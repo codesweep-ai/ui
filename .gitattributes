@@ -1,0 +1,10 @@
+# CATALOG.md and catalog.json are generated from the component frontmatter, and
+# `npm run catalog:check` regenerates them and compares the result byte for byte
+# against what is committed. A checkout on Windows applies core.autocrlf and
+# rewrites every text file to CRLF, after which the generator's LF output no
+# longer matches the file beside it and the gate reports drift that no diff
+# explains.
+#
+# text=auto still lets git detect and leave binaries alone (the visual baselines
+# under visual-baseline/).
+* text=auto eol=lf

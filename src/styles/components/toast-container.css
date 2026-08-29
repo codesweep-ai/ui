@@ -1,0 +1,34 @@
+@import "./toast.css";
+
+/* toast-container component styles. */
+.cs-component-toast-container-7 {
+    pointer-events: none
+}
+
+.cs-component-toast-container-6 {
+    position: fixed
+}
+
+.cs-component-toast-container-6 {
+    bottom: var(--space-4)
+}
+
+.cs-component-toast-container-6 {
+    right: var(--space-4)
+}
+
+.cs-component-toast-container-6 {
+    z-index: var(--z-toast)
+}
+
+.cs-component-toast-container-7 {
+    display: flex
+}
+
+.cs-component-toast-container-7 {
+    flex-direction: column
+}
+
+.cs-component-toast-container-7 {
+    gap: var(--space-2)
+}

@@ -1,0 +1,169 @@
+/* toast component styles. */
+@keyframes cs-toast-enter {
+    from { opacity: 0; transform: translateY(.5rem); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cs-toast-enter {
+    animation: cs-toast-enter 200ms ease-out both
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-toast-enter { animation: none; }
+}
+
+.cs-component-toast-container-7 {
+    pointer-events: none
+}
+
+.cs-component-toast-19 {
+    pointer-events: auto
+}
+
+.cs-component-toast-container-6 {
+    position: fixed
+}
+
+.cs-component-toast-container-6 {
+    bottom: var(--space-4)
+}
+
+.cs-component-toast-container-6 {
+    right: var(--space-4)
+}
+
+.cs-component-toast-container-6 {
+    z-index: var(--z-toast)
+}
+
+.cs-component-toast-23 {
+    margin-top: var(--space-0-5)
+}
+
+.cs-component-toast-container-7 {
+    display: flex
+}
+
+.cs-component-toast-19,
+.cs-component-toast-27 {
+    display: inline-flex
+}
+
+.cs-component-toast-23,
+.cs-component-toast-28 {
+    height: var(--icon-size-sm)
+}
+
+.cs-component-toast-23,
+.cs-component-toast-28 {
+    width: var(--icon-size-sm)
+}
+
+.cs-component-toast-19 {
+    max-width: var(--toast-max-width)
+}
+
+.cs-component-toast-24 {
+    flex: 1 1 0%
+}
+
+.cs-component-toast-23,
+.cs-component-toast-27 {
+    flex-shrink: 0
+}
+
+.cs-component-toast-container-7 {
+    flex-direction: column
+}
+
+.cs-component-toast-19 {
+    align-items: flex-start
+}
+
+.cs-component-toast-19,
+.cs-component-toast-container-7 {
+    gap: var(--space-2)
+}
+
+.cs-component-toast-21 {
+    border-radius: var(--radius-md)
+}
+
+.cs-component-toast-20 {
+    border-width: .0625rem
+}
+
+.cs-component-toast-20 {
+    border-left-width: .25rem
+}
+
+.cs-component-toast-20 {
+    border-color: var(--border)
+}
+
+.cs-component-toast-6 {
+    border-left-color: var(--color-error)
+}
+
+.cs-component-toast-4 {
+    border-left-color: var(--color-success)
+}
+
+.cs-component-toast-5 {
+    border-left-color: var(--color-warning)
+}
+
+.cs-component-toast-7 {
+    border-left-color: var(--muted)
+}
+
+.cs-component-toast-20 {
+    background-color: var(--card)
+}
+
+.cs-component-toast-21 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-toast-21 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-toast-24 {
+    line-height: 1.4
+}
+
+.cs-component-toast-21 {
+    box-shadow: var(--shadow-md)
+}
+
+.cs-component-toast-10 {
+    color: var(--color-error)
+}
+
+.cs-component-toast-8 {
+    color: var(--color-success)
+}
+
+.cs-component-toast-9 {
+    color: var(--color-warning)
+}
+
+.cs-component-toast-24 {
+    color: var(--fg)
+}
+
+.cs-component-toast-11,
+.cs-component-toast-27 {
+    color: var(--muted)
+}
+
+.cs-component-toast-24 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-toast-27:hover {
+    color: var(--fg)
+}

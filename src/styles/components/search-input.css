@@ -1,0 +1,153 @@
+/* search-input component styles. */
+.cs-component-search-input-31 {
+    pointer-events: none
+}
+
+.cs-component-search-input-37 {
+    margin-top: var(--space-1)
+}
+
+.cs-component-search-input-28 {
+    display: flex
+}
+
+.cs-component-search-input-11,
+.cs-component-search-input-13 {
+    display: inline-flex
+}
+
+.cs-component-search-input-33 {
+    height: var(--icon-size-md)
+}
+
+.cs-component-search-input-33 {
+    width: var(--icon-size-md)
+}
+
+.cs-component-search-input-20 {
+    min-width: 0
+}
+
+.cs-component-search-input-20 {
+    flex: 1 1 0%
+}
+
+.cs-component-search-input-28 {
+    flex-shrink: 0
+}
+
+.cs-component-search-input-12,
+.cs-component-search-input-26,
+.cs-component-search-input-31 {
+    cursor: not-allowed
+}
+
+.cs-component-search-input-30 {
+    cursor: pointer
+}
+
+.cs-component-search-input-11 {
+    flex-direction: column
+}
+
+.cs-component-search-input-13,
+.cs-component-search-input-28 {
+    align-items: center
+}
+
+.cs-component-search-input-28 {
+    justify-content: center
+}
+
+.cs-component-search-input-14 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-search-input-14 {
+    border-width: .0625rem
+}
+
+.cs-component-search-input-21 {
+    border-style: none
+}
+
+.cs-component-search-input-14 {
+    border-color: var(--border)
+}
+
+.cs-component-search-input-15 {
+    background-color: var(--card)
+}
+
+.cs-component-search-input-21 {
+    background-color: transparent
+}
+
+.cs-component-search-input-29 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-search-input-22 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-search-input-22 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-search-input-37 {
+    font-style: italic
+}
+
+.cs-component-search-input-12 {
+    opacity: 0.5
+}
+
+.cs-component-search-input-18,
+.cs-component-search-input-30 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-search-input-23 {
+    color: var(--fg)
+}
+
+.cs-component-search-input-29,
+.cs-component-search-input-37 {
+    color: var(--muted)
+}
+
+.cs-component-search-input-23 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-search-input-37 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-search-input-24::placeholder {
+    color: var(--color-neutral);
+    opacity: 1
+}
+
+.cs-component-search-input-16:focus-within {
+    box-shadow: 0 0 0 .125rem var(--color-accent)
+}
+
+.cs-component-search-input-17:hover {
+    border-color: var(--muted)
+}
+
+.cs-component-search-input-30:hover {
+    color: var(--fg)
+}
+
+.cs-component-search-input-25:focus {
+    outline: .125rem solid transparent;
+    outline-offset: .125rem
+}

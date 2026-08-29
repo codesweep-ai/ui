@@ -1,0 +1,126 @@
+/* panel component styles. */
+.cs-component-panel-4,
+.cs-component-panel-11,
+.cs-component-panel-13 {
+    display: flex
+}
+
+.cs-component-panel-11 {
+    height: 2.5rem
+}
+
+.cs-component-panel-19 {
+    height: var(--icon-size-md)
+}
+
+.cs-component-panel-4 {
+    height: 100%
+}
+
+.cs-component-panel-20 {
+    min-height: 0
+}
+
+.cs-component-panel-5 {
+    width: 0 !important
+}
+
+.cs-component-panel-19 {
+    width: var(--icon-size-md)
+}
+
+.cs-component-panel-20 {
+    flex: 1 1 0%
+}
+
+.cs-component-panel-11 {
+    flex-shrink: 0
+}
+
+.cs-component-panel-4 {
+    flex-direction: column
+}
+
+.cs-component-panel-11,
+.cs-component-panel-13 {
+    align-items: center
+}
+
+.cs-component-panel-11 {
+    justify-content: space-between
+}
+
+.cs-component-panel-13 {
+    gap: var(--space-1)
+}
+
+.cs-component-panel-5 {
+    overflow: hidden !important
+}
+
+.cs-component-panel-20 {
+    overflow: hidden
+}
+
+.cs-component-panel-12 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.cs-component-panel-14 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-panel-4 {
+    border-right-width: .0625rem
+}
+
+.cs-component-panel-5 {
+    border-style: none !important
+}
+
+.cs-component-panel-4 {
+    border-color: var(--border)
+}
+
+.cs-component-panel-4 {
+    background-color: var(--bg)
+}
+
+.cs-component-panel-14 {
+    padding: var(--space-1)
+}
+
+.cs-component-panel-20 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-panel-11 {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4)
+}
+
+.cs-component-panel-20 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-panel-14 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-panel-14 {
+    color: var(--muted)
+}
+
+.cs-component-panel-14:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-panel-14:hover {
+    color: var(--fg)
+}

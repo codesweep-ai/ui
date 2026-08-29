@@ -1,0 +1,368 @@
+/* ── Scoped Markdown Typography ──────────────────────────── */
+/* All styles scoped under .markdown-content. Uses DS tokens. */
+
+.markdown-content {
+  color: var(--fg);
+  font-size: var(--font-size-prose-body);
+  line-height: var(--line-height-prose);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ── Headings ───────────────────────────────────────────── */
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  font-weight: var(--font-weight-semibold);
+  color: var(--fg);
+  margin: var(--space-6) 0 var(--space-3);
+  line-height: var(--line-height-tight);
+}
+
+.markdown-content h1 {
+  font-size: var(--font-size-prose-h1);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.markdown-content h2 {
+  font-size: var(--font-size-prose-h2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.markdown-content h3 {
+  font-size: var(--font-size-prose-h3);
+}
+
+.markdown-content h4 {
+  font-size: var(--font-size-prose-h4);
+}
+
+.markdown-content h5 {
+  font-size: var(--font-size-prose-small);
+}
+
+.markdown-content h6 {
+  font-size: var(--font-size-prose-small);
+  color: var(--muted);
+}
+
+.markdown-content > :first-child {
+  margin-top: 0;
+}
+
+/* Compact variant for inspector/detail side panes. */
+.markdown-content--dense {
+  font-size: var(--font-size-sm);
+}
+
+.markdown-content--dense h1 {
+  font-size: var(--font-size-xl);
+}
+
+.markdown-content--dense h2 {
+  font-size: var(--font-size-lg);
+}
+
+.markdown-content--dense h3,
+.markdown-content--dense h4 {
+  font-size: var(--font-size-md);
+}
+
+.markdown-content--dense h1,
+.markdown-content--dense h2,
+.markdown-content--dense h3,
+.markdown-content--dense h4,
+.markdown-content--dense h5,
+.markdown-content--dense h6 {
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.markdown-content--dense p,
+.markdown-content--dense ul,
+.markdown-content--dense ol,
+.markdown-content--dense blockquote,
+.markdown-content--dense .md-code-block {
+  margin-bottom: var(--space-3);
+}
+
+/* ── Paragraphs ─────────────────────────────────────────── */
+
+.markdown-content p {
+  margin: 0 0 var(--space-4);
+}
+
+/* ── Lists ──────────────────────────────────────────────── */
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: var(--space-6);
+  margin: 0 0 var(--space-4);
+}
+
+.markdown-content li {
+  margin-bottom: var(--space-1);
+}
+
+.markdown-content li > ul,
+.markdown-content li > ol {
+  margin-top: var(--space-1);
+  margin-bottom: 0;
+}
+
+/* ── Task lists ─────────────────────────────────────────── */
+
+.markdown-content ul:has(> li > input[type="checkbox"]) {
+  list-style: none;
+  padding-left: 0;
+}
+
+.markdown-content li > input[type="checkbox"] {
+  margin-right: var(--space-2);
+  accent-color: var(--color-accent);
+}
+
+/* ── Blockquotes ────────────────────────────────────────── */
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--color-link);
+  background: var(--color-bg-subtle);
+  padding: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-4);
+  color: var(--fg);
+}
+
+.markdown-content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* ── Links ──────────────────────────────────────────────── */
+
+.markdown-content a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+  color: var(--color-link-hover);
+}
+
+/* ── Inline code ────────────────────────────────────────── */
+
+.markdown-content :not(pre) > code {
+  font-family: var(--font-family-mono);
+  background: var(--color-bg-muted);
+  padding: var(--space-0-5) var(--space-1);
+  border-radius: var(--radius-xs);
+  font-size: var(--font-size-xs);
+}
+
+/* ── Code blocks ────────────────────────────────────────── */
+
+.md-code-block {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin: 0 0 var(--space-4);
+}
+
+.md-code-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.md-code-block__body {
+  background: var(--color-bg-subtle);
+  overflow-x: auto;
+}
+
+.md-code-block__body pre {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-code);
+}
+
+.md-code-block__body code {
+  font-family: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* ── Tables ─────────────────────────────────────────────── */
+
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-xs);
+}
+
+.markdown-content th {
+  background: var(--card);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid var(--border);
+  padding: var(--space-2) var(--space-3);
+}
+
+.markdown-content tr:nth-child(even) {
+  background: var(--color-bg-subtle);
+}
+
+/* ── Horizontal rule ────────────────────────────────────── */
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-6) 0;
+}
+
+/* ── Images ─────────────────────────────────────────────── */
+
+.markdown-content img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+}
+
+/* ── GitHub Alerts ──────────────────────────────────────── */
+
+.md-alert {
+  padding: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-4);
+  border-left: 4px solid;
+  border-radius: var(--radius-sm);
+}
+
+.md-alert__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-sm);
+}
+
+.md-alert__body > :last-child {
+  margin-bottom: 0;
+}
+
+.md-alert--note {
+  border-color: var(--color-link);
+  background: var(--color-accent-bg-strong);
+}
+
+.md-alert--note .md-alert__title {
+  color: var(--color-link);
+}
+
+.md-alert--tip {
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.md-alert--tip .md-alert__title {
+  color: var(--color-success);
+}
+
+.md-alert--important {
+  border-color: var(--color-cat-5);
+  background: var(--color-bg-subtle);
+}
+
+.md-alert--important .md-alert__title {
+  color: var(--color-cat-5);
+}
+
+.md-alert--warning {
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg);
+}
+
+.md-alert--warning .md-alert__title {
+  color: var(--color-warning);
+}
+
+.md-alert--caution {
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+.md-alert--caution .md-alert__title {
+  color: var(--color-error);
+}
+
+/* ── Mermaid containers ─────────────────────────────────── */
+
+.md-mermaid {
+  display: flex;
+  justify-content: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: 0 0 var(--space-4);
+  overflow-x: auto;
+}
+
+.md-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.md-mermaid-error {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+
+.md-mermaid-error__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-error);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-2);
+}
+
+.md-mermaid-error__code {
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  overflow-x: auto;
+  color: var(--fg);
+}
+
+/* ── KaTeX ──────────────────────────────────────────────── */
+
+.markdown-content .katex {
+  font-size: var(--font-size-md);
+}
+
+.markdown-content .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-2) 0;
+}

@@ -1,0 +1,38 @@
+/* streaming-text component styles. */
+.cs-stream-cursor {
+    animation: cs-stream-cursor 1s steps(2, end) infinite;
+    background: var(--color-accent);
+    display: inline-block;
+    height: 1em;
+    margin-left: .125rem;
+    vertical-align: -.125rem;
+    width: .125rem
+}
+
+@keyframes cs-stream-cursor {
+    0%, 50% { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-stream-cursor {
+        animation: none;
+        opacity: 1
+    }
+}
+
+.cs-component-streaming-text-8 {
+    white-space: pre-wrap
+}
+
+.cs-component-streaming-text-8 {
+    overflow-wrap: break-word
+}
+
+.cs-component-streaming-text-9 {
+    color: var(--fg)
+}
+
+.cs-component-streaming-text-9 {
+    font-size: var(--font-size-sm)
+}

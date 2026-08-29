@@ -1,0 +1,55 @@
+/* Print stylesheet — sensible defaults for clean PDF / paper export.
+   Opt-in: import "@codesweep-ai/ui/styles/print.css" once at the app root.
+   Hides app chrome (Header / Footer + anything marked `.no-print`), forces
+   light theme so it's readable on paper, and lets long-form prose fill the
+   page width. Add `.no-print` to anything else you want suppressed.  */
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Suppress app chrome and anything opted out via .no-print */
+  [data-component="Header"],
+  [data-component="Footer"],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Long-form prose fills the page width on paper */
+  .prose,
+  .markdown-content {
+    max-width: none;
+  }
+
+  /* Avoid orphaned headings / split rows */
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  tr,
+  img,
+  pre {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Link URLs after the link text, so printed pages aren't dead-ends */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--muted);
+  }
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+}

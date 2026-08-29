@@ -1,0 +1,195 @@
+/* app-shell component styles. */
+.cs-component-app-shell-3 {
+    position: sticky
+}
+
+.cs-component-app-shell-3 {
+    top: 0
+}
+
+.cs-component-app-shell-3 {
+    z-index: var(--z-header)
+}
+
+.cs-component-app-shell-13 {
+    margin-left: var(--space-2);
+    margin-right: var(--space-2)
+}
+
+.cs-component-app-shell-20 {
+    margin-top: auto;
+    min-height: calc(var(--space-6) + var(--space-2) + var(--space-0-5))
+}
+
+.cs-component-app-shell-4,
+.cs-component-app-shell-6,
+.cs-component-app-shell-11,
+.cs-component-app-shell-12,
+.cs-component-app-shell-24 {
+    display: flex
+}
+
+.cs-component-app-shell-13 {
+    height: 1rem
+}
+
+.cs-component-app-shell-7 {
+    height: 2rem
+}
+
+.cs-component-app-shell-24 {
+    height: 100vh
+}
+
+.cs-component-app-shell-7 {
+    width: auto
+}
+
+.cs-component-app-shell-24 {
+    flex-direction: column
+}
+
+.cs-component-app-shell-4,
+.cs-component-app-shell-6,
+.cs-component-app-shell-11,
+.cs-component-app-shell-12 {
+    align-items: center
+}
+
+.cs-component-app-shell-4 {
+    justify-content: space-between
+}
+
+.cs-component-app-shell-11 {
+    gap: var(--space-1)
+}
+
+.cs-component-app-shell-6 {
+    gap: var(--space-2)
+}
+
+.cs-component-app-shell-24 {
+    overflow: hidden
+}
+
+.cs-component-app-shell-16 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-app-shell-13 {
+    border-left-width: .0625rem
+}
+
+.cs-component-app-shell-13 {
+    border-color: var(--color-nav-hover)
+}
+
+.cs-component-app-shell-24 {
+    background-color: var(--bg)
+}
+
+.cs-component-app-shell-3,
+.cs-component-app-shell-20 {
+    background-color: var(--color-header-bg)
+}
+
+.cs-component-app-shell-17 {
+    background-color: color-mix(in srgb, var(--color-accent) 22%, transparent) /* selected: an accent tint; hover stays --color-nav-hover */
+}
+
+.cs-component-app-shell-16 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-app-shell-4,
+.cs-component-app-shell-20 {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4)
+}
+
+.cs-component-app-shell-16 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-app-shell-4,
+.cs-component-app-shell-20 {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3)
+}
+
+.cs-component-app-shell-20 {
+    text-align: center
+}
+
+.cs-component-app-shell-6,
+.cs-component-app-shell-16 {
+    text-decoration-line: none
+}
+
+.cs-component-app-shell-16 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-app-shell-3 {
+    box-shadow: var(--shadow-header)
+}
+
+.cs-component-app-shell-20 {
+    box-shadow: var(--shadow-up)
+}
+
+.cs-component-app-shell-8 {
+    color: var(--color-accent) /* the text title is the one accent in the chrome; brands re-point --color-accent */
+}
+
+.cs-component-app-shell-3,
+.cs-component-app-shell-20 {
+    color: var(--color-header-text)
+}
+
+.cs-component-app-shell-17 {
+    color: var(--color-header-text) /* on the accent tint; accent-on-accent fails AA in the light theme */
+}
+
+.cs-component-app-shell-18 {
+    color: var(--color-header-text-muted)
+}
+
+.cs-component-app-shell-24 {
+    color: var(--fg)
+}
+
+.cs-component-app-shell-8 {
+    font-size: var(--font-size-lg)
+}
+
+.cs-component-app-shell-16,
+.cs-component-app-shell-20 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-app-shell-8 {
+    font-weight: var(--font-weight-bold)
+}
+
+.cs-component-app-shell-16 {
+    font-weight: var(--font-weight-medium)
+}
+
+.cs-component-app-shell-18:hover {
+    background-color: var(--color-nav-hover)
+}
+
+.cs-component-app-shell-18:hover {
+    color: var(--color-text-inverse)
+}
+
+.cs-component-app-shell-24 > main {
+    flex: 1 1 0%;
+    min-height: 0;
+    overflow-y: auto
+}

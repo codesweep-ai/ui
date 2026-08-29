@@ -1,0 +1,235 @@
+@import "./button.css";
+@import "./dropdown.css";
+@import "./search-input.css";
+@import "./skeleton.css";
+
+/* table component styles. */
+.cs-component-table-28,
+.cs-component-table-62,
+.cs-component-table-84,
+.cs-component-table-85 {
+    display: flex
+}
+
+.cs-component-table-51 {
+    display: inline-flex
+}
+
+.cs-component-table-63,
+.cs-component-table-72 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-table-53,
+.cs-component-table-54,
+.cs-component-table-88 {
+    height: var(--icon-size-sm)
+}
+
+.cs-component-table-63,
+.cs-component-table-72 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-table-53,
+.cs-component-table-54,
+.cs-component-table-88 {
+    width: var(--icon-size-sm)
+}
+
+.cs-component-table-32 {
+    width: 100%
+}
+
+.cs-component-table-29 {
+    flex: 1 1 0%
+}
+
+.cs-component-table-33 {
+    border-collapse: collapse
+}
+
+.cs-component-table-38,
+.cs-component-table-76 {
+    cursor: pointer
+}
+
+.cs-component-table-38 {
+    user-select: none
+}
+
+.cs-component-table-62 {
+    flex-direction: column
+}
+
+.cs-component-table-28,
+.cs-component-table-51,
+.cs-component-table-62,
+.cs-component-table-84,
+.cs-component-table-85 {
+    align-items: center
+}
+
+.cs-component-table-84 {
+    justify-content: space-between
+}
+
+.cs-component-table-51 {
+    gap: var(--space-1)
+}
+
+.cs-component-table-62,
+.cs-component-table-85 {
+    gap: var(--space-2)
+}
+
+.cs-component-table-28 {
+    gap: var(--space-3)
+}
+
+.cs-component-table-83 {
+    overflow: hidden
+}
+
+.cs-component-table-27 {
+    overflow-x: auto
+}
+
+.cs-component-table-83 {
+    text-overflow: ellipsis
+}
+
+.cs-component-table-83 {
+    white-space: nowrap
+}
+
+.cs-component-table-27 {
+    border-radius: var(--radius-md)
+}
+
+.cs-component-table-27 {
+    border-width: .0625rem
+}
+
+.cs-component-table-28,
+.cs-component-table-58,
+.cs-component-table-79 {
+    border-bottom-width: .0625rem
+}
+
+.cs-component-table-36 {
+    border-bottom-width: .125rem
+}
+
+.cs-component-table-84 {
+    border-top-width: .0625rem
+}
+
+.cs-component-table-27,
+.cs-component-table-28,
+.cs-component-table-36,
+.cs-component-table-58,
+.cs-component-table-79,
+.cs-component-table-84 {
+    border-color: var(--border)
+}
+
+.cs-component-table-36,
+.cs-component-table-84 {
+    background-color: var(--color-bg-muted)
+}
+
+.cs-component-table-77 {
+    background-color: var(--color-accent-bg)
+}
+
+.cs-component-table-28,
+.cs-component-table-84 {
+    padding: var(--space-3)
+}
+
+.cs-component-table-35,
+.cs-component-table-58,
+.cs-component-table-60 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-table-35,
+.cs-component-table-58 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-table-60 {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6)
+}
+
+.cs-component-table-43 {
+    text-align: left
+}
+
+.cs-component-table-42,
+.cs-component-table-62 {
+    text-align: center
+}
+
+.cs-component-table-40,
+.cs-component-table-81 {
+    text-align: right
+}
+
+.cs-component-table-75 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-table-53 {
+    color: var(--color-accent)
+}
+
+.cs-component-table-63 {
+    color: var(--color-error)
+}
+
+.cs-component-table-37,
+.cs-component-table-64 {
+    color: var(--fg)
+}
+
+.cs-component-table-54,
+.cs-component-table-67,
+.cs-component-table-72,
+.cs-component-table-91 {
+    color: var(--muted)
+}
+
+.cs-component-table-64 {
+    font-size: var(--font-size-body)
+}
+
+.cs-component-table-67 {
+    font-size: var(--font-size-caption)
+}
+
+.cs-component-table-32 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-table-91 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-table-81 {
+    font-variant-numeric: tabular-nums
+}
+
+.cs-component-table-37 {
+    font-weight: var(--font-weight-semibold)
+}
+
+.cs-component-table-78:hover {
+    background-color: var(--color-row-hover)
+}

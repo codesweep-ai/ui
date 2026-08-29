@@ -1,0 +1,89 @@
+/* radio-group component styles. */
+.cs-component-radio-group-1 {
+    display: flex;
+    gap: var(--space-1)
+}
+
+.cs-component-radio-group-2 {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch
+}
+
+.cs-component-radio-group-3 {
+    flex-direction: column
+}
+
+.cs-component-radio-group-4 {
+    align-items: flex-start;
+    background: transparent;
+    border: .0625rem solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-2);
+    text-align: left
+}
+
+.cs-component-radio-group-4:hover:not(:disabled) {
+    background-color: var(--color-bg-muted-hover);
+    color: var(--fg)
+}
+
+.cs-component-radio-group-4:focus-visible {
+    outline: .125rem solid var(--color-accent);
+    outline-offset: .125rem
+}
+
+.cs-component-radio-group-5 {
+    background-color: var(--color-bg-muted);
+    border-color: var(--border);
+    color: var(--fg)
+}
+
+.cs-component-radio-group-6 {
+    cursor: not-allowed;
+    opacity: .5
+}
+
+/* The dot. Its ring is always drawn so the row does not shift on selection. */
+.cs-component-radio-group-7 {
+    border: .0625rem solid var(--muted);
+    border-radius: 50%;
+    flex: none;
+    height: .875rem;
+    margin-top: .125rem;
+    position: relative;
+    width: .875rem
+}
+
+.cs-component-radio-group-5 .cs-component-radio-group-7 {
+    border-color: var(--color-accent)
+}
+
+.cs-component-radio-group-5 .cs-component-radio-group-7::after {
+    background-color: var(--color-accent);
+    border-radius: 50%;
+    content: "";
+    inset: .1875rem;
+    position: absolute
+}
+
+.cs-component-radio-group-8 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5);
+    min-width: 0
+}
+
+.cs-component-radio-group-9 {
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-semibold)
+}
+
+.cs-component-radio-group-10 {
+    color: var(--muted);
+    font-size: var(--font-size-sm)
+}

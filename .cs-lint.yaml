@@ -1,0 +1,79 @@
+# The knobs cs-lint reads for this repository.
+#
+# The linters carry no project knowledge. Everything that differs between
+# repositories lives here, so a fix to a check reaches every project without
+# carrying one project's exceptions into the next.
+#
+# Run `cs-lint <linter> --explain` to read what each rule wants.
+
+docs:
+  # The documents the checks read. This project ships a component library
+  # rather than a command, so the catalogue is its reference and the design
+  # system spec is its specification.
+  documents:
+    - README.md
+    - INSTALL.md
+    - MANUAL.md
+    - CONTRIBUTING.md
+    - DESIGN_SYSTEM_SPEC.md
+    - CATALOG.md
+    - AGENTS.md
+
+  prose:
+    # CATALOG.md is generated from component frontmatter by `npm run catalog`,
+    # and its first line says so. A finding in it cannot be fixed in it.
+
+    # The domain terms a reader of this project cannot infer. Each must be
+    # introduced where a document first uses it: glossed on the spot, defined
+    # in a glossary table, or linked to the page that defines it.
+    #
+    # Words that also read as ordinary English are deliberately absent: the
+    # check cannot tell the design-system "surface" from the verb, and would
+    # fire on every ordinary use.
+    glossary:
+      - design token
+      - primitive
+      - app shell
+      - slot
+
+    lowercaseStarters: []
+
+    projectVerbs: []
+
+    # The things this repository counts for itself. Prose that states one of
+    # these numbers is right the day it is written and wrong by the next
+    # component, and nothing fails when it drifts.
+    countable:
+      - components?
+      - patterns?
+      - tokens?
+      - variants?
+
+  refs:
+    # The README shows installing from a packed tarball, which the reader
+    # supplies from their own checkout.
+    placeholderOK: ["/path/to/codesweep-ai-ui-<version>.tgz"]
+
+oss:
+  project: "@codesweep-ai/ui"
+  githubRepo: codesweep-ai/ui
+
+  # True once the repository is public. Flip this in the same commit that
+  # makes it public.
+  published: false
+
+  # No SPEC.md: DESIGN_SYSTEM_SPEC.md is this project's specification, and it is
+  # named for what it specifies. MANUAL.md holds the package-level surface, and
+  # the component surface is one specification per component under components/,
+  # which CATALOG.md indexes.
+  docSet:
+    - README.md
+    - INSTALL.md
+    - MANUAL.md
+    - CONTRIBUTING.md
+    - DESIGN_SYSTEM_SPEC.md
+    - CATALOG.md
+    - AGENTS.md
+
+  # npm scripts rather than make targets: this project has no Makefile.
+  expectedTargets: ["build", "test", "lint", "typecheck", "check", "ci"]

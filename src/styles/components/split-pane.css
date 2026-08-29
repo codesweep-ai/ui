@@ -1,0 +1,78 @@
+/* split-pane component styles. */
+.cs-component-split-pane-31 {
+    position: absolute
+}
+
+.cs-component-split-pane-30 {
+    position: relative
+}
+
+.cs-component-split-pane-31 {
+    top: 0;
+    bottom: 0
+}
+
+.cs-component-split-pane-31 {
+    left: -0.25rem
+}
+
+.cs-component-split-pane-20 {
+    display: flex
+}
+
+.cs-component-split-pane-21 {
+    display: contents
+}
+
+.cs-component-split-pane-20 {
+    height: 100%
+}
+
+.cs-component-split-pane-30 {
+    width: 0.25rem
+}
+
+.cs-component-split-pane-31 {
+    width: 0.5rem
+}
+
+.cs-component-split-pane-23 {
+    min-width: 0
+}
+
+.cs-component-split-pane-23 {
+    flex: 1 1 0%
+}
+
+.cs-component-split-pane-30 {
+    flex-shrink: 0
+}
+
+.cs-component-split-pane-30 {
+    cursor: col-resize
+}
+
+.cs-component-split-pane-20 {
+    flex-direction: row
+}
+
+.cs-component-split-pane-20,
+.cs-component-split-pane-22 {
+    overflow: hidden
+}
+
+.cs-component-split-pane-30 {
+    background-color: var(--border)
+}
+
+.cs-component-split-pane-31 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-markdown-viewer-150:hover .cs-component-split-pane-31,
+.cs-component-split-pane-30:hover .cs-component-markdown-viewer-153,
+.cs-component-split-pane-30:hover .cs-component-split-pane-31 {
+    background-color: var(--color-accent)
+}

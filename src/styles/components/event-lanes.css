@@ -1,0 +1,159 @@
+/* EventLanes component styles. */
+.cs-component-event-lanes-root {
+    --event-lanes-gutter: 8rem;
+    color: var(--fg);
+    max-width: 100%;
+    position: relative
+}
+
+.cs-component-event-lanes-main,
+.cs-component-event-lanes-overview-row {
+    display: grid;
+    grid-template-columns: var(--event-lanes-gutter) minmax(0, 1fr)
+}
+
+.cs-component-event-lanes-labels {
+    background: var(--bg);
+    border: .0625rem solid var(--border);
+    border-right: 0;
+    min-width: 0;
+    position: relative;
+    z-index: 2
+}
+
+.cs-component-event-lanes-ruler-label,
+.cs-component-event-lanes-label {
+    align-items: center;
+    border-bottom: .0625rem solid var(--border);
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0 var(--space-2);
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.cs-component-event-lanes-ruler-label {
+    color: var(--muted);
+    font-size: var(--font-size-xs);
+    height: var(--event-lanes-ruler-height)
+}
+
+.cs-component-event-lanes-label {
+    font-size: var(--font-size-sm);
+    height: var(--event-lanes-lane-height)
+}
+
+.cs-component-event-lanes-label:last-child {
+    border-bottom: 0
+}
+
+.cs-component-event-lanes-axis-cell {
+    min-width: 0;
+    position: relative
+}
+
+.cs-component-event-lanes-scroller {
+    border: .0625rem solid var(--border);
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    scrollbar-gutter: stable;
+    width: 100%
+}
+
+.cs-component-event-lanes-scroller:focus-visible {
+    box-shadow: 0 0 0 .125rem var(--bg), 0 0 0 .25rem var(--color-link);
+    outline: 0;
+    z-index: 3
+}
+
+.cs-component-event-lanes-axis {
+    min-width: 100%;
+    position: relative
+}
+
+.cs-component-event-lanes-ruler {
+    height: var(--event-lanes-ruler-height);
+    min-width: 100%;
+    position: relative
+}
+
+/* Pinned to the scrollport, not the axis. `min-width: 100%` resolved against
+   the axis element (the full scroll extent), so this box was as wide as the
+   scrollable content and `position: sticky` could never engage: the canvas rode
+   along with the scroll while the paint had ALREADY subtracted scrollLeft, so
+   the marks were offset twice and the drawn region visibly collapsed — 838px of
+   canvas in view at scrollLeft 0, 79px at the end. The canvas is sized to the
+   viewport in JS, so `fit-content` is the correct width and no minimum is
+   needed. */
+.cs-component-event-lanes-canvas-window {
+    height: calc(var(--event-lanes-lane-height) * var(--event-lanes-lane-count, 1));
+    min-width: 0;
+    position: sticky;
+    left: 0;
+    width: fit-content
+}
+
+.cs-component-event-lanes-canvas-window canvas {
+    cursor: crosshair;
+    display: block
+}
+
+.cs-component-event-lanes-census {
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: .0625rem;
+    margin: -.0625rem;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: .0625rem
+}
+
+.cs-component-event-lanes-tooltip-layer {
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: var(--z-tooltip)
+}
+
+.cs-component-event-lanes-tooltip-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0-5)
+}
+
+.cs-component-event-lanes-tooltip-content span {
+    color: var(--muted);
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-event-lanes-overview-row {
+    margin-top: var(--space-1)
+}
+
+.cs-component-event-lanes-overview-label {
+    align-items: center;
+    color: var(--muted);
+    display: flex;
+    font-size: var(--font-size-xs);
+    padding: 0 var(--space-2)
+}
+
+.cs-component-event-lanes-overview {
+    border: .0625rem solid var(--border);
+    cursor: ew-resize;
+    display: block;
+    max-width: 100%;
+    touch-action: none
+}
+
+@media (max-width: 40rem) {
+    .cs-component-event-lanes-root {
+        --event-lanes-gutter: 6rem
+    }
+}

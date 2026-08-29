@@ -1,0 +1,183 @@
+@import "./button.css";
+@import "./tree.css";
+@import "./skeleton.css";
+
+/* sectioned-tree component styles. */
+.cs-component-sectioned-tree-53 {
+    position: sticky
+}
+
+.cs-component-sectioned-tree-53 {
+    top: 0
+}
+
+.cs-component-sectioned-tree-53 {
+    z-index: var(--z-sticky)
+}
+
+.cs-component-sectioned-tree-11,
+.cs-component-sectioned-tree-14,
+.cs-component-sectioned-tree-22,
+.cs-component-sectioned-tree-37,
+.cs-component-sectioned-tree-49 {
+    display: flex
+}
+
+.cs-component-sectioned-tree-23,
+.cs-component-sectioned-tree-33 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-sectioned-tree-55 {
+    height: var(--icon-size-xs)
+}
+
+.cs-component-sectioned-tree-23,
+.cs-component-sectioned-tree-33 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-sectioned-tree-55 {
+    width: var(--icon-size-xs)
+}
+
+.cs-component-sectioned-tree-56 {
+    flex: 1 1 0%
+}
+
+.cs-component-sectioned-tree-40,
+.cs-component-sectioned-tree-52 {
+    cursor: pointer
+}
+
+.cs-component-sectioned-tree-54 {
+    flex-direction: row-reverse
+}
+
+.cs-component-sectioned-tree-11,
+.cs-component-sectioned-tree-14,
+.cs-component-sectioned-tree-22,
+.cs-component-sectioned-tree-37 {
+    flex-direction: column
+}
+
+.cs-component-sectioned-tree-22,
+.cs-component-sectioned-tree-49 {
+    align-items: center
+}
+
+.cs-component-sectioned-tree-14,
+.cs-component-sectioned-tree-49 {
+    gap: var(--space-1)
+}
+
+.cs-component-sectioned-tree-11,
+.cs-component-sectioned-tree-22 {
+    gap: var(--space-2)
+}
+
+.cs-component-sectioned-tree-40,
+.cs-component-sectioned-tree-52 {
+    border-style: none
+}
+
+.cs-component-sectioned-tree-50 {
+    background-color: var(--card)
+}
+
+.cs-component-sectioned-tree-40 {
+    background-color: transparent
+}
+
+.cs-component-sectioned-tree-40 {
+    padding: 0
+}
+
+.cs-component-sectioned-tree-11 {
+    padding: var(--space-2)
+}
+
+.cs-component-sectioned-tree-22 {
+    padding: var(--space-6)
+}
+
+.cs-component-sectioned-tree-42,
+.cs-component-sectioned-tree-49 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-sectioned-tree-49 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-sectioned-tree-42 {
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-sectioned-tree-58 {
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-sectioned-tree-17 {
+    padding-left: var(--space-3)
+}
+
+.cs-component-sectioned-tree-44 {
+    text-align: left
+}
+
+.cs-component-sectioned-tree-22 {
+    text-align: center
+}
+
+.cs-component-sectioned-tree-43,
+.cs-component-sectioned-tree-54 {
+    text-align: right
+}
+
+.cs-component-sectioned-tree-41 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-sectioned-tree-23 {
+    color: var(--color-error)
+}
+
+.cs-component-sectioned-tree-24 {
+    color: var(--fg)
+}
+
+.cs-component-sectioned-tree-27,
+.cs-component-sectioned-tree-33,
+.cs-component-sectioned-tree-39,
+.cs-component-sectioned-tree-50 {
+    color: var(--muted)
+}
+
+.cs-component-sectioned-tree-24 {
+    font-size: var(--font-size-body)
+}
+
+.cs-component-sectioned-tree-27 {
+    font-size: var(--font-size-caption)
+}
+
+.cs-component-sectioned-tree-39 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-sectioned-tree-57 {
+    font-variant-numeric: tabular-nums
+}
+
+.cs-component-sectioned-tree-57 {
+    font-weight: var(--font-weight-regular)
+}
+
+.cs-component-sectioned-tree-41:hover {
+    color: var(--fg)
+}

@@ -1,0 +1,61 @@
+/* chip component styles. */
+.cs-component-chip-1 {
+    align-items: center
+}
+
+.cs-component-chip-1 {
+    display: flex
+}
+
+.cs-component-chip-1:focus-visible {
+    outline: .125rem solid var(--color-accent);
+    outline-offset: .125rem
+}
+
+.cs-component-chip-1 {
+    border-radius: 624.9375rem;
+    border-style: solid;
+    border-width: .0625rem;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-semibold);
+    gap: var(--space-1);
+    height: 1.75rem;
+    justify-content: center;
+    line-height: 1;
+    padding: 0 var(--space-2);
+    white-space: nowrap
+}
+
+.cs-component-chip-2 {
+    background-color: var(--color-accent-bg-strong);
+    border-color: var(--color-accent);
+    color: var(--fg)
+}
+
+.cs-component-chip-3 {
+    background-color: var(--card);
+    border-color: var(--border);
+    color: var(--fg)
+}
+
+.cs-component-chip-3:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-chip-4 {
+    cursor: not-allowed;
+    opacity: .5
+}
+
+.cs-component-chip-5 {
+    align-items: center;
+    background-color: var(--color-bg-muted);
+    border-radius: 624.9375rem;
+    display: inline-flex;
+    font-variant-numeric: tabular-nums;
+    justify-content: center;
+    min-width: 1rem;
+    padding: 0 var(--space-1)
+}

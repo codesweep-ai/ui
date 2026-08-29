@@ -1,0 +1,54 @@
+/* segmented-control component styles. */
+.cs-component-segmented-control-1,
+.cs-component-segmented-control-2 {
+    align-items: center
+}
+
+.cs-component-segmented-control-1 {
+    display: flex
+}
+
+.cs-component-segmented-control-2:focus-visible {
+    outline: .125rem solid var(--color-accent);
+    outline-offset: .125rem
+}
+
+.cs-component-segmented-control-1 {
+    background-color: var(--color-bg-muted);
+    border: .0625rem solid var(--border);
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    gap: var(--space-0-5);
+    padding: var(--space-0-5)
+}
+
+.cs-component-segmented-control-2 {
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-semibold);
+    height: 1.75rem;
+    justify-content: center;
+    padding: 0 var(--space-3);
+    white-space: nowrap
+}
+
+.cs-component-segmented-control-3 {
+    background-color: var(--card);
+    box-shadow: var(--shadow-sm);
+    color: var(--fg)
+}
+
+.cs-component-segmented-control-4:hover {
+    background-color: var(--color-bg-muted-hover);
+    color: var(--fg)
+}
+
+.cs-component-segmented-control-5 {
+    cursor: not-allowed;
+    opacity: .5
+}

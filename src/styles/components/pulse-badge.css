@@ -1,0 +1,56 @@
+/* pulse-badge component styles. */
+.cs-pulse {
+    animation: cs-pulse 1.4s ease-in-out infinite;
+    border-radius: 50%;
+    display: inline-block;
+    transform-origin: center
+}
+
+@keyframes cs-pulse {
+    0%, 100% { opacity: .6; transform: scale(.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-pulse {
+        animation: none;
+        opacity: .85;
+        transform: none
+    }
+}
+
+.cs-component-pulse-badge-17 {
+    display: inline-block
+}
+
+.cs-component-pulse-badge-11 {
+    height: var(--pulse-size-lg)
+}
+
+.cs-component-pulse-badge-10 {
+    height: var(--pulse-size-md)
+}
+
+.cs-component-pulse-badge-9 {
+    height: var(--pulse-size-sm)
+}
+
+.cs-component-pulse-badge-11 {
+    width: var(--pulse-size-lg)
+}
+
+.cs-component-pulse-badge-10 {
+    width: var(--pulse-size-md)
+}
+
+.cs-component-pulse-badge-9 {
+    width: var(--pulse-size-sm)
+}
+
+.cs-component-pulse-badge-19 {
+    flex-shrink: 0
+}
+
+.cs-component-pulse-badge-17 {
+    border-radius: 624.9375rem
+}

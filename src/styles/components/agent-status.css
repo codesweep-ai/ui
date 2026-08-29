@@ -1,0 +1,52 @@
+@import "./pulse-badge.css";
+
+/* agent-status component styles. */
+.cs-component-agent-status-21 {
+    display: inline-flex
+}
+
+.cs-component-agent-status-16 {
+    height: var(--icon-size-sm)
+}
+
+.cs-component-agent-status-16 {
+    width: var(--icon-size-sm)
+}
+
+.cs-component-agent-status-16 {
+    flex-shrink: 0
+}
+
+.cs-component-agent-status-21 {
+    align-items: center
+}
+
+.cs-component-agent-status-21 {
+    gap: var(--space-2)
+}
+
+.cs-component-agent-status-23 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.cs-component-agent-status-13 {
+    color: var(--color-error)
+}
+
+.cs-component-agent-status-12 {
+    color: var(--color-success)
+}
+
+.cs-component-agent-status-11 {
+    color: var(--color-warning)
+}
+
+.cs-component-agent-status-22 {
+    color: var(--fg)
+}
+
+.cs-component-agent-status-22 {
+    font-size: var(--font-size-sm)
+}

@@ -1,0 +1,354 @@
+@import "./button.css";
+@import "./markdown-minimap.css";
+@import "./skeleton.css";
+
+/* markdown-viewer component styles. */
+.cs-component-markdown-viewer-153 {
+    position: absolute
+}
+
+.cs-component-markdown-viewer-150 {
+    position: relative
+}
+
+.cs-component-markdown-viewer-153 {
+    top: 0;
+    bottom: 0
+}
+
+.cs-component-markdown-viewer-153 {
+    left: -0.25rem
+}
+
+.cs-component-markdown-viewer-144 {
+    display: block
+}
+
+.cs-component-markdown-viewer-33,
+.cs-component-markdown-viewer-55,
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-133,
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-138,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-154,
+.cs-component-markdown-viewer-155,
+.cs-component-markdown-viewer-160,
+.cs-component-markdown-viewer-161,
+.cs-component-markdown-viewer-162 {
+    display: flex
+}
+
+.cs-component-markdown-viewer-58,
+.cs-component-markdown-viewer-71 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-markdown-viewer-112 {
+    height: var(--icon-size-md)
+}
+
+.cs-component-markdown-viewer-55,
+.cs-component-markdown-viewer-133 {
+    height: 100%
+}
+
+.cs-component-markdown-viewer-140,
+.cs-component-markdown-viewer-164 {
+    min-height: 0
+}
+
+.cs-component-markdown-viewer-150 {
+    width: 0.25rem
+}
+
+.cs-component-markdown-viewer-153 {
+    width: 0.5rem
+}
+
+.cs-component-markdown-viewer-58,
+.cs-component-markdown-viewer-71 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-markdown-viewer-112 {
+    width: var(--icon-size-md)
+}
+
+.cs-component-markdown-viewer-144 {
+    width: 100%
+}
+
+.cs-component-markdown-viewer-156,
+.cs-component-markdown-viewer-157 {
+    min-width: 0
+}
+
+.cs-component-markdown-viewer-140,
+.cs-component-markdown-viewer-157,
+.cs-component-markdown-viewer-164 {
+    flex: 1 1 0%
+}
+
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-150,
+.cs-component-markdown-viewer-154,
+.cs-component-markdown-viewer-160,
+.cs-component-markdown-viewer-161,
+.cs-component-markdown-viewer-162 {
+    flex-shrink: 0
+}
+
+.cs-component-markdown-viewer-150 {
+    cursor: col-resize
+}
+
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-144,
+.cs-component-markdown-viewer-155 {
+    cursor: pointer
+}
+
+.cs-component-markdown-viewer-33,
+.cs-component-markdown-viewer-55,
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-154,
+.cs-component-markdown-viewer-160,
+.cs-component-markdown-viewer-161 {
+    flex-direction: column
+}
+
+.cs-component-markdown-viewer-55,
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-138,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-154,
+.cs-component-markdown-viewer-155,
+.cs-component-markdown-viewer-160,
+.cs-component-markdown-viewer-162 {
+    align-items: center
+}
+
+.cs-component-markdown-viewer-55 {
+    justify-content: center
+}
+
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-162 {
+    justify-content: space-between
+}
+
+.cs-component-markdown-viewer-111 {
+    gap: var(--space-1)
+}
+
+.cs-component-markdown-viewer-33,
+.cs-component-markdown-viewer-55,
+.cs-component-markdown-viewer-138 {
+    gap: var(--space-2)
+}
+
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-161 {
+    overflow: hidden
+}
+
+.cs-component-markdown-viewer-140,
+.cs-component-markdown-viewer-157 {
+    overflow-y: auto
+}
+
+.cs-component-markdown-viewer-144 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-162 {
+    border-bottom-width: .0625rem
+}
+
+.cs-component-markdown-viewer-160,
+.cs-component-markdown-viewer-161 {
+    border-left-width: .0625rem
+}
+
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-154 {
+    border-right-width: .0625rem
+}
+
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-144,
+.cs-component-markdown-viewer-155 {
+    border-style: none
+}
+
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-154,
+.cs-component-markdown-viewer-160,
+.cs-component-markdown-viewer-161,
+.cs-component-markdown-viewer-162 {
+    border-color: var(--border)
+}
+
+.cs-component-markdown-viewer-136,
+.cs-component-markdown-viewer-161 {
+    background-color: var(--bg)
+}
+
+.cs-component-markdown-viewer-145 {
+    background-color: var(--color-accent-bg-strong)
+}
+
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-144,
+.cs-component-markdown-viewer-155 {
+    background-color: transparent
+}
+
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-139 {
+    padding: 0
+}
+
+.cs-component-markdown-viewer-155 {
+    padding: var(--space-1)
+}
+
+.cs-component-markdown-viewer-33 {
+    padding: var(--space-4)
+}
+
+.cs-component-markdown-viewer-159 {
+    padding: var(--space-5)
+}
+
+.cs-component-markdown-viewer-55 {
+    padding: var(--space-6)
+}
+
+.cs-component-markdown-viewer-144,
+.cs-component-markdown-viewer-162 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-markdown-viewer-137 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-markdown-viewer-144 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-markdown-viewer-137,
+.cs-component-markdown-viewer-140,
+.cs-component-markdown-viewer-162 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-markdown-viewer-154,
+.cs-component-markdown-viewer-160 {
+    padding-top: var(--space-2)
+}
+
+.cs-component-markdown-viewer-144 {
+    text-align: left
+}
+
+.cs-component-markdown-viewer-55 {
+    text-align: center
+}
+
+.cs-component-markdown-viewer-161 {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-144,
+.cs-component-markdown-viewer-153,
+.cs-component-markdown-viewer-155 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-markdown-viewer-58 {
+    color: var(--color-error)
+}
+
+.cs-component-markdown-viewer-59,
+.cs-component-markdown-viewer-145 {
+    color: var(--fg)
+}
+
+.cs-component-markdown-viewer-62,
+.cs-component-markdown-viewer-71,
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-138,
+.cs-component-markdown-viewer-139,
+.cs-component-markdown-viewer-146,
+.cs-component-markdown-viewer-155,
+.cs-component-markdown-viewer-163 {
+    color: var(--muted)
+}
+
+.cs-component-markdown-viewer-59 {
+    font-size: var(--font-size-body)
+}
+
+.cs-component-markdown-viewer-62 {
+    font-size: var(--font-size-caption)
+}
+
+.cs-component-markdown-viewer-111,
+.cs-component-markdown-viewer-138,
+.cs-component-markdown-viewer-144,
+.cs-component-markdown-viewer-163 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-markdown-viewer-138,
+.cs-component-markdown-viewer-163 {
+    font-weight: var(--font-weight-medium)
+}
+
+.cs-component-markdown-viewer-161 {
+    transition-duration: 0.2s
+}
+
+.cs-component-markdown-viewer-161 {
+    transition-timing-function: ease
+}
+
+.cs-component-markdown-viewer-146:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-markdown-viewer-111:hover,
+.cs-component-markdown-viewer-139:hover,
+.cs-component-markdown-viewer-146:hover,
+.cs-component-markdown-viewer-155:hover {
+    color: var(--fg)
+}
+
+.cs-component-markdown-viewer-150:hover .cs-component-markdown-viewer-153,
+.cs-component-markdown-viewer-150:hover .cs-component-split-pane-31,
+.cs-component-split-pane-30:hover .cs-component-markdown-viewer-153 {
+    background-color: var(--color-accent)
+}

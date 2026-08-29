@@ -1,0 +1,203 @@
+{
+  "name": "@codesweep-ai/ui",
+  "version": "0.2.0",
+  "description": "Open React components and design tokens for agent and LLM interfaces.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": "^22.13.0 || >=24"
+  },
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codesweep-ai/ui.git"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles/*.css": "./dist/styles/*.css",
+    "./tokens": "./dist/styles/tokens.css",
+    "./mermaid": {
+      "types": "./dist/mermaid.d.ts",
+      "import": "./dist/mermaid.js"
+    },
+    "./markdown": {
+      "types": "./dist/markdown.d.ts",
+      "import": "./dist/markdown.js"
+    },
+    "./markdown/rich": {
+      "types": "./dist/markdown/rich.d.ts",
+      "import": "./dist/markdown/rich.js"
+    },
+    "./code": {
+      "types": "./dist/code.d.ts",
+      "import": "./dist/code.js"
+    },
+    "./minimap": {
+      "types": "./dist/minimap.d.ts",
+      "import": "./dist/minimap.js"
+    },
+    "./chart": {
+      "types": "./dist/chart.d.ts",
+      "import": "./dist/chart.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "mermaid": [
+        "dist/mermaid.d.ts"
+      ],
+      "markdown": [
+        "dist/markdown.d.ts"
+      ],
+      "markdown/rich": [
+        "dist/markdown/rich.d.ts"
+      ],
+      "code": [
+        "dist/code.d.ts"
+      ],
+      "minimap": [
+        "dist/minimap.d.ts"
+      ],
+      "chart": [
+        "dist/chart.d.ts"
+      ],
+      "testing": [
+        "dist/testing/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "docs/*.md",
+    "components",
+    "patterns",
+    "LICENSE",
+    "NOTICE",
+    "CODE_OF_CONDUCT.md",
+    "CATALOG.md",
+    "catalog.json",
+    "CONTRIBUTING.md",
+    "DESIGN_SYSTEM_SPEC.md",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run lint:styles && eslint \"src/**/*.{ts,tsx}\" \"preview/src/**/*.{ts,tsx}\"",
+    "lint:styles": "stylelint \"src/styles/components.css\" \"src/styles/components/*.css\" \"src/styles/syntax.css\" \"src/styles/utilities.css\" \"preview/src/preview.css\"",
+    "docs:prose": "cs-lint prose",
+    "docs:refs": "cs-lint refs",
+    "oss": "cs-lint oss",
+    "test": "npm run test:consumer-dom-checker && vitest run",
+    "test:consumer-dom-checker": "node --test scripts/check-consumer-dom-contract.test.mjs",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "build": "node scripts/build.mjs",
+    "size:subpaths": "npm run build && node scripts/size-subpaths.mjs",
+    "catalog": "node scripts/gen-catalog.mjs",
+    "catalog:check": "node scripts/gen-catalog.mjs --check",
+    "check:consumer-dom": "node scripts/check-consumer-dom-contract.mjs",
+    "lint:integrity": "node scripts/check-integrity.mjs",
+    "preview": "vite --config preview/vite.config.ts",
+    "preview:build": "vite build --config preview/vite.config.ts",
+    "preview:serve": "vite preview --config preview/vite.config.ts",
+    "preview:rich-check": "npm run preview:build && node scripts/preview-rich-check.mjs",
+    "visual:capture": "node scripts/visual-container.mjs capture",
+    "visual:compare": "node scripts/visual-container.mjs compare",
+    "visual:capture:host": "npm run preview:build && node scripts/visual-baseline.mjs capture",
+    "visual:compare:host": "npm run preview:build && node scripts/visual-baseline.mjs compare",
+    "clean": "rm -rf dist coverage",
+    "docs:compile": "node scripts/docs-compile.mjs",
+    "prepack": "npm run build",
+    "check": "npm run lint:integrity && npm run typecheck && npm run lint && npm run docs:prose && npm run docs:refs && npm run oss && npm run catalog:check && npm run test && npm run build && npm run docs:compile && npm run size:subpaths",
+    "ci": "node scripts/ci.mjs"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "peerDependencies": {
+    "mermaid": "^11.12.2",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "puppeteer": "^25.1.0",
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "mermaid": {
+      "optional": true
+    },
+    "pixelmatch": {
+      "optional": true
+    },
+    "pngjs": {
+      "optional": true
+    },
+    "puppeteer": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.28",
+    "lucide-react": "^0.563.0",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "roughjs": "^4.6.6",
+    "unified": "^11.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@codesweep-ai/cs-lint": "0.0.0-20260828235620-b8267e782dde",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/d3": "^7.4.3",
+    "@types/d3-sankey": "^0.12.5",
+    "@types/node": "^26.2.0",
+    "@types/pngjs": "^6.0.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/parser": "^8.59.4",
+    "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/browser-playwright": "^4.1.7",
+    "@vitest/coverage-v8": "^4.1.7",
+    "autoprefixer": "^10.4.20",
+    "d3": "^7.9.0",
+    "d3-sankey": "^0.12.3",
+    "eslint": "^9.39.4",
+    "jsdom": "^29.1.1",
+    "mermaid": "^11.12.2",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "postcss": "^8.5.15",
+    "puppeteer": "^25.1.0",
+    "recharts": "^3.8.1",
+    "stylelint": "^17.14.1",
+    "typescript": "^5.6.3",
+    "vite": "^8.0.14",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^4.1.7"
+  }
+}

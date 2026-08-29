@@ -1,0 +1,98 @@
+@import "./reset.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Prose — long-form / generated content. Apply to a container to restyle its
+   descendants with the prose type ramp (larger than app chrome). MarkdownViewer
+   has its own richer CSS (markdown-content.css) driven by the same tokens. */
+.prose {
+  max-width: var(--max-width-prose);
+  font-size: var(--font-size-prose-body);
+  line-height: var(--line-height-prose);
+  color: var(--fg);
+}
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  margin: var(--space-6) 0 var(--space-3);
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose h1 {
+  font-size: var(--font-size-prose-h1);
+}
+.prose h2 {
+  font-size: var(--font-size-prose-h2);
+}
+.prose h3 {
+  font-size: var(--font-size-prose-h3);
+}
+.prose h4 {
+  font-size: var(--font-size-prose-h4);
+}
+.prose p,
+.prose ul,
+.prose ol {
+  margin: 0 0 var(--space-4);
+}
+.prose ul,
+.prose ol {
+  padding-left: var(--space-6);
+}
+.prose small {
+  font-size: var(--font-size-prose-small);
+}
+.prose pre,
+.prose code {
+  font-family: var(--font-family-mono);
+}

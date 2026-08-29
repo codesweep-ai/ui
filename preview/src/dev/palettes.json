@@ -1,0 +1,140 @@
+{
+  "groups": [
+    {
+      "id": "surface",
+      "label": "Surface (page / card)",
+      "managed": [
+        "--bg",
+        "--card"
+      ],
+      "default": 0,
+      "options": [
+        {
+          "name": "Current",
+          "light": {},
+          "dark": {},
+          "note": "Ships today: light --bg #f3f4f6 / --card #ffffff, dark --bg #0b0f14 / --card #0f1620."
+        },
+        {
+          "name": "Cool Mist",
+          "light": {
+            "--bg": "#eceff3",
+            "--card": "#ffffff"
+          },
+          "dark": {
+            "--card": "#131b27"
+          },
+          "note": "Exploratory, unreviewed. A cooler light page with pure-white cards, and a slightly lifted dark card. Never shipped."
+        },
+        {
+          "name": "Pure white (legacy)",
+          "light": {
+            "--bg": "#ffffff",
+            "--card": "#f9fafb"
+          },
+          "dark": {},
+          "note": "Values from before the colour review, kept as an A/B baseline. Never shipped in this repo, which has carried the reviewed 'soft cool gray, page recedes' value from the start."
+        }
+      ]
+    },
+    {
+      "id": "header",
+      "label": "Header / footer bar",
+      "managed": [
+        "--color-header-bg"
+      ],
+      "default": 0,
+      "options": [
+        {
+          "name": "Current",
+          "light": {},
+          "dark": {},
+          "note": "Ships today: --color-header-bg #171717 in both themes."
+        },
+        {
+          "name": "Pure black (legacy)",
+          "light": {
+            "--color-header-bg": "#000000"
+          },
+          "dark": {
+            "--color-header-bg": "#000000"
+          },
+          "note": "A value from before the colour review, kept as an A/B baseline. Never shipped in this repo, which has carried #0b0f14 from the start."
+        },
+        {
+          "name": "Charcoal #141a22",
+          "light": {
+            "--color-header-bg": "#141a22"
+          },
+          "dark": {
+            "--color-header-bg": "#141a22"
+          },
+          "note": "Exploratory, unreviewed. Sits between the shipped header and the dark page background; no provenance beyond this file."
+        },
+        {
+          "name": "Slate #1b2430",
+          "light": {
+            "--color-header-bg": "#1b2430"
+          },
+          "dark": {
+            "--color-header-bg": "#1b2430"
+          },
+          "note": "Exploratory, unreviewed. A step lighter again; no provenance beyond this file."
+        }
+      ]
+    },
+    {
+      "id": "charts",
+      "label": "Categorical palette (charts)",
+      "managed": [
+        "--color-cat-1",
+        "--color-cat-2",
+        "--color-cat-3",
+        "--color-cat-4",
+        "--color-cat-5",
+        "--color-cat-6",
+        "--color-cat-7",
+        "--color-cat-8",
+        "--color-cat-9",
+        "--color-cat-10"
+      ],
+      "default": 0,
+      "options": [
+        {
+          "name": "Current (muted)",
+          "light": {},
+          "dark": {},
+          "note": "Ships today: the desaturated categorical ramp (--color-cat-1..10)."
+        },
+        {
+          "name": "Vivid (legacy)",
+          "light": {
+            "--color-cat-1": "#3b82f6",
+            "--color-cat-2": "#14b8a6",
+            "--color-cat-3": "#d97706",
+            "--color-cat-4": "#e11d48",
+            "--color-cat-5": "#7c3aed",
+            "--color-cat-6": "#ea580c",
+            "--color-cat-7": "#059669",
+            "--color-cat-8": "#c026d3",
+            "--color-cat-9": "#0284c7",
+            "--color-cat-10": "#65a30d"
+          },
+          "dark": {
+            "--color-cat-1": "#60a5fa",
+            "--color-cat-2": "#2dd4bf",
+            "--color-cat-3": "#fbbf24",
+            "--color-cat-4": "#fb7185",
+            "--color-cat-5": "#a78bfa",
+            "--color-cat-6": "#fb923c",
+            "--color-cat-7": "#34d399",
+            "--color-cat-8": "#e879f9",
+            "--color-cat-9": "#38bdf8",
+            "--color-cat-10": "#a3e635"
+          },
+          "note": "The categorical ramp before the muting pass. Kept as an A/B baseline."
+        }
+      ]
+    }
+  ]
+}

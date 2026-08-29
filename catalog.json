@@ -1,0 +1,1787 @@
+{
+  "$generated": "Do not edit. Run `npm run catalog`. Source: spec frontmatter.",
+  "counts": {
+    "components": 36,
+    "patterns": 10
+  },
+  "components": [
+    {
+      "spec": "components/AgentStatus.md",
+      "name": "AgentStatus",
+      "summary": "Single-line status row for visible agent work; shows a verb-phrase and animated indicator so users always know what the agent is doing.",
+      "keywords": [
+        "agent status",
+        "activity indicator",
+        "loading state",
+        "in-flight",
+        "progress",
+        "verb phrase",
+        "streaming status",
+        "live update",
+        "aria-live",
+        "pulse badge",
+        "spinner alternative",
+        "agent feedback",
+        "task status",
+        "llm progress"
+      ],
+      "since": "1.4.0",
+      "status": "stable",
+      "use_when": [
+        "Displaying the work an agent has in hand (reading, generating, inferring)",
+        "Replacing generic spinners or \"Loading…\" text with a specific verb phrase",
+        "Surfacing paused / settled / error milestones in an agent trace"
+      ],
+      "avoid_when": [
+        "You need streaming model output text → StreamingText",
+        "You need a full step-by-step trace of completed agent actions → AgentTrace"
+      ],
+      "related": [
+        "PulseBadge",
+        "StreamingText",
+        "AgentTrace"
+      ],
+      "patterns": [
+        "AgentActivity"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/AgentTrace.md",
+      "name": "AgentTrace",
+      "summary": "Vertical, expandable list of chronological agent steps with status icons.",
+      "keywords": [
+        "agent",
+        "trace",
+        "steps",
+        "activity",
+        "log",
+        "history",
+        "timeline",
+        "audit",
+        "run log",
+        "agent steps",
+        "chronological"
+      ],
+      "since": "1.4.0",
+      "status": "stable",
+      "use_when": [
+        "Showing the chronological list of steps an agent has taken (settled history)"
+      ],
+      "avoid_when": [
+        "One thing happening right now → AgentStatus",
+        "Token-by-token model output → StreamingText",
+        "Dense horizontal event overview or shared lane axis → EventLanes",
+        "Static program structure (file tree / AST) → Tree or SectionedTree"
+      ],
+      "related": [
+        "AgentStatus",
+        "StreamingText",
+        "EventLanes",
+        "PulseBadge"
+      ],
+      "patterns": [
+        "AgentActivity"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/AppShell.md",
+      "name": "AppShell",
+      "summary": "Application shell with always-dark sticky header, scrollable content area, and optional footer; the top-level layout wrapper for every page.",
+      "keywords": [
+        "app shell",
+        "layout",
+        "header",
+        "footer",
+        "navigation",
+        "nav bar",
+        "top bar",
+        "app frame",
+        "page layout",
+        "sticky header",
+        "dark header",
+        "logo",
+        "nav links",
+        "global chrome",
+        "app wrapper",
+        "spa layout"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Wrapping any full-page app view that needs a header with nav + branding",
+        "Any page that uses ThemeToggle or top-level navigation",
+        "Building the outermost layout frame of a SPA"
+      ],
+      "avoid_when": [
+        "You only need a content card or panel without global chrome → Card or Panel"
+      ],
+      "related": [
+        "ThemeToggle"
+      ],
+      "patterns": [
+        "Dashboard"
+      ],
+      "note": "The Header is reserved for global chrome only. Feature-specific controls (dropdowns, search bars, breadcrumbs) belong in a feature toolbar inside the <main> content area, not in the Header."
+    },
+    {
+      "spec": "components/Button.md",
+      "name": "Button",
+      "summary": "Standard interactive button with six visual variants (primary, secondary, danger, ghost, success, warning) and two sizes.",
+      "keywords": [
+        "button",
+        "cta",
+        "call to action",
+        "submit",
+        "click",
+        "action",
+        "primary button",
+        "ghost button",
+        "danger button",
+        "secondary button",
+        "interactive",
+        "trigger",
+        "form submit",
+        "icon button",
+        "control"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Any user-triggered action (submit, confirm, cancel, navigate)",
+        "Icon-only controls in toolbars (ghost variant, add aria-label)",
+        "Destructive confirmations (danger variant)"
+      ],
+      "avoid_when": [
+        "You need ordinary text navigation without button emphasis → use an <a>"
+      ],
+      "related": [
+        "FormGroup",
+        "Modal"
+      ],
+      "patterns": [
+        "Form"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Card.md",
+      "name": "Card",
+      "summary": "Content container with background, border, optional header, and loading/error/empty state support; the primary surface for grouping related content.",
+      "keywords": [
+        "card",
+        "panel",
+        "container",
+        "content surface",
+        "tile",
+        "widget",
+        "dashboard tile",
+        "loading skeleton",
+        "bordered container",
+        "card header",
+        "maximize",
+        "minimize",
+        "card group",
+        "content card",
+        "info card"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Grouping related content with a consistent bordered surface",
+        "Dashboard tiles or stats cards that may have a loading state",
+        "Any surface that needs a header row + scrollable body (inside a CardGroup)"
+      ],
+      "avoid_when": [
+        "You need a full sidebar/content split → SplitPane or Panel",
+        "You need to manage maximize/minimize across multiple cards → wrap in CardGroup"
+      ],
+      "related": [
+        "CardGroup",
+        "Panel",
+        "Skeleton"
+      ],
+      "patterns": [
+        "Dashboard"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/CardGroup.md",
+      "name": "CardGroup",
+      "summary": "Layout container that manages maximize/minimize state for a group of Cards; supports fill (fixed-viewport) and natural-height stack modes.",
+      "keywords": [
+        "card group",
+        "maximize",
+        "minimize",
+        "card layout",
+        "dashboard layout",
+        "expand collapse",
+        "viewport fill",
+        "card container",
+        "multi-card",
+        "card state",
+        "controlled layout",
+        "card grid",
+        "stacked cards",
+        "dashboard panel"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Laying out multiple Cards that should share a fixed viewport height (fill mode)",
+        "Providing maximize/minimize affordance across sibling Cards",
+        "Stacking Cards in a scrolling page without nested scrollbars (fill=false)"
+      ],
+      "avoid_when": [
+        "You only have a single card with no siblings to maximize against → use Card directly"
+      ],
+      "related": [
+        "Card"
+      ],
+      "patterns": [
+        "Dashboard"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/ChartFrame.md",
+      "name": "ChartFrame",
+      "summary": "Card frame + loading/error/empty states around a chart you render inside.",
+      "keywords": [
+        "chart",
+        "graph",
+        "plot",
+        "visualization",
+        "viz",
+        "dataviz",
+        "d3",
+        "recharts",
+        "sankey",
+        "bar chart",
+        "line chart",
+        "area chart",
+        "scatter",
+        "timeseries",
+        "force-directed graph",
+        "network graph",
+        "dashboard tile"
+      ],
+      "since": "1.5.0",
+      "status": "stable",
+      "use_when": [
+        "Rendering any chart/visualization that needs consistent card chrome + states",
+        "Always pair with useChartTheme() for theme-aware colors and axes"
+      ],
+      "avoid_when": [
+        "You need the chart primitive itself — ChartFrame is the frame only"
+      ],
+      "related": [
+        "ChartTooltip"
+      ],
+      "patterns": [
+        "Chart",
+        "Dashboard"
+      ],
+      "note": "The DS provides the frame + theme bridge (useChartTheme), NOT chart primitives. For a force-directed graph: render d3-force inside a ChartFrame and color via useChartTheme(). Don't reinvent the card/state shell."
+    },
+    {
+      "spec": "components/ChartTooltip.md",
+      "name": "ChartTooltip",
+      "summary": "Token-styled tooltip shell for charts, positioned absolutely; handles bg, border, shadow, and radius so every chart's tooltip looks identical.",
+      "keywords": [
+        "chart tooltip",
+        "graph tooltip",
+        "data tooltip",
+        "hover tooltip",
+        "chart hover",
+        "visualization tooltip",
+        "recharts tooltip",
+        "d3 tooltip",
+        "dataviz tooltip",
+        "absolute tooltip",
+        "chart annotation",
+        "cursor tooltip",
+        "plot tooltip"
+      ],
+      "since": "1.5.0",
+      "status": "stable",
+      "use_when": [
+        "Adding a hover tooltip to any custom chart or visualization inside a ChartFrame",
+        "Ensuring consistent tooltip chrome across all charts without custom CSS"
+      ],
+      "avoid_when": [
+        "Don't style the tooltip box yourself — supply only content rows as children"
+      ],
+      "related": [
+        "ChartFrame"
+      ],
+      "patterns": [
+        "Chart",
+        "Dashboard"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/CheckboxGroup.md",
+      "name": "CheckboxGroup",
+      "summary": "List of checkboxes with select-all/none controls, optional filter input, and collapsible grouped sections; integrates with FormGroup for label/helper/error rendering.",
+      "keywords": [
+        "checkbox group",
+        "multi-select",
+        "checkboxes",
+        "filter checkboxes",
+        "select all",
+        "select none",
+        "grouped checkboxes",
+        "collapsible sections",
+        "filter sidebar",
+        "multi-select filter",
+        "checkbox list",
+        "form multi-select",
+        "faceted filter",
+        "options list",
+        "toggle group"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Multi-select filter sidebar, for example file types, statuses or categories",
+        "Any form field requiring multiple boolean selections from a list",
+        "Grouped/sectioned option lists with collapse/expand behavior"
+      ],
+      "avoid_when": [
+        "Single boolean toggle → a plain checkbox input; this package ships no toggle component",
+        "Mutually exclusive options → RadioGroup"
+      ],
+      "related": [
+        "FormGroup",
+        "Input",
+        "SearchInput"
+      ],
+      "patterns": [
+        "Form",
+        "Dashboard"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Chip.md",
+      "name": "Chip",
+      "summary": "Dense toggle pill for toolbar filters, with pressed, count, and disabled states.",
+      "keywords": [
+        "chip",
+        "filter chip",
+        "pill",
+        "toggle",
+        "toolbar filter",
+        "count",
+        "pressed"
+      ],
+      "since": "0.2.0",
+      "status": "experimental",
+      "use_when": [
+        "Toggling independent filters in a compact toolbar",
+        "Showing a filter label with a small result count"
+      ],
+      "avoid_when": [
+        "Choosing exactly one of several modes → SegmentedControl",
+        "Choosing from a long list → Dropdown"
+      ],
+      "related": [
+        "SegmentedControl",
+        "Dropdown",
+        "Legend"
+      ],
+      "patterns": [
+        "DataTable",
+        "FormResults"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/CodeBlock.md",
+      "name": "CodeBlock",
+      "summary": "Syntax-highlighted code display with line numbers, copy button, line highlights, and query match highlighting; supports all highlight.js languages.",
+      "keywords": [
+        "code block",
+        "syntax highlighting",
+        "code display",
+        "highlight.js",
+        "code viewer",
+        "copy code",
+        "line numbers",
+        "code snippet",
+        "source code",
+        "programming language",
+        "code diff",
+        "search highlight",
+        "code highlight",
+        "monospace",
+        "code panel"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Displaying source code with syntax highlighting and a copy affordance",
+        "Showing a code snippet with specific lines highlighted, as search results do",
+        "Rendering code from a file path with a source subtitle"
+      ],
+      "avoid_when": [
+        "You need editable code → use a third-party editor (CodeMirror, Monaco)",
+        "Markdown documents with inline code — MarkdownViewer handles code fences natively"
+      ],
+      "related": [
+        "MarkdownViewer",
+        "HighlightText"
+      ],
+      "patterns": [
+        "MasterDetail"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Dropdown.md",
+      "name": "Dropdown",
+      "summary": "Styled native select element for choosing a single value from a list of options, with optional label, helper, and error states.",
+      "keywords": [
+        "dropdown",
+        "select",
+        "native select",
+        "option",
+        "picker",
+        "choose",
+        "single select",
+        "combo",
+        "form field",
+        "filter",
+        "menu",
+        "selector",
+        "listbox",
+        "choice"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Choosing one value from a short or long predefined list",
+        "A form field needs a label, helper text, or inline validation error",
+        "Filtering or controlling a view from a discrete set of options"
+      ],
+      "avoid_when": [
+        "Multi-select needed → CheckboxGroup",
+        "Free-text entry with suggestions → SearchInput"
+      ],
+      "related": [
+        "FormGroup",
+        "Input",
+        "CheckboxGroup",
+        "SearchInput"
+      ],
+      "patterns": [
+        "Form"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/EventLanes.md",
+      "name": "EventLanes",
+      "summary": "Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.",
+      "keywords": [
+        "event lanes",
+        "event timeline",
+        "event strip",
+        "canvas timeline",
+        "trace events",
+        "agent events",
+        "multi-agent timeline",
+        "spans",
+        "overview",
+        "virtual listbox"
+      ],
+      "since": "0.2.0",
+      "status": "experimental",
+      "use_when": [
+        "Showing an ordered event stream on one or more named lanes",
+        "A dense trace needs thousands of selectable events without thousands of laid-out DOM marks",
+        "Related events need spans, linked highlighting, markers, or a shared ruler"
+      ],
+      "avoid_when": [
+        "Showing chronological step details with expandable text → AgentTrace",
+        "Showing continuous numeric data → ChartFrame"
+      ],
+      "related": [
+        "ChartTooltip",
+        "AgentTrace"
+      ],
+      "patterns": [
+        "AgentActivity"
+      ],
+      "note": "The palette accepts CSS custom-property names such as --color-cat-1, never resolved colors or hex values. EventLanes is canvas-rendered but exposes every visible event and span through a stable DOM census."
+    },
+    {
+      "spec": "components/FormGroup.md",
+      "name": "FormGroup",
+      "summary": "Label + control + helper/error composition wrapper. The canonical way to render any single form field with accessible label binding, error messaging, and aria wiring.",
+      "keywords": [
+        "form group",
+        "label",
+        "field wrapper",
+        "helper text",
+        "error message",
+        "validation",
+        "aria",
+        "accessible form",
+        "input wrapper",
+        "form field",
+        "required",
+        "hint",
+        "describedby"
+      ],
+      "since": "1.3.0",
+      "status": "stable",
+      "use_when": [
+        "Wrapping any single Input, Dropdown, or custom control with a visible label",
+        "Displaying inline validation errors or helper hints below a field",
+        "Building accessible forms with proper htmlFor / aria-describedby wiring"
+      ],
+      "avoid_when": [
+        "Wrapping CheckboxGroup → CheckboxGroup already renders its own label; nesting creates duplicate labels"
+      ],
+      "related": [
+        "Input",
+        "Dropdown",
+        "CheckboxGroup"
+      ],
+      "patterns": [
+        "Form"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/HighlightText.md",
+      "name": "HighlightText",
+      "summary": "Renders text with matched substrings visually highlighted using semantic mark elements. Used in search results, filtered lists, and autocomplete suggestions.",
+      "keywords": [
+        "highlight",
+        "text highlight",
+        "search highlight",
+        "mark",
+        "match",
+        "substring",
+        "autocomplete",
+        "filter",
+        "query match",
+        "search results",
+        "bolden",
+        "emphasize",
+        "annotate"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Showing which part of a result matched a user's search query",
+        "Highlighting matches in a filtered list or autocomplete dropdown"
+      ],
+      "avoid_when": [
+        "Full rich-text or markdown rendering → MarkdownViewer"
+      ],
+      "related": [
+        "SearchInput",
+        "Table"
+      ],
+      "patterns": [
+        "DataTable",
+        "FormResults"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Input.md",
+      "name": "Input",
+      "summary": "Standard text input supporting plain text, email, password, number, tel, url, and multiline (textarea) variants, with optional prefix/suffix slots and error state.",
+      "keywords": [
+        "input",
+        "text input",
+        "text field",
+        "textarea",
+        "multiline",
+        "email",
+        "password",
+        "number",
+        "form control",
+        "prefix",
+        "suffix",
+        "search field",
+        "field",
+        "controlled input"
+      ],
+      "since": "1.3.0",
+      "status": "stable",
+      "use_when": [
+        "Collecting freeform text from the user in a form",
+        "Needing a multiline textarea (set multiline=true)",
+        "Showing an inline icon or unit prefix/suffix inside the input"
+      ],
+      "avoid_when": [
+        "Search-specific UX with clear button → SearchInput",
+        "Choosing from a fixed list → Dropdown or CheckboxGroup"
+      ],
+      "related": [
+        "FormGroup",
+        "Dropdown",
+        "SearchInput",
+        "CheckboxGroup"
+      ],
+      "patterns": [
+        "Form"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Legend.md",
+      "name": "Legend",
+      "summary": "Compact token-colour legend that can be static or toggle a selected item set.",
+      "keywords": [
+        "legend",
+        "key",
+        "swatch",
+        "color key",
+        "filter legend",
+        "toggle legend",
+        "categories"
+      ],
+      "since": "0.2.0",
+      "status": "experimental",
+      "use_when": [
+        "Explaining token-coloured categories beside a chart, event lane, or trace",
+        "Letting users show or hide categories without building custom legend buttons"
+      ],
+      "avoid_when": [
+        "Choosing exactly one mode → SegmentedControl",
+        "Showing status text without category filtering → StatusBadge"
+      ],
+      "related": [
+        "EventLanes",
+        "Chip",
+        "SegmentedControl",
+        "StatusBadge"
+      ],
+      "patterns": [
+        "AgentActivity",
+        "Chart"
+      ],
+      "note": "Swatch colors are CSS custom-property names, never resolved colors or hex values."
+    },
+    {
+      "spec": "components/MarkdownMinimap.md",
+      "name": "MarkdownMinimap",
+      "summary": "Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown container. Draws a block silhouette of headings and content, overlays the current viewport, and lets the user click or drag to scroll.",
+      "keywords": [
+        "minimap",
+        "overview",
+        "scrollbar",
+        "canvas",
+        "scroll indicator",
+        "document map",
+        "navigation",
+        "long document",
+        "outline",
+        "viewport",
+        "scroll position",
+        "markdown nav"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Providing a bird's-eye navigation control alongside a long markdown document",
+        "Users need to jump to arbitrary scroll positions quickly"
+      ],
+      "avoid_when": [
+        "Heading-based jump navigation is sufficient → use MarkdownViewer with outline=true"
+      ],
+      "related": [
+        "MarkdownViewer",
+        "SplitPane",
+        "Panel"
+      ],
+      "patterns": [
+        "MarkdownViewer"
+      ],
+      "note": "Requires a React ref to the scrollable markdown container it controls; it reads scroll position and heading layout from that element."
+    },
+    {
+      "spec": "components/MarkdownViewer.md",
+      "name": "MarkdownViewer",
+      "summary": "Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline.",
+      "keywords": [
+        "markdown",
+        "markdown viewer",
+        "gfm",
+        "github flavored markdown",
+        "syntax highlight",
+        "mermaid",
+        "katex",
+        "math",
+        "outline",
+        "minimap",
+        "document viewer",
+        "rich text",
+        "code block",
+        "alert"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Rendering markdown documents with headings, code blocks, or tables",
+        "A long document needs heading-based navigation (outline) or a scroll minimap",
+        "Displaying agent-generated or user-authored markdown content"
+      ],
+      "avoid_when": [
+        "Plain unstyled text display — use a plain element",
+        "Only syntax highlighting is needed → CodeBlock"
+      ],
+      "related": [
+        "MermaidDiagram",
+        "MarkdownMinimap",
+        "CodeBlock",
+        "Skeleton"
+      ],
+      "patterns": [
+        "MarkdownViewer"
+      ],
+      "note": "Requires markdown-content.css imported at the feature level: @import \"@codesweep-ai/ui/styles/markdown-content.css\" Without this, headings, tables, code blocks, and alerts render unstyled."
+    },
+    {
+      "spec": "components/MermaidDiagram.md",
+      "name": "MermaidDiagram",
+      "summary": "Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-theme change) and shows a friendly error block with raw source if the diagram fails to parse.",
+      "keywords": [
+        "mermaid",
+        "diagram",
+        "flowchart",
+        "sequence diagram",
+        "gantt",
+        "graph",
+        "chart",
+        "uml",
+        "visualization",
+        "dsl",
+        "svg diagram",
+        "architecture diagram",
+        "flow diagram",
+        "sketch",
+        "hand-drawn",
+        "roughjs-style"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Rendering a Mermaid DSL string as an SVG diagram",
+        "Embedding diagrams inside a MarkdownViewer via a fenced code block",
+        "Showing an agent-architecture diagram in the hand-drawn motif (sketch={true})"
+      ],
+      "avoid_when": [
+        "General chart/data visualization → ChartFrame",
+        "Static SVG or image → use an img/svg element directly"
+      ],
+      "related": [
+        "MarkdownViewer",
+        "ChartFrame"
+      ],
+      "patterns": [
+        "MarkdownViewer"
+      ],
+      "note": "Mermaid's securityLevel is \"loose\" — treat the chart prop as trusted input and sanitize before passing user-submitted Mermaid source."
+    },
+    {
+      "spec": "components/Modal.md",
+      "name": "Modal",
+      "summary": "Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, scrollable content area, header with close button, and optional footer actions.",
+      "keywords": [
+        "modal",
+        "dialog",
+        "overlay",
+        "popup",
+        "lightbox",
+        "confirm",
+        "confirmation",
+        "alert dialog",
+        "drawer",
+        "sheet",
+        "portal",
+        "focus trap",
+        "backdrop",
+        "dismiss"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Asking for user confirmation before a destructive or irreversible action",
+        "Presenting a form or detail view without navigating away",
+        "Blocking the background while the user completes a focused task"
+      ],
+      "avoid_when": [
+        "Inline expandable content → Panel or Card",
+        "Persistent side panel → Panel or SplitPane"
+      ],
+      "related": [
+        "Button",
+        "Panel"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "components/Panel.md",
+      "name": "Panel",
+      "summary": "Collapsible side panel with a header and scrollable content area. Used for file trees, doc outlines, and filter panels inside flex layouts.",
+      "keywords": [
+        "panel",
+        "sidebar",
+        "collapsible",
+        "side panel",
+        "pane",
+        "drawer",
+        "filter panel",
+        "file tree panel",
+        "outline",
+        "collapse",
+        "expand",
+        "header",
+        "layout"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Providing a collapsible sidebar alongside main content in a flex layout",
+        "Wrapping a Tree, SectionedTree, or filter controls in a titled panel",
+        "Building a two- or three-column layout with SplitPane"
+      ],
+      "avoid_when": [
+        "Full-screen overlay → Modal",
+        "Simple card container without collapse → Card"
+      ],
+      "related": [
+        "SplitPane",
+        "Tree",
+        "SectionedTree",
+        "Card"
+      ],
+      "patterns": [
+        "Explorer",
+        "MasterDetail",
+        "Dashboard"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/PulseBadge.md",
+      "name": "PulseBadge",
+      "summary": "Small pulsing dot that signals live, in-progress activity.",
+      "keywords": [
+        "pulse",
+        "badge",
+        "dot",
+        "live",
+        "activity",
+        "animated",
+        "indicator",
+        "status dot",
+        "pulsing",
+        "real-time",
+        "streaming",
+        "agent activity"
+      ],
+      "since": "1.4.0",
+      "status": "stable",
+      "use_when": [
+        "Indicating that an agent or process is running",
+        "Decorating a label with a live-activity signal, as AgentStatus does"
+      ],
+      "avoid_when": [
+        "Unread / notification count → StatusBadge",
+        "Multiple simultaneous live signals in one viewport (one pulse per panel only)"
+      ],
+      "related": [
+        "AgentStatus",
+        "StreamingText",
+        "AgentTrace",
+        "StatusBadge"
+      ],
+      "patterns": [
+        "AgentActivity"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/RadioGroup.md",
+      "name": "RadioGroup",
+      "summary": "Exclusive choice among two or more options, each able to carry a description.",
+      "keywords": [
+        "radio",
+        "radio group",
+        "radiogroup",
+        "exclusive options",
+        "single select",
+        "choice",
+        "mode"
+      ],
+      "since": "0.2.0",
+      "status": "experimental",
+      "use_when": [
+        "Choosing one of several mutually exclusive options that each need explaining",
+        "More options than SegmentedControl accepts, or options too long for a compact toolbar",
+        "The choice is the subject of the view rather than a control on it"
+      ],
+      "avoid_when": [
+        "Two to five short labels in a compact toolbar → SegmentedControl",
+        "Many values where the options need not stay visible → Dropdown",
+        "Options that are not mutually exclusive → CheckboxGroup"
+      ],
+      "related": [
+        "SegmentedControl",
+        "CheckboxGroup",
+        "Dropdown",
+        "FormGroup"
+      ],
+      "patterns": [
+        "MarkdownViewer"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/SearchInput.md",
+      "name": "SearchInput",
+      "summary": "Integrated search bar with inline search button, clear button, and optional auto-search after a character threshold.",
+      "keywords": [
+        "search",
+        "input",
+        "filter",
+        "query",
+        "search bar",
+        "autocomplete",
+        "debounce",
+        "clear",
+        "find",
+        "lookup",
+        "search field",
+        "text input"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Providing a standalone search bar that fires a query callback",
+        "Auto-searching as the user types past a character threshold",
+        "Showing an inline no-results message below the input"
+      ],
+      "avoid_when": [
+        "Search lives inside a Table or container that already has its own empty state → use the container's emptyMessage"
+      ],
+      "related": [
+        "Input",
+        "FormGroup",
+        "Table"
+      ],
+      "patterns": [
+        "Form",
+        "FormResults"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/SectionedTree.md",
+      "name": "SectionedTree",
+      "summary": "Self-managing component that renders multiple independent tree sections with collapsible headers, per-section search, and shared selection.",
+      "keywords": [
+        "sectioned tree",
+        "grouped tree",
+        "file explorer",
+        "multi-section",
+        "collapsible",
+        "sidebar",
+        "navigation",
+        "tree groups",
+        "project files",
+        "dependencies",
+        "explorer"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Showing multiple independent tree groups, such as project files and dependencies",
+        "Explorer-style sidebar with collapsible named sections",
+        "Shared single-selection across multiple tree groups"
+      ],
+      "avoid_when": [
+        "Single flat tree without grouping → Tree",
+        "Static program structure without grouping → Tree"
+      ],
+      "related": [
+        "Tree",
+        "SearchInput",
+        "HighlightText",
+        "SplitPane"
+      ],
+      "patterns": [
+        "Explorer",
+        "MasterDetail"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/SegmentedControl.md",
+      "name": "SegmentedControl",
+      "summary": "Compact radiogroup for choosing one of two to five adjacent options.",
+      "keywords": [
+        "segmented control",
+        "radio group",
+        "view switcher",
+        "mode toggle",
+        "exclusive options"
+      ],
+      "since": "0.2.0",
+      "status": "experimental",
+      "use_when": [
+        "Switching between two to five mutually exclusive views or render modes",
+        "Keeping a small mode choice visible in a compact toolbar"
+      ],
+      "avoid_when": [
+        "Toggling independent filters → Chip",
+        "More than five values, or options needing a description → RadioGroup",
+        "Many values that need not stay visible → Dropdown"
+      ],
+      "related": [
+        "RadioGroup",
+        "Chip",
+        "Dropdown",
+        "Legend"
+      ],
+      "patterns": [
+        "DataTable",
+        "FormResults"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Skeleton.md",
+      "name": "Skeleton",
+      "summary": "Primitive shimmer placeholder for loading states — indicates where content will appear without a generic spinner.",
+      "keywords": [
+        "skeleton",
+        "loading",
+        "shimmer",
+        "placeholder",
+        "spinner alternative",
+        "content placeholder",
+        "loading state",
+        "pulse",
+        "rect",
+        "circle",
+        "text placeholder"
+      ],
+      "since": "1.1.0",
+      "status": "stable",
+      "use_when": [
+        "Filling space where async content is loading",
+        "Building component-level loading states (tables, cards, lists)",
+        "Inline text placeholders while a value loads"
+      ],
+      "avoid_when": [],
+      "related": [
+        "Table",
+        "Card",
+        "CardGroup"
+      ],
+      "patterns": [
+        "ComponentStates"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/SplitPane.md",
+      "name": "SplitPane",
+      "summary": "Container with two or three resizable panes separated by drag handles, with optional per-pane width persistence.",
+      "keywords": [
+        "split pane",
+        "resizable",
+        "drag handle",
+        "layout",
+        "panels",
+        "two-column",
+        "three-column",
+        "side by side",
+        "resize",
+        "master detail",
+        "panel layout",
+        "persistent width"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Two- or three-column layouts where the user should control pane widths",
+        "File explorer + detail view side-by-side",
+        "Any layout that needs persistent resizable panels"
+      ],
+      "avoid_when": [],
+      "related": [
+        "Panel",
+        "SectionedTree",
+        "Tree"
+      ],
+      "patterns": [
+        "MasterDetail",
+        "Explorer"
+      ],
+      "note": "SplitPane uses height: 100%, so its parent must have a defined height. In full-viewport layouts this happens naturally; in page layouts wrap SplitPane in a container with an explicit height, such as h-96."
+    },
+    {
+      "spec": "components/StatusBadge.md",
+      "name": "StatusBadge",
+      "summary": "Small static indicator for status values with a colored dot and uppercase label.",
+      "keywords": [
+        "status badge",
+        "badge",
+        "indicator",
+        "success",
+        "warning",
+        "error",
+        "neutral",
+        "dot",
+        "label",
+        "state indicator",
+        "tag",
+        "chip",
+        "status label"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Displaying a discrete status value (success / warning / error / neutral)",
+        "Labelling an item's current state in a table, card, or list row"
+      ],
+      "avoid_when": [
+        "Live pulsing activity signal → PulseBadge"
+      ],
+      "related": [
+        "PulseBadge",
+        "Table",
+        "Card"
+      ],
+      "patterns": [
+        "ComponentStates"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/StreamingText.md",
+      "name": "StreamingText",
+      "summary": "Live-rendered plain text that reveals characters at a configurable speed with a blinking trailing cursor, for streaming model output.",
+      "keywords": [
+        "streaming text",
+        "typewriter",
+        "token stream",
+        "live text",
+        "model output",
+        "llm output",
+        "character reveal",
+        "cursor",
+        "animated text",
+        "streaming",
+        "real-time",
+        "chat output"
+      ],
+      "since": "1.4.0",
+      "status": "stable",
+      "use_when": [
+        "Rendering token-by-token model output as it streams from the backend",
+        "Showing live plain-text output below an AgentStatus row"
+      ],
+      "avoid_when": [
+        "Static or completed markdown content → MarkdownViewer",
+        "Rendering inside a Modal (streaming output must not block UI)"
+      ],
+      "related": [
+        "AgentStatus",
+        "AgentTrace",
+        "PulseBadge",
+        "MarkdownViewer"
+      ],
+      "patterns": [
+        "AgentActivity"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/Table.md",
+      "name": "Table",
+      "summary": "Data table with sortable columns, filtering, pagination, and async states.",
+      "keywords": [
+        "table",
+        "grid",
+        "data table",
+        "tabular",
+        "rows",
+        "columns",
+        "sortable",
+        "sort",
+        "filter",
+        "search",
+        "paginate",
+        "pagination",
+        "list view",
+        "spreadsheet",
+        "dataset"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Displaying rows of structured data across multiple columns",
+        "You need sorting, client-side filtering, or pagination"
+      ],
+      "avoid_when": [
+        "A flat single-column list → SectionedTree",
+        "Hierarchical / nested data → Tree or SectionedTree"
+      ],
+      "related": [
+        "SectionedTree",
+        "Tree",
+        "SearchInput",
+        "Dropdown",
+        "StatusBadge",
+        "HighlightText"
+      ],
+      "patterns": [
+        "DataTable",
+        "Explorer",
+        "MasterDetail"
+      ],
+      "note": null
+    },
+    {
+      "spec": "components/ThemeToggle.md",
+      "name": "ThemeToggle",
+      "summary": "Button or radio-group control for cycling through theme modes (system, light, dark), with localStorage persistence.",
+      "keywords": [
+        "theme toggle",
+        "dark mode",
+        "light mode",
+        "color scheme",
+        "theme switcher",
+        "appearance",
+        "system theme",
+        "mode toggle",
+        "dark light",
+        "preferences",
+        "ui theme"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Letting users switch between light, dark, and system color schemes",
+        "Placing a theme control in the app header or settings panel"
+      ],
+      "avoid_when": [],
+      "related": [
+        "AppShell"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "components/Toast.md",
+      "name": "Toast",
+      "summary": "Single transient notification — feedback for an action that auto-dismisses, with a colored variant + screen-reader announcement.",
+      "keywords": [
+        "toast",
+        "notification",
+        "snackbar",
+        "alert",
+        "feedback",
+        "transient",
+        "popup",
+        "success message",
+        "error message",
+        "status",
+        "dismiss",
+        "announce",
+        "sr-only",
+        "aria-live",
+        "role status",
+        "role alert"
+      ],
+      "since": "1.11.0",
+      "status": "stable",
+      "use_when": [
+        "Confirming an action completed (\"Saved\", \"Copied\")",
+        "Reporting a recoverable error (\"Couldn't save — retry\")",
+        "Surfacing a background event without blocking the user"
+      ],
+      "avoid_when": [
+        "The user must respond before continuing — use a Modal / Dialog instead",
+        "The message is persistent / structural — use an inline Alert / Banner"
+      ],
+      "related": [
+        "ToastContainer"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "components/ToastContainer.md",
+      "name": "ToastContainer",
+      "summary": "Host for the toast system — mount once at the app root and call `toast.success(...)` etc. from anywhere.",
+      "keywords": [
+        "toast",
+        "notifications",
+        "snackbar",
+        "container",
+        "host",
+        "root",
+        "stacking",
+        "bottom-right",
+        "auto-dismiss",
+        "imperative api",
+        "pub sub",
+        "store",
+        "feedback layer"
+      ],
+      "since": "1.11.0",
+      "status": "stable",
+      "use_when": [
+        "Adding the global toast / notification system to an app — mount once at root"
+      ],
+      "avoid_when": [
+        "You need persistent / structural messaging — use an inline Alert / Banner",
+        "You need a blocking dialog — use a Modal"
+      ],
+      "related": [
+        "Toast"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "components/Tree.md",
+      "name": "Tree",
+      "summary": "Hierarchical tree view with expand/collapse, selection, search/filter, and optional drag-to-reorder.",
+      "keywords": [
+        "tree",
+        "hierarchy",
+        "file tree",
+        "expand collapse",
+        "treeview",
+        "navigation",
+        "folder",
+        "nodes",
+        "filterable",
+        "search tree",
+        "drag reorder",
+        "file browser",
+        "ast"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Displaying a hierarchical data structure (file system, AST, module graph)",
+        "Navigating nested nodes with expand/collapse and selection",
+        "Searchable/filterable tree within a panel or sidebar"
+      ],
+      "avoid_when": [
+        "Multiple grouped tree sections → SectionedTree"
+      ],
+      "related": [
+        "SectionedTree",
+        "HighlightText",
+        "SearchInput",
+        "SplitPane"
+      ],
+      "patterns": [
+        "Explorer",
+        "MasterDetail"
+      ],
+      "note": null
+    }
+  ],
+  "patterns": [
+    {
+      "spec": "patterns/AgentActivity.md",
+      "name": "AgentActivity",
+      "summary": "Visual language for surfacing real-time AI agent work — in-flight, paused, and settled states.",
+      "keywords": [
+        "agent activity",
+        "ai agent",
+        "streaming output",
+        "real-time progress",
+        "agent status",
+        "live work",
+        "agent trace",
+        "step history",
+        "in-flight",
+        "agentic ui"
+      ],
+      "since": "1.4.0",
+      "status": "stable",
+      "use_when": [
+        "An AI agent is actively doing work the user should be able to observe",
+        "Showing a history of completed agent steps alongside a live current step",
+        "Replacing a generic spinner with a specific verb-phrase about what the agent is doing"
+      ],
+      "avoid_when": [
+        "Dense event sequences on a shared axis → EventLanes",
+        "Static, non-animated state labels → StatusBadge",
+        "Unknown async wait without agent involvement → Skeleton"
+      ],
+      "related": [
+        "AgentStatus",
+        "AgentTrace",
+        "EventLanes",
+        "PulseBadge",
+        "StreamingText",
+        "StatusBadge",
+        "Skeleton"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/Chart.md",
+      "name": "Chart",
+      "summary": "Theme-aware chart bridge for d3, recharts, and any other library — routes all colors through design-system tokens.",
+      "keywords": [
+        "chart",
+        "data visualization",
+        "themed chart",
+        "d3",
+        "recharts",
+        "chart colors",
+        "dark mode chart",
+        "chart theming",
+        "categorical palette",
+        "chart tooltip"
+      ],
+      "since": "1.5.0",
+      "status": "stable",
+      "use_when": [
+        "Building any chart that must respect light/dark theme switching",
+        "Using d3 or a declarative library and needing colors from the design-system token palette",
+        "Wrapping a chart in consistent loading, empty, and error states"
+      ],
+      "avoid_when": [
+        "Single static metric display → Card",
+        "Dashboard-level layout with filters → Dashboard"
+      ],
+      "related": [
+        "ChartFrame",
+        "ChartTooltip"
+      ],
+      "patterns": [],
+      "note": "useChartTheme() and assignSeriesColors() are lib utilities, not components — they are not in the `related` list. Always depend your draw effect on the returned theme object (useEffect(draw, [theme])) so charts re-render on light/dark toggle."
+    },
+    {
+      "spec": "patterns/ComponentStates.md",
+      "name": "ComponentStates",
+      "summary": "Canonical empty, loading, and error state contract for every component that renders async data.",
+      "keywords": [
+        "loading state",
+        "empty state",
+        "error state",
+        "async data",
+        "skeleton",
+        "retry",
+        "component states",
+        "loading skeleton",
+        "empty message",
+        "error handling"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Adding a new component that fetches or streams data",
+        "Ensuring consistent loading/empty/error UI across the app",
+        "Consumers need override props for empty messages, retry callbacks, or error copy"
+      ],
+      "avoid_when": [
+        "Pure client-side/static components with no async data → no state props needed"
+      ],
+      "related": [
+        "Skeleton",
+        "Button",
+        "Table",
+        "Tree",
+        "SectionedTree",
+        "MarkdownViewer",
+        "Dropdown",
+        "SearchInput",
+        "Card"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/Dashboard.md",
+      "name": "Dashboard",
+      "summary": "Stats bar, filterable chart, and optional sidebar for summarizing and exploring aggregate data.",
+      "keywords": [
+        "dashboard",
+        "metrics",
+        "stats bar",
+        "chart filter",
+        "kpi",
+        "data summary",
+        "analytics page",
+        "filterable chart",
+        "aggregate view",
+        "overview page"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Showing high-level metrics alongside a chart visualization",
+        "Letting users filter a dataset and see the chart update in real time"
+      ],
+      "avoid_when": [
+        "Single metric display → Card with a large number",
+        "Drill-down or hierarchical detail → Explorer or MasterDetail"
+      ],
+      "related": [
+        "Card",
+        "CardGroup",
+        "CheckboxGroup",
+        "ChartFrame",
+        "ChartTooltip"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/DataTable.md",
+      "name": "DataTable",
+      "summary": "Full-featured table with filtering, sorting, pagination, and search highlighting for large flat datasets.",
+      "keywords": [
+        "data table",
+        "table",
+        "sortable table",
+        "paginated table",
+        "search table",
+        "filter table",
+        "list view",
+        "registry",
+        "audit log",
+        "inventory",
+        "tabular data"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Displaying a large flat dataset (10+ rows) with search and pagination",
+        "Package registries, user lists, audit logs, or inventory pages",
+        "Columns contain mixed content (text, badges, numbers) that needs per-column search"
+      ],
+      "avoid_when": [
+        "Hierarchical or nested data → Explorer",
+        "Each row needs rich detail on click → MasterDetail",
+        "Small datasets under 10 rows → plain Table without filter/pagination"
+      ],
+      "related": [
+        "Table",
+        "HighlightText",
+        "StatusBadge",
+        "SearchInput",
+        "Dropdown"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/Explorer.md",
+      "name": "Explorer",
+      "summary": "Tree sidebar with resizable content pane for browsing and navigating hierarchical data structures.",
+      "keywords": [
+        "explorer",
+        "file tree",
+        "tree sidebar",
+        "hierarchical navigation",
+        "split pane",
+        "document browser",
+        "file browser",
+        "nested navigation",
+        "sidebar tree",
+        "tree view"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Browsing file trees, documentation structures, or package hierarchies",
+        "Items are in a parent/child hierarchy and selecting a leaf shows detail content",
+        "Multiple independent tree groups in one sidebar, such as project files and dependencies"
+      ],
+      "avoid_when": [
+        "Flat lists with no nesting → MasterDetail",
+        "Fewer than ~10 items total → simple list or Dropdown"
+      ],
+      "related": [
+        "SplitPane",
+        "Panel",
+        "Tree",
+        "SectionedTree",
+        "Card",
+        "CardGroup",
+        "SearchInput"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/Form.md",
+      "name": "Form",
+      "summary": "Composition rules for form fields — layout, validation, submit placement, and error-summary patterns.",
+      "keywords": [
+        "form",
+        "form layout",
+        "field validation",
+        "form group",
+        "input",
+        "submit button",
+        "error summary",
+        "form validation",
+        "accessible form",
+        "form pattern"
+      ],
+      "since": "1.3.0",
+      "status": "stable",
+      "use_when": [
+        "Building any form with one or more user-editable fields",
+        "Needing consistent validation UX (blur-first, on-change-after-blur, on-submit)",
+        "Forms with more than 5 fields that need an error summary block"
+      ],
+      "avoid_when": [
+        "Read-only data display → Table, Card, or MasterDetail"
+      ],
+      "related": [
+        "FormGroup",
+        "Input",
+        "Button",
+        "Dropdown",
+        "CheckboxGroup"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/FormResults.md",
+      "name": "FormResults",
+      "summary": "Pinned search/filter form at top with scrollable result cards below for query-driven workflows.",
+      "keywords": [
+        "search results",
+        "search page",
+        "form results",
+        "query results",
+        "code search",
+        "filter results",
+        "find page",
+        "search interface",
+        "result cards",
+        "query-driven"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Search interfaces where the user provides criteria and gets a list of results",
+        "Any workflow with a distinct input step followed by a results step (find, filter, generate)"
+      ],
+      "avoid_when": [
+        "Always-visible data that requires no query → Dashboard or MasterDetail",
+        "Single-result lookups → Card with loading state"
+      ],
+      "related": [
+        "Card",
+        "SearchInput",
+        "HighlightText",
+        "Dropdown",
+        "StatusBadge",
+        "CodeBlock"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/MarkdownViewer.md",
+      "name": "MarkdownViewer",
+      "summary": "Document browser with outline navigation, minimap, and rich markdown rendering for in-app documentation.",
+      "keywords": [
+        "markdown viewer",
+        "document browser",
+        "markdown renderer",
+        "outline navigation",
+        "minimap",
+        "documentation",
+        "readme viewer",
+        "spec viewer",
+        "doc browser",
+        "in-app docs"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Rendering documentation, specs, or help content in-app",
+        "Building a document browser with file tree navigation",
+        "Showing README or changelog files alongside code"
+      ],
+      "avoid_when": [
+        "Plain text display without headings → simple pre or paragraph",
+        "Short snippets where outline adds no value",
+        "Editing markdown → read-only viewer only"
+      ],
+      "related": [
+        "MarkdownViewer",
+        "MarkdownMinimap",
+        "SplitPane",
+        "Panel",
+        "Tree",
+        "Card",
+        "CardGroup"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/MasterDetail.md",
+      "name": "MasterDetail",
+      "summary": "Sortable list or table on one side with a detail pane on the other for inspecting individual records.",
+      "keywords": [
+        "master detail",
+        "list detail",
+        "record detail",
+        "split view",
+        "row selection",
+        "detail pane",
+        "inspect record",
+        "two panel",
+        "table detail",
+        "side panel"
+      ],
+      "since": "1.0.0",
+      "status": "stable",
+      "use_when": [
+        "Browsing a flat list of records where each record has rich detail",
+        "Any table where clicking a row shows more information without navigating away"
+      ],
+      "avoid_when": [
+        "Deep or arbitrary-depth hierarchies → Explorer",
+        "Data that fits entirely in table cells → plain Table",
+        "Nested drill-down more than 3 levels → Explorer"
+      ],
+      "related": [
+        "SplitPane",
+        "Table",
+        "Card",
+        "StatusBadge",
+        "CodeBlock",
+        "HighlightText"
+      ],
+      "patterns": [],
+      "note": null
+    }
+  ]
+}

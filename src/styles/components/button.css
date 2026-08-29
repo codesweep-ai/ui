@@ -1,0 +1,172 @@
+/* button component styles. */
+.cs-component-button-27 {
+    pointer-events: none
+}
+
+.cs-component-button-22 {
+    display: inline-flex
+}
+
+.cs-component-button-27 {
+    cursor: not-allowed
+}
+
+.cs-component-button-26 {
+    cursor: pointer
+}
+
+.cs-component-button-22 {
+    align-items: center
+}
+
+.cs-component-button-22 {
+    justify-content: center
+}
+
+.cs-component-button-22 {
+    gap: var(--space-2)
+}
+
+.cs-component-button-23 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-button-11,
+.cs-component-button-12 {
+    border-width: .0625rem
+}
+
+.cs-component-button-13 {
+    border-style: none
+}
+
+.cs-component-button-11 {
+    border-color: var(--border)
+}
+
+.cs-component-button-12 {
+    border-color: var(--color-error)
+}
+
+.cs-component-button-10,
+.cs-component-button-14,
+.cs-component-button-15 {
+    border-color: transparent
+}
+
+.cs-component-button-10 {
+    background-color: var(--color-btn-primary)
+}
+
+.cs-component-button-14 {
+    background-color: var(--color-success)
+}
+
+.cs-component-button-15 {
+    background-color: var(--color-warning)
+}
+
+.cs-component-button-11,
+.cs-component-button-12,
+.cs-component-button-13 {
+    background-color: transparent
+}
+
+.cs-component-button-16 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-button-17 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-button-16 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-button-17 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-button-23 {
+    font-weight: var(--font-weight-medium)
+}
+
+.cs-component-button-27 {
+    opacity: 0.7
+}
+
+.cs-component-button-24 {
+    transition-property: background-color,border-color,color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-button-10 {
+    color: var(--color-btn-primary-text)
+}
+
+.cs-component-button-14 {
+    color: var(--color-btn-success-text)
+}
+
+.cs-component-button-15 {
+    color: var(--color-btn-warning-text)
+}
+
+.cs-component-button-12 {
+    color: var(--color-error)
+}
+
+.cs-component-button-11,
+.cs-component-button-13 {
+    color: var(--fg)
+}
+
+.cs-component-button-17 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-button-16 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-button-24 {
+    transition-duration: 0.2s
+}
+
+.cs-component-button-24 {
+    transition-timing-function: ease
+}
+
+.cs-component-button-11:hover,
+.cs-component-button-13:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-button-12:hover {
+    background-color: var(--color-error-bg)
+}
+
+.cs-component-button-10:hover,
+.cs-component-button-14:hover,
+.cs-component-button-15:hover {
+    filter: brightness(1.1)
+}
+
+.cs-component-button-25:focus {
+    outline: .125rem solid transparent;
+    outline-offset: .125rem
+}
+
+.cs-component-button-25:focus {
+    box-shadow: 0 0 0 .125rem var(--color-accent)
+}
+
+.cs-component-button-25:active {
+    transform: scale(.98)
+}

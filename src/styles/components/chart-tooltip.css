@@ -1,0 +1,54 @@
+/* chart-tooltip component styles. */
+.cs-component-chart-tooltip-15 {
+    pointer-events: none
+}
+
+.cs-component-chart-tooltip-15 {
+    position: absolute
+}
+
+.cs-component-chart-tooltip-15 {
+    z-index: var(--z-tooltip)
+}
+
+.cs-component-chart-tooltip-16 {
+    max-width: var(--chart-tooltip-max-width)
+}
+
+.cs-component-chart-tooltip-17 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-chart-tooltip-17 {
+    border-width: .0625rem
+}
+
+.cs-component-chart-tooltip-17 {
+    border-color: var(--border)
+}
+
+.cs-component-chart-tooltip-17 {
+    background-color: var(--card)
+}
+
+.cs-component-chart-tooltip-19 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-chart-tooltip-19 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-chart-tooltip-18 {
+    box-shadow: var(--shadow-md)
+}
+
+.cs-component-chart-tooltip-20 {
+    color: var(--fg)
+}
+
+.cs-component-chart-tooltip-20 {
+    font-size: var(--font-size-xs)
+}

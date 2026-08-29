@@ -1,0 +1,124 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check (node ${{ matrix.node }})
+    strategy:
+      fail-fast: false
+      matrix:
+        # The floor package.json declares, and the active LTS. Node 20 reached
+        # end of life in April 2026, and 22.13 is the lowest version every
+        # dependency accepts: below it, eslint and jsdom warn on install and
+        # rolldown fails outright on anything under 20.19.
+        node: ["22.13", "24"]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the readiness rules read the history
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run check
+
+  # A job each, because each answers in seconds and answers even when the tests
+  # are failing. prose and refs read the tracked tree and nothing else, so they
+  # need no build.
+  prose:
+    name: docs prose
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npx cs-lint prose
+
+  refs:
+    name: docs refs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npx cs-lint refs
+
+  # The gate renders in the Playwright image rather than on the runner, because
+  # the runner's fonts and Chromium are not the ones the baseline was taken with.
+  # scripts/visual-container.mjs builds the tag from the installed playwright, so
+  # there is no image version to keep in step here.
+  visual:
+    name: visual baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run visual:compare
+
+      # A pixel count names a file and shows nobody anything. On a red run the
+      # render and the diff go up with it.
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: visual-diff/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # puppeteer fetches its browser from a postinstall script, and npm now asks
+  # before running those, so the fetch is a step here rather than a hope.
+  rich:
+    name: rich markdown
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npx puppeteer browsers install chrome
+      - run: npm run preview:rich-check
+
+  oss:
+    name: open-source readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the history rules read the history
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npx cs-lint oss

@@ -1,0 +1,1610 @@
+/* Plain CSS generated once from the pre-removal component utility declarations. */
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24 {
+    position: fixed
+}
+.cs-preview-pages-components-page-170,
+.cs-preview-pages-patterns-chart-demo-33,
+.cs-preview-pages-patterns-dashboard-demo-29 {
+    position: relative
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24 {
+    bottom: var(--space-4)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24 {
+    right: var(--space-4)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24 {
+    z-index: var(--z-tooltip)
+}
+.cs-preview-pages-components-page-68 {
+    grid-column: span 2 / span 2
+}
+.cs-preview-pages-patterns-dashboard-demo-89,
+.cs-preview-pages-patterns-explorer-demo-14,
+.cs-preview-pages-patterns-mapping-demo-16,
+.cs-preview-pages-patterns-markdown-viewer-demo-10 {
+    margin: calc(var(--space-4) * -1)
+}
+.cs-preview-pages-components-page-366,
+.cs-preview-pages-components-page-370,
+.cs-preview-pages-components-page-390,
+.cs-preview-pages-components-page-393,
+.cs-preview-pages-components-page-465,
+.cs-preview-pages-tokens-page-213,
+.cs-preview-pages-tokens-page-252,
+.cs-preview-pages-tokens-page-256,
+.cs-preview-pages-patterns-master-detail-demo-34,
+.cs-preview-pages-patterns-master-detail-demo-218 {
+    margin: 0
+}
+.cs-preview-pages-patterns-mapping-demo-26 {
+    margin-left: var(--space-2);
+    margin-right: var(--space-2)
+}
+.cs-preview-pages-components-page-297,
+.cs-preview-pages-tokens-page-182,
+.cs-preview-pages-patterns-agent-activity-demo-23,
+.cs-preview-pages-patterns-chart-demo-104,
+.cs-preview-pages-patterns-data-table-demo-51,
+.cs-preview-pages-patterns-form-demo-14 {
+    margin-left: auto;
+    margin-right: auto
+}
+.cs-preview-dev-palette-lab-33,
+.cs-preview-pages-tokens-page-252,
+.cs-preview-pages-patterns-chart-demo-84,
+.cs-preview-pages-patterns-dashboard-demo-39 {
+    margin-bottom: var(--space-1)
+}
+.cs-preview-pages-tokens-page-210 {
+    margin-bottom: var(--space-2)
+}
+.cs-preview-dev-palette-lab-25,
+.cs-preview-pages-tokens-page-208,
+.cs-preview-pages-tokens-page-219,
+.cs-preview-pages-tokens-page-256,
+.cs-preview-pages-patterns-master-detail-demo-191 {
+    margin-bottom: var(--space-3)
+}
+.cs-preview-pages-components-page-305,
+.cs-preview-pages-components-page-307 {
+    margin-bottom: var(--space-4)
+}
+.cs-preview-pages-tokens-page-250,
+.cs-preview-pages-patterns-dashboard-demo-8,
+.cs-preview-pages-patterns-data-table-demo-53 {
+    margin-top: var(--space-1)
+}
+.cs-preview-pages-tokens-page-251 {
+    margin-top: var(--space-2)
+}
+.cs-preview-dev-palette-lab-39 {
+    margin-top: var(--space-3)
+}
+.cs-preview-pages-components-page-486,
+.cs-preview-pages-tokens-page-207 {
+    margin-top: var(--space-4)
+}
+.cs-preview-pages-components-page-303,
+.cs-preview-pages-tokens-page-229,
+.cs-preview-pages-tokens-page-230 {
+    display: block
+}
+.cs-preview-pages-components-page-170,
+.cs-preview-pages-tokens-page-279 {
+    display: inline-block
+}
+.cs-preview-dev-palette-lab-25,
+.cs-preview-dev-palette-lab-27,
+.cs-preview-dev-palette-lab-32,
+.cs-preview-dev-palette-lab-34,
+.cs-preview-pages-components-page-41,
+.cs-preview-pages-components-page-72,
+.cs-preview-pages-components-page-95,
+.cs-preview-pages-components-page-122,
+.cs-preview-pages-components-page-174,
+.cs-preview-pages-components-page-297,
+.cs-preview-pages-components-page-307,
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-321,
+.cs-preview-pages-components-page-349,
+.cs-preview-pages-components-page-360,
+.cs-preview-pages-components-page-377,
+.cs-preview-pages-components-page-382,
+.cs-preview-pages-components-page-402,
+.cs-preview-pages-components-page-422,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-components-page-431,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-464,
+.cs-preview-pages-components-page-470,
+.cs-preview-pages-components-page-489,
+.cs-preview-pages-components-page-490,
+.cs-preview-pages-components-page-505,
+.cs-preview-pages-patterns-page-37,
+.cs-preview-pages-patterns-page-38,
+.cs-preview-pages-tokens-page-186,
+.cs-preview-pages-tokens-page-195,
+.cs-preview-pages-tokens-page-196,
+.cs-preview-pages-tokens-page-203,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-tokens-page-239,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-257,
+.cs-preview-pages-tokens-page-262,
+.cs-preview-pages-tokens-page-278,
+.cs-preview-pages-tokens-page-284,
+.cs-preview-pages-patterns-chart-demo-33,
+.cs-preview-pages-patterns-chart-demo-76,
+.cs-preview-pages-patterns-chart-demo-85,
+.cs-preview-pages-patterns-chart-demo-109,
+.cs-preview-pages-patterns-chart-demo-112,
+.cs-preview-pages-patterns-dashboard-demo-9,
+.cs-preview-pages-patterns-dashboard-demo-10,
+.cs-preview-pages-patterns-dashboard-demo-17,
+.cs-preview-pages-patterns-dashboard-demo-18,
+.cs-preview-pages-patterns-dashboard-demo-28,
+.cs-preview-pages-patterns-dashboard-demo-40,
+.cs-preview-pages-patterns-dashboard-demo-85,
+.cs-preview-pages-patterns-dashboard-demo-89,
+.cs-preview-pages-patterns-dashboard-demo-96,
+.cs-preview-pages-patterns-dashboard-demo-104,
+.cs-preview-pages-patterns-explorer-demo-11,
+.cs-preview-pages-patterns-explorer-demo-21,
+.cs-preview-pages-patterns-form-demo-18,
+.cs-preview-pages-patterns-form-demo-43,
+.cs-preview-pages-patterns-form-results-demo-10,
+.cs-preview-pages-patterns-form-results-demo-13,
+.cs-preview-pages-patterns-form-results-demo-17,
+.cs-preview-pages-patterns-form-results-demo-23,
+.cs-preview-pages-patterns-form-results-demo-24,
+.cs-preview-pages-patterns-mapping-demo-14,
+.cs-preview-pages-patterns-mapping-demo-22,
+.cs-preview-pages-patterns-mapping-demo-23,
+.cs-preview-pages-patterns-markdown-viewer-demo-7,
+.cs-preview-pages-patterns-markdown-viewer-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-31,
+.cs-preview-pages-patterns-master-detail-demo-32,
+.cs-preview-pages-patterns-master-detail-demo-35,
+.cs-preview-pages-patterns-master-detail-demo-43,
+.cs-preview-pages-patterns-master-detail-demo-77,
+.cs-preview-pages-patterns-master-detail-demo-78,
+.cs-preview-pages-patterns-master-detail-demo-118,
+.cs-preview-pages-patterns-master-detail-demo-189,
+.cs-preview-pages-patterns-master-detail-demo-191,
+.cs-preview-pages-patterns-master-detail-demo-192,
+.cs-preview-pages-patterns-master-detail-demo-215 {
+    display: flex
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-31,
+.cs-preview-pages-components-page-403 {
+    display: inline-flex
+}
+.cs-preview-pages-components-page-54,
+.cs-preview-pages-components-page-334,
+.cs-preview-pages-components-page-388,
+.cs-preview-pages-tokens-page-220,
+.cs-preview-pages-tokens-page-232,
+.cs-preview-pages-tokens-page-238,
+.cs-preview-pages-tokens-page-283,
+.cs-preview-pages-patterns-dashboard-demo-4,
+.cs-preview-pages-patterns-form-demo-19 {
+    display: grid
+}
+.cs-preview-pages-tokens-page-233 {
+    height: 3rem
+}
+.cs-preview-pages-tokens-page-197 {
+    height: 4rem
+}
+.cs-preview-pages-patterns-chart-demo-86,
+.cs-preview-pages-patterns-dashboard-demo-41 {
+    height: 0.5rem
+}
+.cs-preview-pages-patterns-dashboard-demo-19 {
+    height: 0.625rem
+}
+.cs-preview-pages-tokens-page-285 {
+    height: 5rem
+}
+.cs-preview-pages-patterns-dashboard-demo-96 {
+    height: 8rem
+}
+.cs-preview-pages-tokens-page-188,
+.cs-preview-pages-tokens-page-266 {
+    height: 1rem
+}
+.cs-preview-pages-components-page-442 {
+    height: 12rem
+}
+.cs-preview-pages-tokens-page-247,
+.cs-preview-pages-tokens-page-279,
+.cs-preview-pages-patterns-dashboard-demo-12 {
+    height: 1.5rem
+}
+.cs-preview-pages-components-page-174 {
+    height: 18rem
+}
+.cs-preview-pages-tokens-page-222 {
+    height: 2rem
+}
+.cs-preview-pages-components-page-422 {
+    height: 20rem
+}
+.cs-preview-pages-components-page-341,
+.cs-preview-pages-components-page-431 {
+    height: 24rem
+}
+.cs-preview-pages-patterns-explorer-demo-14,
+.cs-preview-pages-patterns-mapping-demo-16 {
+    height: var(--card-content-height)
+}
+.cs-preview-dev-palette-lab-23 {
+    height: var(--icon-size-sm)
+}
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-454,
+.cs-preview-pages-components-page-470,
+.cs-preview-pages-patterns-page-37,
+.cs-preview-pages-patterns-agent-activity-demo-22,
+.cs-preview-pages-patterns-chart-demo-103,
+.cs-preview-pages-patterns-dashboard-demo-13,
+.cs-preview-pages-patterns-dashboard-demo-85,
+.cs-preview-pages-patterns-dashboard-demo-91,
+.cs-preview-pages-patterns-dashboard-demo-106,
+.cs-preview-pages-patterns-data-table-demo-50,
+.cs-preview-pages-patterns-explorer-demo-11,
+.cs-preview-pages-patterns-explorer-demo-15,
+.cs-preview-pages-patterns-explorer-demo-19,
+.cs-preview-pages-patterns-explorer-demo-21,
+.cs-preview-pages-patterns-form-demo-13,
+.cs-preview-pages-patterns-form-results-demo-10,
+.cs-preview-pages-patterns-mapping-demo-14,
+.cs-preview-pages-patterns-markdown-viewer-demo-7,
+.cs-preview-pages-patterns-markdown-viewer-demo-10,
+.cs-preview-pages-patterns-markdown-viewer-demo-11,
+.cs-preview-pages-patterns-markdown-viewer-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-17,
+.cs-preview-pages-patterns-master-detail-demo-43,
+.cs-preview-pages-patterns-master-detail-demo-189 {
+    height: 100%
+}
+.cs-preview-pages-components-page-398 {
+    max-height: 16rem
+}
+.cs-preview-app-37,
+.cs-preview-pages-patterns-page-37,
+.cs-preview-pages-patterns-page-45,
+.cs-preview-pages-patterns-dashboard-demo-91,
+.cs-preview-pages-patterns-explorer-demo-14,
+.cs-preview-pages-patterns-form-results-demo-10,
+.cs-preview-pages-patterns-form-results-demo-16,
+.cs-preview-pages-patterns-master-detail-demo-190 {
+    min-height: 0
+}
+.cs-preview-pages-tokens-page-216 {
+    width: 2.5rem
+}
+.cs-preview-pages-tokens-page-197,
+.cs-preview-pages-patterns-dashboard-demo-11 {
+    width: 4rem
+}
+.cs-preview-pages-patterns-chart-demo-86,
+.cs-preview-pages-patterns-dashboard-demo-41 {
+    width: 0.5rem
+}
+.cs-preview-pages-patterns-dashboard-demo-19 {
+    width: 0.625rem
+}
+.cs-preview-pages-tokens-page-187 {
+    width: 7rem
+}
+.cs-preview-pages-tokens-page-204 {
+    width: 8rem
+}
+.cs-preview-pages-patterns-dashboard-demo-92 {
+    width: 11rem
+}
+.cs-preview-pages-tokens-page-279 {
+    width: 1.5rem
+}
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-patterns-dashboard-demo-16 {
+    width: 2rem
+}
+.cs-preview-pages-components-page-179 {
+    width: var(--content-width-sm)
+}
+.cs-preview-dev-palette-lab-23 {
+    width: var(--icon-size-sm)
+}
+.cs-preview-pages-tokens-page-233,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-247,
+.cs-preview-pages-tokens-page-271,
+.cs-preview-pages-tokens-page-285 {
+    width: 100%
+}
+.cs-preview-pages-tokens-page-228,
+.cs-preview-pages-patterns-dashboard-demo-95 {
+    min-width: 0
+}
+.cs-preview-pages-patterns-form-results-demo-15 {
+    min-width: var(--content-width-sm)
+}
+.cs-preview-pages-components-page-54,
+.cs-preview-pages-components-page-94,
+.cs-preview-pages-components-page-168 {
+    max-width: 42rem
+}
+.cs-preview-pages-patterns-agent-activity-demo-23,
+.cs-preview-pages-patterns-chart-demo-104 {
+    max-width: 56rem
+}
+.cs-preview-pages-components-page-297,
+.cs-preview-pages-tokens-page-182 {
+    max-width: 64rem
+}
+.cs-preview-pages-patterns-data-table-demo-51 {
+    max-width: 72rem
+}
+.cs-preview-dev-palette-lab-24 {
+    max-width: 26.25rem
+}
+.cs-preview-pages-components-page-391,
+.cs-preview-pages-components-page-398 {
+    max-width: var(--content-width-sm)
+}
+.cs-preview-pages-components-page-359 {
+    max-width: 32rem
+}
+.cs-preview-pages-components-page-72,
+.cs-preview-pages-components-page-382 {
+    max-width: 28rem
+}
+.cs-preview-pages-patterns-form-demo-14 {
+    max-width: 36rem
+}
+.cs-preview-app-37,
+.cs-preview-pages-components-page-175,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-patterns-page-45,
+.cs-preview-pages-tokens-page-266,
+.cs-preview-pages-patterns-dashboard-demo-12,
+.cs-preview-pages-patterns-dashboard-demo-95,
+.cs-preview-pages-patterns-explorer-demo-14,
+.cs-preview-pages-patterns-form-results-demo-15,
+.cs-preview-pages-patterns-form-results-demo-16,
+.cs-preview-pages-patterns-master-detail-demo-190 {
+    flex: 1 1 0%
+}
+.cs-preview-pages-patterns-page-38,
+.cs-preview-pages-tokens-page-204,
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-patterns-dashboard-demo-11,
+.cs-preview-pages-patterns-dashboard-demo-16,
+.cs-preview-pages-patterns-dashboard-demo-19,
+.cs-preview-pages-patterns-dashboard-demo-92,
+.cs-preview-pages-patterns-form-results-demo-11 {
+    flex-shrink: 0
+}
+.cs-preview-pages-tokens-page-271 {
+    border-collapse: collapse
+}
+.cs-preview-pages-patterns-chart-demo-14 {
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+}
+.cs-preview-pages-components-page-300 {
+    columns: 2
+}
+.cs-preview-pages-components-page-334,
+.cs-preview-pages-components-page-388,
+.cs-preview-pages-tokens-page-220 {
+    grid-template-columns: repeat(1, minmax(0, 1fr))
+}
+.cs-preview-pages-components-page-54,
+.cs-preview-pages-tokens-page-232,
+.cs-preview-pages-tokens-page-283,
+.cs-preview-pages-patterns-form-demo-19 {
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+}
+.cs-preview-pages-patterns-dashboard-demo-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+}
+.cs-preview-pages-tokens-page-238 {
+    grid-template-columns: repeat(5, minmax(0, 1fr))
+}
+.cs-preview-dev-palette-lab-32,
+.cs-preview-pages-components-page-72,
+.cs-preview-pages-components-page-297,
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-382,
+.cs-preview-pages-components-page-464,
+.cs-preview-pages-components-page-505,
+.cs-preview-pages-patterns-page-37,
+.cs-preview-pages-tokens-page-196,
+.cs-preview-pages-tokens-page-239,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-257,
+.cs-preview-pages-tokens-page-284,
+.cs-preview-pages-patterns-dashboard-demo-9,
+.cs-preview-pages-patterns-dashboard-demo-28,
+.cs-preview-pages-patterns-dashboard-demo-85,
+.cs-preview-pages-patterns-explorer-demo-11,
+.cs-preview-pages-patterns-form-demo-18,
+.cs-preview-pages-patterns-form-results-demo-10,
+.cs-preview-pages-patterns-form-results-demo-17,
+.cs-preview-pages-patterns-form-results-demo-23,
+.cs-preview-pages-patterns-mapping-demo-14,
+.cs-preview-pages-patterns-mapping-demo-22,
+.cs-preview-pages-patterns-markdown-viewer-demo-7,
+.cs-preview-pages-patterns-master-detail-demo-31,
+.cs-preview-pages-patterns-master-detail-demo-77,
+.cs-preview-pages-patterns-master-detail-demo-189 {
+    flex-direction: column
+}
+.cs-preview-dev-palette-lab-34,
+.cs-preview-pages-components-page-122,
+.cs-preview-pages-components-page-321,
+.cs-preview-pages-components-page-349,
+.cs-preview-pages-components-page-377,
+.cs-preview-pages-components-page-402,
+.cs-preview-pages-tokens-page-195,
+.cs-preview-pages-patterns-dashboard-demo-17,
+.cs-preview-pages-patterns-form-results-demo-13,
+.cs-preview-pages-patterns-master-detail-demo-215 {
+    flex-wrap: wrap
+}
+.cs-preview-pages-components-page-505 {
+    align-items: flex-start
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-25,
+.cs-preview-dev-palette-lab-27,
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-321,
+.cs-preview-pages-components-page-360,
+.cs-preview-pages-components-page-377,
+.cs-preview-pages-components-page-402,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-470,
+.cs-preview-pages-components-page-489,
+.cs-preview-pages-components-page-490,
+.cs-preview-pages-tokens-page-186,
+.cs-preview-pages-tokens-page-196,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-tokens-page-239,
+.cs-preview-pages-tokens-page-278,
+.cs-preview-pages-tokens-page-284,
+.cs-preview-pages-patterns-chart-demo-85,
+.cs-preview-pages-patterns-chart-demo-109,
+.cs-preview-pages-patterns-dashboard-demo-10,
+.cs-preview-pages-patterns-dashboard-demo-18,
+.cs-preview-pages-patterns-dashboard-demo-28,
+.cs-preview-pages-patterns-dashboard-demo-40,
+.cs-preview-pages-patterns-dashboard-demo-96,
+.cs-preview-pages-patterns-dashboard-demo-104,
+.cs-preview-pages-patterns-explorer-demo-21,
+.cs-preview-pages-patterns-form-results-demo-24,
+.cs-preview-pages-patterns-mapping-demo-23,
+.cs-preview-pages-patterns-markdown-viewer-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-32,
+.cs-preview-pages-patterns-master-detail-demo-43,
+.cs-preview-pages-patterns-master-detail-demo-78,
+.cs-preview-pages-patterns-master-detail-demo-118,
+.cs-preview-pages-patterns-master-detail-demo-191 {
+    align-items: center
+}
+.cs-preview-pages-components-page-41,
+.cs-preview-pages-tokens-page-203 {
+    align-items: baseline
+}
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-470,
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-patterns-chart-demo-33,
+.cs-preview-pages-patterns-chart-demo-76,
+.cs-preview-pages-patterns-dashboard-demo-17,
+.cs-preview-pages-patterns-dashboard-demo-96,
+.cs-preview-pages-patterns-dashboard-demo-104,
+.cs-preview-pages-patterns-explorer-demo-21,
+.cs-preview-pages-patterns-markdown-viewer-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-43,
+.cs-preview-pages-patterns-master-detail-demo-118 {
+    justify-content: center
+}
+.cs-preview-dev-palette-lab-25,
+.cs-preview-pages-patterns-chart-demo-109,
+.cs-preview-pages-patterns-mapping-demo-23,
+.cs-preview-pages-patterns-master-detail-demo-78,
+.cs-preview-pages-patterns-master-detail-demo-191 {
+    justify-content: space-between
+}
+.cs-preview-pages-tokens-page-257,
+.cs-preview-pages-tokens-page-262 {
+    gap: var(--space-0-5)
+}
+.cs-preview-dev-palette-lab-34,
+.cs-preview-pages-patterns-page-38,
+.cs-preview-pages-tokens-page-239,
+.cs-preview-pages-patterns-chart-demo-85,
+.cs-preview-pages-patterns-chart-demo-112,
+.cs-preview-pages-patterns-dashboard-demo-18,
+.cs-preview-pages-patterns-dashboard-demo-40 {
+    gap: var(--space-1)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-27,
+.cs-preview-pages-components-page-41,
+.cs-preview-pages-components-page-95,
+.cs-preview-pages-components-page-122,
+.cs-preview-pages-components-page-490,
+.cs-preview-pages-components-page-505,
+.cs-preview-pages-tokens-page-196,
+.cs-preview-pages-tokens-page-278,
+.cs-preview-pages-patterns-dashboard-demo-9,
+.cs-preview-pages-patterns-form-demo-43,
+.cs-preview-pages-patterns-form-results-demo-23,
+.cs-preview-pages-patterns-form-results-demo-24,
+.cs-preview-pages-patterns-mapping-demo-22 {
+    gap: var(--space-2)
+}
+.cs-preview-dev-palette-lab-25,
+.cs-preview-dev-palette-lab-32,
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-321,
+.cs-preview-pages-components-page-349,
+.cs-preview-pages-components-page-360,
+.cs-preview-pages-components-page-382,
+.cs-preview-pages-components-page-464,
+.cs-preview-pages-tokens-page-220,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-238,
+.cs-preview-pages-tokens-page-284,
+.cs-preview-pages-patterns-dashboard-demo-4,
+.cs-preview-pages-patterns-dashboard-demo-10,
+.cs-preview-pages-patterns-form-demo-19,
+.cs-preview-pages-patterns-form-results-demo-13,
+.cs-preview-pages-patterns-form-results-demo-17,
+.cs-preview-pages-patterns-master-detail-demo-31,
+.cs-preview-pages-patterns-master-detail-demo-32,
+.cs-preview-pages-patterns-master-detail-demo-192 {
+    gap: var(--space-3)
+}
+.cs-preview-pages-components-page-54,
+.cs-preview-pages-components-page-72,
+.cs-preview-pages-components-page-300,
+.cs-preview-pages-components-page-307,
+.cs-preview-pages-components-page-334,
+.cs-preview-pages-components-page-377,
+.cs-preview-pages-tokens-page-186,
+.cs-preview-pages-tokens-page-203,
+.cs-preview-pages-tokens-page-232,
+.cs-preview-pages-patterns-dashboard-demo-85,
+.cs-preview-pages-patterns-dashboard-demo-89,
+.cs-preview-pages-patterns-form-demo-18,
+.cs-preview-pages-patterns-mapping-demo-14,
+.cs-preview-pages-patterns-master-detail-demo-35,
+.cs-preview-pages-patterns-master-detail-demo-77,
+.cs-preview-pages-patterns-master-detail-demo-189,
+.cs-preview-pages-patterns-master-detail-demo-215 {
+    gap: var(--space-4)
+}
+.cs-preview-pages-components-page-388,
+.cs-preview-pages-components-page-402,
+.cs-preview-pages-components-page-489,
+.cs-preview-pages-tokens-page-195,
+.cs-preview-pages-tokens-page-283 {
+    gap: var(--space-5)
+}
+.cs-preview-pages-components-page-297 {
+    gap: var(--space-6)
+}
+.cs-preview-pages-tokens-page-240 {
+    gap: var(--space-px)
+}
+.cs-preview-pages-patterns-dashboard-demo-17 {
+    column-gap: var(--space-4)
+}
+.cs-preview-pages-patterns-dashboard-demo-17 {
+    row-gap: var(--space-1)
+}
+.cs-preview-pages-components-page-168 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-components-page-365 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-components-page-389 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-components-page-486 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-patterns-chart-demo-108 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(var(--space-2) * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(var(--space-2) * var(--tw-space-y-reverse))
+}
+.cs-preview-pages-components-page-94 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-tokens-page-185 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(var(--space-3) * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(var(--space-3) * var(--tw-space-y-reverse))
+}
+.cs-preview-pages-components-page-40 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-components-page-359 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-tokens-page-202 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-patterns-agent-activity-demo-23 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-patterns-data-table-demo-51 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-patterns-form-demo-14 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(var(--space-4) * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(var(--space-4) * var(--tw-space-y-reverse))
+}
+.cs-preview-pages-tokens-page-218 > :not([hidden]) ~ :not([hidden]),
+.cs-preview-pages-patterns-chart-demo-104 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(var(--space-5) * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(var(--space-5) * var(--tw-space-y-reverse))
+}
+.cs-preview-pages-tokens-page-182 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(var(--space-6) * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(var(--space-6) * var(--tw-space-y-reverse))
+}
+.cs-preview-pages-patterns-agent-activity-demo-28 > :not([hidden]) ~ :not([hidden]) {
+    --tw-divide-y-reverse: 0;
+    border-top-width: calc(.0625rem * calc(1 - var(--tw-divide-y-reverse)));
+    border-bottom-width: calc(.0625rem * var(--tw-divide-y-reverse))
+}
+.cs-preview-pages-patterns-agent-activity-demo-28 > :not([hidden]) ~ :not([hidden]) {
+    border-color: var(--border)
+}
+.cs-preview-pages-components-page-174,
+.cs-preview-pages-components-page-313,
+.cs-preview-pages-components-page-341,
+.cs-preview-pages-components-page-422,
+.cs-preview-pages-components-page-431,
+.cs-preview-pages-components-page-442,
+.cs-preview-pages-patterns-page-45,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-257,
+.cs-preview-pages-patterns-dashboard-demo-12 {
+    overflow: hidden
+}
+.cs-preview-pages-tokens-page-270 {
+    overflow-x: auto
+}
+.cs-preview-app-37,
+.cs-preview-pages-components-page-175,
+.cs-preview-pages-components-page-398,
+.cs-preview-pages-components-page-454,
+.cs-preview-pages-patterns-agent-activity-demo-22,
+.cs-preview-pages-patterns-chart-demo-103,
+.cs-preview-pages-patterns-dashboard-demo-86,
+.cs-preview-pages-patterns-dashboard-demo-92,
+.cs-preview-pages-patterns-dashboard-demo-95,
+.cs-preview-pages-patterns-data-table-demo-50,
+.cs-preview-pages-patterns-explorer-demo-19,
+.cs-preview-pages-patterns-form-demo-13,
+.cs-preview-pages-patterns-form-results-demo-16,
+.cs-preview-pages-patterns-mapping-demo-14,
+.cs-preview-pages-patterns-master-detail-demo-17,
+.cs-preview-pages-patterns-master-detail-demo-190 {
+    overflow-y: auto
+}
+.cs-preview-pages-tokens-page-230 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+.cs-preview-pages-patterns-explorer-demo-20 {
+    white-space: pre-line
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24,
+.cs-preview-pages-components-page-99,
+.cs-preview-pages-components-page-170,
+.cs-preview-pages-components-page-174,
+.cs-preview-pages-components-page-313,
+.cs-preview-pages-components-page-341,
+.cs-preview-pages-components-page-403,
+.cs-preview-pages-components-page-422,
+.cs-preview-pages-components-page-431,
+.cs-preview-pages-components-page-442,
+.cs-preview-pages-tokens-page-233,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-257,
+.cs-preview-pages-tokens-page-285,
+.cs-preview-pages-patterns-agent-activity-demo-28 {
+    border-radius: var(--radius-md)
+}
+.cs-preview-dev-palette-lab-36,
+.cs-preview-pages-components-page-306,
+.cs-preview-pages-patterns-page-41,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-patterns-chart-demo-83,
+.cs-preview-pages-patterns-dashboard-demo-12,
+.cs-preview-pages-patterns-dashboard-demo-13,
+.cs-preview-pages-patterns-mapping-demo-23 {
+    border-radius: var(--radius-sm)
+}
+.cs-preview-pages-tokens-page-188,
+.cs-preview-pages-tokens-page-215,
+.cs-preview-pages-tokens-page-279,
+.cs-preview-pages-patterns-chart-demo-86,
+.cs-preview-pages-patterns-dashboard-demo-19,
+.cs-preview-pages-patterns-dashboard-demo-41 {
+    border-radius: var(--radius-xs)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24,
+.cs-preview-dev-palette-lab-36,
+.cs-preview-pages-components-page-99,
+.cs-preview-pages-components-page-170,
+.cs-preview-pages-components-page-174,
+.cs-preview-pages-components-page-313,
+.cs-preview-pages-components-page-341,
+.cs-preview-pages-components-page-422,
+.cs-preview-pages-components-page-431,
+.cs-preview-pages-components-page-442,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-233,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-279,
+.cs-preview-pages-tokens-page-285,
+.cs-preview-pages-patterns-agent-activity-demo-28,
+.cs-preview-pages-patterns-chart-demo-83 {
+    border-width: .0625rem
+}
+.cs-preview-pages-tokens-page-197 {
+    border-width: .125rem
+}
+.cs-preview-pages-components-page-41,
+.cs-preview-pages-patterns-page-38,
+.cs-preview-pages-tokens-page-272,
+.cs-preview-pages-tokens-page-276 {
+    border-bottom-width: .0625rem
+}
+.cs-preview-pages-components-page-179 {
+    border-left-width: .0625rem
+}
+.cs-preview-pages-patterns-dashboard-demo-92 {
+    border-right-width: .0625rem
+}
+.cs-preview-dev-palette-lab-39,
+.cs-preview-pages-tokens-page-207,
+.cs-preview-pages-tokens-page-251 {
+    border-top-width: .0625rem
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24,
+.cs-preview-dev-palette-lab-38,
+.cs-preview-dev-palette-lab-39,
+.cs-preview-pages-components-page-41,
+.cs-preview-pages-components-page-99,
+.cs-preview-pages-components-page-170,
+.cs-preview-pages-components-page-174,
+.cs-preview-pages-components-page-179,
+.cs-preview-pages-components-page-313,
+.cs-preview-pages-components-page-341,
+.cs-preview-pages-components-page-422,
+.cs-preview-pages-components-page-431,
+.cs-preview-pages-components-page-442,
+.cs-preview-pages-patterns-page-38,
+.cs-preview-pages-tokens-page-207,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-233,
+.cs-preview-pages-tokens-page-240,
+.cs-preview-pages-tokens-page-251,
+.cs-preview-pages-tokens-page-272,
+.cs-preview-pages-tokens-page-276,
+.cs-preview-pages-tokens-page-279,
+.cs-preview-pages-tokens-page-285,
+.cs-preview-pages-patterns-agent-activity-demo-28,
+.cs-preview-pages-patterns-chart-demo-83,
+.cs-preview-pages-patterns-dashboard-demo-92 {
+    border-color: var(--border)
+}
+.cs-preview-dev-palette-lab-37,
+.cs-preview-pages-tokens-page-197 {
+    border-color: var(--color-accent)
+}
+.cs-preview-pages-patterns-page-38 {
+    background-color: var(--bg)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24,
+.cs-preview-pages-components-page-99,
+.cs-preview-pages-components-page-170,
+.cs-preview-pages-tokens-page-285,
+.cs-preview-pages-patterns-agent-activity-demo-28,
+.cs-preview-pages-patterns-chart-demo-83 {
+    background-color: var(--card)
+}
+.cs-preview-pages-tokens-page-222,
+.cs-preview-pages-patterns-dashboard-demo-12 {
+    background-color: var(--color-bg-muted)
+}
+.cs-preview-pages-components-page-306 {
+    background-color: var(--color-bg-muted-hover)
+}
+.cs-preview-pages-components-page-179,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-patterns-mapping-demo-23 {
+    background-color: var(--color-bg-subtle)
+}
+.cs-preview-pages-tokens-page-188,
+.cs-preview-pages-tokens-page-215 {
+    background-color: var(--color-accent)
+}
+.cs-preview-pages-tokens-page-197 {
+    background-color: var(--color-accent-bg)
+}
+.cs-preview-dev-palette-lab-37 {
+    background-color: var(--color-accent-bg-strong)
+}
+.cs-preview-pages-patterns-page-42 {
+    background-color: var(--color-accent)
+}
+.cs-preview-pages-components-page-403 {
+    background-color: var(--color-header-bg)
+}
+.cs-preview-pages-tokens-page-221,
+.cs-preview-pages-tokens-page-272,
+.cs-preview-pages-tokens-page-276 {
+    padding: var(--space-2)
+}
+.cs-preview-dev-palette-lab-24,
+.cs-preview-pages-components-page-99,
+.cs-preview-pages-components-page-403,
+.cs-preview-pages-patterns-agent-activity-demo-29 {
+    padding: var(--space-3)
+}
+.cs-preview-pages-components-page-175,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-454,
+.cs-preview-pages-patterns-dashboard-demo-85,
+.cs-preview-pages-patterns-dashboard-demo-89,
+.cs-preview-pages-patterns-data-table-demo-50,
+.cs-preview-pages-patterns-explorer-demo-11,
+.cs-preview-pages-patterns-explorer-demo-19,
+.cs-preview-pages-patterns-form-results-demo-11,
+.cs-preview-pages-patterns-form-results-demo-16,
+.cs-preview-pages-patterns-mapping-demo-14,
+.cs-preview-pages-patterns-markdown-viewer-demo-7,
+.cs-preview-pages-patterns-master-detail-demo-17,
+.cs-preview-pages-patterns-master-detail-demo-190 {
+    padding: var(--space-4)
+}
+.cs-preview-pages-components-page-297,
+.cs-preview-pages-tokens-page-182,
+.cs-preview-pages-patterns-agent-activity-demo-22,
+.cs-preview-pages-patterns-chart-demo-103,
+.cs-preview-pages-patterns-form-demo-13 {
+    padding: var(--space-5)
+}
+.cs-preview-pages-components-page-306 {
+    padding-left: var(--space-1);
+    padding-right: var(--space-1)
+}
+.cs-preview-pages-patterns-chart-demo-83 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-36,
+.cs-preview-pages-patterns-page-41,
+.cs-preview-pages-patterns-mapping-demo-23 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+.cs-preview-pages-patterns-page-38 {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4)
+}
+.cs-preview-pages-components-page-306 {
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem
+}
+.cs-preview-pages-components-page-303 {
+    padding-top: var(--space-0-5);
+    padding-bottom: var(--space-0-5)
+}
+.cs-preview-dev-palette-lab-36,
+.cs-preview-pages-patterns-chart-demo-83 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-pages-patterns-page-38,
+.cs-preview-pages-patterns-page-41,
+.cs-preview-pages-patterns-dashboard-demo-107,
+.cs-preview-pages-patterns-mapping-demo-23 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+.cs-preview-pages-patterns-form-results-demo-21 {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4)
+}
+.cs-preview-pages-patterns-master-detail-demo-118 {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6)
+}
+.cs-preview-pages-patterns-form-results-demo-11 {
+    padding-bottom: 0
+}
+.cs-preview-pages-components-page-41 {
+    padding-bottom: var(--space-2)
+}
+.cs-preview-pages-patterns-dashboard-demo-92 {
+    padding-right: var(--space-4)
+}
+.cs-preview-dev-palette-lab-39,
+.cs-preview-pages-patterns-dashboard-demo-17 {
+    padding-top: var(--space-2)
+}
+.cs-preview-pages-tokens-page-207,
+.cs-preview-pages-tokens-page-251 {
+    padding-top: var(--space-4)
+}
+.cs-preview-pages-tokens-page-272 {
+    text-align: left
+}
+.cs-preview-pages-tokens-page-236,
+.cs-preview-pages-patterns-dashboard-demo-6,
+.cs-preview-pages-patterns-form-results-demo-21 {
+    text-align: center
+}
+.cs-preview-pages-patterns-dashboard-demo-11,
+.cs-preview-pages-patterns-dashboard-demo-16 {
+    text-align: right
+}
+.cs-preview-pages-components-page-369,
+.cs-preview-pages-components-page-375,
+.cs-preview-pages-tokens-page-187,
+.cs-preview-pages-tokens-page-200,
+.cs-preview-pages-tokens-page-204,
+.cs-preview-pages-tokens-page-214,
+.cs-preview-pages-tokens-page-229,
+.cs-preview-pages-tokens-page-236,
+.cs-preview-pages-tokens-page-277,
+.cs-preview-pages-patterns-agent-activity-demo-26,
+.cs-preview-pages-patterns-chart-demo-36,
+.cs-preview-pages-patterns-chart-demo-88,
+.cs-preview-pages-patterns-chart-demo-107,
+.cs-preview-pages-patterns-dashboard-demo-11,
+.cs-preview-pages-patterns-dashboard-demo-16,
+.cs-preview-pages-patterns-dashboard-demo-43,
+.cs-preview-pages-patterns-dashboard-demo-59,
+.cs-preview-pages-patterns-data-table-demo-29,
+.cs-preview-pages-patterns-form-demo-17,
+.cs-preview-pages-patterns-form-results-demo-25 {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+}
+.cs-preview-pages-components-page-465,
+.cs-preview-pages-patterns-explorer-demo-20,
+.cs-preview-pages-patterns-master-detail-demo-34,
+.cs-preview-pages-patterns-master-detail-demo-218 {
+    line-height: 1.625
+}
+.cs-preview-pages-components-page-46,
+.cs-preview-pages-patterns-page-41 {
+    text-decoration-line: none
+}
+.cs-preview-pages-patterns-chart-demo-83 {
+    --tw-shadow-color: var(--shadow-md);
+    --tw-shadow: var(--tw-shadow-colored)
+}
+.cs-preview-pages-patterns-dashboard-demo-13 {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+.cs-preview-pages-components-page-46,
+.cs-preview-pages-components-page-303,
+.cs-preview-pages-patterns-page-41 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-24 {
+    box-shadow: var(--shadow-lg)
+}
+.cs-preview-pages-patterns-page-42 {
+    color: var(--color-btn-primary-text)
+}
+
+.cs-preview-pages-patterns-page-46 {
+    font-size: var(--font-size-page-title);
+    font-weight: var(--font-weight-semibold);
+    padding: var(--space-4) var(--space-4) 0
+}
+.cs-preview-pages-components-page-303 {
+    color: var(--color-link)
+}
+.cs-preview-pages-patterns-form-demo-53 {
+    color: var(--color-success)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-36,
+.cs-preview-pages-components-page-344,
+.cs-preview-pages-components-page-365,
+.cs-preview-pages-components-page-465,
+.cs-preview-pages-tokens-page-216,
+.cs-preview-pages-tokens-page-219,
+.cs-preview-pages-tokens-page-227,
+.cs-preview-pages-tokens-page-229,
+.cs-preview-pages-tokens-page-250,
+.cs-preview-pages-patterns-chart-demo-84,
+.cs-preview-pages-patterns-chart-demo-88,
+.cs-preview-pages-patterns-dashboard-demo-7,
+.cs-preview-pages-patterns-dashboard-demo-16,
+.cs-preview-pages-patterns-data-table-demo-52,
+.cs-preview-pages-patterns-explorer-demo-20,
+.cs-preview-pages-patterns-mapping-demo-24,
+.cs-preview-pages-patterns-master-detail-demo-34,
+.cs-preview-pages-patterns-master-detail-demo-37,
+.cs-preview-pages-patterns-master-detail-demo-79,
+.cs-preview-pages-patterns-master-detail-demo-95,
+.cs-preview-pages-patterns-master-detail-demo-218 {
+    color: var(--fg)
+}
+.cs-preview-dev-palette-lab-28,
+.cs-preview-dev-palette-lab-31,
+.cs-preview-dev-palette-lab-33,
+.cs-preview-dev-palette-lab-39,
+.cs-preview-pages-components-page-46,
+.cs-preview-pages-components-page-169,
+.cs-preview-pages-components-page-305,
+.cs-preview-pages-components-page-319,
+.cs-preview-pages-components-page-370,
+.cs-preview-pages-components-page-390,
+.cs-preview-pages-components-page-393,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-451,
+.cs-preview-pages-components-page-459,
+.cs-preview-pages-components-page-470,
+.cs-preview-pages-patterns-page-43,
+.cs-preview-pages-tokens-page-187,
+.cs-preview-pages-tokens-page-193,
+.cs-preview-pages-tokens-page-200,
+.cs-preview-pages-tokens-page-204,
+.cs-preview-pages-tokens-page-208,
+.cs-preview-pages-tokens-page-213,
+.cs-preview-pages-tokens-page-230,
+.cs-preview-pages-tokens-page-236,
+.cs-preview-pages-tokens-page-252,
+.cs-preview-pages-tokens-page-256,
+.cs-preview-pages-patterns-agent-activity-demo-25,
+.cs-preview-pages-patterns-chart-demo-87,
+.cs-preview-pages-patterns-chart-demo-106,
+.cs-preview-pages-patterns-chart-demo-111,
+.cs-preview-pages-patterns-dashboard-demo-11,
+.cs-preview-pages-patterns-dashboard-demo-18,
+.cs-preview-pages-patterns-dashboard-demo-42,
+.cs-preview-pages-patterns-dashboard-demo-96,
+.cs-preview-pages-patterns-data-table-demo-29,
+.cs-preview-pages-patterns-data-table-demo-43,
+.cs-preview-pages-patterns-data-table-demo-53,
+.cs-preview-pages-patterns-explorer-demo-21,
+.cs-preview-pages-patterns-form-demo-16,
+.cs-preview-pages-patterns-form-results-demo-18,
+.cs-preview-pages-patterns-form-results-demo-21,
+.cs-preview-pages-patterns-form-results-demo-25,
+.cs-preview-pages-patterns-mapping-demo-21,
+.cs-preview-pages-patterns-mapping-demo-26,
+.cs-preview-pages-patterns-markdown-viewer-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-22,
+.cs-preview-pages-patterns-master-detail-demo-33,
+.cs-preview-pages-patterns-master-detail-demo-43,
+.cs-preview-pages-patterns-master-detail-demo-118 {
+    color: var(--muted)
+}
+.cs-preview-pages-components-page-319 {
+    font-size: var(--font-size-body)
+}
+.cs-preview-pages-patterns-master-detail-demo-79 {
+    font-size: var(--font-size-lg)
+}
+.cs-preview-pages-patterns-chart-demo-110,
+.cs-preview-pages-patterns-master-detail-demo-95 {
+    font-size: var(--font-size-md)
+}
+.cs-preview-pages-components-page-298,
+.cs-preview-pages-tokens-page-183 {
+    font-size: var(--font-size-page-title)
+}
+.cs-preview-pages-components-page-42,
+.cs-preview-pages-patterns-agent-activity-demo-24,
+.cs-preview-pages-patterns-chart-demo-105,
+.cs-preview-pages-patterns-data-table-demo-52,
+.cs-preview-pages-patterns-form-demo-15 {
+    font-size: var(--font-size-section-title)
+}
+.cs-preview-pages-components-page-169,
+.cs-preview-pages-components-page-303,
+.cs-preview-pages-components-page-305,
+.cs-preview-pages-components-page-344,
+.cs-preview-pages-components-page-365,
+.cs-preview-pages-components-page-390,
+.cs-preview-pages-components-page-426,
+.cs-preview-pages-components-page-444,
+.cs-preview-pages-components-page-446,
+.cs-preview-pages-components-page-465,
+.cs-preview-pages-components-page-470,
+.cs-preview-pages-components-page-485,
+.cs-preview-pages-components-page-490,
+.cs-preview-pages-tokens-page-208,
+.cs-preview-pages-tokens-page-213,
+.cs-preview-pages-tokens-page-219,
+.cs-preview-pages-tokens-page-271,
+.cs-preview-pages-patterns-agent-activity-demo-25,
+.cs-preview-pages-patterns-chart-demo-106,
+.cs-preview-pages-patterns-dashboard-demo-96,
+.cs-preview-pages-patterns-data-table-demo-53,
+.cs-preview-pages-patterns-explorer-demo-20,
+.cs-preview-pages-patterns-explorer-demo-21,
+.cs-preview-pages-patterns-form-demo-16,
+.cs-preview-pages-patterns-form-results-demo-18,
+.cs-preview-pages-patterns-form-results-demo-21,
+.cs-preview-pages-patterns-mapping-demo-21,
+.cs-preview-pages-patterns-mapping-demo-23,
+.cs-preview-pages-patterns-markdown-viewer-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-34,
+.cs-preview-pages-patterns-master-detail-demo-35,
+.cs-preview-pages-patterns-master-detail-demo-43,
+.cs-preview-pages-patterns-master-detail-demo-118,
+.cs-preview-pages-patterns-master-detail-demo-192,
+.cs-preview-pages-patterns-master-detail-demo-215,
+.cs-preview-pages-patterns-master-detail-demo-218 {
+    font-size: var(--font-size-sm)
+}
+.cs-preview-pages-patterns-dashboard-demo-7 {
+    font-size: var(--font-size-stat)
+}
+.cs-preview-dev-palette-lab-22,
+.cs-preview-dev-palette-lab-28,
+.cs-preview-dev-palette-lab-33,
+.cs-preview-dev-palette-lab-36,
+.cs-preview-dev-palette-lab-39,
+.cs-preview-pages-components-page-46,
+.cs-preview-pages-components-page-66,
+.cs-preview-pages-components-page-306,
+.cs-preview-pages-components-page-375,
+.cs-preview-pages-components-page-393,
+.cs-preview-pages-components-page-451,
+.cs-preview-pages-patterns-page-41,
+.cs-preview-pages-tokens-page-187,
+.cs-preview-pages-tokens-page-193,
+.cs-preview-pages-tokens-page-200,
+.cs-preview-pages-tokens-page-204,
+.cs-preview-pages-tokens-page-216,
+.cs-preview-pages-tokens-page-229,
+.cs-preview-pages-tokens-page-230,
+.cs-preview-pages-tokens-page-236,
+.cs-preview-pages-tokens-page-250,
+.cs-preview-pages-tokens-page-252,
+.cs-preview-pages-tokens-page-256,
+.cs-preview-pages-tokens-page-277,
+.cs-preview-pages-patterns-agent-activity-demo-26,
+.cs-preview-pages-patterns-chart-demo-83,
+.cs-preview-pages-patterns-chart-demo-107,
+.cs-preview-pages-patterns-chart-demo-111,
+.cs-preview-pages-patterns-dashboard-demo-11,
+.cs-preview-pages-patterns-dashboard-demo-16,
+.cs-preview-pages-patterns-dashboard-demo-18,
+.cs-preview-pages-patterns-data-table-demo-29,
+.cs-preview-pages-patterns-form-demo-17,
+.cs-preview-pages-patterns-form-results-demo-25,
+.cs-preview-pages-patterns-master-detail-demo-33 {
+    font-size: var(--font-size-xs)
+}
+.cs-preview-pages-patterns-chart-demo-88,
+.cs-preview-pages-patterns-dashboard-demo-16,
+.cs-preview-pages-patterns-dashboard-demo-43 {
+    font-variant-numeric: tabular-nums
+}
+.cs-preview-pages-components-page-298,
+.cs-preview-pages-tokens-page-183,
+.cs-preview-pages-patterns-dashboard-demo-7 {
+    font-weight: var(--font-weight-bold)
+}
+.cs-preview-pages-patterns-page-41,
+.cs-preview-pages-tokens-page-216,
+.cs-preview-pages-tokens-page-250,
+.cs-preview-pages-patterns-chart-demo-110,
+.cs-preview-pages-patterns-data-table-demo-25,
+.cs-preview-pages-patterns-mapping-demo-25 {
+    font-weight: var(--font-weight-medium)
+}
+.cs-preview-pages-components-page-42,
+.cs-preview-pages-components-page-173,
+.cs-preview-pages-tokens-page-219,
+.cs-preview-pages-patterns-agent-activity-demo-24,
+.cs-preview-pages-patterns-chart-demo-35,
+.cs-preview-pages-patterns-chart-demo-84,
+.cs-preview-pages-patterns-chart-demo-105,
+.cs-preview-pages-patterns-dashboard-demo-39,
+.cs-preview-pages-patterns-dashboard-demo-58,
+.cs-preview-pages-patterns-data-table-demo-52,
+.cs-preview-pages-patterns-form-demo-15,
+.cs-preview-pages-patterns-master-detail-demo-37,
+.cs-preview-pages-patterns-master-detail-demo-79,
+.cs-preview-pages-patterns-master-detail-demo-95 {
+    font-weight: var(--font-weight-semibold)
+}
+.cs-preview-pages-patterns-dashboard-demo-13 {
+    transition-duration: 0.3s
+}
+.cs-preview-dev-palette-lab-38:hover,
+.cs-preview-pages-patterns-page-43:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+.cs-preview-pages-tokens-page-275:hover {
+    background-color: var(--color-row-hover)
+}
+.cs-preview-pages-components-page-46:hover {
+    color: var(--color-link)
+}
+.cs-preview-pages-components-page-303:hover {
+    color: var(--color-link-hover)
+}
+.cs-preview-dev-palette-lab-31:hover,
+.cs-preview-pages-patterns-page-43:hover {
+    color: var(--fg)
+}
+@media (min-width: 40em) {
+    .cs-preview-pages-components-page-300 {
+        columns: 3
+    }
+    .cs-preview-pages-tokens-page-220 {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+    .cs-preview-pages-tokens-page-232 {
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+    }
+}
+@media (min-width: 48em) {
+    .cs-preview-pages-tokens-page-238 {
+        grid-template-columns: repeat(10, minmax(0, 1fr))
+    }
+    .cs-preview-pages-components-page-334 {
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+    .cs-preview-pages-components-page-388,
+.cs-preview-pages-tokens-page-220 {
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+    }
+    .cs-preview-pages-tokens-page-283 {
+        grid-template-columns: repeat(4, minmax(0, 1fr))
+    }
+    .cs-preview-pages-tokens-page-232 {
+        grid-template-columns: repeat(5, minmax(0, 1fr))
+    }
+}
+
+/* AppShell owns scrolling; mermaid's absolutely positioned tooltip must not grow the document. */
+html, body { height: 100%; overflow: hidden; }
+
+.cs-preview-event-lanes-stack,
+.cs-preview-event-lanes-fixture {
+    display: flex;
+    flex-direction: column
+}
+
+.cs-preview-event-lanes-stack {
+    gap: var(--space-6)
+}
+
+.cs-preview-event-lanes-fixture {
+    gap: var(--space-2);
+    min-width: 0
+}
+
+.cs-preview-event-lanes-heading,
+.cs-preview-event-lanes-controls {
+    align-items: center;
+    display: flex;
+    gap: var(--space-3);
+    justify-content: space-between
+}
+
+.cs-preview-event-lanes-heading h3 {
+    font-size: var(--font-size-md);
+    margin: 0
+}
+
+.cs-preview-event-lanes-heading output {
+    color: var(--muted);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs)
+}
+
+.cs-preview-event-lanes-ruler {
+    height: 100%;
+    position: relative
+}
+
+.cs-preview-event-lanes-ruler span {
+    color: var(--muted);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    position: absolute;
+    transform: translateX(-50%)
+}
+
+.cs-preview-event-lane-accent {
+    color: var(--color-accent)
+}
+
+.cs-preview-event-lane-muted {
+    color: var(--muted);
+    font-style: italic
+}
+
+/* --- Markdown flavors ladder + spec frontmatter panel -------------------- */
+/* Added by hand, in the same plain-CSS style as the generated rules above.
+   Tokens only: stylelint forbids hex colours and px units here. */
+
+.cs-preview-flavors {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6)
+}
+
+.cs-preview-flavors-lede {
+    color: var(--muted);
+    max-width: 70ch
+}
+
+.cs-preview-flavors-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--font-size-sm)
+}
+
+.cs-preview-flavors-caption {
+    text-align: left;
+    color: var(--muted);
+    padding-bottom: var(--space-2)
+}
+
+.cs-preview-flavors-table th,
+.cs-preview-flavors-table td {
+    text-align: left;
+    padding: var(--space-2);
+    border-bottom: .0625rem solid var(--border);
+    vertical-align: top
+}
+
+.cs-preview-flavors-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3)
+}
+
+.cs-preview-flavors-import {
+    margin: 0;
+    padding: var(--space-2);
+    background: var(--color-bg-subtle);
+    border: .0625rem solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    font-size: var(--font-size-sm)
+}
+
+.cs-preview-flavors-size {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--font-size-sm)
+}
+
+.cs-preview-flavors-use {
+    margin: 0;
+    color: var(--muted);
+    max-width: 70ch
+}
+
+/* One flavor renders at a time, so this is the only scroll surface on the page
+   besides the page itself — the six capped portholes are gone. */
+.cs-preview-flavors-render {
+    border-top: .0625rem solid var(--border);
+    padding-top: var(--space-3);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto
+}
+
+.cs-preview-spec-pane {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0
+}
+
+.cs-preview-spec-frontmatter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-bottom: .0625rem solid var(--border);
+    background: var(--color-bg-subtle)
+}
+
+.cs-preview-spec-frontmatter-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center
+}
+
+.cs-preview-spec-frontmatter-status,
+.cs-preview-spec-frontmatter-since {
+    font-size: var(--font-size-sm);
+    color: var(--muted)
+}
+
+.cs-preview-spec-frontmatter-summary {
+    margin: 0;
+    max-width: 70ch
+}
+
+.cs-preview-spec-frontmatter-heading {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--muted)
+}
+
+.cs-preview-spec-frontmatter-list {
+    margin: var(--space-1) 0 0;
+    padding-left: var(--space-4);
+    font-size: var(--font-size-sm)
+}
+
+.cs-preview-spec-frontmatter-note {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--muted);
+    max-width: 70ch
+}
+
+.cs-preview-spec-frontmatter-link {
+    font-size: var(--font-size-sm);
+    color: var(--color-link);
+    background: none;
+    border: .0625rem solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer
+}
+
+/* The flavors ladder sits above these cards, so the demo root no longer passes
+   a definite height down. SplitPane needs one, so the browser and the standalone
+   viewer carry their own rather than inheriting a height that resolves to zero. */
+.cs-preview-spec-browser {
+    height: 40rem;
+    margin: calc(var(--space-4) * -1)
+}
+
+.cs-preview-spec-standalone {
+    height: 32rem;
+    margin: calc(var(--space-4) * -1)
+}
+
+.cs-preview-spec-body {
+    flex: 1;
+    min-height: 0
+}
+
+/* This page is now taller than the viewport — the ladder, then the browser, then
+   the standalone viewer. The shared demo root pins height to 100%, which clips
+   everything after the first screenful, so this page manages its own flow. */
+/* The patterns tab container is sized for demos that fill the pane exactly
+   (Explorer, Dashboard, Master-Detail), so a long document gets clipped rather
+   than scrolled. This tab is a document, so it owns its own scrolling instead of
+   changing that container for every other tab. */
+.cs-preview-markdown-demo-root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-4)
+}
+
+/* --- Docs page ---------------------------------------------------------- */
+.cs-preview-docs-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto
+}
+
+.cs-preview-docs-title {
+    margin: 0;
+    font-size: var(--font-size-page-title);
+    font-weight: var(--font-weight-semibold)
+}
+
+.cs-preview-docs-lede {
+    margin: 0;
+    color: var(--muted);
+    max-width: 70ch
+}
+
+/* Fills whatever height the window leaves, rather than a fixed size that clips
+   on short windows and strands a band of empty space on tall ones. Below the
+   floor the browser stops shrinking and the page scrolls instead. */
+.cs-preview-docs-browser {
+    flex: 1 1 auto;
+    min-height: 28rem;
+    border: .0625rem solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden
+}
+
+.cs-preview-docs-split {
+    height: 100%
+}
+
+/* --- flavor rail + panel ------------------------------------------------- */
+.cs-preview-flavors-layout {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    flex: 1;
+    min-height: 0
+}
+
+.cs-preview-flavors-rail {
+    flex: none;
+    width: 15rem;
+    position: sticky;
+    top: 0
+}
+
+.cs-preview-flavors-panel {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border: .0625rem solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3)
+}
+
+@media (max-width: 60rem) {
+    .cs-preview-flavors-layout {
+        flex-direction: column
+    }
+
+    .cs-preview-flavors-rail {
+        width: 100%;
+        position: static
+    }
+}

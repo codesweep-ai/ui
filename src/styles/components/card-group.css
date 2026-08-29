@@ -1,0 +1,20 @@
+/* card-group component styles. */
+.cs-component-card-group-5 {
+    display: flex
+}
+
+.cs-component-card-group-6 {
+    height: 100%
+}
+
+.cs-component-card-group-6 {
+    min-height: 0
+}
+
+.cs-component-card-group-5 {
+    flex-direction: column
+}
+
+.cs-component-card-group-5 {
+    gap: var(--space-4)
+}

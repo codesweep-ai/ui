@@ -1,0 +1,18 @@
+[
+  {
+    "theme": "light",
+    "components": 35,
+    "interactionStates": 3,
+    "axeViolations": 0,
+    "focusedTreeItem": "button-tsx",
+    "splitPane": "200 -> 260"
+  },
+  {
+    "theme": "dark",
+    "components": 35,
+    "interactionStates": 3,
+    "axeViolations": 0,
+    "focusedTreeItem": "button-tsx",
+    "splitPane": "200 -> 260"
+  }
+]

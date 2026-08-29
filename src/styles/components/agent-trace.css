@@ -1,0 +1,206 @@
+@import "./button.css";
+@import "./pulse-badge.css";
+@import "./skeleton.css";
+
+/* agent-trace component styles. */
+.cs-component-agent-trace-24,
+.cs-component-agent-trace-29,
+.cs-component-agent-trace-38,
+.cs-component-agent-trace-51 {
+    display: flex
+}
+
+.cs-component-agent-trace-39,
+.cs-component-agent-trace-46 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-agent-trace-20 {
+    height: var(--icon-size-sm)
+}
+
+.cs-component-agent-trace-57 {
+    height: var(--icon-size-xs)
+}
+
+.cs-component-agent-trace-39,
+.cs-component-agent-trace-46 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-agent-trace-20 {
+    width: var(--icon-size-sm)
+}
+
+.cs-component-agent-trace-57 {
+    width: var(--icon-size-xs)
+}
+
+.cs-component-agent-trace-51 {
+    width: 100%
+}
+
+.cs-component-agent-trace-58 {
+    min-width: 0
+}
+
+.cs-component-agent-trace-58 {
+    flex: 1 1 0%
+}
+
+.cs-component-agent-trace-20,
+.cs-component-agent-trace-56,
+.cs-component-agent-trace-59 {
+    flex-shrink: 0
+}
+
+.cs-component-agent-trace-55 {
+    cursor: default
+}
+
+.cs-component-agent-trace-54 {
+    cursor: pointer
+}
+
+.cs-component-agent-trace-24,
+.cs-component-agent-trace-38 {
+    flex-direction: column
+}
+
+.cs-component-agent-trace-29,
+.cs-component-agent-trace-37,
+.cs-component-agent-trace-38,
+.cs-component-agent-trace-51 {
+    align-items: center
+}
+
+.cs-component-agent-trace-37 {
+    justify-content: center
+}
+
+.cs-component-agent-trace-29,
+.cs-component-agent-trace-38,
+.cs-component-agent-trace-51 {
+    gap: var(--space-2)
+}
+
+.cs-component-agent-trace-58 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.cs-component-agent-trace-25 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-agent-trace-25 {
+    border-width: .0625rem
+}
+
+.cs-component-agent-trace-31,
+.cs-component-agent-trace-61 {
+    border-top-width: .0625rem
+}
+
+.cs-component-agent-trace-52 {
+    border-style: none
+}
+
+.cs-component-agent-trace-25,
+.cs-component-agent-trace-31,
+.cs-component-agent-trace-61 {
+    border-color: var(--border)
+}
+
+.cs-component-agent-trace-26 {
+    background-color: var(--card)
+}
+
+.cs-component-agent-trace-61 {
+    background-color: var(--color-bg-subtle)
+}
+
+.cs-component-agent-trace-52 {
+    background-color: transparent
+}
+
+.cs-component-agent-trace-30,
+.cs-component-agent-trace-38 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-agent-trace-60 {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5)
+}
+
+.cs-component-agent-trace-30,
+.cs-component-agent-trace-60 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-agent-trace-38 {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-5)
+}
+
+.cs-component-agent-trace-52 {
+    text-align: left
+}
+
+.cs-component-agent-trace-37 {
+    text-align: center
+}
+
+.cs-component-agent-trace-54 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-agent-trace-16,
+.cs-component-agent-trace-39 {
+    color: var(--color-error)
+}
+
+.cs-component-agent-trace-14 {
+    color: var(--color-success)
+}
+
+.cs-component-agent-trace-15 {
+    color: var(--color-warning)
+}
+
+.cs-component-agent-trace-40,
+.cs-component-agent-trace-53 {
+    color: var(--fg)
+}
+
+.cs-component-agent-trace-17,
+.cs-component-agent-trace-41,
+.cs-component-agent-trace-46,
+.cs-component-agent-trace-56,
+.cs-component-agent-trace-59 {
+    color: var(--muted)
+}
+
+.cs-component-agent-trace-40,
+.cs-component-agent-trace-52 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-agent-trace-41,
+.cs-component-agent-trace-59 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-agent-trace-59 {
+    font-variant-numeric: tabular-nums
+}
+
+.cs-component-agent-trace-54:hover {
+    background-color: var(--color-row-hover)
+}

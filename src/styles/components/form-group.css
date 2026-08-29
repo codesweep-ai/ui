@@ -1,0 +1,34 @@
+/* form-group component styles. */
+.cs-component-form-group-18 {
+    margin-left: var(--space-0-5)
+}
+
+.cs-component-form-group-15 {
+    display: flex
+}
+
+.cs-component-form-group-16 {
+    cursor: default
+}
+
+.cs-component-form-group-15 {
+    flex-direction: column
+}
+
+.cs-component-form-group-15 {
+    gap: var(--space-1)
+}
+
+.cs-component-form-group-18,
+.cs-component-form-group-20 {
+    color: var(--color-error)
+}
+
+.cs-component-form-group-21 {
+    color: var(--muted)
+}
+
+.cs-component-form-group-20,
+.cs-component-form-group-21 {
+    font-size: var(--font-size-xs)
+}

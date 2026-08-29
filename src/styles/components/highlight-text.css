@@ -1,0 +1,17 @@
+/* highlight-text component styles. */
+.cs-component-highlight-text-10 {
+    border-radius: var(--radius-xs)
+}
+
+.cs-component-highlight-text-10 {
+    background-color: var(--color-highlight)
+}
+
+.cs-component-highlight-text-10 {
+    padding-left: var(--space-px);
+    padding-right: var(--space-px)
+}
+
+.cs-component-highlight-text-10 {
+    color: var(--fg)
+}

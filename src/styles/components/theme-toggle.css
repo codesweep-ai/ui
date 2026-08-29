@@ -1,0 +1,123 @@
+/* theme-toggle component styles. */
+.cs-component-theme-toggle-24,
+.cs-component-theme-toggle-32 {
+    display: inline-flex
+}
+
+.cs-component-theme-toggle-42 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-theme-toggle-42 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-theme-toggle-26,
+.cs-component-theme-toggle-36 {
+    cursor: pointer
+}
+
+.cs-component-theme-toggle-24,
+.cs-component-theme-toggle-32 {
+    align-items: center
+}
+
+.cs-component-theme-toggle-32 {
+    justify-content: center
+}
+
+.cs-component-theme-toggle-24 {
+    gap: var(--space-1)
+}
+
+.cs-component-theme-toggle-33 {
+    border-radius: var(--radius-md)
+}
+
+.cs-component-theme-toggle-26 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-theme-toggle-33 {
+    border-width: .0625rem
+}
+
+.cs-component-theme-toggle-33 {
+    border-color: var(--border)
+}
+
+.cs-component-theme-toggle-27 {
+    background-color: var(--color-bg-muted)
+}
+
+.cs-component-theme-toggle-28,
+.cs-component-theme-toggle-34 {
+    background-color: transparent
+}
+
+.cs-component-theme-toggle-32 {
+    padding: var(--space-2)
+}
+
+.cs-component-theme-toggle-26 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-theme-toggle-26 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-theme-toggle-36 {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-theme-toggle-26 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-theme-toggle-34 {
+    color: var(--color-header-text)
+}
+
+.cs-component-theme-toggle-27 {
+    color: var(--fg)
+}
+
+.cs-component-theme-toggle-28 {
+    color: var(--muted)
+}
+
+.cs-component-theme-toggle-26 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-theme-toggle-35:hover {
+    border-color: var(--muted)
+}
+
+.cs-component-theme-toggle-35:hover {
+    background-color: var(--color-nav-hover)
+}
+
+.cs-component-theme-toggle-28:hover {
+    color: var(--fg)
+}
+
+.cs-component-theme-toggle-37:focus {
+    outline: .125rem solid transparent;
+    outline-offset: .125rem
+}
+
+.cs-component-theme-toggle-37:focus {
+    box-shadow: 0 0 0 .125rem var(--color-accent)
+}
+
+.cs-component-theme-toggle-36:active {
+    transform: scale(.95)
+}

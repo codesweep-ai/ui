@@ -1,0 +1,375 @@
+@import "./button.css";
+@import "./highlight-text.css";
+@import "./skeleton.css";
+
+/* tree component styles. */
+.cs-component-tree-104 {
+    position: absolute
+}
+
+.cs-component-tree-94 {
+    position: relative
+}
+
+.cs-component-tree-104 {
+    right: var(--space-1)
+}
+
+.cs-component-tree-104 {
+    top: 50%
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-91,
+.cs-component-tree-92,
+.cs-component-tree-93,
+.cs-component-tree-121,
+.cs-component-tree-122,
+.cs-component-tree-128,
+.cs-component-tree-147,
+.cs-component-tree-150,
+.cs-component-tree-156 {
+    display: flex
+}
+
+.cs-component-tree-157,
+.cs-component-tree-166 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-tree-31,
+.cs-component-tree-32 {
+    height: var(--icon-size-sm)
+}
+
+.cs-component-tree-106 {
+    height: var(--icon-size-xs)
+}
+
+.cs-component-tree-91 {
+    height: 100%
+}
+
+.cs-component-tree-91,
+.cs-component-tree-142 {
+    min-height: 0
+}
+
+.cs-component-tree-157,
+.cs-component-tree-166 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-tree-31,
+.cs-component-tree-32,
+.cs-component-tree-33 {
+    width: var(--icon-size-sm)
+}
+
+.cs-component-tree-106 {
+    width: var(--icon-size-xs)
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44 {
+    width: fit-content
+}
+
+.cs-component-tree-96 {
+    width: 100%
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44 {
+    min-width: 100%
+}
+
+.cs-component-tree-94,
+.cs-component-tree-142 {
+    flex: 1 1 0%
+}
+
+.cs-component-tree-30,
+.cs-component-tree-32,
+.cs-component-tree-92 {
+    flex-shrink: 0
+}
+
+.cs-component-tree-104 {
+    transform: translateY(-50%)
+}
+
+.cs-component-tree-30 {
+    cursor: grab
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-104,
+.cs-component-tree-113,
+.cs-component-tree-130,
+.cs-component-tree-136 {
+    cursor: pointer
+}
+
+.cs-component-tree-25,
+.cs-component-tree-138 {
+    flex-direction: row-reverse
+}
+
+.cs-component-tree-91,
+.cs-component-tree-92,
+.cs-component-tree-147,
+.cs-component-tree-156 {
+    flex-direction: column
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-93,
+.cs-component-tree-121,
+.cs-component-tree-122,
+.cs-component-tree-128,
+.cs-component-tree-150,
+.cs-component-tree-156 {
+    align-items: center
+}
+
+.cs-component-tree-122 {
+    justify-content: space-between
+}
+
+.cs-component-tree-128 {
+    gap: var(--space-0-5)
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-92,
+.cs-component-tree-93,
+.cs-component-tree-147 {
+    gap: var(--space-1)
+}
+
+.cs-component-tree-150,
+.cs-component-tree-156 {
+    gap: var(--space-2)
+}
+
+.cs-component-tree-138 {
+    align-self: flex-end
+}
+
+.cs-component-tree-142 {
+    overflow: auto
+}
+
+.cs-component-tree-34 {
+    white-space: nowrap
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-96,
+.cs-component-tree-111,
+.cs-component-tree-130 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-tree-96 {
+    border-width: .0625rem
+}
+
+.cs-component-tree-92 {
+    border-bottom-width: .0625rem
+}
+
+.cs-component-tree-104,
+.cs-component-tree-113,
+.cs-component-tree-130,
+.cs-component-tree-136 {
+    border-style: none
+}
+
+.cs-component-tree-92,
+.cs-component-tree-96 {
+    border-color: var(--border)
+}
+
+.cs-component-tree-92,
+.cs-component-tree-97 {
+    background-color: var(--card)
+}
+
+.cs-component-tree-27,
+.cs-component-tree-28 {
+    background-color: var(--color-accent-bg)
+}
+
+.cs-component-tree-26 {
+    background-color: var(--color-accent-bg-strong,var(--color-accent-bg))
+}
+
+.cs-component-tree-104,
+.cs-component-tree-113,
+.cs-component-tree-130,
+.cs-component-tree-136 {
+    background-color: transparent
+}
+
+.cs-component-tree-136 {
+    padding: 0
+}
+
+.cs-component-tree-104,
+.cs-component-tree-130 {
+    padding: var(--space-0-5)
+}
+
+.cs-component-tree-111 {
+    padding: var(--space-1)
+}
+
+.cs-component-tree-147 {
+    padding: var(--space-2)
+}
+
+.cs-component-tree-156 {
+    padding: var(--space-6)
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-88,
+.cs-component-tree-92,
+.cs-component-tree-98 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44,
+.cs-component-tree-92,
+.cs-component-tree-98 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-tree-88 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-tree-139 {
+    text-align: left
+}
+
+.cs-component-tree-156 {
+    text-align: center
+}
+
+.cs-component-tree-89 {
+    font-style: italic
+}
+
+.cs-component-tree-30 {
+    opacity: 0
+}
+
+.cs-component-tree-26 {
+    box-shadow: 0 0 0 .0625rem var(--color-accent)
+}
+
+.cs-component-tree-24,
+.cs-component-tree-102,
+.cs-component-tree-113,
+.cs-component-tree-130,
+.cs-component-tree-137 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-tree-26,
+.cs-component-tree-28 {
+    color: var(--color-accent)
+}
+
+.cs-component-tree-157 {
+    color: var(--color-error)
+}
+
+.cs-component-tree-29,
+.cs-component-tree-97,
+.cs-component-tree-158 {
+    color: var(--fg)
+}
+
+.cs-component-tree-89,
+.cs-component-tree-104,
+.cs-component-tree-111,
+.cs-component-tree-123,
+.cs-component-tree-130,
+.cs-component-tree-135,
+.cs-component-tree-161,
+.cs-component-tree-166 {
+    color: var(--muted)
+}
+
+.cs-component-tree-158 {
+    font-size: var(--font-size-body)
+}
+
+.cs-component-tree-161 {
+    font-size: var(--font-size-caption)
+}
+
+.cs-component-tree-23,
+.cs-component-tree-44 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-tree-89,
+.cs-component-tree-99,
+.cs-component-tree-123,
+.cs-component-tree-135 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-tree-123 {
+    font-variant-numeric: tabular-nums
+}
+
+.cs-component-tree-100::placeholder {
+    color: var(--color-neutral);
+    opacity: 1
+}
+
+.cs-component-tree-112:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-tree-24:hover {
+    background-color: var(--color-row-hover)
+}
+
+.cs-component-tree-104:hover,
+.cs-component-tree-112:hover,
+.cs-component-tree-130:hover,
+.cs-component-tree-137:hover {
+    color: var(--fg)
+}
+
+.cs-component-tree-101:focus {
+    outline: .125rem solid transparent;
+    outline-offset: .125rem
+}
+
+.cs-component-tree-101:focus {
+    box-shadow: 0 0 0 .125rem var(--color-accent)
+}
+
+.cs-component-tree-23:hover .cs-component-tree-30 {
+    opacity: 0.6
+}

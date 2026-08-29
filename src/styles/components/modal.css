@@ -1,0 +1,167 @@
+/* modal component styles. */
+.cs-component-modal-14 {
+    position: fixed
+}
+
+.cs-component-modal-14 {
+    inset: 0
+}
+
+.cs-component-modal-14 {
+    z-index: var(--z-modal)
+}
+
+.cs-component-modal-18 {
+    margin-top: var(--modal-margin-top)
+}
+
+.cs-component-modal-14,
+.cs-component-modal-18,
+.cs-component-modal-23,
+.cs-component-modal-30 {
+    display: flex
+}
+
+.cs-component-modal-28 {
+    height: var(--icon-size-lg)
+}
+
+.cs-component-modal-29 {
+    min-height: 0
+}
+
+.cs-component-modal-28 {
+    width: var(--icon-size-lg)
+}
+
+.cs-component-modal-29 {
+    flex: 1 1 0%
+}
+
+.cs-component-modal-26 {
+    cursor: pointer
+}
+
+.cs-component-modal-18 {
+    flex-direction: column
+}
+
+.cs-component-modal-14 {
+    align-items: flex-start
+}
+
+.cs-component-modal-23 {
+    align-items: center
+}
+
+.cs-component-modal-30 {
+    justify-content: flex-end
+}
+
+.cs-component-modal-14 {
+    justify-content: center
+}
+
+.cs-component-modal-23 {
+    justify-content: space-between
+}
+
+.cs-component-modal-30 {
+    gap: var(--space-2)
+}
+
+.cs-component-modal-18 {
+    overflow: hidden
+}
+
+.cs-component-modal-29 {
+    overflow-y: auto
+}
+
+.cs-component-modal-20 {
+    border-radius: var(--radius-lg)
+}
+
+.cs-component-modal-26 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-modal-19 {
+    border-width: .0625rem
+}
+
+.cs-component-modal-23 {
+    border-bottom-width: .0625rem
+}
+
+.cs-component-modal-30 {
+    border-top-width: .0625rem
+}
+
+.cs-component-modal-19,
+.cs-component-modal-23,
+.cs-component-modal-30 {
+    border-color: var(--border)
+}
+
+.cs-component-modal-19 {
+    background-color: var(--card)
+}
+
+.cs-component-modal-14 {
+    background-color: var(--color-overlay)
+}
+
+.cs-component-modal-26 {
+    padding: var(--space-1)
+}
+
+.cs-component-modal-29 {
+    padding: var(--space-4)
+}
+
+.cs-component-modal-23,
+.cs-component-modal-30 {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4)
+}
+
+.cs-component-modal-30 {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3)
+}
+
+.cs-component-modal-23 {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4)
+}
+
+.cs-component-modal-26 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-modal-20 {
+    box-shadow: var(--shadow-lg)
+}
+
+.cs-component-modal-26 {
+    color: var(--muted)
+}
+
+.cs-component-modal-25 {
+    font-size: var(--font-size-md)
+}
+
+.cs-component-modal-25 {
+    font-weight: var(--font-weight-semibold)
+}
+
+.cs-component-modal-26:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-modal-26:hover {
+    color: var(--fg)
+}

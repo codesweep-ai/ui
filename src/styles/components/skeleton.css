@@ -1,0 +1,21 @@
+.cs-skeleton {
+  animation: cs-skeleton-pulse 1.5s ease-in-out infinite;
+  background: var(--color-bg-subtle);
+  display: inline-block;
+}
+
+.cs-skeleton--circle {
+  display: inline-block;
+}
+
+@keyframes cs-skeleton-pulse {
+  0%, 100% { opacity: .4; }
+  50% { opacity: .8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-skeleton {
+    animation: none;
+    opacity: .6;
+  }
+}

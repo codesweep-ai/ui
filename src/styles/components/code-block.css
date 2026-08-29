@@ -1,0 +1,215 @@
+/* code-block component styles. */
+.cs-component-code-block-65 {
+    margin: 0
+}
+
+.cs-component-code-block-66 {
+    display: block
+}
+
+.cs-component-code-block-50,
+.cs-component-code-block-53,
+.cs-component-code-block-57,
+.cs-component-code-block-67 {
+    display: flex
+}
+
+.cs-component-code-block-61 {
+    height: var(--icon-size-md)
+}
+
+.cs-component-code-block-50 {
+    height: 100%
+}
+
+.cs-component-code-block-62 {
+    min-height: 0
+}
+
+.cs-component-code-block-61 {
+    width: var(--icon-size-md)
+}
+
+.cs-component-code-block-71 {
+    min-width: 0
+}
+
+.cs-component-code-block-69 {
+    min-width: 3ch
+}
+
+.cs-component-code-block-62,
+.cs-component-code-block-71 {
+    flex: 1 1 0%
+}
+
+.cs-component-code-block-54,
+.cs-component-code-block-69 {
+    flex-shrink: 0
+}
+
+.cs-component-code-block-57 {
+    cursor: pointer
+}
+
+.cs-component-code-block-69 {
+    user-select: none
+}
+
+.cs-component-code-block-50 {
+    flex-direction: column
+}
+
+.cs-component-code-block-53,
+.cs-component-code-block-57 {
+    align-items: center
+}
+
+.cs-component-code-block-53 {
+    justify-content: space-between
+}
+
+.cs-component-code-block-57 {
+    gap: var(--space-1)
+}
+
+.cs-component-code-block-62,
+.cs-component-code-block-64 {
+    overflow: auto
+}
+
+.cs-component-code-block-49 {
+    overflow: hidden
+}
+
+.cs-component-code-block-63 {
+    overflow-x: auto
+}
+
+.cs-component-code-block-55 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.cs-component-code-block-71 {
+    white-space: pre
+}
+
+.cs-component-code-block-49 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-code-block-49 {
+    border-width: .0625rem
+}
+
+.cs-component-code-block-53 {
+    border-bottom-width: .0625rem
+}
+
+.cs-component-code-block-69 {
+    border-right-width: .0625rem
+}
+
+.cs-component-code-block-57 {
+    border-style: none
+}
+
+.cs-component-code-block-49,
+.cs-component-code-block-53,
+.cs-component-code-block-69 {
+    border-color: var(--border)
+}
+
+.cs-component-code-block-49 {
+    background-color: var(--bg)
+}
+
+.cs-component-code-block-53 {
+    background-color: var(--card)
+}
+
+.cs-component-code-block-68 {
+    background-color: var(--color-success-bg)
+}
+
+.cs-component-code-block-57 {
+    background-color: transparent
+}
+
+.cs-component-code-block-57 {
+    padding: 0
+}
+
+.cs-component-code-block-53,
+.cs-component-code-block-71 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-code-block-53 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-code-block-69 {
+    padding-left: var(--space-4)
+}
+
+.cs-component-code-block-69 {
+    padding-right: var(--space-2)
+}
+
+.cs-component-code-block-69 {
+    text-align: right
+}
+
+.cs-component-code-block-55 {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+}
+
+.cs-component-code-block-66 {
+    line-height: var(--line-height-code)
+}
+
+.cs-component-code-block-57 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-code-block-58 {
+    color: var(--color-success)
+}
+
+.cs-component-code-block-55,
+.cs-component-code-block-57,
+.cs-component-code-block-69 {
+    color: var(--muted)
+}
+
+.cs-component-code-block-66 {
+    font-family: var(--font-family-mono)
+}
+
+.cs-component-code-block-66 {
+    font-size: var(--font-size-code)
+}
+
+.cs-component-code-block-55,
+.cs-component-code-block-57 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-code-block-68 {
+    font-weight: var(--font-weight-semibold)
+}
+
+.cs-component-code-block-66 {
+    tab-size: 2
+}
+
+.cs-component-code-block-57:hover {
+    color: var(--fg)
+}

@@ -1,0 +1,80 @@
+/* legend component styles. */
+.cs-component-legend-1,
+.cs-component-legend-2,
+.cs-component-legend-4,
+.cs-component-legend-6 {
+    align-items: center
+}
+
+.cs-component-legend-1,
+.cs-component-legend-2 {
+    display: flex
+}
+
+.cs-component-legend-2 {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0
+}
+
+.cs-component-legend-1 {
+    gap: var(--space-3)
+}
+
+.cs-component-legend-3 {
+    display: contents
+}
+
+.cs-component-legend-4,
+.cs-component-legend-6 {
+    background: transparent;
+    border: 0;
+    color: var(--fg);
+    display: inline-flex;
+    font: inherit;
+    gap: var(--space-1);
+    padding: var(--space-1)
+}
+
+.cs-component-legend-4 {
+    border-radius: var(--radius-sm);
+    cursor: pointer
+}
+
+.cs-component-legend-4[aria-pressed="false"] {
+    opacity: .5
+}
+
+.cs-component-legend-4:hover {
+    background-color: var(--color-bg-muted-hover)
+}
+
+.cs-component-legend-4:focus-visible {
+    outline: .125rem solid var(--color-accent);
+    outline-offset: .125rem
+}
+
+.cs-component-legend-5 {
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: .625rem;
+    width: .625rem
+}
+
+/* The square swatch variant. NOT legend-6 — that is the static item wrapper,
+   so styling it here collapsed every item in a non-interactive legend to a
+   12x12 box and stacked the labels on top of each other. */
+.cs-component-legend-8 {
+    border-radius: var(--radius-xs);
+    height: .75rem;
+    width: .75rem
+}
+
+.cs-component-legend-7 {
+    align-items: center;
+    display: flex;
+    gap: var(--space-2);
+    margin-left: auto
+}

@@ -1,0 +1,344 @@
+/* ============================================================
+   @codesweep-ai/ui — Design Tokens
+   ============================================================ */
+
+:root {
+  /* --- Spacing --- */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  /* --- Radii --- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* --- Typography --- */
+  --font-family-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  --font-family-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo,
+    Consolas, "Liberation Mono", "Cascadia Code", monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* --- Prose / long-form ramp (generated content; larger than app chrome) ---
+     Drives the `.prose` utility (base.css) and MarkdownViewer's markdown CSS. */
+  --font-size-prose-h1: 2rem;        /* 32px */
+  --font-size-prose-h2: 1.5rem;      /* 24px */
+  --font-size-prose-h3: 1.25rem;     /* 20px */
+  --font-size-prose-h4: 1rem;        /* 16px */
+  --font-size-prose-body: 1rem;      /* 16px — larger than chrome body */
+  --font-size-prose-small: 0.875rem; /* 14px */
+  --line-height-prose: 1.65;
+  --max-width-prose: 65ch;
+
+  /* --- Shadows (dark-mode defaults — need higher opacity on dark bg) --- */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-up: 0 -3px 6px rgba(0, 0, 0, 0.5);
+
+  /* --- Transitions --- */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+
+  /* --- Neutral header chrome (fixed, theme-independent) ---
+     The header + footer bar is always dark in BOTH themes, so every color
+     used on it must read on a dark surface regardless of the active theme. */
+  --color-accent: #1ee0ca;
+  --color-header-bg: #171717;
+  --color-header-text: #fafafa;
+  --color-header-text-muted: #b8b8b8;
+  --color-nav-hover: #404040;
+  --color-text-inverse: #ffffff;
+
+  /* --- Dark Theme (default) --- */
+  --bg: #0b0f14;
+  --fg: #d1d9e0;
+  --muted: #9aa4af;
+  /* A second structural step, one clear move further from the foreground than
+     --muted. For plumbing that recurs at volume and must stay separable from it
+     without competing with the categorical hues. Reviewed 2026-08-27 against a
+     real 1,366-event strip in both themes; 3:1+ against --bg. */
+  --color-structural: #6b7580;
+  --card: #0f1620;
+  --border: rgba(255, 255, 255, 0.08);
+
+  /* --- Syntax highlighting (dark) --- */
+  --syntax-keyword: #f97583;
+  --syntax-string: #85e89d;
+  --syntax-number: #79b8ff;
+  --syntax-title: #b392f0;
+  --syntax-attr: #79b8ff;
+  --syntax-builtin: #ffab70;
+  --syntax-comment: #6a737d;
+
+  --color-accent-bg: rgba(30, 224, 202, 0.05);
+  --color-accent-bg-hover: rgba(30, 224, 202, 0.1);
+  --color-accent-bg-strong: rgba(30, 224, 202, 0.15);
+
+  --color-link: #3b82f6;
+  --color-link-hover: #2563eb;
+
+  --color-error: #f87171;
+  --color-error-text: #f87171;
+  --color-error-bg: rgba(248, 113, 113, 0.1);
+  --color-info: #60a5fa;
+  --color-success: #34d399;
+  --color-success-bg: rgba(52, 211, 153, 0.2);
+  --color-warning: #f59e0b;
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-neutral: #9ca3af;
+  --color-neutral-bg: rgba(156, 163, 175, 0.2);
+  /* severe: the step between warning and error, for 4-level ordered severity
+     scales (low/med/high/critical). Status colors ship with a label or shape —
+     never color alone; adjacent hot hues (warning/severe/error) are not
+     separable by hue for CVD readers. Added v1.12.0 (unreleased). */
+  --color-severe: #f97316;
+  --color-severe-bg: rgba(249, 115, 22, 0.1);
+
+  --color-btn-primary: #17c9b5;
+  --color-btn-primary-text: #000000;
+  --color-btn-success-text: #000000;
+  --color-btn-warning-text: #000000;
+  --color-btn-disabled-bg: rgba(59, 130, 246, 0.5);
+  --color-btn-disabled-text: rgba(255, 255, 255, 0.7);
+
+  --color-highlight: rgba(250, 204, 21, 0.35);
+
+  --color-bg-subtle: rgba(255, 255, 255, 0.05);
+  --color-bg-muted: rgba(128, 128, 128, 0.05);
+  --color-bg-muted-hover: rgba(128, 128, 128, 0.1);
+  --color-row-hover: rgba(255, 255, 255, 0.06);
+
+  /* --- Z-index --- */
+  --z-sticky: 10;
+  --z-header: 100;
+  --z-modal: 200;
+  --z-tooltip: 300; /* above modal — chart/UI tooltips. Added v1.5.0. */
+  --z-toast: 400;   /* above tooltips — transient feedback. Added v1.11.0. */
+
+  /* --- Overlay --- */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* --- Header shadow (always dark, not theme-dependent) --- */
+  --shadow-header: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  /* --- Letter spacing --- */
+  --letter-spacing-wide: 0.5px;
+
+  /* --- Tree indentation --- */
+  --tree-indent-size: 1rem;
+  --tree-indent-base: 0.5rem;
+
+  /* --- Icon sizes --- */
+  --icon-size-xs: 12px;
+  --icon-size-sm: 14px;
+  --icon-size-md: 16px;
+  --icon-size-lg: 18px;
+
+  /* --- Pulse / indicator dot sizes (PulseBadge) --- */
+  --pulse-size-sm: 6px;
+  --pulse-size-md: 8px;
+  --pulse-size-lg: 10px;
+
+  /* --- Categorical palette (charts, legends, grouping) — muted set (color review) --- */
+  --color-cat-1: #6f93c9;   /* blue    */
+  --color-cat-2: #4fb3a6;   /* teal    */
+  --color-cat-3: #d2a44e;   /* amber   */
+  --color-cat-4: #d77f8b;   /* rose    */
+  --color-cat-5: #9e90cc;   /* violet  */
+  --color-cat-6: #d89259;   /* orange  */
+  --color-cat-7: #5fae8a;   /* emerald */
+  --color-cat-8: #c489c9;   /* fuchsia */
+  --color-cat-9: #6ab0d4;   /* sky     */
+  --color-cat-10: #9cb866;  /* lime    */
+
+  /* --- Categorical sub-shades (light / mid / dark per hue) --- */
+  --color-cat-1-light: #93c5fd;
+  --color-cat-1-mid: #3b82f6;
+  --color-cat-1-dark: #2563eb;
+  --color-cat-2-light: #5eead4;
+  --color-cat-2-mid: #14b8a6;
+  --color-cat-2-dark: #0d9488;
+  --color-cat-3-light: #fcd34d;
+  --color-cat-3-mid: #f59e0b;
+  --color-cat-3-dark: #d97706;
+  --color-cat-4-light: #fda4af;
+  --color-cat-4-mid: #f43f5e;
+  --color-cat-4-dark: #e11d48;
+  --color-cat-5-light: #c4b5fd;
+  --color-cat-5-mid: #8b5cf6;
+  --color-cat-5-dark: #7c3aed;
+  --color-cat-6-light: #fdba74;
+  --color-cat-6-mid: #f97316;
+  --color-cat-6-dark: #ea580c;
+  --color-cat-7-light: #6ee7b7;
+  --color-cat-7-mid: #10b981;
+  --color-cat-7-dark: #059669;
+  --color-cat-8-light: #f0abfc;
+  --color-cat-8-mid: #d946ef;
+  --color-cat-8-dark: #c026d3;
+  --color-cat-9-light: #7dd3fc;
+  --color-cat-9-mid: #0ea5e9;
+  --color-cat-9-dark: #0284c7;
+  --color-cat-10-light: #bef264;
+  --color-cat-10-mid: #84cc16;
+  --color-cat-10-dark: #65a30d;
+
+  /* --- Semantic typography --- */
+  --font-size-page-title: var(--font-size-xl);
+  --font-size-section-title: var(--font-size-lg);
+  --font-size-card-header: var(--font-size-sm);
+  --font-size-label: var(--font-size-xs);
+  --font-size-body: var(--font-size-sm);
+  --font-size-caption: var(--font-size-xs);
+  --font-size-stat: var(--font-size-xl);
+
+  /* --- Code typography --- */
+  --font-size-code: 13px;
+  --line-height-code: 1.6;
+
+  /* --- Chart typography --- */
+  --font-size-chart-axis: 11px;
+
+  /* --- Card content --- */
+  --card-content-height: 28rem;
+
+  /* --- Input / Layout Widths --- */
+  --input-min-width: 150px;
+  --content-width-sm: 200px;
+  --chart-tooltip-max-width: 240px;
+  --toast-max-width: 360px;
+
+  /* --- Modal --- */
+  --modal-max-width: 700px;
+  --modal-margin-top: 5vh;
+  --modal-max-height: 80vh;
+
+}
+
+:root[data-theme="light"] {
+  /* --- Shadows (lighter for white backgrounds) --- */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 2px 8px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.18);
+  --shadow-up: 0 -3px 6px rgba(15, 23, 42, 0.1);
+
+  --bg: #f3f4f6;        /* soft cool gray — page recedes (color review) */
+  --fg: #1f2937;
+  --muted: #4b5563;
+  --color-structural: #7b8694;
+  --card: #ffffff;      /* white cards lift off the page (color review) */
+  --border: rgba(0, 0, 0, 0.1);
+
+  /* --- Syntax highlighting (light) --- */
+  --syntax-keyword: #d73a49;
+  --syntax-string: #22863a;
+  --syntax-number: #005cc5;
+  --syntax-title: #6f42c1;
+  --syntax-attr: #005cc5;
+  --syntax-builtin: #e36209;
+  --syntax-comment: #6a737d;
+
+  --color-accent: #0f766e;
+  --color-accent-bg: rgba(13, 148, 136, 0.08);
+  --color-accent-bg-hover: rgba(13, 148, 136, 0.12);
+  --color-accent-bg-strong: rgba(13, 148, 136, 0.18);
+
+  --color-link: #2563eb;
+  --color-link-hover: #1d4ed8;
+
+  --color-error: #dc2626;
+  --color-error-text: #b91c1c;
+  --color-error-bg: rgba(220, 38, 38, 0.1);
+  --color-info: #0369a1;
+  --color-success: #047857;
+  --color-success-bg: rgba(16, 185, 129, 0.2);
+  --color-warning: #b45309;
+  --color-warning-bg: rgba(210, 153, 34, 0.15);
+  --color-neutral: #6b7280;
+  --color-neutral-bg: rgba(107, 114, 128, 0.2);
+  --color-severe: #c2410c;
+  --color-severe-bg: rgba(194, 65, 12, 0.1);
+
+  --color-btn-primary: #0f766e;
+  --color-btn-primary-text: #ffffff;
+  --color-btn-success-text: #ffffff;
+  --color-btn-warning-text: #ffffff;
+  --color-btn-disabled-bg: rgba(37, 99, 235, 0.5);
+  --color-btn-disabled-text: rgba(255, 255, 255, 0.7);
+
+  --color-highlight: rgba(250, 204, 21, 0.4);
+
+  --color-bg-subtle: rgba(0, 0, 0, 0.03);
+  --color-bg-muted: rgba(128, 128, 128, 0.08);
+  --color-bg-muted-hover: rgba(128, 128, 128, 0.12);
+  --color-row-hover: rgba(0, 0, 0, 0.04);
+
+  /* --- Categorical palette (light — muted set, darkened for contrast on white) --- */
+  --color-cat-1: #3f6491;   /* blue    */
+  --color-cat-2: #2f8a80;   /* teal    */
+  --color-cat-3: #a9772f;   /* amber   */
+  --color-cat-4: #b15562;   /* rose    */
+  --color-cat-5: #6c5da0;   /* violet  */
+  --color-cat-6: #b06a3c;   /* orange  */
+  --color-cat-7: #3f7d5e;   /* emerald */
+  --color-cat-8: #95548c;   /* fuchsia */
+  --color-cat-9: #2f78a0;   /* sky     */
+  --color-cat-10: #6f8a40;  /* lime    */
+
+  /* --- Categorical sub-shades (light — adjusted for white backgrounds) --- */
+  --color-cat-1-light: #60a5fa;
+  --color-cat-1-mid: #2563eb;
+  --color-cat-1-dark: #1d4ed8;
+  --color-cat-2-light: #2dd4bf;
+  --color-cat-2-mid: #0d9488;
+  --color-cat-2-dark: #0f766e;
+  --color-cat-3-light: #f59e0b;
+  --color-cat-3-mid: #b45309;
+  --color-cat-3-dark: #92400e;
+  --color-cat-4-light: #f43f5e;
+  --color-cat-4-mid: #be123c;
+  --color-cat-4-dark: #9f1239;
+  --color-cat-5-light: #8b5cf6;
+  --color-cat-5-mid: #6d28d9;
+  --color-cat-5-dark: #5b21b6;
+  --color-cat-6-light: #f97316;
+  --color-cat-6-mid: #c2410c;
+  --color-cat-6-dark: #9a3412;
+  --color-cat-7-light: #10b981;
+  --color-cat-7-mid: #047857;
+  --color-cat-7-dark: #065f46;
+  --color-cat-8-light: #d946ef;
+  --color-cat-8-mid: #a21caf;
+  --color-cat-8-dark: #86198f;
+  --color-cat-9-light: #0ea5e9;
+  --color-cat-9-mid: #0369a1;
+  --color-cat-9-dark: #075985;
+  --color-cat-10-light: #84cc16;
+  --color-cat-10-mid: #4d7c0f;
+  --color-cat-10-dark: #3f6212;
+}

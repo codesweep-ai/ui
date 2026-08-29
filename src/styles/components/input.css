@@ -1,0 +1,168 @@
+/* input component styles. */
+.cs-component-input-21,
+.cs-component-input-34 {
+    display: inline-flex
+}
+
+.cs-component-input-21 {
+    width: 100%
+}
+
+.cs-component-input-28 {
+    min-width: 0
+}
+
+.cs-component-input-28 {
+    flex: 1 1 0%
+}
+
+.cs-component-input-34 {
+    flex-shrink: 0
+}
+
+.cs-component-input-26 {
+    cursor: not-allowed
+}
+
+.cs-component-input-41 {
+    resize: vertical
+}
+
+.cs-component-input-34 {
+    align-items: center
+}
+
+.cs-component-input-21 {
+    align-items: stretch
+}
+
+.cs-component-input-34 {
+    justify-content: center
+}
+
+.cs-component-input-22 {
+    border-radius: var(--radius-sm)
+}
+
+.cs-component-input-22 {
+    border-width: .0625rem
+}
+
+.cs-component-input-28 {
+    border-style: none
+}
+
+.cs-component-input-25 {
+    border-color: var(--border)
+}
+
+.cs-component-input-24 {
+    border-color: var(--color-error)
+}
+
+.cs-component-input-22 {
+    background-color: var(--card)
+}
+
+.cs-component-input-28 {
+    background-color: transparent
+}
+
+.cs-component-input-18,
+.cs-component-input-37 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2)
+}
+
+.cs-component-input-19,
+.cs-component-input-38 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3)
+}
+
+.cs-component-input-18 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1)
+}
+
+.cs-component-input-19 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2)
+}
+
+.cs-component-input-32 {
+    padding-left: var(--space-1)
+}
+
+.cs-component-input-33 {
+    padding-right: var(--space-1)
+}
+
+.cs-component-input-29 {
+    font-weight: var(--font-family-sans)
+}
+
+.cs-component-input-41 {
+    line-height: var(--line-height-normal)
+}
+
+.cs-component-input-26 {
+    opacity: 0.6
+}
+
+.cs-component-input-28 {
+    outline: .125rem solid transparent;
+    outline-offset: .125rem
+}
+
+.cs-component-input-23 {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms
+}
+
+.cs-component-input-27 {
+    background: var(--color-bg-subtle)
+}
+
+.cs-component-input-29 {
+    color: var(--fg)
+}
+
+.cs-component-input-35 {
+    color: var(--muted)
+}
+
+.cs-component-input-19 {
+    font-size: var(--font-size-sm)
+}
+
+.cs-component-input-18 {
+    font-size: var(--font-size-xs)
+}
+
+.cs-component-input-30::placeholder {
+    color: var(--color-neutral);
+    opacity: 1
+}
+
+.cs-component-input-25:focus-within {
+    border-color: var(--color-accent)
+}
+
+.cs-component-input-24:focus-within,
+.cs-component-input-25:focus-within {
+    box-shadow: 0 0 0 .125rem var(--color-accent)
+}
+
+.cs-component-input-24:focus-within {
+    box-shadow: 0 0 0 .125rem var(--color-error)
+}
+
+.cs-component-input-25:hover {
+    border-color: var(--muted)
+}
+
+.cs-component-input-31:disabled {
+    cursor: not-allowed
+}
