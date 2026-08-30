@@ -2,6 +2,14 @@
   "name": "@codesweep-ai/ui",
   "version": "0.2.0",
   "description": "Open React components and design tokens for agent and LLM interfaces.",
+  "keywords": [
+    "ai-agents",
+    "accessibility",
+    "component-library",
+    "dark-mode",
+    "design-system",
+    "react"
+  ],
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
