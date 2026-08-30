@@ -1,0 +1,79 @@
+name: npm
+
+# Publish a build of one commit to the `dev` channel. Nothing about it is a
+# release: no tag is cut, no GitHub release is made, and `latest` never moves.
+#
+# This is separate from release.yml on purpose. Something that runs on every push
+# should not be able to reach the release machinery at all, and the permissions
+# below are what make that true rather than merely intended.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Show what would publish, without publishing it
+        type: boolean
+        default: false
+
+permissions:
+  contents: read # this workflow reads the repository and writes nothing to it
+  id-token: write # provenance, minted from the run rather than from a key
+
+# One publish at a time, and a superseded one is dropped: two pushes in a row
+# would otherwise race, and the older is of no interest by the time it lands.
+concurrency:
+  group: npm-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: publish a dev build
+    # A cloud-hosted runner, which provenance requires.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the version is the commit, so the history has to be here
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - run: npm ci
+
+      # The gate, because a published version cannot be taken back.
+      - run: npm run check
+
+      # The commit's own timestamp and hash, so the same commit always names
+      # itself the same way. scripts/dev-version.mjs says why the patch is
+      # bumped rather than the current version reused.
+      - name: version this build
+        run: |
+          version="$(node scripts/dev-version.mjs)"
+          echo "publishing $version"
+          npm version "$version" --no-git-tag-version --allow-same-version
+
+      # `--tag dev` keeps `latest` where the last release left it, and a caret
+      # range never resolves to a prerelease, so nobody gets one without asking.
+      #
+      # NODE_AUTH_TOKEN is here to create the package. A trusted publisher is
+      # configured on a package that already exists, so the first publish cannot
+      # use one. Provenance is minted from this run's own identity either way, so
+      # the first version carries it too.
+      #
+      # Once the package exists and both workflows are named as trusted
+      # publishers, delete the `env:` block below and revoke the secret. npm is
+      # withdrawing a stored token's ability to publish in January 2027.
+      # The tarball's contents are assembled in .package/, which is what carries
+      # the README written for someone installing this rather than reading the
+      # repository. scripts/stage-package.mjs says why that needs a directory.
+      - run: npm run stage
+
+      - name: publish
+        run: npm publish .package --tag dev --provenance --access public ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

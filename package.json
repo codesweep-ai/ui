@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/codesweep-ai/ui.git"
   },
+  "homepage": "https://github.com/codesweep-ai/ui#readme",
+  "bugs": {
+    "url": "https://github.com/codesweep-ai/ui/issues"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -79,18 +83,13 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
-    "docs/*.md",
-    "components",
-    "patterns",
     "LICENSE",
     "NOTICE",
-    "CODE_OF_CONDUCT.md",
-    "CATALOG.md",
-    "catalog.json",
-    "CONTRIBUTING.md",
-    "DESIGN_SYSTEM_SPEC.md",
     "README.md"
   ],
   "scripts": {
@@ -120,9 +119,10 @@
     "visual:compare:host": "npm run preview:build && node scripts/visual-baseline.mjs compare",
     "clean": "rm -rf dist coverage",
     "docs:compile": "node scripts/docs-compile.mjs",
-    "prepack": "npm run build",
     "check": "npm run lint:integrity && npm run typecheck && npm run lint && npm run docs:prose && npm run docs:refs && npm run oss && npm run catalog:check && npm run test && npm run build && npm run docs:compile && npm run size:subpaths",
-    "ci": "node scripts/ci.mjs"
+    "ci": "node scripts/ci.mjs",
+    "stage": "npm run build && node scripts/stage-package.mjs",
+    "prepublishOnly": "node -e \"console.error('publish the staged package: npm run stage && npm publish .package');process.exit(1)\""
   },
   "browserslist": [
     "> 0.5%",

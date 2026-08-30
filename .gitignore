@@ -38,8 +38,15 @@ node_modules/
 # by the production build.
 /marketing-preview/content/final.json
 
+# The registry this machine runs to try the package out: verdaccio itself, its
+# storage, and the throwaway credentials for it.
+/.local-registry/
+
 # Screenshots and attachments a failing browser test leaves behind.
 __screenshots__/
 .vitest-attachments/
 /visual-diff/
 *.tgz
+
+# The directory scripts/stage-package.mjs assembles the tarball's contents in.
+/.package/

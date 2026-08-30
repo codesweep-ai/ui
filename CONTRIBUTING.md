@@ -166,6 +166,21 @@ Keep the `Co-Authored-By:` trailer when an agent wrote the change. Drop every
 other trailer an agent harness appends: a link to a session or a transcript is
 private to whoever ran it and dead to everyone else.
 
+## Releasing
+
+Every commit on main publishes to the `dev` channel on npm, versioned from the
+commit itself. No tag is cut and `latest` does not move, so a dev build reaches
+only someone who asks for it:
+
+```sh
+npm install --save-dev @codesweep-ai/ui@dev
+```
+
+A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
+push the tag; `release.yml` runs the gate, publishes to `latest`, and opens a
+GitHub release. Neither workflow stores a credential: each package names its
+workflow as a trusted publisher.
+
 ## Docs
 
 A user-visible change lands in exactly one document. Every fact lives in one

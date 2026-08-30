@@ -37,7 +37,9 @@ jobs:
       # No token. The package names this workflow as a trusted publisher, so npm
       # takes the run's own identity and mints a credential that lives for the
       # length of the publish.
-      - run: npm publish --provenance --access public
+      - run: npm run stage
+
+      - run: npm publish .package --provenance --access public
 
       # The tag is what a reader finds first, so it gets a page of its own with
       # the changes since the last one.

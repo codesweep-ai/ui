@@ -85,7 +85,9 @@ say("the rich Markdown flavours");
 run(npm, ["run", "preview:rich-check"]);
 
 say("the package the release workflow would publish");
-run(npm, ["pack", "--dry-run"]);
+// `check` above has already built dist/, so this stages without rebuilding it.
+run("node", ["scripts/stage-package.mjs"]);
+run(npm, ["pack", "--dry-run", ".package"]);
 
 const ran = skipped.length === 0 ? "ci: every gate ran." : `ci: ${skipped.length} gate(s) did not run.`;
 const note = tty ? `\n\x1b[1m${ran}\x1b[0m` : `\n${ran}`;
