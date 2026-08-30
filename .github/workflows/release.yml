@@ -29,6 +29,12 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: npm
 
+      # Trusted publishing needs npm 11.5.1 or newer, and which npm a given
+      # Node 24 bundles is not something to leave to chance: 24.4.1 shipped
+      # 11.4.2, under the floor. Without this the run falls back to looking for
+      # a token it does not have.
+      - run: npm install -g npm@latest
+
       - run: npm ci
 
       # The whole gate, because a release is the one build nobody re-runs.
