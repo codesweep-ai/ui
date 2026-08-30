@@ -112,6 +112,7 @@
     "preview": "vite --config preview/vite.config.ts",
     "preview:build": "vite build --config preview/vite.config.ts",
     "preview:serve": "vite preview --config preview/vite.config.ts",
+    "registry:local": "node scripts/local-registry.mjs",
     "preview:rich-check": "npm run preview:build && node scripts/preview-rich-check.mjs",
     "visual:capture": "node scripts/visual-container.mjs capture",
     "visual:compare": "node scripts/visual-container.mjs compare",

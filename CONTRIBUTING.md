@@ -166,6 +166,23 @@ Keep the `Co-Authored-By:` trailer when an agent wrote the change. Drop every
 other trailer an agent harness appends: a link to a session or a transcript is
 private to whoever ran it and dead to everyone else.
 
+## Trying the package before publishing it
+
+Installing a tarball by path skips the export map, the `files` list and the
+peer-dependency resolution, which is most of what a publish can get wrong.
+`npm run registry:local` runs a registry on this machine, publishes to it, and
+prints the address to browse:
+
+```sh
+npm run registry:local                      # start, publish, print the URL
+node scripts/local-registry.mjs stop        # stop it again
+```
+
+It replaces the version it published last time, so it can be run after every
+change. It reaches no registry but the one it started, apart from proxying the
+dependencies a consumer would install. Set `CS_UI_REGISTRY_PORT` where 4873 is
+already taken.
+
 ## Releasing
 
 Every commit on main publishes to the `dev` channel on npm, versioned from the
