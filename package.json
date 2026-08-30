@@ -178,7 +178,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@codesweep-ai/cs-lint": "0.0.0-20260828235620-b8267e782dde",
+    "@codesweep-ai/cs-lint": "0.0.0-20260830063344-348ac8910f1c",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
