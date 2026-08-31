@@ -1,0 +1,17 @@
+# Why this file exists: so Jekyll's copy of the gallery's source does not land
+# on top of the gallery the workflow builds. /preview/ is one or the other.
+#
+# Naming an exclude list replaces Jekyll's defaults rather than adding to them,
+# so node_modules and the two build caches have to be named again here. That is
+# not housekeeping. The workflow runs `npm ci` before Jekyll, so node_modules is
+# on disk when it walks the tree, and @dnd-kit ships a CHANGELOG carrying an
+# unterminated `{{` that Liquid reads as its own syntax and fails the build on.
+#
+# Nothing else is excluded, deliberately. Every page the branch build published
+# — the component and pattern docs, the documents, the source tree — keeps the
+# URL it already has.
+exclude:
+  - node_modules
+  - .sass-cache
+  - .jekyll-cache
+  - preview

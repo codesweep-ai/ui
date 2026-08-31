@@ -13,6 +13,16 @@ node_modules/
 /dist/
 /preview/dist/
 
+# The Pages build: Jekyll's output, and the directory the workflow assembles the
+# site in. Both are built from the tree on every run, and neither is read by
+# anything but the deploy step that follows it.
+/_site/
+/site/
+
+# Jekyll's own scratch, written into the source tree by the build above.
+/.sass-cache/
+/.jekyll-cache/
+
 # TypeScript's incremental build state, which is a fact about one machine.
 *.tsbuildinfo
 
