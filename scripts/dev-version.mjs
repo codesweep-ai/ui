@@ -27,7 +27,12 @@ import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
 function git(...args) {
-  return execFileSync("git", args, { cwd: ROOT, encoding: "utf8" }).trim();
+  // TZ=UTC because the stamp below is rendered in git's -local date mode, which
+  // follows this process's zone rather than the commit's. Without it the same
+  // commit names itself differently on a laptop than in CI -- CI published
+  // 0.2.1-dev.20260831063919.0d88493 for a commit a UTC-7 machine calls
+  // ...20260830233919... -- and the version stops being a function of the commit.
+  return execFileSync("git", args, { cwd: ROOT, encoding: "utf8", env: { ...process.env, TZ: "UTC" } }).trim();
 }
 
 function fail(message) {
@@ -45,8 +50,8 @@ const [, major, minor, patch] = parts;
 let stamp;
 let hash;
 try {
-  // %cd with this format is the commit date in UTC, so a build on any machine
-  // in any timezone names the commit the same way.
+  // %cd with this format is the commit date in UTC, git() having pinned TZ, so
+  // a build on any machine in any timezone names the commit the same way.
   stamp = git("log", "-1", "--format=%cd", "--date=format-local:%Y%m%d%H%M%S");
   hash = git("rev-parse", "--short=7", "HEAD");
 } catch {
