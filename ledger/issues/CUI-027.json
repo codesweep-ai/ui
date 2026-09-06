@@ -1,0 +1,22 @@
+{
+  "id": "CUI-027",
+  "title": "Smaller pattern drift, grouped",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Five small ones, none worth a record alone.\n\n`MasterDetailDemo` omits `wrap: true` on its three StatusBadge columns while its own spec has it. `components/Table.md` says a column holding structured elements must set it, because a non-wrapping cell is clipped and offered through a tooltip whose content is the same badge again. Nothing clips at the widths tested, since the tables do not set `fixed`, so the symptom is latent rather than visible.\n\nThe Chart demo's hand-rolled Recharts tooltip loses its shadow: the rule it points at sets two undefined Tailwind variables and no `box-shadow`. Side by side with a real ChartTooltip on the same page, one has a shadow and one does not.\n\n`patterns/FormResults.md` prescribes a spinner while results load, which `patterns/ComponentStates.md` lists as an anti-pattern in favour of skeletons.\n\nTwo documents cite `OPEN.md`, which does not exist: that content became the ledger.\n\n`components/Legend.md` claims patterns that do not mention it, and omits Dashboard, which is the one that needs a legend.",
+  "notes": [],
+  "links": [
+    "CUI-024"
+  ]
+}

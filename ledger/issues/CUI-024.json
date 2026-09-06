@@ -1,0 +1,27 @@
+{
+  "id": "CUI-024",
+  "title": "The Dashboard demo hand-rolls a Legend, skips ChartFrame, and fixes its charts at 460px",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Three separate departures in one file.\n\nIt defines a local `Legend` component and uses it three times. The kit exports one, with a `shape` option, `role=\"group\"` and documented `data-legend-swatch` and `data-legend-label` hooks. The local copy has none of that, and it passes resolved colours through `style={{ backgroundColor }}`, which is the one thing `components/Legend.md` forbids: swatch colours are custom-property names, never resolved values.\n\nIts three charts sit in bare Cards. `patterns/Chart.md` says to wrap every chart in `ChartFrame`, so their empty branch is a bespoke div instead of the canonical empty block.\n\nEach chart is a fixed 460 by H pixel SVG with no `viewBox`, so it neither grows nor shrinks. The reviewer measured 31px of chart cut off at a 430px viewport, unreachable because the page does not scroll horizontally, and 460px of chart in an 868px card at a wide one. Dashboard.md tells readers to do the opposite.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "The fixed pixel space is worth keeping for the ChartTooltip coordinate maths, which is what the comment in the demo is actually protecting. A viewBox with a percentage width gets both."
+    }
+  ],
+  "links": [
+    "CUI-023"
+  ]
+}

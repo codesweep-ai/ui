@@ -1,0 +1,27 @@
+{
+  "id": "CUI-021",
+  "title": "The Chart pattern's d3 example never translates its axes, so the reference chart is wrong",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`ChartDemo.tsx` calls `.attr(\"cs-preview-pages-patterns-chart-demo-14\", `translate(...)`)` on both axis groups. The attribute name was replaced by a generated class name, presumably by a rewrite that walked class strings and caught this one because its value looked like a class. The axes are therefore never translated: the x-axis labels print across the top of the plot and the y-axis ticks fall outside the SVG.\n\n`patterns/Chart.md` names this file as the worked example of imperative charting with `styleAxis` and `ChartTooltip`. It is what a consumer copies to learn the charting bridge.\n\nNothing catches it. d3's `.attr()` takes any name, so typecheck and lint both pass, and the rule the stray name points at is dead Tailwind residue in `preview/src/preview.css` referencing `--tw-*` variables this repository never defines.\n\nFix: restore `.attr(\"transform\", ...)` on both, and delete the orphan rule.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed by reading the source. The reviewer additionally probed the built page and found the group carrying the stray attribute with an identity transform matrix and a bounding box at the top of the plot."
+    }
+  ],
+  "links": [
+    "CUI-017"
+  ]
+}

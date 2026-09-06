@@ -1,10 +1,26 @@
 {
-  "recommendedBy": "session agent, triaging five consumer reports for the repository owner",
+  "recommendedBy": "session agent, after two independent reviews of the patterns",
   "updated": "2026-09-06",
   "items": [
     {
+      "id": "CUI-021",
+      "why": "The reference chart for the whole charting bridge renders its axes in the wrong place, and every gate passes over it."
+    },
+    {
       "id": "CUI-020",
       "why": "A documented error state that cannot happen, in a pattern people copy."
+    },
+    {
+      "id": "CUI-028",
+      "why": "Both defects above are invisible to a screenshot. This is what would have caught them."
+    },
+    {
+      "id": "CUI-025",
+      "why": "The worked examples never caught up with the props added to fix the consumer reports."
+    },
+    {
+      "id": "CUI-022",
+      "why": "The example code is what people paste, and nothing checks it would run."
     },
     {
       "id": "CUI-006",

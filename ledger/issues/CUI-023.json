@@ -1,0 +1,23 @@
+{
+  "id": "CUI-023",
+  "title": "The Dashboard pattern teaches a charting bridge the kit replaced, and does not describe its own demo",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`patterns/Dashboard.md` devotes roughly 200 lines to a hand-rolled `useChartTokens()` hook that reads computed CSS variables, plus Recharts-specific tooltip and legend recipes. `useChartTokens` exists nowhere but that document. The shipped answer is `useChartTheme()`, which `patterns/Chart.md` makes its first rule, and Dashboard.md never mentions `useChartTheme`, `ChartFrame` or `ChartTooltip` in its prose even though its own frontmatter lists the latter two as related.\n\nThe hook it teaches is also wrong in the way Chart.md warns about: it re-reads on render without subscribing to the theme flip, so a chart drawn with it does not follow a light and dark toggle.\n\nSeparately, its Composition section describes Card plus Recharts line, bar and pie charts. The demo uses no Recharts at all: it hand-draws SVG with `useChartTheme` and `ChartTooltip`. The `ResponsiveContainer` sizing guidance describes something the demo does not do.\n\nA reader following this document builds a second, divergent theming bridge and never meets ChartFrame's loading, error and empty states.",
+  "notes": [],
+  "links": [
+    "CUI-013",
+    "CUI-024"
+  ]
+}

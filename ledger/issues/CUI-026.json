@@ -1,0 +1,22 @@
+{
+  "id": "CUI-026",
+  "title": "The MarkdownViewer pattern specifies a composition its demo no longer shows",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`patterns/MarkdownViewer.md` specifies a three-pane composition of SplitPane, Panel, Tree and a viewer with outline and minimap. The demo shows a six-flavour bundle-cost ladder instead, and says so in its own comment: the three-pane composition moved to the Docs page.\n\nSo the tab and the specification are two unrelated documents about the same name. A reader who opens one and then reads the other finds nothing in common.\n\nThe flavour ladder is the more useful thing to document, because choosing a parser flavour is the real decision a consumer faces. The three-pane example is worth keeping, labelled as the Docs page composition.\n\nSecondary: the spec duplicates internals that already live in `components/MarkdownViewer.md`, including the outline widths and the scroll debounce. They agree today, so this is duplication rather than contradiction, against CONTRIBUTING's rule that every fact lives in one place.",
+  "notes": [],
+  "links": [
+    "CUI-010"
+  ]
+}

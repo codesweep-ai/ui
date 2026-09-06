@@ -1,0 +1,33 @@
+{
+  "id": "CUI-028",
+  "title": "Patterns have no behavioural tests, only screenshots",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, asked how the patterns should be tested",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "The visual gate photographs each pattern after clicking expand-all. It therefore catches layout regressions and is blind to behaviour. Two defects found this week prove the gap: a panel that clipped content a wheel could not reach, and a form whose documented error states cannot happen. Neither produces a pixel difference, because absent content and an unsubmitted form both photograph as correct.\n\nThe recommended shape, from a reviewer who read the existing gates first, is to extend what is here rather than add a stack. Pattern suites live under `src/patterns/`, layout assertions in the existing Playwright browser project because jsdom computes no layout, and wiring assertions in jsdom. They import the real demos rather than restating the composition, so a test cannot pass while the thing the specification documents is broken. One configuration line is needed: an alias for the package name, which the demos import and the test projects cannot currently resolve.\n\nAssertions anchor on ARIA roles and accessible names first, then `data-component` and `data-part`, never the generated preview class names. The demos carry no hooks of their own, so every stable anchor comes from the library.\n\nThe first step is one predicate over every pattern: no element may hide content while its computed overflow cannot scroll. The reviewer ran it. It is green across the patterns today and reports `hides 1056px` when the panel clipping is forced back, so it adopts clean and is not a heuristic.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Deliberately excluded: component behaviour already covered by its own suite, chart geometry, anything the pixel, size or style gates already own, and the preview shell."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "One risk named by the reviewer: importing the demos pulls `preview/src` into the typecheck program for the first time, which may surface pre-existing type errors there."
+    }
+  ],
+  "links": [
+    "CUI-017",
+    "CUI-018",
+    "CUI-020"
+  ]
+}
