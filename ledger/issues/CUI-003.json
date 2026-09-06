@@ -10,10 +10,11 @@
   "stint": "add-ledger, 2026-09-06",
   "evidence": {
     "commits": [
-      "5d4f99d"
+      "5d4f99d",
+      "2cd300f"
     ],
     "integrated": [],
-    "verified": "Measured before fixing: a throwaway test rendering Tree and changing selectedId from outside recorded 0 scrollIntoView calls, so Tree did not do this either. Fixed as an opt-in prop on both. Full suite 606 passed across 60 files, up from 554 across 56 at the start of this work. npm run check exit 0. npm run visual:compare 76/76 screenshots passed, 161 differing pixels against a 0.1% threshold, axe violations 0 in both themes and no rule matching more nodes than the baseline."
+    "verified": "Measured before fixing: a throwaway test rendering Tree and changing selectedId from outside recorded 0 scrollIntoView calls, so Tree did not do this either. Fixed as an opt-in prop on both. Full suite 606 passed across 60 files, up from 554 across 56 at the start of this work. npm run check exit 0. npm run visual:compare 76/76 screenshots passed, 161 differing pixels against a 0.1% threshold, axe violations 0 in both themes and no rule matching more nodes than the baseline. Default flipped to true in 2cd300f, with three further tests in Tree.overflow.test.tsx asserting the scroll happens, that it can be turned off, and that it is not animated: 11 passed in that file, 609 across 60 files. npm run check exit 0, visual:compare 76/76, axe violations 0."
   },
   "resolution": null,
   "details": "`Tree` scrolls its selected row into view. `SectionedTree`, which composes Trees, does not.\n\nWhen selection is driven from outside the component, by a link elsewhere on the page setting `selectedId`, the selected row can sit off screen in a SectionedTree with no indication. The sidebar shows an unrelated position. The same interaction works in a plain Tree.\n\nThis is filed as a defect rather than a gap because two components meant to compose behave differently on the same input.\n\nWorked around in the consuming app by abandoning SectionedTree for Panel plus Tree per section.",
@@ -29,6 +30,14 @@
     {
       "date": "2026-09-06",
       "text": "So this was a missing capability rather than an inconsistency. Fixed as scrollSelectedIntoView on both, defaulting to false, because turning it on by default would change Tree's behaviour for everyone on the strength of a premise that did not hold. Consumers driving selection from a link elsewhere on the page should pass it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The repository owner reversed the default to true, on the grounds that nobody could name a reason to want a selection left off screen. The conservative default came from the report being wrong about the baseline, not from a case against the behaviour, so the reversal stands."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The selection scroll is deliberately not animated, which the other two callers are. Search matches and arrow keys scroll because the user just acted on the tree, where an animation helps them follow the move. This one fires because the page changed underneath it, so an animation draws the eye to movement nobody asked for, and rapid selection changes queue smooth scrolls against each other. Both animated callers now honour prefers-reduced-motion, which they did not before: that was a pre-existing gap against the convention Skeleton, Toast, PulseBadge and StreamingText already keep, and making this routine is what surfaced it."
     }
   ],
   "links": [
