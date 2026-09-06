@@ -48,7 +48,8 @@ interface SkeletonProps {
 
 - Background: `var(--color-bg-subtle)` (defined in `tokens.css`).
 - Animation: `cs-skeleton-pulse` — `opacity: 0.4 → 0.8 → 0.4` over `1.5s`, `ease-in-out`, infinite.
-- Defined in `base.css` (no separate import required if you already import `base.css`).
+- Defined in `src/styles/components/skeleton.css`, which `components.css` imports. Importing
+  `base.css` alone leaves the element unstyled and unanimated, with nothing logged.
 
 ### Reduced motion
 
@@ -70,7 +71,8 @@ None.
 ## Dependencies
 
 - `cn()` utility for className merging.
-- CSS class `cs-skeleton` (defined in `src/styles/base.css`).
+- CSS class `cs-skeleton`, defined in `src/styles/components/skeleton.css` and reached through
+  `@codesweep-ai/ui/styles/components.css`.
 
 ## Edge Cases
 
