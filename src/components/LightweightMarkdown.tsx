@@ -178,6 +178,37 @@ function parseInline(value: string, context: RenderContext): ReactNode[] {
       }
     }
 
+    // Single-marker emphasis, tried after the two-marker forms above so `**`
+    // is never read as a pair of `*`. The two flanking rules are the subset
+    // that keeps this parser agreeing with CommonMark on ordinary prose: a
+    // marker hugging whitespace opens nothing, and `_` does not emphasise
+    // inside a word, which is what leaves snake_case identifiers alone.
+    const emMarker = value[cursor];
+    if (emMarker === "*" || emMarker === "_") {
+      const before = cursor > 0 ? value[cursor - 1] : "";
+      const opensWord = emMarker === "_" && /[\p{L}\p{N}]/u.test(before);
+      if (!opensWord && !/\s/.test(value[cursor + 1] ?? " ")) {
+        const end = findClosingDelimiter(value, cursor + 1, emMarker);
+        if (
+          end > cursor + 1 &&
+          !/\s/.test(value[end - 1]) &&
+          !(emMarker === "_" && /[\p{L}\p{N}]/u.test(value[end + 1] ?? ""))
+        ) {
+          nodes.push(
+            element(
+              "em",
+              {},
+              parseInline(value.slice(cursor + 1, end), { ...context, keyPrefix: key() }),
+              context,
+              key(),
+            ),
+          );
+          cursor = end + 1;
+          continue;
+        }
+      }
+    }
+
     if (value[cursor] === "\n" && cursor >= 2 && value.slice(cursor - 2, cursor) === "  ") {
       const previous = nodes[nodes.length - 1];
       if (typeof previous === "string") nodes[nodes.length - 1] = previous.slice(0, -2);

@@ -51,3 +51,39 @@ describe("MarkdownViewer parser conformance", () => {
     expect(container.querySelector("[data-markdown-blockquote]")).not.toBeNull();
   });
 });
+
+describe.each([
+  ["lightweight", MarkdownViewer],
+  ["rich", RichMarkdownViewer],
+] as const)("MarkdownViewer emphasis — %s", (_, Viewer) => {
+  it("renders single-marker emphasis with either marker", () => {
+    const { container } = render(<Viewer content={"*star* and _underscore_"} />);
+    expect(Array.from(container.querySelectorAll("em"), (node) => node.textContent)).toEqual([
+      "star",
+      "underscore",
+    ]);
+  });
+
+  it("nests emphasis inside strong", () => {
+    const { container } = render(<Viewer content={"**bold with *nested* inside**"} />);
+    expect(container.querySelector("strong em")).toHaveTextContent("nested");
+  });
+
+  it("leaves an underscore inside a word alone", () => {
+    const { container } = render(<Viewer content={"a snake_case_name here"} />);
+    expect(container.querySelectorAll("em")).toHaveLength(0);
+    expect(container.querySelector("article")).toHaveTextContent("snake_case_name");
+  });
+
+  it("does not emphasise a marker hugging whitespace", () => {
+    const { container } = render(<Viewer content={"2 * 3 * 4"} />);
+    expect(container.querySelectorAll("em")).toHaveLength(0);
+    expect(container.querySelector("article")).toHaveTextContent("2 * 3 * 4");
+  });
+
+  it("leaves an unclosed marker as literal text", () => {
+    const { container } = render(<Viewer content={"an *unclosed marker"} />);
+    expect(container.querySelectorAll("em")).toHaveLength(0);
+    expect(container.querySelector("article")).toHaveTextContent("an *unclosed marker");
+  });
+});

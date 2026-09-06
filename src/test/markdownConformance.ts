@@ -4,6 +4,9 @@ Paragraph with **bold text**, \`inline code\`, and an [allowed link](https://exa
 
 > A blockquote with **strong text**.
 
+Emphasis: *single star*, _single underscore_, and **bold with *nested* inside**.
+A snake_case_name keeps its underscores, and 2 * 3 * 4 stays arithmetic.
+
 - outer item
   - nested item
 - second item
