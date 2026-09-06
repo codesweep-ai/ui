@@ -2,11 +2,25 @@
   "recommendedBy": "session agent, triaging five consumer reports for the repository owner",
   "updated": "2026-09-06",
   "items": [
-    { "id": "CUI-001", "why": "Corrupts every code span or fence containing a `<`, which is every TypeScript generic. Reproduced, and the fix is contained to one function." },
-    { "id": "CUI-002", "why": "A core markdown feature renders its own markers, and the two renderers disagree while a test claims they agree." },
-    { "id": "CUI-005", "why": "The escape hatch every other record is currently forced through, and it breaks on any rebuild." },
-    { "id": "CUI-003", "why": "Small self-contained defect that makes two components meant to compose behave the same way." },
-    { "id": "CUI-004", "why": "Removes chrome a consumer cannot turn off, and restores a choice plain Tree already offers." },
-    { "id": "CUI-006", "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed." }
+    {
+      "id": "CUI-002",
+      "why": "A core markdown feature renders its own markers, and the two renderers disagree while a test claims they agree."
+    },
+    {
+      "id": "CUI-005",
+      "why": "The escape hatch every other record is currently forced through, and it breaks on any rebuild."
+    },
+    {
+      "id": "CUI-003",
+      "why": "Small self-contained defect that makes two components meant to compose behave the same way."
+    },
+    {
+      "id": "CUI-004",
+      "why": "Removes chrome a consumer cannot turn off, and restores a choice plain Tree already offers."
+    },
+    {
+      "id": "CUI-006",
+      "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."
+    }
   ]
 }

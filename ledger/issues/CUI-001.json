@@ -3,18 +3,39 @@
   "title": "escapeMarkdownHtml escapes < inside code, corrupting code spans, fences and mermaid diagrams",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
+  "evidence": {
+    "commits": [
+      "15bbb39"
+    ],
+    "integrated": [],
+    "verified": "npx vitest run src/lib/markdownUrl.test.ts: 12 passed. Reverting only src/lib/markdownUrl.ts and rerunning fails 7 of those 12, plus all 3 consumer cases added to MarkdownViewer.security.test.tsx (both viewers) and MarkdownViewer.mermaid.test.tsx. The 5 that still pass on the reverted build are the prose cases, which is the evidence prose escaping is unchanged. Full suite 569 passed across 57 files, up from 554 across 56. npm run check exit 0."
+  },
   "resolution": null,
-  "details": "`escapeMarkdownHtml` in `src/lib/markdownUrl.ts` replaces every `<` that opens a tag with `&lt;`, and `MarkdownViewer` applies it to the whole document before either renderer sees it. The escape does not know where code begins, so it corrupts verbatim regions.\n\nTwo symptoms. Inline `` `Array<string>` `` renders on the page as the literal text `Array&lt;string>`, because neither renderer decodes entities back inside code. And a `<br/>` inside a ```mermaid fence reaches MermaidDiagram as `&lt;br/>`, so mermaid emits a stray `br` in the node label instead of a line break.\n\nIn prose the bug is invisible, because the lightweight parser's `appendText` decodes entities again. That is why it survived: it only shows up inside code, and it shows up on every TypeScript generic.\n\nThe escape exists to keep raw HTML out of react-markdown's tree, where a consumer's rehype plugin would render it. A fix must keep prose escaping byte for byte identical and exempt only regions both renderers already treat as literal text.\n\nWorked around in the consuming app by post-processing the rendered DOM to undo the entity."
-  ,
+  "details": "`escapeMarkdownHtml` in `src/lib/markdownUrl.ts` replaces every `<` that opens a tag with `&lt;`, and `MarkdownViewer` applies it to the whole document before either renderer sees it. The escape does not know where code begins, so it corrupts verbatim regions.\n\nTwo symptoms. Inline `` `Array<string>` `` renders on the page as the literal text `Array&lt;string>`, because neither renderer decodes entities back inside code. And a `<br/>` inside a ```mermaid fence reaches MermaidDiagram as `&lt;br/>`, so mermaid emits a stray `br` in the node label instead of a line break.\n\nIn prose the bug is invisible, because the lightweight parser's `appendText` decodes entities again. That is why it survived: it only shows up inside code, and it shows up on every TypeScript generic.\n\nThe escape exists to keep raw HTML out of react-markdown's tree, where a consumer's rehype plugin would render it. A fix must keep prose escaping byte for byte identical and exempt only regions both renderers already treat as literal text.\n\nWorked around in the consuming app by post-processing the rendered DOM to undo the entity.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed against src/lib/markdownUrl.ts:25 and src/components/MarkdownViewer.tsx:756. Reproduced with a throwaway vitest file: the escaper's output contains `Array&lt;string>` and `one&lt;br/>two`, both asserted and passing." },
-    { "date": "2026-09-06", "text": "The report arrived with a full fix and a claim of 565 tests passing across 57 files. That work is not in this repository, whose baseline is 554 across 56. Treating the design as a proposal rather than as landed work." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed against src/lib/markdownUrl.ts:25 and src/components/MarkdownViewer.tsx:756. Reproduced with a throwaway vitest file: the escaper's output contains `Array&lt;string>` and `one&lt;br/>two`, both asserted and passing."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The report arrived with a full fix and a claim of 565 tests passing across 57 files. That work is not in this repository, whose baseline is 554 across 56. Treating the design as a proposal rather than as landed work."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Fixed by making the escaper code-aware rather than by narrowing what it escapes. It now walks the source and passes fenced blocks and code spans through untouched, reusing LightweightMarkdown's own fence regexes so the escaper and the parser cannot disagree about where code begins. Indented 4-space code blocks are deliberately still escaped, because telling one from a lazy paragraph continuation is ambiguous and a wrong guess would under-escape."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "If you worked around this in a consumer app, undo it. Any post-processing that rewrote &lt; back to < in rendered output will now double-handle correct text, and a pre-pass over the markdown source is no longer needed. Take the fix and delete the workaround rather than leaving both in place. components/MarkdownViewer.md now states the prose and code rules separately, so the guarantee you are relying on is written down."
+    }
   ],
-  "links": ["CUI-002"]
+  "links": [
+    "CUI-002"
+  ]
 }
