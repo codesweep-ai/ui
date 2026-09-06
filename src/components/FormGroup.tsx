@@ -101,22 +101,28 @@ function FormGroupImpl({
         </label>
       )}
       {enhancedChildren}
-      {error ? (
-        <span
-          id={errorId}
-          role="alert"
-          className="cs-component-form-group-20 "
-        >
-          {error}
-        </span>
-      ) : helper ? (
-        <span
-          id={helperId}
-          className="cs-component-form-group-21 "
-        >
-          {helper}
-        </span>
-      ) : null}
+      {/* The message slot holds its line whether or not there is a message, so
+          a field that turns invalid does not push everything below it down the
+          page. A field with helper text already occupied the slot; this gives
+          every other field the same footprint. */}
+      <span className="cs-component-form-group-22 ">
+        {error ? (
+          <span
+            id={errorId}
+            role="alert"
+            className="cs-component-form-group-20 "
+          >
+            {error}
+          </span>
+        ) : helper ? (
+          <span
+            id={helperId}
+            className="cs-component-form-group-21 "
+          >
+            {helper}
+          </span>
+        ) : null}
+      </span>
     </div>
   );
 }

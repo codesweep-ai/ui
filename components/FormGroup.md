@@ -65,6 +65,9 @@ interface FormGroupProps {
 - Label: `text-label-upper` utility (font-size-label, semibold, uppercase, var(--muted)).
 - Required asterisk: `var(--color-error)`, `aria-hidden`, separated by `var(--space-0-5)`.
 - Helper / error: `font-size: var(--font-size-xs)`. Helper uses `var(--muted)`, error uses `var(--color-error)`.
+- Message slot: always present, with `min-height: 1lh` at the message font size. A field that
+  turns invalid therefore does not move the fields below it down the page. The cost is one line
+  of height per group whether or not it ever shows a message.
 
 ## Behavior
 

@@ -28,6 +28,15 @@
     color: var(--muted)
 }
 
+/* Reserves one line of message text, so an error appearing does not move the
+   fields below it. Carrying the message font-size makes 1lh exactly the line
+   the message will occupy, rather than a guess at its computed line-height. */
+.cs-component-form-group-22 {
+    display: block;
+    font-size: var(--font-size-xs);
+    min-height: 1lh
+}
+
 .cs-component-form-group-20,
 .cs-component-form-group-21 {
     font-size: var(--font-size-xs)
