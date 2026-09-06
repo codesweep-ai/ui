@@ -61,7 +61,7 @@ interface DropdownOption {
 
 ## Empty options state (added v1.2.0)
 
-When `options` is an empty array, the select is automatically disabled and renders a single disabled option with `emptyMessage` text (default `"No options available."`). The `placeholder` prop is ignored in this state. The wrapper carries `data-testid="dropdown-empty"`.
+When `options` is an empty array, the select is automatically disabled and renders a single disabled option with `emptyMessage` text (default `"No options available."`). The `placeholder` prop is ignored in this state. The `<select>` carries `data-testid="dropdown-empty"`.
 
 This is the appropriate "empty" treatment for a single-line control: rather than a separate empty UI block, the affordance itself communicates "nothing here yet" while staying in place.
 
@@ -97,8 +97,10 @@ When none of these props are set, Dropdown renders bare (no wrapper) — preserv
 - Font-size: `var(--font-size-sm)`.
 - Font-family: `var(--font-family-sans)`.
 - Color: `var(--fg)`.
-- Appearance: `none` (custom dropdown arrow via background SVG or pseudo-element).
-- Dropdown arrow: right-aligned chevron using CSS `background-image` (inline SVG data URI).
+- Appearance: `none`, so the native arrow is suppressed and the component draws its own.
+- Dropdown arrow: a lucide `ChevronDown` element rendered beside the `<select>` and absolutely
+  positioned over its right edge. It is an element in the DOM rather than a background image, so
+  restyling it means targeting that node.
 - **Requires** `color-scheme: dark` / `color-scheme: light` on `:root` (set in `base.css`) so the browser renders native `<option>` elements with the correct theme.
 
 ### States
@@ -151,7 +153,8 @@ None.
 
 ## Traceability
 
-`data-component="Dropdown"` on the root `<select>`.
+`data-component="Dropdown"` on the wrapper `<div>`, which is the root this component renders. The
+`<select>` inside it carries no `data-component`.
 
 ## Compiling usage example
 
