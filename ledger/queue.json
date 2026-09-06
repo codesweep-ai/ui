@@ -11,24 +11,24 @@
       "why": "A minimap that mounts before its content draws nothing, ever, and the fix is a judgement about how far to reach."
     },
     {
-      "id": "CUI-044",
-      "why": "Its placeholder bullet needs an owner decision: repaint every placeholder, or document the colour that ships."
+      "id": "CUI-046",
+      "why": "Four drifts in one specification, including a selector it invites consumers to trust."
     },
     {
-      "id": "CUI-040",
-      "why": "Card documents a containing block it does not establish, so a consumer positioning inside it lands on the page."
+      "id": "CUI-045",
+      "why": "Four specifications naming attributes the components stopped emitting; all documentation, no decisions."
     },
     {
       "id": "CUI-041",
       "why": "A responsive header the stylesheet has no media query for."
     },
     {
-      "id": "CUI-030",
-      "why": "A section the gate has never once photographed."
+      "id": "CUI-052",
+      "why": "Re-recording a baseline should produce a diff a reviewer can read."
     },
     {
-      "id": "CUI-046",
-      "why": "Four drifts in one specification, including a selector it invites consumers to trust."
+      "id": "CUI-030",
+      "why": "A section the gate has never once photographed."
     }
   ]
 }

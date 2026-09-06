@@ -1,0 +1,22 @@
+{
+  "id": "CUI-052",
+  "title": "Re-recording the baseline rewrites captures whose pixels did not change",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while re-recording the baseline for CUI-040",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`npm run visual:capture` rewrote 17 of the 94 captures for a change that affected two components. Measured against the committed versions, `code-block` changed 1.82% and 1.79% of its pixels and `mermaid-diagram` 0.53% and 0.64%. The other 13 differed by 0 pixels at the threshold the gate itself uses.\n\nRestoring those 13 leaves `visual:compare` at 94 of 94 with 0 differing pixels, so they carry nothing the gate can see. Running `visual:capture` again rewrites all 17 once more, so this is reproducible rather than one bad run.\n\nThe cost is review. CONTRIBUTING asks that an intentional visual change be reviewed in both themes, and 13 files of noise around 4 real ones makes that harder than it needs to be. Writing a capture only when it differs from the committed one would fix it.\n\nWhat has not been established is why the bytes differ when the pixels do not. It could be encoder nondeterminism or a colour delta below the comparison threshold, and the two want different fixes.",
+  "notes": [],
+  "links": [
+    "CUI-040"
+  ]
+}

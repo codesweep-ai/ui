@@ -3,15 +3,17 @@
   "title": "Card documents a position: relative that no stylesheet sets",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "Card pass, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "783a5b2"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Reverting the rule fails the new test with `expected 'static' to be 'relative'`, and it passes with the rule, in browser mode because jsdom applies no stylesheet to a computed style. The change moves nothing: with the components page loaded, 3484 elements were measured before and after promoting all 13 cards to `position: relative`, and 0 changed their bounding rectangle. It does change text rasterisation inside two of them, so `code-block` and `mermaid-diagram` were re-recorded at 1.8170% and 1.7947%, and 0.5313% and 0.6410%. `npm run ci` exits 0 with every gate run, 632 tests, visual:compare 94/94 at 0 differing pixels, axe 0."
   },
   "resolution": null,
   "details": "`components/Card.md:60` gives the Card root `display: block` and `position: relative`.\n\n`src/styles/components/card.css` contains no `position` declaration at all. The root class sets overflow, radius, border and shadow only.\n\nA consumer who absolutely positions a badge or a menu inside a Card, on the strength of that line, gets it positioned against whichever ancestor does establish a containing block. That is usually the page rather than the card.",
@@ -23,6 +25,10 @@
     {
       "date": "2026-09-06",
       "text": "Attempted and reverted, because the one-line fix is not visually inert. Adding `position: relative` to the Card root fails the visual gate at 90 of 94: `code-block` changes 1.79% and 1.82% of pixels, and `mermaid-diagram` 0.53% and 0.64%, in light and dark. The captures keep their dimensions, and no whole-pixel shift explains the difference: comparing the new render against the baseline at every offset from -2 to +2 in both axes, the smallest difference is at zero offset. So the text is rasterised differently rather than moved, which is what promoting the card to a containing block does to the subpixel positions of its descendants. Accepting the fix means re-recording four captures for a containing block nothing in the library currently uses. Correcting the specification instead costs nothing and leaves a consumer without the anchor. That is a decision for the repository owner."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The owner approved the fix on condition it broke nothing, so the question became whether the failing pixels were geometry or rasterisation. Comparing the new render against the baseline at every offset from -2 to +2 in both axes put the smallest difference at zero offset, which rules out a shift, and the bounding-rectangle sweep settled it: nothing moves. The captures were re-recorded on that basis."
     }
   ],
   "links": []

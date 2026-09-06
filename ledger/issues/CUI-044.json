@@ -27,6 +27,10 @@
     {
       "date": "2026-09-06",
       "text": "The placeholder bullet needs a decision and was left alone during the Input pass. `components/Input.md:98` and `components/SearchInput.md:81` say `var(--muted)`, and both sheets use `var(--color-neutral)`. Changing the sheets repaints every placeholder in both themes and moves the baseline. Changing the documents blesses the colour that ships today. Neither is obviously right, so it is for the repository owner rather than a session agent."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The placeholder bullet is done, in 92ce7e2. The owner chose to document the colour that ships rather than repaint every placeholder, so `components/Input.md` and `components/SearchInput.md` now name `var(--color-neutral)`. The Table, StatusBadge and Panel bullets are still open."
     }
   ],
   "links": []
