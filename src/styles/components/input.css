@@ -159,7 +159,9 @@
     box-shadow: 0 0 0 .125rem var(--color-error)
 }
 
-.cs-component-input-25:hover {
+/* The disabled class, not :disabled: this rule is on the wrapper div, and the
+   native attribute on the inner control does not select it. */
+.cs-component-input-25:hover:not(.cs-component-input-26) {
     border-color: var(--muted)
 }
 
