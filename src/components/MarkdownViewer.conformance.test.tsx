@@ -81,6 +81,16 @@ describe.each([
     expect(container.querySelector("article")).toHaveTextContent("2 * 3 * 4");
   });
 
+  it("reads three markers as emphasis wrapping strong", () => {
+    const { container } = render(<Viewer content={"***both at once***"} />);
+    expect(container.querySelector("em strong")).toHaveTextContent("both at once");
+  });
+
+  it("reads three underscores the same way", () => {
+    const { container } = render(<Viewer content={"___both at once___"} />);
+    expect(container.querySelector("em strong")).toHaveTextContent("both at once");
+  });
+
   it("leaves an unclosed marker as literal text", () => {
     const { container } = render(<Viewer content={"an *unclosed marker"} />);
     expect(container.querySelectorAll("em")).toHaveLength(0);

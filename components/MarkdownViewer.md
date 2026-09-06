@@ -24,7 +24,7 @@ note: >
 
 ## Overview
 
-Markdown renderer with heading outline navigation and canvas minimap. `@codesweep-ai/ui/markdown` uses the lightweight parser; it covers paragraphs, headings, lists, inline and fenced code, bold and italic text, links, GFM tables, and blockquotes. `@codesweep-ai/ui/markdown/rich` is the build-time opt-in to the full CommonMark + GFM pipeline and its remark/rehype plugin seam. Both entries export `MarkdownViewer` with the same base props and shared safe React renderer; the rich entry adds plugin props. No runtime prop chooses a parser.
+Markdown renderer with heading outline navigation and canvas minimap. `@codesweep-ai/ui/markdown` uses the lightweight parser; it covers paragraphs, headings, lists, inline and fenced code, bold and italic text including the two together, links, GFM tables, and blockquotes. `@codesweep-ai/ui/markdown/rich` is the build-time opt-in to the full CommonMark + GFM pipeline and its remark/rehype plugin seam. Both entries export `MarkdownViewer` with the same base props and shared safe React renderer; the rich entry adds plugin props. No runtime prop chooses a parser.
 
 ## Props
 
@@ -178,7 +178,7 @@ Without this import, markdown elements will render unstyled.
 - `@codesweep-ai/ui/markdown` — dependency-light parser for the documented default subset, including GFM tables.
 - `@codesweep-ai/ui/markdown/rich` — full `react-markdown`, `remark-gfm`, and `rehype-slug` pipeline plus consumer-selected plugins.
 - Consumer-selected renderers remain optional for syntax highlighting, diagrams, and math.
-- A shared conformance corpus is rendered through both entries and compared structurally. It includes a nested-list continuation at a table-cell boundary, an unclosed fence, and an escaped pipe inside inline code in a table row, emphasis in both markers, and an intraword underscore that has to stay literal.
+- A shared conformance corpus is rendered through both entries and compared structurally. It includes a nested-list continuation at a table-cell boundary, an unclosed fence, and an escaped pipe inside inline code in a table row, emphasis in both markers, three markers reading as emphasis wrapping strong, and an intraword underscore that has to stay literal.
 
 ## Edge Cases
 

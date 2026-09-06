@@ -139,6 +139,44 @@ function parseInline(value: string, context: RenderContext): ReactNode[] {
       continue;
     }
 
+    // Three markers, before the two-marker branch below can take the first pair
+    // and leave a stray one behind. CommonMark reads `***x***` as emphasis
+    // wrapping strong, which is the nesting the rich parser produces.
+    //
+    // Exactly three. Four or more is left alone: the rules for those runs are
+    // where CommonMark's delimiter matching stops being expressible as a scan,
+    // and a wrong guess here would disagree with the other parser in a new way
+    // rather than an old one.
+    const triple = value.startsWith("***", cursor)
+      ? "***"
+      : value.startsWith("___", cursor)
+        ? "___"
+        : null;
+    if (triple && value[cursor + 3] !== triple[0]) {
+      const end = findClosingDelimiter(value, cursor + 3, triple);
+      if (end > cursor + 3 && value[end + 3] !== triple[0]) {
+        nodes.push(
+          element(
+            "em",
+            {},
+            [
+              element(
+                "strong",
+                {},
+                parseInline(value.slice(cursor + 3, end), { ...context, keyPrefix: key() }),
+                context,
+                key(),
+              ),
+            ],
+            context,
+            key(),
+          ),
+        );
+        cursor = end + 3;
+        continue;
+      }
+    }
+
     const delimiter = value.startsWith("**", cursor)
       ? "**"
       : value.startsWith("__", cursor)
