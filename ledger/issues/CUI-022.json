@@ -3,15 +3,19 @@
   "title": "Pattern example code is written in a retired class syntax and names classes that do not exist",
   "type": "defect",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
-  "resolved": null,
+  "resolved": "2026-09-06",
   "stint": "sandbox-verify, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "87dec12",
+      "7108192",
+      "5b10863"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Before the rewrite the ten pattern documents carried 85 class references that resolved to nothing, and afterwards none. `text-label-upper` was the only name that ever resolved, to `src/styles/utilities.css`. The new integrity check counts every occurrence across both documentation directories: run against the tree at 7108192^ it reports 97 failures and exits 1, each naming a class and a line, and against the current tree it reports 0 and exits 0. `npm run check` exits 0, and `cs-lint prose` reports 0 errors on the rewritten documents."
   },
   "resolution": null,
   "details": "All ten `patterns/*.md` write their examples in Tailwind utility and arbitrary-value syntax. Tailwind is not a dependency, and DESIGN_SYSTEM_SPEC section 7.10 says the convention is retired and components use plain CSS with no arbitrary-value syntax.\n\nThe examples also name classes defined nowhere in the repository. The reviewer checked twelve, including `dashboard-stat`, `dashboard-chart-layout` and `data-table-heading`, and found none of them in `src/styles/` or `preview/src/`.\n\nThe code block is the part people paste, and pasted as-is it renders unstyled markup with no way to tell which half of the class list was ever real.\n\nThe reason it rotted silently is worth fixing with it. Every `components/*.md` carries a marked `docs-compile` example that is type-checked and rendered by the gate. No `patterns/*.md` does, and `scripts/docs-compile.mjs` reads the components directory alone.",
@@ -31,6 +35,10 @@
     {
       "date": "2026-09-06",
       "text": "Starting the other half. Measured across the ten pattern documents: 85 class references in JSX blocks that resolve to nothing, in eight files. Chart.md and ComponentStates.md use no classes and are already clean. The 85 split three ways: retired utility names such as `flex` and `mt-1`, arbitrary-value syntax such as `[color:var(--fg)]`, and invented semantic names such as `dashboard-stat`. Only `text-label-upper` resolves, to `src/styles/utilities.css`."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Closed by the rewrite and the gate together. Each document now defines the classes its own examples use, in plain CSS with values from the tokens. The check resolves a name against the css blocks in the same document and against the stylesheets under `src/styles/`. It reads quoted class attributes only, so a class assembled in a `className={...}` expression is still unchecked. No example in either directory writes one today."
     }
   ],
   "links": [
