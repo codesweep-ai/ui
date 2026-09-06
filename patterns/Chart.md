@@ -115,3 +115,24 @@ The `@codesweep-ai/no-hardcoded-chart-colors` rule (warn, in the recommended con
 - ❌ `const palette = ["#60a5fa", "#2dd4bf", …]` — use `theme.categorical`.
 - ❌ A chart that doesn't restyle on theme toggle — depend your draw effect on the `theme` object.
 - ❌ A bespoke loading spinner inside the chart — use `ChartFrame`'s `loading`.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { useChartTheme } from "@codesweep-ai/ui";
+import { ChartFrame } from "@codesweep-ai/ui/chart";
+
+export function Example() {
+  // Every value comes from the bridge, never a hard-coded colour.
+  const theme = useChartTheme();
+  return (
+    <ChartFrame title="Requests" height={160}>
+      <svg viewBox="0 0 100 40" width="100%">
+        <rect x={4} y={10} width={12} height={30} fill={theme.categorical[0]} />
+        <rect x={24} y={18} width={12} height={22} fill={theme.categorical[1]} />
+      </svg>
+    </ChartFrame>
+  );
+}
+```

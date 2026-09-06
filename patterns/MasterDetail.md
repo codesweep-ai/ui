@@ -319,3 +319,36 @@ Row selection uses the Table component's `onRowClick` and `selectedKey` props �
 - **Don't** embed click-handler buttons in individual cells for selection — use `onRowClick` instead.
 - **Don't** put editable forms in the detail pane — this pattern is read-only. Use Form + Results for input.
 - **Don't** make the table columns too narrow; ensure the primary identifier (name) is always readable.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { useState } from "react";
+import { Card, SplitPane, StatusBadge, Table, type TableColumn } from "@codesweep-ai/ui";
+
+interface Service { id: string; name: string; state: "ok" | "warn" }
+const rows: Service[] = [
+  { id: "bus", name: "EventBus", state: "ok" },
+  { id: "auth", name: "Auth", state: "warn" },
+];
+
+export function Example() {
+  const [selected, setSelected] = useState<Service | null>(null);
+  const columns: TableColumn<Service>[] = [
+    { id: "name", header: "Name", cell: (row) => row.name },
+    // wrap, because a truncated badge is broken visuals rather than shortened text.
+    { id: "state", header: "State", wrap: true, cell: (row) => <StatusBadge status={row.state === "ok" ? "success" : "warning"} label={row.state} /> },
+  ];
+  return (
+    <SplitPane
+      panes={[
+        { id: "list", defaultWidth: 320, children: (
+          <Table columns={columns} data={rows} rowKey={(row) => row.id} onRowClick={setSelected} selectedKey={selected?.id} />
+        ) },
+        { id: "detail", children: <Card header={selected?.name ?? "Select a service"}>Detail</Card> },
+      ]}
+    />
+  );
+}
+```

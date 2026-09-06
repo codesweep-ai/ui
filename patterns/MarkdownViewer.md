@@ -219,3 +219,14 @@ This example uses the lightweight `@codesweep-ai/ui/markdown` entry. If the docu
 - **Don't** handle link clicks with global event listeners — use the `onLinkClick` prop.
 - **Don't** override the `pre` element outside the component — use `codeRenderers` instead.
 - **Don't** render without a height constraint — the viewer expects `height: 100%` or another explicit parent height.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { MarkdownViewer } from "@codesweep-ai/ui/markdown";
+
+export function Example() {
+  return <MarkdownViewer content={"# Scan result\n\nA paragraph, and a `code span`."} outline />;
+}
+```

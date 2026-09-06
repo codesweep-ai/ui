@@ -303,3 +303,26 @@ When using `fixed` layout, column widths are percentages:
 - **Don't** make numeric columns searchable unless the formatted string is meaningful.
 - **Don't** set `width` on every column — leave one flexible to absorb space.
 - **Don't** use `pageSize` smaller than 5 or larger than 50 — both hurt usability.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { Table, type TableColumn } from "@codesweep-ai/ui";
+
+interface Package { id: string; name: string; downloads: number }
+
+const rows: Package[] = [
+  { id: "react", name: "react", downloads: 41_000 },
+  { id: "vite", name: "vite", downloads: 22_000 },
+];
+
+const columns: TableColumn<Package>[] = [
+  { id: "name", header: "Name", cell: (row) => row.name, sortable: true, searchValue: (row) => row.name },
+  { id: "downloads", header: "Downloads", cell: (row) => row.downloads, sortable: true, align: "right" },
+];
+
+export function Example() {
+  return <Table columns={columns} data={rows} rowKey={(row) => row.id} fixed filterable />;
+}
+```

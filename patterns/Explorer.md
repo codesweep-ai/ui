@@ -275,3 +275,47 @@ function Explorer() {
 - **Do** use SectionedTree when you have multiple independent tree groups.
 - **Don't** nest more than 3-4 levels deep; flatten if possible.
 - **Don't** put interactive controls inside the content Card header—keep it a label.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { useState } from "react";
+import { Card, Panel, SectionedTree, SplitPane, type TreeSection } from "@codesweep-ai/ui";
+
+const sections: TreeSection[] = [
+  {
+    id: "files",
+    label: "Project Files",
+    // A filter on the section long enough to earn one, not on every section.
+    filterable: true,
+    nodes: [{ id: "app", name: "App.tsx", type: "leaf" }],
+  },
+  { id: "deps", label: "Dependencies", filterable: false, nodes: [{ id: "react", name: "react", type: "leaf" }] },
+];
+
+export function Example() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  return (
+    <SplitPane
+      panes={[
+        {
+          id: "sidebar",
+          defaultWidth: 280,
+          children: (
+            <Panel title="Explorer">
+              <SectionedTree
+                sections={sections}
+                selectedId={selectedId}
+                onSelect={(node) => setSelectedId(node.id)}
+                filterable={false}
+              />
+            </Panel>
+          ),
+        },
+        { id: "content", children: <Card header={selectedId ?? "Nothing selected"}>Body</Card> },
+      ]}
+    />
+  );
+}
+```

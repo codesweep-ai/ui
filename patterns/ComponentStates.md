@@ -129,3 +129,29 @@ The same shape works for `Tree`, `SectionedTree`, and `MarkdownViewer`. Internal
 ## Enforcement
 
 The ESLint rule `@codesweep-ai/components-need-state-props` (warn level, added v1.2.0) flags components that touch async-data patterns without these props. It's a heuristic, not a guarantee — manual review still required for component additions.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { Table, type TableColumn } from "@codesweep-ai/ui";
+import { ChartFrame } from "@codesweep-ai/ui/chart";
+
+interface Row { id: string; name: string }
+const columns: TableColumn<Row>[] = [
+  { id: "name", header: "Name", cell: (row) => row.name },
+];
+
+export function Example() {
+  // Every state is a prop on the component, never a hand-rolled div.
+  return (
+    <div>
+      <Table columns={columns} data={[]} rowKey={(row) => row.id} emptyMessage="No results." />
+      <Table columns={columns} data={[]} rowKey={(row) => row.id} loading />
+      <ChartFrame title="Requests" empty emptyMessage="Nothing recorded yet.">
+        <svg />
+      </ChartFrame>
+    </div>
+  );
+}
+```

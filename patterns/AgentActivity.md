@@ -94,3 +94,25 @@ import {
 - [`EventLanes`](../components/EventLanes.md) is the dense horizontal variant of agent activity, with a shared index axis and optional named lanes. AgentTrace is the verbose, vertical, expandable counterpart.
 - [`StatusBadge`](../components/StatusBadge.md) is for stable, non-animated state labels (e.g. "Approved", "Failed"). Use PulseBadge only when activity is *live*.
 - [`Skeleton`](../components/Skeleton.md) is for unknown async wait (e.g. waiting for a network request). Once agent activity starts, swap to AgentStatus.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { AgentStatus, AgentTrace, StreamingText, type AgentTraceStep } from "@codesweep-ai/ui";
+
+const steps: AgentTraceStep[] = [
+  { id: "read", status: "success", label: "Read 142 files" },
+  { id: "scan", status: "in-flight", label: "Scanning for unused exports" },
+];
+
+export function Example() {
+  return (
+    <div>
+      <AgentStatus state="in-flight">Scanning for unused exports…</AgentStatus>
+      <StreamingText text="Found three candidates so far." done />
+      <AgentTrace steps={steps} />
+    </div>
+  );
+}
+```

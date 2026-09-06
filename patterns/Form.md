@@ -170,3 +170,34 @@ While a submission is in flight:
 ## Reference
 
 For a minimal canonical stack see [`components/FormGroup.md`](../components/FormGroup.md) and [`components/Input.md`](../components/Input.md). The in-repo unit tests at `src/components/FormGroup.test.tsx` exercise the auto-wiring contract.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { useState } from "react";
+import { Button, FormGroup, Input } from "@codesweep-ai/ui";
+
+export function Example() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | undefined>();
+
+  // noValidate, because this form validates itself. FormGroup forwards
+  // `required` to the input, and the browser would otherwise refuse to fire
+  // submit, so this handler would never run.
+  return (
+    <form
+      noValidate
+      onSubmit={(event) => {
+        event.preventDefault();
+        setError(email.includes("@") ? undefined : "Enter a valid email.");
+      }}
+    >
+      <FormGroup label="Email" htmlFor="email" required error={error}>
+        <Input id="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+      </FormGroup>
+      <Button type="submit">Create account</Button>
+    </form>
+  );
+}
+```

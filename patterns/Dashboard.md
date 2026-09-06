@@ -413,3 +413,26 @@ Map `--color-cat-N` tokens to data series in order:
 - **Do** use `--color-cat-N` categorical tokens for data series, not semantic tokens like `--color-success`.
 - **Don't** use more than 5-6 series on a single line chart — it becomes unreadable.
 - **Don't** use Recharts' default legend — it uses mixed shapes (circles, rectangles, sectors) across chart types. Use the custom `ChartLegend` for uniform square swatches.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { Card, CardGroup, useChartTheme } from "@codesweep-ai/ui";
+import { ChartFrame } from "@codesweep-ai/ui/chart";
+
+export function Example() {
+  const theme = useChartTheme();
+  return (
+    <CardGroup>
+      <Card id="throughput" header="Throughput" maximizable>
+        <ChartFrame height={140}>
+          <svg viewBox="0 0 100 40" width="100%">
+            <rect x={4} y={8} width={12} height={32} fill={theme.categorical[0]} />
+          </svg>
+        </ChartFrame>
+      </Card>
+    </CardGroup>
+  );
+}
+```

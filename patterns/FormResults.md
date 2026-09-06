@@ -228,3 +228,25 @@ function SearchPage() {
 - **Do** show a count of results (e.g., "3 results") above the list.
 - **Don't** auto-submit on every keystroke without debounce — use SearchInput's built-in debounce.
 - **Don't** show more than ~20 results at once; paginate or virtualize.
+
+## Compiling usage example
+
+<!-- docs-compile -->
+```tsx
+import { useState } from "react";
+import { Card, SearchInput } from "@codesweep-ai/ui";
+
+export function Example() {
+  const [query, setQuery] = useState("");
+  // null is "not searched yet", [] is "searched and found nothing". They are
+  // different states and the pattern renders them differently.
+  const results: string[] | null = query ? [] : null;
+
+  return (
+    <div>
+      <SearchInput value={query} onChange={setQuery} onSearch={setQuery} placeholder="Search files…" />
+      {results !== null && results.length === 0 && <Card variant="muted">No matches.</Card>}
+    </div>
+  );
+}
+```

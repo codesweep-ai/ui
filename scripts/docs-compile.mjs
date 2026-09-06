@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const componentDir = path.join(root, "components");
+const patternDir = path.join(root, "patterns");
 const scratch = path.join(root, ".docs-compile");
 const marker = /<!-- docs-compile -->\s*```tsx\n([\s\S]*?)\n```/g;
 
@@ -34,27 +35,40 @@ await rm(scratch, { recursive: true, force: true });
 await mkdir(scratch, { recursive: true });
 
 try {
-  const specs = (await readdir(componentDir))
-    .filter((file) => file.endsWith(".md"))
-    .sort();
+  // Patterns are compiled too, and for the same reason components are. The
+  // example is the part a reader pastes, and nothing checked that a pattern's
+  // would even run: all ten were written in a class syntax this design system
+  // retired, naming classes that exist nowhere in the repository.
+  //
+  // A pattern documents a composition rather than one component's hooks, so it
+  // carries no Traceability section and there is nothing to assert about its
+  // DOM. Compiling and rendering without throwing is the contract: the imports
+  // resolve, the props type-check, and the components accept each other.
+  const dirs = [
+    { dir: componentDir, prefix: "component", requireTraceability: true },
+    { dir: patternDir, prefix: "pattern", requireTraceability: false },
+  ];
 
   const contracts = [];
-  for (const [index, spec] of specs.entries()) {
-    const source = await readFile(path.join(componentDir, spec), "utf8");
-    const examples = [...source.matchAll(marker)];
-    if (examples.length !== 1) {
-      throw new Error(`${spec} must contain exactly one marked compiling TSX example; found ${examples.length}`);
+  for (const { dir, prefix, requireTraceability } of dirs) {
+    const specs = (await readdir(dir)).filter((file) => file.endsWith(".md")).sort();
+    for (const spec of specs) {
+      const source = await readFile(path.join(dir, spec), "utf8");
+      const examples = [...source.matchAll(marker)];
+      if (examples.length !== 1) {
+        throw new Error(
+          `${prefix} ${spec} must contain exactly one marked compiling TSX example; found ${examples.length}`,
+        );
+      }
+      const name = `${prefix}-${path.basename(spec, ".md")}`;
+      await writeFile(path.join(scratch, `${name}.tsx`), `${examples[0][1]}\n`);
+      contracts.push({
+        spec: `${prefix}s/${spec}`,
+        importName: `Example${contracts.length}`,
+        module: `./${name}`,
+        selectors: requireTraceability ? traceabilitySelectors(spec, source) : [],
+      });
     }
-    await writeFile(
-      path.join(scratch, `${path.basename(spec, ".md")}.tsx`),
-      `${examples[0][1]}\n`,
-    );
-    contracts.push({
-      spec,
-      importName: `Example${index}`,
-      module: `./${path.basename(spec, ".md")}`,
-      selectors: traceabilitySelectors(spec, source),
-    });
   }
 
   const imports = contracts
@@ -129,7 +143,7 @@ export default defineConfig({
     [path.join(root, "node_modules/vitest/vitest.mjs"), "run", "--config", path.join(scratch, "vitest.config.mjs")],
     { cwd: scratch, stdio: "inherit" },
   );
-  console.log(`docs:compile: PASS (${specs.length} compiling examples + rendered hook contracts)`);
+  console.log(`docs:compile: PASS (${contracts.length} compiling examples + rendered hook contracts)`);
 } finally {
   await rm(scratch, { recursive: true, force: true });
 }
