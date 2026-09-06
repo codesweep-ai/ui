@@ -5,6 +5,13 @@
     {
       "id": "color-contrast",
       "impact": "serious",
+      "error": {
+        "message": "Element midpoint exceeds the grid bounds Skipping color-contrast rule.",
+        "stack": "Error: Element midpoint exceeds the grid bounds\n    at assert (eval at evaluate (:311:30), <anonymous>:7417:15)\n    at Grid.getCellFromPoint (eval at evaluate (:311:30), <anonymous>:15657:11)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16014:27)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16026:17)\n    at eval (eval at evaluate (:311:30), <anonymous>:17829:16)\n    at Array.map (<anonymous>)\n    at getTextElementStack (eval at evaluate (:311:30), <anonymous>:17828:26)\n    at _getBackgroundStack (eval at evaluate (:311:30), <anonymous>:24805:20)\n    at _getBackgroundColor (eval at evaluate (:311:30), <anonymous>:25171:22)\n    at _getBackgroundColor2 (eval at evaluate (:311:30), <anonymous>:25161:21)",
+        "name": "Error",
+        "ruleId": "color-contrast",
+        "method": "color-contrast#evaluate"
+      },
       "tags": [
         "cat.color",
         "wcag2aa",
@@ -22,32 +29,32 @@
       "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=playwright",
       "nodes": [
         {
-          "any": [
+          "any": [],
+          "all": [],
+          "none": [
             {
-              "id": "color-contrast",
+              "id": "error-occurred",
               "data": {
-                "contrastRatio": 0,
-                "fontSize": "9.0pt (12px)",
-                "fontWeight": "normal",
-                "messageKey": "elmPartiallyObscuring",
-                "expectedContrastRatio": "4.5:1"
+                "message": "Element midpoint exceeds the grid bounds Skipping color-contrast rule.",
+                "stack": "Error: Element midpoint exceeds the grid bounds\n    at assert (eval at evaluate (:311:30), <anonymous>:7417:15)\n    at Grid.getCellFromPoint (eval at evaluate (:311:30), <anonymous>:15657:11)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16014:27)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16026:17)\n    at eval (eval at evaluate (:311:30), <anonymous>:17829:16)\n    at Array.map (<anonymous>)\n    at getTextElementStack (eval at evaluate (:311:30), <anonymous>:17828:26)\n    at _getBackgroundStack (eval at evaluate (:311:30), <anonymous>:24805:20)\n    at _getBackgroundColor (eval at evaluate (:311:30), <anonymous>:25171:22)\n    at _getBackgroundColor2 (eval at evaluate (:311:30), <anonymous>:25161:21)",
+                "name": "Error",
+                "ruleId": "color-contrast",
+                "method": "color-contrast#evaluate"
               },
               "relatedNodes": [],
-              "impact": "serious",
-              "message": "Element's background color could not be determined because it partially overlaps other elements"
+              "message": "Axe encountered an error; test the page for this type of problem manually",
+              "impact": "serious"
             }
           ],
-          "all": [],
-          "none": [],
           "impact": "serious",
-          "html": "<div class=\"cs-preview-dev-palette-lab-39 \">Preview-only — not in the published package. Charts: Patterns → Chart / Dashboard.</div>",
+          "html": "<span data-part=\"label\" class=\"cs-component-tree-34\">package.json</span>",
           "target": [
-            ".cs-preview-dev-palette-lab-39"
+            ".cs-component-tree-25[data-tree-node-id=\"pf-package\"][aria-level=\"1\"] > .cs-component-tree-34[data-part=\"label\"]"
           ],
-          "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+          "failureSummary": "Fix all of the following:\n  Axe encountered an error; test the page for this type of problem manually"
         }
       ]
     }
   ],
-  "passes": 53
+  "passes": 52
 }

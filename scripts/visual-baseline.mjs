@@ -12,6 +12,7 @@ const ROOT = path.resolve(import.meta.dirname, "..");
 const BASELINE_DIR = path.join(ROOT, "visual-baseline");
 const DIFF_DIR = path.join(ROOT, "visual-diff");
 const PREVIEW_URL = "http://127.0.0.1:4173/?page=components&brand=codesweep";
+const PATTERN_URL = "http://127.0.0.1:4173/?page=patterns&brand=codesweep";
 // An unset CHROME_BIN used to mean "whatever chromium playwright bundles",
 // which renders a contributor's pixels with one browser and the workflow's with
 // another and says nothing about having done so. The gate names its browser or
@@ -26,6 +27,13 @@ if (!CHROME_BIN) {
 
 const PIXEL_THRESHOLD = 0.1;
 const MAX_DIFF_RATIO = 0.001;
+// A ratio alone lets a real change hide in a large capture. The pattern pages
+// are whole-page shots of a few million pixels, so 0.1% of one is thousands: the
+// Tree label regression that started this moved 2084 pixels in the Explorer and
+// passed. Runs in the pinned image are deterministic to the pixel, twice
+// measured at zero, so anything above a small floor is a change rather than
+// noise and is worth a person looking at it.
+const MAX_DIFF_PIXELS = 250;
 const THEMES = ["light", "dark"];
 const COMPONENTS = [
   "AgentStatus", "AgentTrace", "AppShell",
@@ -37,6 +45,48 @@ const COMPONENTS = [
   "StreamingText", "Table", "ThemeToggle", "Toast",
   "ToastContainer", "Tree",
 ];
+
+// Patterns are the worked examples of how components compose, which is exactly
+// where a change that is right for one component on its own goes wrong. Until
+// these were captured the gate watched 35 components and none of the nine
+// pages that put them together, and a Tree change that passed 76 of 76 still
+// broke every label in the flipped Explorer.
+const PATTERNS = [
+  "explorer", "dashboard", "master-detail", "form", "agent-activity",
+  "chart", "form-results", "data-table", "markdown-viewer",
+];
+
+// Components the catalog lists that this gate deliberately does not capture.
+// The coverage check below reads this, so a new component either gets captured
+// or gets a reason written here. Neither happens by forgetting.
+const UNCAPTURED = {
+  Tooltip: "renders only while open, so it has no resting state to photograph",
+  EventLanes: "captured through its two fixtures above, which pin the geometry",
+  Chip: "no section of its own; it renders inside other sections",
+  Legend: "same",
+  RadioGroup: "same",
+  SegmentedControl: "same",
+};
+
+/**
+ * Every catalogued component is either captured or excused.
+ *
+ * The list above used to be the only record of what this gate watches, and it
+ * did not move when the catalog did: it sat at 33 while the catalog reached 37,
+ * so components joined the library and never joined the gate. Failing here is
+ * what makes that a decision rather than an oversight.
+ */
+async function assertCatalogCovered() {
+  const catalog = JSON.parse(await readFile(path.join(ROOT, "catalog.json"), "utf8"));
+  const known = new Set([...COMPONENTS, ...Object.keys(UNCAPTURED)]);
+  const missing = catalog.components.map((c) => c.name).filter((name) => !known.has(name));
+  if (missing.length) {
+    throw new Error(
+      `the catalog lists ${missing.join(", ")}, which this gate neither captures nor excuses. ` +
+      "Add each to COMPONENTS, or to UNCAPTURED with the reason.",
+    );
+  }
+}
 
 function slug(value) {
   return value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
@@ -67,9 +117,42 @@ async function screenshot(locator, file) {
   await locator.screenshot({ path: file, animations: "disabled" });
 }
 
+/**
+ * One capture per pattern page, with every tree expanded.
+ *
+ * Expanded on purpose. A pattern at rest shows a handful of collapsed rows and
+ * hides the composition, which is the part worth watching: the flipped
+ * Explorer's labels only sit wrongly once there are rows to sit wrongly in.
+ *
+ * Reduced motion is emulated for the same reason the themes are pinned. The
+ * agent activity pattern streams text a character at a time, so without it the
+ * capture lands mid-animation and the baseline disagrees with itself between
+ * runs. StreamingText already snaps to its full text under the OS setting.
+ */
+async function capturePatterns(page, theme, outputDir) {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const pattern of PATTERNS) {
+    await page.goto(`${PATTERN_URL}&tab=${pattern}&theme=${theme}`, { waitUntil: "networkidle" });
+    await page.locator("main").waitFor();
+    await page.evaluate(() => {
+      for (const button of document.querySelectorAll("button")) {
+        if (/expand all/i.test(button.textContent ?? "")) button.click();
+      }
+    });
+    await page.waitForFunction(() => document.fonts.status === "loaded");
+    await screenshot(page.locator("main"), path.join(outputDir, theme, `pattern-${pattern}.png`));
+  }
+  await page.emulateMedia({ reducedMotion: null });
+}
+
 async function preparePage(page, theme, outputDir) {
   await page.addInitScript((selectedTheme) => {
     localStorage.setItem("preview-theme", selectedTheme);
+    // The palette lab is a preview-only overlay pinned to the corner. Left open
+    // it floats over the pattern pages and hides what is underneath: it is what
+    // obscured the flipped Explorer's tree while that layout was being checked
+    // by eye.
+    localStorage.setItem("palette-lab-open", "false");
   }, theme);
   // The localStorage seed above only reaches the boot script in preview/index.html,
   // which paints before React mounts. ThemeToggle then mounts useTheme with its
@@ -217,9 +300,12 @@ async function captureTheme(page, theme, outputDir) {
       passes: axe.passes.length,
     }, null, 2)}\n`,
   );
+  await capturePatterns(page, theme, outputDir);
+
   return {
     theme,
     components: COMPONENTS.length + 2,
+    patterns: PATTERNS.length,
     interactionStates: 3,
     axeViolations: axe.violations.length,
     focusedTreeItem,
@@ -367,9 +453,10 @@ async function compare() {
       });
       const ratio = count / (expected.width * expected.height);
       differingPixels += count;
-      if (ratio > MAX_DIFF_RATIO) {
+      if (ratio > MAX_DIFF_RATIO || count > MAX_DIFF_PIXELS) {
         failed += 1;
-        console.error(`FAIL ${relative}: ${count} pixels (${(ratio * 100).toFixed(4)}%)`);
+        const why = ratio > MAX_DIFF_RATIO ? "" : ` — over the ${MAX_DIFF_PIXELS} pixel floor`;
+        console.error(`FAIL ${relative}: ${count} pixels (${(ratio * 100).toFixed(4)}%)${why}`);
         await writeFailure(relative, expected, actual);
       }
     }
@@ -386,7 +473,7 @@ async function compare() {
     const compared = baselineFiles.length;
     console.log(`Visual compare: ${compared - failed}/${compared} compared screenshots passed; ${differingPixels} differing pixels; threshold ${MAX_DIFF_RATIO * 100}% at pixelmatch ${PIXEL_THRESHOLD}.`);
     for (const summary of summaries) {
-      console.log(`${summary.theme}: ${summary.components} components, ${summary.interactionStates} interaction states, axe violations=${summary.axeViolations}.`);
+      console.log(`${summary.theme}: ${summary.components} components, ${summary.patterns} patterns, ${summary.interactionStates} interaction states, axe violations=${summary.axeViolations}.`);
     }
     console.log(`Axe compare: ${axeFailed} rule(s) matched more nodes than the baseline.`);
     if (failed > 0) {
@@ -403,12 +490,15 @@ async function compare() {
 }
 
 const command = process.argv[2];
+// Both routes gate on it, so a component that joined the catalog without
+// joining this file fails the run rather than quietly going unwatched.
+await assertCatalogCovered();
 if (command === "capture") {
   await rm(BASELINE_DIR, { recursive: true, force: true });
   await mkdir(BASELINE_DIR, { recursive: true });
   const summaries = await capture(BASELINE_DIR);
   for (const summary of summaries) {
-    console.log(`${summary.theme}: captured ${summary.components} components and ${summary.interactionStates} interaction states; axe violations=${summary.axeViolations}.`);
+    console.log(`${summary.theme}: captured ${summary.components} components, ${summary.patterns} patterns and ${summary.interactionStates} interaction states; axe violations=${summary.axeViolations}.`);
   }
 } else if (command === "compare") {
   await compare();

@@ -143,10 +143,14 @@ still be wrong in the pattern that uses it. Whether a pattern needs updating is 
 judgement call, but looking is not: open the ones under `patterns/` that name the
 component, and drive them in `npm run preview`.
 
-Nothing enforces this. The visual gate captures components, not patterns, so a
-pattern can break while `visual:compare` stays green. That is not theoretical: a
-`flex` shorthand added to Tree's label passed 76/76 and still pinned every label
-in the flipped Explorer to the wrong edge of its row.
+The visual gate captures every pattern page, in both themes, with the trees
+expanded, so a composition that breaks fails the run. It did not always. A `flex`
+shorthand on Tree's label once passed 76 of 76 captures, and still pinned every
+label in the flipped Explorer to the wrong edge of its row.
+
+The gate is not a substitute for looking. It compares what the pages render, so
+it says nothing about whether a pattern still teaches the right composition after
+a component gains a prop.
 
 ## Trying your build elsewhere
 

@@ -2,6 +2,7 @@
   {
     "theme": "light",
     "components": 35,
+    "patterns": 9,
     "interactionStates": 3,
     "axeViolations": 0,
     "focusedTreeItem": "button-tsx",
@@ -10,6 +11,7 @@
   {
     "theme": "dark",
     "components": 35,
+    "patterns": 9,
     "interactionStates": 3,
     "axeViolations": 0,
     "focusedTreeItem": "button-tsx",
