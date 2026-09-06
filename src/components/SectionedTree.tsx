@@ -21,6 +21,8 @@ export interface TreeSection<T extends TreeNode = TreeNode> {
   id: string;
   label: string;
   nodes: T[];
+  /** Override the component's `filterable` for this section alone. */
+  filterable?: boolean;
 }
 
 interface SectionedTreeProps<T extends TreeNode = TreeNode> {
@@ -29,6 +31,21 @@ interface SectionedTreeProps<T extends TreeNode = TreeNode> {
   onSelect?: (node: T) => void;
   className?: string;
   renderLabel?: (node: T) => React.ReactNode;
+  /**
+   * Give each section a filter box. Default: true, which is what this component always did.
+   *
+   * A section can override it through `TreeSection.filterable`, so a long section keeps its
+   * filter while short ones lose the chrome. Plain `Tree` offers the same choice.
+   */
+  filterable?: boolean;
+  /** Give each section an expand-all control. Default: true. */
+  expandAllControl?: boolean;
+  /** Passed to every section's Tree. Default: "truncate". */
+  labelOverflow?: "truncate" | "scroll" | "wrap";
+  /** Passed to every section's Tree. Default: "center". */
+  alignLabel?: "center" | "start";
+  /** Passed to every section's Tree. Default: false. */
+  scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content */
   flipped?: boolean;
   /** Loading state: render skeleton sections instead of content. */
@@ -77,6 +94,11 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
   onSelect,
   className,
   renderLabel,
+  filterable = true,
+  expandAllControl = true,
+  labelOverflow = "truncate",
+  alignLabel = "center",
+  scrollSelectedIntoView = false,
   flipped = false,
   loading,
   error,
@@ -272,10 +294,11 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
         const nodeCount = sectionCounts[section.id] ?? 0;
 
         return (
-          <div key={section.id} className="cs-component-sectioned-tree-37 ">
+          <div key={section.id} data-part="section" data-section-id={section.id} className="cs-component-sectioned-tree-37 ">
             {/* Section header */}
             <button
               type="button"
+              data-part="header"
               onClick={() => toggleSection(section.id)}
               className={cn(
                 "cs-component-sectioned-tree-49 ",
@@ -300,7 +323,7 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
 
             {/* Section content */}
             {!isCollapsed && (
-              <div className="cs-component-sectioned-tree-58">
+              <div data-part="body" className="cs-component-sectioned-tree-58">
                 <Tree
                   nodes={section.nodes as T[]}
                   expandedIds={getExpandedIds(section.id)}
@@ -308,11 +331,16 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
                   onSelect={onSelect}
                   onToggle={(nodeId) => handleToggle(section.id, nodeId)}
                   renderLabel={renderLabel}
-                  filterable
-                  onToggleExpandAll={() =>
-                    handleToggleExpandAll(section.id, section.nodes)
+                  filterable={section.filterable ?? filterable}
+                  onToggleExpandAll={
+                    expandAllControl
+                      ? () => handleToggleExpandAll(section.id, section.nodes)
+                      : undefined
                   }
                   allExpanded={allExpandedMap[section.id] ?? false}
+                  labelOverflow={labelOverflow}
+                  alignLabel={alignLabel}
+                  scrollSelectedIntoView={scrollSelectedIntoView}
                   flipped={flipped}
                 />
               </div>

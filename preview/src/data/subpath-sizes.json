@@ -1,42 +1,42 @@
 {
   ".": {
-    "raw": 147042,
-    "gzip": 47659,
-    "eager": 162482
+    "raw": 149018,
+    "gzip": 48388,
+    "eager": 164484
   },
   "chrome": {
-    "raw": 151801,
-    "gzip": 49212,
-    "eager": 171983
+    "raw": 153815,
+    "gzip": 49906,
+    "eager": 174023
   },
   "./markdown": {
     "raw": 167230,
     "gzip": 54236,
-    "eager": 192974
+    "eager": 193000
   },
   "./markdown/rich": {
     "raw": 330481,
     "gzip": 103513,
-    "eager": 356225
+    "eager": 356251
   },
   "./mermaid": {
     "raw": 3260545,
-    "gzip": 923089,
-    "eager": 158304
+    "gzip": 923006,
+    "eager": 158330
   },
   "./code": {
     "raw": 166078,
     "gzip": 54907,
-    "eager": 179899
+    "eager": 179925
   },
   "./chart": {
     "raw": 147030,
     "gzip": 47581,
-    "eager": 162463
+    "eager": 162489
   },
   "./minimap": {
     "raw": 144003,
     "gzip": 46579,
-    "eager": 154194
+    "eager": 154220
   }
 }

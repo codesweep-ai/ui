@@ -27,6 +27,8 @@ interface TreeSection<T extends TreeNode = TreeNode> {
   id: string;
   label: string;
   nodes: T[];
+  /** Override the component's `filterable` for this section alone. */
+  filterable?: boolean;
 }
 
 interface SectionedTreeProps<T extends TreeNode = TreeNode> {
@@ -40,6 +42,16 @@ interface SectionedTreeProps<T extends TreeNode = TreeNode> {
   className?: string;
   /** Custom render for node label */
   renderLabel?: (node: T) => React.ReactNode;
+  /** Give each section a filter box. Default: true */
+  filterable?: boolean;
+  /** Give each section an expand-all control. Default: true */
+  expandAllControl?: boolean;
+  /** Passed to every section's Tree. Default: "truncate" */
+  labelOverflow?: "truncate" | "scroll" | "wrap";
+  /** Passed to every section's Tree. Default: "center" */
+  alignLabel?: "center" | "start";
+  /** Passed to every section's Tree. Default: false */
+  scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content. Default: false */
   flipped?: boolean;
   /** Loading state: render skeleton sections. */

@@ -22,6 +22,7 @@ import { cn } from "../lib/cn";
 import { HighlightText } from "./HighlightText";
 import { Button } from "./Button";
 import { Skeleton } from "./Skeleton";
+import { Tooltip } from "./Tooltip";
 
 const LOADING_NODE_COUNT = 6;
 const LazySortableRow = lazy(() =>
@@ -54,6 +55,29 @@ interface TreeProps<T extends TreeNode> {
   onToggleExpandAll?: () => void;
   /** Whether all nodes are currently expanded */
   allExpanded?: boolean;
+  /**
+   * What a label too wide for its row does. Default: "truncate".
+   *
+   * "truncate" cuts it with an ellipsis and offers the full text on hover or focus, which is
+   * what every other component in the kit does. "scroll" widens the row and scrolls sideways,
+   * which is what this component did before 0.3.0. "wrap" lets it run onto another line.
+   */
+  labelOverflow?: "truncate" | "scroll" | "wrap";
+  /**
+   * How a row lines up its icon against its label. Default: "center".
+   *
+   * Pass "start" when `renderLabel` returns more than one line, so the icon sits on the first
+   * line rather than floating to the middle of the row.
+   */
+  alignLabel?: "center" | "start";
+  /**
+   * Scroll the selected row into view when `selectedId` changes. Default: false.
+   *
+   * Off by default because it is new behaviour rather than a restored parity. Search matches and
+   * keyboard navigation have always scrolled; a selection set from outside the component, by a
+   * link elsewhere on the page, never has. Turn it on where the page drives the selection.
+   */
+  scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content */
   flipped?: boolean;
   /** Enable drag-to-reorder within sibling groups */
@@ -269,6 +293,7 @@ function TreeNodeRowInner<T extends TreeNode>({
         aria-level={depth + 1}
         tabIndex={isFocused ? 0 : -1}
         data-tree-node-id={node.id}
+        data-part="row"
         className={cn(
           "cs-component-tree-23 ",
           "cs-component-tree-24 ",
@@ -307,11 +332,17 @@ function TreeNodeRowInner<T extends TreeNode>({
           <span className="cs-component-tree-33" />
         )}
         {isBranch ? (
-          <Folder className="cs-component-tree-32 " />
+          <Folder data-part="icon" className="cs-component-tree-32 " />
         ) : (
-          <FileText className="cs-component-tree-32 " />
+          <FileText data-part="icon" className="cs-component-tree-32 " />
         )}
-        <span className="cs-component-tree-34">{label}</span>
+        {/* overflowOnly means this costs nothing until a label is actually cut, so the same
+            wrapper is correct in every overflow mode: nothing is clipped when the row scrolls
+            or wraps, and the tooltip never opens. describedBy is off because the full name is
+            already on this element and a screen reader reads it from there. */}
+        <Tooltip content={node.name} describedBy={false} overflowOnly>
+          <span data-part="label" className="cs-component-tree-34">{label}</span>
+        </Tooltip>
       </div>
       {isBranch && isExpanded && node.children && (
         <div role="group">
@@ -406,6 +437,7 @@ function FlatPathRow<T extends TreeNode>({
       aria-selected={isSelected}
       tabIndex={isFocused ? 0 : -1}
       data-tree-node-id={entry.node.id}
+      data-part="row"
       className={cn(
         "cs-component-tree-44 ",
         "cs-component-tree-24 ",
@@ -425,10 +457,12 @@ function FlatPathRow<T extends TreeNode>({
         }
       }}
     >
-      <FileText className="cs-component-tree-32 " />
-      <span className="cs-component-tree-34">
-        <HighlightText text={entry.path} query={filterText} />
-      </span>
+      <FileText data-part="icon" className="cs-component-tree-32 " />
+      <Tooltip content={entry.path} describedBy={false} overflowOnly>
+        <span data-part="label" className="cs-component-tree-34">
+          <HighlightText text={entry.path} query={filterText} />
+        </span>
+      </Tooltip>
     </div>
   );
 }
@@ -473,6 +507,9 @@ function TreeImpl<T extends TreeNode>({
   filterPlaceholder = "Filter...",
   onToggleExpandAll,
   allExpanded,
+  labelOverflow = "truncate",
+  alignLabel = "center",
+  scrollSelectedIntoView = false,
   flipped = false,
   reorderable = false,
   onReorder,
@@ -614,6 +651,11 @@ function TreeImpl<T extends TreeNode>({
   useEffect(() => {
     scrollToNode(currentMatchId);
   }, [currentMatchId, scrollToNode]);
+
+  useEffect(() => {
+    if (!scrollSelectedIntoView) return;
+    scrollToNode(selectedId ?? null);
+  }, [scrollSelectedIntoView, selectedId, scrollToNode]);
 
   const goNextMatch = () => {
     if (matchEntries.length === 0) return;
@@ -869,7 +911,12 @@ function TreeImpl<T extends TreeNode>({
   };
 
   return (
-    <div data-component="Tree" className={cn("cs-component-tree-91 ", className)}>
+    <div
+      data-component="Tree"
+      data-label-overflow={labelOverflow}
+      data-align-label={alignLabel}
+      className={cn("cs-component-tree-91 ", className)}
+    >
       {/* Filter toolbar */}
       {filterable && (
         <div className="cs-component-tree-92 ">
@@ -903,31 +950,33 @@ function TreeImpl<T extends TreeNode>({
                 </button>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() =>
-                setDisplayMode((m) => (m === "tree" ? "flat" : "tree"))
-              }
-              className={cn(
-                "cs-component-tree-111 ",
-                "cs-component-tree-112 ",
-                "cs-component-tree-113 "
-              )}
-              aria-label={
-                displayMode === "tree"
-                  ? "Switch to flat list"
-                  : "Switch to tree view"
-              }
-              title={
-                displayMode === "tree" ? "Flat list view" : "Tree view"
-              }
+            <Tooltip
+              content={displayMode === "tree" ? "Flat list view" : "Tree view"}
+              describedBy={false}
             >
-              {displayMode === "tree" ? (
-                <List className="cs-component-tree-31 " />
-              ) : (
-                <ListTree className="cs-component-tree-31 " />
-              )}
-            </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setDisplayMode((m) => (m === "tree" ? "flat" : "tree"))
+                }
+                className={cn(
+                  "cs-component-tree-111 ",
+                  "cs-component-tree-112 ",
+                  "cs-component-tree-113 "
+                )}
+                aria-label={
+                  displayMode === "tree"
+                    ? "Switch to flat list"
+                    : "Switch to tree view"
+                }
+              >
+                {displayMode === "tree" ? (
+                  <List className="cs-component-tree-31 " />
+                ) : (
+                  <ListTree className="cs-component-tree-31 " />
+                )}
+              </button>
+            </Tooltip>
           </div>
 
           {/* Match counter + navigation */}
@@ -995,6 +1044,7 @@ function TreeImpl<T extends TreeNode>({
       {/* Tree or flat list content */}
       <div
         ref={containerRef}
+        data-part="scroller"
         className="cs-component-tree-142 "
         role={displayMode === "tree" ? "tree" : "listbox"}
         onKeyDown={handleContainerKeyDown}

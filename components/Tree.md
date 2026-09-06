@@ -49,6 +49,12 @@ interface TreeProps<T extends TreeNode> {
   className?: string;
   /** Custom render for node label */
   renderLabel?: (node: T) => React.ReactNode;
+  /** What a label too wide for its row does. Default: "truncate" */
+  labelOverflow?: "truncate" | "scroll" | "wrap";
+  /** How a row lines up its icon against its label. Default: "center" */
+  alignLabel?: "center" | "start";
+  /** Scroll the selected row into view when selectedId changes. Default: false */
+  scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content. Default: false */
   flipped?: boolean;
 }
@@ -112,7 +118,15 @@ In every state, the outer container chrome (border, filter bar) stays where appl
 - Color: `var(--fg)`.
 - Icons: 14px from lucide-react.
 - `data-tree-node-id={node.id}` on each node row for scroll-into-view targeting.
-- Node label: rendered in a span that clips overflow with an ellipsis. Tree does not add a native `title`; consumers that need a tooltip can provide one from `renderLabel`.
+- Node label: rendered in a span carrying `data-part="label"`. What happens when it does not fit is `labelOverflow`:
+
+| Value | Behaviour |
+|---|---|
+| `truncate` (default) | Clipped with an ellipsis. The full name is offered through [Tooltip](Tooltip.md) on hover or focus, and only when the label is actually cut. |
+| `scroll` | The row widens and the scroller scrolls sideways. This is what the component did before 0.3.0. |
+| `wrap` | The label runs onto another line. Pair with `alignLabel="start"` so the icon stays on the first line. |
+
+  The tooltip passes `describedBy={false}`, because the full name is already on the element and a screen reader reads it from there.
 
 ### Icon Mapping
 | Element          | Icon             | Size  |

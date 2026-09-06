@@ -373,3 +373,58 @@
 .cs-component-tree-23:hover .cs-component-tree-30 {
     opacity: 0.6
 }
+
+/* ── Label overflow and alignment ──────────────────────────────────────────
+   Driven from data attributes on the root rather than a class per combination,
+   so a consumer can read the mode from the DOM and the row markup stays the
+   same in all three.
+
+   "truncate" is the default because every other component in this kit cuts
+   text that does not fit. Tree scrolled sideways instead, which put one
+   horizontal scrollbar inside every tree on the page. */
+[data-component="Tree"][data-label-overflow="truncate"] [data-part="scroller"] {
+    overflow-x: hidden
+}
+
+/* The row keeps its full width. Dropping min-width here instead let the row
+   shrink to its content, which pulled the focus ring in with it so it hugged
+   the label rather than spanning the row. max-width is what stops a long label
+   pushing the row wider than the pane; the label shrinking is what makes room
+   for the ellipsis. */
+[data-component="Tree"][data-label-overflow="truncate"] [data-part="row"] {
+    max-width: 100%
+}
+
+/* A flex child will not shrink below its content unless min-width says so, and
+   without the shrink there is nothing for the ellipsis to do. */
+[data-component="Tree"][data-label-overflow="truncate"] [data-part="label"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+[data-component="Tree"][data-label-overflow="wrap"] [data-part="row"] {
+    max-width: 100%
+}
+
+[data-component="Tree"][data-label-overflow="wrap"] [data-part="label"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere
+}
+
+[data-component="Tree"][data-label-overflow="wrap"] [data-part="scroller"] {
+    overflow-x: hidden
+}
+
+/* A wrapped label makes the row taller than one line, and a centred icon then
+   floats to the middle of it instead of sitting beside the first line. */
+[data-component="Tree"][data-align-label="start"] [data-part="row"] {
+    align-items: flex-start
+}
+
+[data-component="Tree"][data-align-label="start"] [data-part="icon"] {
+    margin-top: var(--space-0-5)
+}
