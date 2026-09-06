@@ -123,10 +123,10 @@ interface FooterProps {
 ### States
 | Element       | State   | CSS                                                        |
 |---------------|---------|-------------------------------------------------------------|
-| Nav link      | Default | `color: var(--muted)`                                      |
+| Nav link      | Default | `color: var(--color-header-text-muted)`                    |
 | Nav link      | Hover   | `color: var(--color-text-inverse)`, `background: var(--color-nav-hover)` |
-| Nav link      | Active  | `color: var(--color-accent)`, `background: var(--color-nav-hover)` |
-| Nav link      | Focus   | `box-shadow: 0 0 0 2px var(--color-accent)`, `outline: none` |
+| Nav link      | Active  | `color: var(--color-header-text)`, `background: color-mix(in srgb, var(--color-accent) 22%, transparent)` |
+| Nav link      | Focus   | No rule of its own, so the browser's default outline shows |
 
 ### Responsive (max-width: 768px)
 - Header inner: `flex-direction: column`, `align-items: flex-start`, `gap: var(--space-2)`.
