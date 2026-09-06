@@ -288,6 +288,8 @@ Shown when `data` is empty AND not loading AND not error. Replaces `<tbody>` wit
 ## Traceability
 
 - Wrapper: `data-component="Table"`.
+- Truncating cell: `data-part="cell"`, on the clipping box a non-wrapping column renders. A column
+  with `wrap: true` renders its cell without one.
 - Every rendered data row: `data-table-row="{rowKey(row)}"`. Select all data rows with `[data-table-row]` or a stable row by its key; loading, error, and empty-state rows do not carry the hook.
 
 ## Compiling usage example

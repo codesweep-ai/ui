@@ -161,7 +161,9 @@ When `flipped` is true, the prop is passed through to each `<Tree>`. Section hea
 
 ## Traceability
 
-`data-component="SectionedTree"` on the root `<div>`.
+`data-component="SectionedTree"` on the root `<div>`. Structural parts: `data-part="section"` on
+each section wrapper, which also carries `data-section-id`, with `data-part="header"` on its
+toggle and `data-part="body"` on its content. Each section's Tree carries its own parts.
 
 ## Compiling usage example
 

@@ -281,7 +281,10 @@ Tree expand/collapse state is not persisted by the Tree component itself. Parent
 
 ## Traceability
 
-`data-component="Tree"` on the root `<div>`.
+`data-component="Tree"` on the root `<div>`, which also carries `data-label-overflow` and
+`data-align-label` naming the modes in force. Structural parts: `data-part="scroller"` on the
+scrolling region, and `data-part="row"`, `data-part="icon"` and `data-part="label"` on each row.
+Prefer these to the generated class names, which change on every build.
 
 ## Compiling usage example
 

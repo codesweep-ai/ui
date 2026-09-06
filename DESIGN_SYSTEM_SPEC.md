@@ -1088,7 +1088,9 @@ Each component's spec (in `components/<Name>.md`) documents its `data-component`
 
 - All interactive elements must have `tabIndex={0}` or be native interactive elements.
 - Tree structures use `role="tree"` / `role="treeitem"` with `aria-expanded`.
-- Buttons include meaningful `title` or `aria-label` attributes.
+- Buttons carry a meaningful `aria-label` when their content is an icon. A supplementary hint goes
+  in a [Tooltip](components/Tooltip.md), not a native `title`: `title` never appears on keyboard
+  focus, so a hint written that way reaches pointer users alone.
 - Focus styles: rely on browser defaults or add a visible focus ring.
 - Keyboard support: Enter/Space to activate, Escape to dismiss overlays.
 
