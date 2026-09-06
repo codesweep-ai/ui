@@ -3,15 +3,18 @@
   "title": "Patterns have no behavioural tests, only screenshots",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked how the patterns should be tested",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "64e86c3",
+      "6b1a31c"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Two halves, each checked against the defect it exists for. The clipping assertion in the visual gate is quiet on the current tree and, with the Panel fix reverted, fails by name: 'the explorer pattern hides content a pointer cannot reach - div[body] hides 1701px', which is the figure measured in CUI-018. The wiring suite is 5 passing tests, and removing noValidate from the Form demo fails the Form one. Full suite 624 passed across 62 files, up from 619 across 61. npm run check exit 0, visual:compare 94/94."
   },
   "resolution": null,
   "details": "The visual gate photographs each pattern after clicking expand-all. It therefore catches layout regressions and is blind to behaviour. Two defects found this week prove the gap: a panel that clipped content a wheel could not reach, and a form whose documented error states cannot happen. Neither produces a pixel difference, because absent content and an unsubmitted form both photograph as correct.\n\nThe recommended shape, from a reviewer who read the existing gates first, is to extend what is here rather than add a stack. Pattern suites live under `src/patterns/`, layout assertions in the existing Playwright browser project because jsdom computes no layout, and wiring assertions in jsdom. They import the real demos rather than restating the composition, so a test cannot pass while the thing the specification documents is broken. One configuration line is needed: an alias for the package name, which the demos import and the test projects cannot currently resolve.\n\nAssertions anchor on ARIA roles and accessible names first, then `data-component` and `data-part`, never the generated preview class names. The demos carry no hooks of their own, so every stable anchor comes from the library.\n\nThe first step is one predicate over every pattern: no element may hide content while its computed overflow cannot scroll. The reviewer ran it. It is green across the patterns today and reports `hides 1056px` when the panel clipping is forced back, so it adopts clean and is not a heuristic.",
@@ -23,6 +26,18 @@
     {
       "date": "2026-09-06",
       "text": "One risk named by the reviewer: importing the demos pulls `preview/src` into the typecheck program for the first time, which may surface pre-existing type errors there."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The recommended shape was followed for the wiring half and abandoned for the layout half, because running it showed it could not work. A demo mounted in a host of its own does not reproduce the layout that makes clipping happen. Given a fixed height the master-detail SplitPane panes come out 175px and report clipping the real page does not have; given a free height nothing is bounded, and the suite passed with the Panel bug deliberately reinstated. A test that cannot fail on the defect it was written for is worse than no test, so the layout assertion moved to the Playwright pass that already drives the real page."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The predicate needed narrowing after it fired on the real page. It flagged the document root, whose scrolling belongs to the window, and a CardGroup sibling collapsed to 2px by the solo behaviour, which shows no content and therefore hides none. Both exclusions are written down where they are made, and the Panel bug was reinstated afterwards to confirm the narrowing had not made it deaf."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Two of the first assertions were wrong rather than the code: the pattern renders several tables so aria-current is not unique to one, and a sortable column header is a columnheader with tabindex and a key handler rather than a button. Both were corrected against what the components actually do. The typecheck risk named in the recommendation did not appear: tsc is clean with the preview sources now in its program."
     }
   ],
   "links": [

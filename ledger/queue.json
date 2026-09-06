@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-028",
-      "why": "Both defects above are invisible to a screenshot. This is what would have caught them."
-    },
-    {
       "id": "CUI-025",
       "why": "The worked examples never caught up with the props added to fix the consumer reports."
     },
