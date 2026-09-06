@@ -54,3 +54,9 @@
 .cs-component-pulse-badge-17 {
     border-radius: 624.9375rem
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="PulseBadge"] {
+    --cs-styles-pulse-badge: 1
+}

@@ -19,3 +19,9 @@
     opacity: .6;
   }
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Skeleton"] {
+    --cs-styles-skeleton: 1
+}

@@ -32,3 +32,9 @@
 .cs-component-toast-container-7 {
     gap: var(--space-2)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="ToastContainer"] {
+    --cs-styles-toast-container: 1
+}

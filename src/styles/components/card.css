@@ -205,3 +205,9 @@
     outline: .125rem solid var(--color-accent);
     outline-offset: .125rem
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Card"] {
+    --cs-styles-card: 1
+}

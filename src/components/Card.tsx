@@ -1,6 +1,8 @@
 "use client";
 
 import { forwardRef } from "react";
+
+import { checkedRootRef } from "../lib/stylesheetWarning";
 import { ChevronDown, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
 import { cn } from "../lib/cn";
 import { Tooltip } from "./Tooltip";
@@ -65,7 +67,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function CardImpl({
     return (
       <Component
         {...rest}
-        ref={ref}
+        ref={checkedRootRef(ref)}
         id={id}
         data-component="Card"
         className={cn("cs-component-card-17", className)}
@@ -84,7 +86,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function CardImpl({
   return (
     <Component
       {...rest}
-      ref={ref}
+      ref={checkedRootRef(ref)}
       id={id}
       data-component="Card"
       role={role ?? (isInteractive ? "button" : undefined)}

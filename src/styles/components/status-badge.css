@@ -92,3 +92,9 @@
 .cs-component-status-badge-25 .cs-component-status-badge-21 {
     color: var(--status-badge-label-color)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="StatusBadge"] {
+    --cs-styles-status-badge: 1
+}

@@ -142,3 +142,9 @@
 .cs-component-chart-frame-23 {
     font-size: var(--font-size-xs)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="ChartFrame"] {
+    --cs-styles-chart-frame: 1
+}

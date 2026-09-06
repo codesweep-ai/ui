@@ -129,3 +129,9 @@
 .cs-component-dropdown-15:focus {
     box-shadow: 0 0 0 .125rem var(--color-error)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Dropdown"] {
+    --cs-styles-dropdown: 1
+}

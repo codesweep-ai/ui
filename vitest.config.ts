@@ -12,6 +12,7 @@ const browserSuites = [
   "src/components/FormGroup.layout.test.tsx",
   "src/components/Input.hover.test.tsx",
   "src/components/Card.position.test.tsx",
+  "src/components/stylesheetWarning.test.tsx",
   "src/components/MarkdownViewer.scroll.test.tsx",
   "src/components/MarkdownViewer.mermaid.test.tsx",
   "src/components/Legend.test.tsx",

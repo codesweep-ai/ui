@@ -168,3 +168,9 @@
 .cs-component-input-31:disabled {
     cursor: not-allowed
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Input"] {
+    --cs-styles-input: 1
+}

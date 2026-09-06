@@ -7,6 +7,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { warnWhenUnstyled } from "./stylesheetWarning";
+
 type RefElement<T> = ReactElement<{ ref?: ForwardedRef<T> }>;
 
 function setRef<T>(ref: ForwardedRef<T> | undefined, value: T | null) {
@@ -22,12 +24,23 @@ function setRef<T>(ref: ForwardedRef<T> | undefined, value: T | null) {
 export function forwardRefToRoot<T, P>(render: (props: P) => ReactNode) {
   const forwarded = forwardRef<T, P>((props, ref) => {
     const node = render(props as P);
-    if (!isValidElement(node) || ref == null) return node;
+    if (!isValidElement(node)) return node;
+    // Outside development the root is only cloned when there is a ref to
+    // forward. In development it is cloned regardless, so the stylesheet check
+    // below has a node to read.
+    if (
+      ref == null &&
+      typeof process !== "undefined" &&
+      process.env.NODE_ENV === "production"
+    ) {
+      return node;
+    }
     const existingRef = (node as RefElement<T> & { ref?: ForwardedRef<T> }).ref;
     return cloneElement(node as RefElement<T>, {
       ref: (value: T | null) => {
         setRef(existingRef, value);
         setRef(ref, value);
+        warnWhenUnstyled(value);
       },
     });
   });

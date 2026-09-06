@@ -1,4 +1,6 @@
 import { forwardRef } from "react";
+
+import { warnWhenUnstyled } from "../lib/stylesheetWarning";
 import { cn } from "../lib/cn";
 
 type NativeInputProps = Omit<
@@ -101,7 +103,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
     if (props.multiline) {
       const { multiline: _multi, rows = 3, ...textareaRest } = rest as MultilineInputProps;
       return (
-        <div data-component="Input" data-multiline="true" className={wrapperClass}>
+        <div data-component="Input" data-multiline="true" className={wrapperClass} ref={warnWhenUnstyled}>
           {prefix && <span className={affixClass}>{prefix}</span>}
           <textarea
             ref={ref as React.Ref<HTMLTextAreaElement>}
@@ -118,7 +120,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
 
     const { type = "text", ...inputRest } = rest as SingleLineInputProps;
     return (
-      <div data-component="Input" className={wrapperClass}>
+      <div data-component="Input" className={wrapperClass} ref={warnWhenUnstyled}>
         {prefix && <span className={affixClass}>{prefix}</span>}
         <input
           ref={ref as React.Ref<HTMLInputElement>}

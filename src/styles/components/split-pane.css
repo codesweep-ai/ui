@@ -76,3 +76,9 @@
 .cs-component-split-pane-30:hover .cs-component-split-pane-31 {
     background-color: var(--color-accent)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="SplitPane"] {
+    --cs-styles-split-pane: 1
+}

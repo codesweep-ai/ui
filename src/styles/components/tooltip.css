@@ -43,3 +43,9 @@
 .cs-tooltip[data-side="right"] {
     transform: translate(var(--space-2), -50%)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Tooltip"] {
+    --cs-styles-tooltip: 1
+}

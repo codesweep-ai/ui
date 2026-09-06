@@ -52,3 +52,9 @@
 .cs-component-chart-tooltip-20 {
     font-size: var(--font-size-xs)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="ChartTooltip"] {
+    --cs-styles-chart-tooltip: 1
+}

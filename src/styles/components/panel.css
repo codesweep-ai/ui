@@ -130,3 +130,9 @@
 .cs-component-panel-14:hover {
     color: var(--fg)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Panel"] {
+    --cs-styles-panel: 1
+}

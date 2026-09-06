@@ -151,3 +151,9 @@
     outline: .125rem solid transparent;
     outline-offset: .125rem
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="SearchInput"] {
+    --cs-styles-search-input: 1
+}

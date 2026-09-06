@@ -170,3 +170,9 @@
 .cs-component-button-25:active {
     transform: scale(.98)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Button"] {
+    --cs-styles-button: 1
+}

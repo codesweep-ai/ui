@@ -279,3 +279,9 @@
 .cs-component-checkbox-group-15:hover:disabled {
     color: var(--muted)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="CheckboxGroup"] {
+    --cs-styles-checkbox-group: 1
+}

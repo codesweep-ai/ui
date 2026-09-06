@@ -181,3 +181,9 @@
 .cs-component-sectioned-tree-41:hover {
     color: var(--fg)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="SectionedTree"] {
+    --cs-styles-sectioned-tree: 1
+}

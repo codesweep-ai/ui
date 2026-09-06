@@ -41,3 +41,9 @@
 .cs-component-form-group-21 {
     font-size: var(--font-size-xs)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="FormGroup"] {
+    --cs-styles-form-group: 1
+}

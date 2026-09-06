@@ -36,3 +36,9 @@
 .cs-component-streaming-text-9 {
     font-size: var(--font-size-sm)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="StreamingText"] {
+    --cs-styles-streaming-text: 1
+}

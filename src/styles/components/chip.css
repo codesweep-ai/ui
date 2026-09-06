@@ -59,3 +59,9 @@
     min-width: 1rem;
     padding: 0 var(--space-1)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Chip"] {
+    --cs-styles-chip: 1
+}

@@ -11,3 +11,9 @@
 .cs-component-markdown-minimap-15 {
     cursor: pointer
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="MarkdownMinimap"] {
+    --cs-styles-markdown-minimap: 1
+}

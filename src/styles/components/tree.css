@@ -440,3 +440,9 @@
 [data-component="Tree"][data-align-label="start"] [data-part="icon"] {
     margin-top: var(--space-0-5)
 }
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Tree"] {
+    --cs-styles-tree: 1
+}

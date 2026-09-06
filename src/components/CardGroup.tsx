@@ -1,6 +1,8 @@
 "use client";
 
 import { forwardRef, useState, useCallback } from "react";
+
+import { checkedRootRef } from "../lib/stylesheetWarning";
 import { cn } from "../lib/cn";
 import { CardGroupContext } from "./CardGroupContext";
 
@@ -49,7 +51,7 @@ function CardGroupImpl({
   return (
     <CardGroupContext.Provider value={{ maximizedId, toggle, fill }}>
       <div
-        ref={ref}
+        ref={checkedRootRef(ref)}
         data-component="CardGroup"
         className={cn(
           "cs-component-card-group-5 ",

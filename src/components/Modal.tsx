@@ -1,6 +1,8 @@
 "use client";
 
 import { forwardRef, useEffect, useId, useRef } from "react";
+
+import { warnWhenUnstyled } from "../lib/stylesheetWarning";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cn } from "../lib/cn";
@@ -102,6 +104,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function ModalImpl({
         backdropRef.current = element;
         if (typeof forwardedRef === "function") forwardedRef(element);
         else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLDivElement | null>).current = element;
+        warnWhenUnstyled(element);
       }}
       data-component="Modal"
       className={cn("cs-component-modal-14 ", className)}
