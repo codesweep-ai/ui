@@ -464,6 +464,32 @@ function checkDocumentedClasses() {
 }
 
 // ===========================================================================
+// 7. Font-family tokens on the wrong property (FAIL)
+//    `font-weight: var(--font-family-sans)` is not a font-weight, so a browser
+//    drops the declaration and the rule meant to assert the family is dead. It
+//    is invisible while something else supplies the family, which reset.css
+//    does for form controls. A font stack is valid on `font-family` and inside
+//    the `font` shorthand, and nowhere else, so this needs no allowlist.
+// ===========================================================================
+
+const FAMILY_TOKEN_USE = /([a-z-]+)\s*:\s*[^;{}]*var\(\s*(--font-family-[\w-]+)/g;
+
+function checkFamilyTokenProperties() {
+  for (const file of walk(join(ROOT, "src", "styles"), (f) => f.endsWith(".css")).sort()) {
+    const source = stripCssComments(read(file));
+    for (const m of source.matchAll(FAMILY_TOKEN_USE)) {
+      const [, property, token] = m;
+      if (property === "font-family" || property === "font") continue;
+      fail(
+        "token-properties",
+        `${rel(file)}:${lineOf(source, m.index)}`,
+        `${property} is given ${token}, a font stack — the declaration is dropped and asserts nothing`,
+      );
+    }
+  }
+}
+
+// ===========================================================================
 // main
 // ===========================================================================
 
@@ -476,6 +502,7 @@ checkDocumentedHooks(specs);
 checkClassHygiene();
 checkExampleImports(specs);
 checkDocumentedClasses();
+checkFamilyTokenProperties();
 
 const failures = findings.filter((f) => f.level === "FAIL");
 const warnings = findings.filter((f) => f.level === "WARN");
