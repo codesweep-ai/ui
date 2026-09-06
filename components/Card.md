@@ -113,9 +113,10 @@ When a Card has `id`, `maximizable`, and is inside a `CardGroup`:
 - Icon: `Maximize2` (from lucide-react) when not maximized, `Minimize2` when maximized.
 - Icon size: `var(--icon-size-sm)` (14px).
 - Button style: `padding: var(--space-1)`, `color: var(--muted)`; hover uses `var(--fg)` on `var(--color-bg-muted-hover)` — matching Panel's collapse button.
-- `aria-label`: `"Show only this card"` / `"Show all cards"`, with the same text
-  as a `title`, extended on the un-maximized state to `"Show only this card — its
-  siblings are hidden"`. The label names the *behaviour*, not the icon: this
+- `aria-label`: `"Show only this card"` / `"Show all cards"`. The same text, extended
+  on the un-maximized state to `"Show only this card — its siblings are hidden"`,
+  reaches a pointer through a `Tooltip` rather than a native `title`: the button
+  carries no `title` attribute. The label names the *behaviour*, not the icon: this
   control solos the card and hides its siblings, which is not what "Maximize"
   leads a reader to expect. Collapsing a card in place is a different control —
   see `collapsible` — and the two can appear together.

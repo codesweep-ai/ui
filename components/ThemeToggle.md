@@ -98,7 +98,7 @@ interface ThemeToggleProps {
 | Tab   | Navigate between options (radio-group) |
 
 ### Accessibility
-- Icon-cycle button: `aria-label="Toggle theme. Current: {mode}"`, `title="Theme: {mode}. Click to cycle."`.
+- Icon-cycle button: `aria-label="Toggle theme. Current: {mode}"`. The hint `"Theme: {mode}. Click to cycle."` reaches a pointer through a `Tooltip`, and the button carries no `title` attribute.
 - Radio-group: `role="radiogroup"`, `aria-label="Theme"`. Each option: `role="radio"`, `aria-checked`.
 
 ## Persistence
