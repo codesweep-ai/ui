@@ -59,7 +59,7 @@ interface PanelProps {
 - Collapse button: uses `PanelLeftClose` icon (16px) from lucide-react.
 
 ### Content Area
-- `flex: 1`, `overflow-y: auto`, `min-height: 0`.
+- `flex: 1`, `overflow-y: auto`, `min-height: 0`. Content taller than the panel scrolls. Until 0.3.0 the stylesheet said `overflow: hidden` here, against this specification, so such content was clipped with no scrollbar and reachable only by `scrollIntoView` or the keyboard.
 - Padding: `var(--space-2)` on all sides. The horizontal gutter keeps content (e.g. a `SectionedTree`'s full-width section headers) from butting the panel edge or an adjacent `SplitPane` resize handle, and aligns it under the header title.
 
 ### Styling
@@ -114,7 +114,7 @@ Not persisted by the Panel itself. Parent components manage collapsed state. Wid
 
 ## Traceability
 
-`data-component="Panel"` on the root `<div>`.
+`data-component="Panel"` on the root `<div>`, with `data-part="header"` on the title bar and `data-part="body"` on the content area.
 
 ## Compiling usage example
 

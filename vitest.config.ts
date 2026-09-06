@@ -14,6 +14,7 @@ const browserSuites = [
   "src/components/Chip.test.tsx",
   "src/components/SegmentedControl.test.tsx",
   "src/components/EventLanes.test.tsx",
+  "src/components/Panel.scroll.test.tsx",
 ];
 
 export default defineConfig({

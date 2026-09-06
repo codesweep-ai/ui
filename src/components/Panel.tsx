@@ -43,7 +43,7 @@ function PanelImpl({
         transition: "width var(--transition-normal)",
       }}
     >
-      <div className="cs-component-panel-11 ">
+      <div data-part="header" className="cs-component-panel-11 ">
         <span className="text-label-upper cs-component-panel-12">
           {title}
         </span>
@@ -61,7 +61,11 @@ function PanelImpl({
           )}
         </div>
       </div>
-      {!collapsed && <div className="cs-component-panel-20 ">{children}</div>}
+      {!collapsed && (
+        <div data-part="body" className="cs-component-panel-20 ">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

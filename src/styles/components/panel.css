@@ -58,8 +58,14 @@
     overflow: hidden !important
 }
 
+/* auto, not hidden. The body is already bounded by `flex: 1 1 0%` and
+   `min-height: 0`, so content taller than the panel used to be clipped with no
+   scrollbar. It was still there: a hidden box scrolls programmatically, so
+   scrollIntoView and keyboard navigation reached it and only the mouse could
+   not. Content that exists for a keyboard and not for a pointer is worse than
+   content that is plainly cut off. */
 .cs-component-panel-20 {
-    overflow: hidden
+    overflow: auto
 }
 
 .cs-component-panel-12 {
