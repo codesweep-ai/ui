@@ -153,7 +153,7 @@ Install `mermaid` when opting into `MermaidDiagram`. If its optional peer is una
 - External links (`http://`, `https://`): `target="_blank"`, `rel="noopener noreferrer"`
 - Anchor links (`#...`): scroll within the content pane only, same rule as the outline
 - Internal links: call `onLinkClick(href)` if provided
-- Raw HTML is always rendered as escaped text. Markdown output is constructed as React elements; the markdown path never splices source into HTML or uses `dangerouslySetInnerHTML`.
+- Raw HTML in prose is always rendered as escaped text. Inside a code span or a fenced block it is rendered verbatim, because an escape there is what the reader would see; it is still text, and neither parser interprets it. Markdown output is constructed as React elements; the markdown path never splices source into HTML or uses `dangerouslySetInnerHTML`.
 
 ### Alert Detection
 - Blockquotes starting with `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]` render as styled alerts

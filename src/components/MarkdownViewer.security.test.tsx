@@ -82,3 +82,23 @@ describe("MarkdownViewer rich plugin boundary", () => {
     expect(container.querySelector("article")).toHaveTextContent("<button onclick=");
   });
 });
+
+describe.each(viewers)("MarkdownViewer code regions are verbatim — %s", (_, Viewer) => {
+  it("renders markup inside code as written, without escaping or interpreting it", () => {
+    const content = ["Inline `<div>` and `Array<string>`.", "", "```html", "<section>markup</section>", "```"].join(
+      "\n",
+    );
+    const { container } = render(<Viewer content={content} />);
+    const article = container.querySelector("article");
+
+    // The escape must not reach the reader: an entity here is the bug this
+    // guards, and it only ever shows up inside code.
+    expect(article?.textContent).not.toContain("&lt;");
+    expect(article?.textContent).toContain("<div>");
+    expect(article?.textContent).toContain("Array<string>");
+    expect(article?.textContent).toContain("<section>markup</section>");
+
+    // Verbatim as text, still inert as markup.
+    expect(container.querySelector("article section")).toBeNull();
+  });
+});
