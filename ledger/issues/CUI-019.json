@@ -1,0 +1,28 @@
+{
+  "id": "CUI-019",
+  "title": "The two parsers still disagree on four or more emphasis markers",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while fixing the three-marker case in CUI-015",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`****four****` renders as `*<strong>*four</strong>**` through the lightweight parser and as `<strong><strong>four</strong></strong>` through the rich one.\n\nCUI-015 fixed the three-marker case and stopped there on purpose. Runs of four or more are where CommonMark's delimiter matching stops being a scan and becomes a stack of openers and closers with rules about their lengths. Implementing a guess would trade a known disagreement for a less obvious one.\n\nFiled because MarkdownViewer.conformance.test.tsx asserts the two parsers produce the same DOM, and for this input that is still untrue. The corpus does not contain such a run, so the assertion passes. Either implement the run matching properly, or write down that the lightweight subset stops at three and say so where the conformance claim is made.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Measured while verifying CUI-015: three markers match in both parsers, four do not."
+    }
+  ],
+  "links": [
+    "CUI-015",
+    "CUI-002"
+  ]
+}
