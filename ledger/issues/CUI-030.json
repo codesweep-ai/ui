@@ -19,6 +19,18 @@
     {
       "date": "2026-09-06",
       "text": "The same shape as the reason those captures expand trees at all: a pattern at rest hides the composition that is worth watching. This is the half of that argument the implementation missed."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The cause in `details` is wrong, and the fix it proposes is a no-op. Neither section on the Explorer page is collapsed: measured in the built preview, both `project` and `deps` render a `data-part=\"body\"` at load. Teaching `capturePatterns` to click a collapsed section header was implemented and reverted, because it changed 0 of 94 captures."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "What actually hides the section is the expand-all pass the capture already does. Measured at the capture's own 1440 by 798, after clicking expand all: the Project Files section grows to 1398px and pushes Dependencies to y=1695, inside a sidebar scroller that is 408px tall over 1615px of content. The section is scrolled out of view rather than collapsed, and a screenshot cannot reach it.\n\n`assertNothingClipped` is right to stay quiet: the scroller does scroll, so a pointer can reach the content. This is a different gap, which is that the gate photographs one scroll position of a box that has several."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The fix is now a judgement rather than the few lines this record promised. A second capture with the sidebar scrolled to its end is the most faithful option and adds a frame per pattern. Expanding less would keep everything in view and give up the reason the captures expand at all. Photographing the scroller at its full height means rendering a layout the application never shows, which is the trap the comment above `assertNothingClipped` already warns about."
     }
   ],
   "links": [
