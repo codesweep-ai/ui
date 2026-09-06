@@ -15,9 +15,12 @@ import {
   explorerContentV2,
 } from "../../data/patternFixtures";
 
+// `filterable` per section, not for the whole tree. A filter earns its row of
+// chrome on a long section and wastes it on a short one, and in a 300px sidebar
+// several sections of chrome outweigh the content they sit above.
 const sections: TreeSection[] = [
-  { id: "project", label: "Project Files", nodes: projectFilesTree },
-  { id: "deps", label: "Dependencies", nodes: dependenciesTree },
+  { id: "project", label: "Project Files", nodes: projectFilesTree, filterable: true },
+  { id: "deps", label: "Dependencies", nodes: dependenciesTree, filterable: false },
 ];
 
 export function ExplorerDemo() {
@@ -53,6 +56,14 @@ export function ExplorerDemo() {
                         sections={sections}
                         selectedId={selectedId}
                         onSelect={(node) => setSelectedId(node.id)}
+                        // Off here, on per section above. `expandAllControl`
+                        // is the same lever for the expand control and is left
+                        // on: two sections is not six, and expanding a whole
+                        // tree at once is worth its row.
+                        filterable={false}
+                        // Paths are long and the sidebar is narrow, so cut
+                        // them and offer the full name on hover or focus.
+                        labelOverflow="truncate"
                       />
                     </Panel>
                   ),

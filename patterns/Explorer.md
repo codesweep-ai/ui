@@ -46,8 +46,8 @@ SplitPane
 SplitPane
   ├── Panel
   │     └── SectionedTree
-  │           ├── Section: "Project Files" → Tree (filterable)
-  │           └── Section: "Dependencies"  → Tree (filterable)
+  │           ├── Section: "Project Files" → Tree (filterable: long)
+  │           └── Section: "Dependencies"  → Tree (no filter: short)
   └── Card (content)
 ```
 
@@ -103,6 +103,56 @@ const [allExpanded, setAllExpanded] = useState(false);
 
 `SectionedTree` manages its own expand/collapse state internally. Standalone `Tree` requires external expand state via `expandedIds` / `onToggle`.
 
+## Chrome per section, not per tree
+
+`SectionedTree` gives every section a filter box and an expand-all control by
+default. That is right for two sections and wrong for six: in a 300px sidebar
+the chrome outweighs the content it sits above, and most of it filters lists of
+a handful of items.
+
+`filterable` and `expandAllControl` are separate levers, so decide them
+separately. Turn the filter off for the component and back on for the sections
+that earn it:
+
+```tsx
+const sections: TreeSection[] = [
+  { id: "files", label: "Project Files", nodes: fileTree, filterable: true },
+  { id: "deps", label: "Dependencies", nodes: depTree, filterable: false },
+];
+
+<SectionedTree sections={sections} filterable={false} />
+```
+
+A section past roughly twenty items is worth a filter. Below that, the filter is
+a row of chrome above a list the eye already reads.
+
+The expand-all control is worth its row while there are a few sections, and
+`expandAllControl={false}` drops it once there are many.
+
+## Long names in a narrow sidebar
+
+Paths outgrow a sidebar. `labelOverflow` decides what happens then, and it
+defaults to `truncate`: the name is cut with an ellipsis and offered in full on
+hover or keyboard focus. Prefer that to `scroll`, which widens the row and gives
+every tree on the page its own horizontal scrollbar.
+
+Where a custom `renderLabel` returns more than one line, pair
+`labelOverflow="wrap"` with `alignLabel="start"` so the icon stays on the first
+line instead of floating to the middle of the row.
+
+`scrollSelectedIntoView` is on by default, which is what a sidebar driven by
+links elsewhere on the page needs. Pass `false` where the sidebar must not move
+under the user.
+
+## Styling hooks
+
+Restyling anything inside these components means naming a part, never a
+generated class. `Tree` carries `data-part` on its `scroller`, `row`, `icon` and
+`label`; `SectionedTree` on its `section`, `header` and `body`; `Panel` on its
+`header` and `body`. Each component's specification lists them under
+Traceability. Generated class names change on every build, so a selector written
+against one stops matching without saying so.
+
 ## Example
 
 ```tsx
@@ -113,8 +163,8 @@ import { SectionedTree, type TreeSection } from "@codesweep-ai/ui";
 import { Card } from "@codesweep-ai/ui";
 
 const sections: TreeSection[] = [
-  { id: "files", label: "Project Files", nodes: fileTree },
-  { id: "deps", label: "Dependencies", nodes: depTree },
+  { id: "files", label: "Project Files", nodes: fileTree, filterable: true },
+  { id: "deps", label: "Dependencies", nodes: depTree, filterable: false },
 ];
 
 function Explorer() {
@@ -136,6 +186,7 @@ function Explorer() {
                 sections={sections}
                 selectedId={selectedId}
                 onSelect={(node) => setSelectedId(node.id)}
+                filterable={false}
               />
             </Panel>
           ),
@@ -198,7 +249,8 @@ function Explorer() {
 ## Variants
 
 - **Default**: Tree sidebar (240-280 px) + content pane
-- **Multi-section**: SectionedTree with collapsible sections, each with independent filter
+- **Multi-section**: SectionedTree with collapsible sections. Give a filter to the sections long
+  enough to need one rather than to all of them
 - **Flipped**: Tree on the right, content on the left — use `flipped` prop on Tree and swap pane order
 - **Collapsed sidebar**: Panel hidden via `collapsed` prop; content fills full width
 - **Maximizable**: Wrap in `CardGroup` + `Card maximizable` for full-screen toggle

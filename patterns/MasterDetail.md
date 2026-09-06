@@ -94,6 +94,14 @@ const sorted = useMemo(() => sortData(records, sort), [records, sort]);
 const selected = records.find((r) => r.name === selectedKey) ?? null;
 ```
 
+## Styling hooks
+
+Reach inside these components by naming a part, never a generated class.
+`Panel` carries `data-part` on its `header` and `body`; `Table` marks the box a
+non-wrapping cell is clipped in with `data-part="cell"`. Each component's
+specification lists them under Traceability. Generated class names are renumbered
+on every build, so a selector written against one stops matching silently.
+
 ## Example
 
 ```tsx
