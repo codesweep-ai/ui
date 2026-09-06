@@ -6,7 +6,16 @@ import { useEffect, useRef, useCallback } from "react";
 import { cn } from "../lib/cn";
 
 interface MarkdownMinimapProps {
-  contentRef: React.RefObject<HTMLDivElement>;
+  /**
+   * The scrolling element this minimap maps.
+   *
+   * The element itself rather than a ref to it, because a ref keeps its
+   * identity when its `current` is filled in, and an effect keyed on one is
+   * never re-run. A minimap that mounted before its content stayed blank
+   * for good. A callback ref on the content element is the shortest way to
+   * supply this: `<div ref={setContent}>`.
+   */
+  content: HTMLElement | null;
   className?: string;
 }
 
@@ -26,7 +35,7 @@ function getToken(name: string): string {
     .trim();
 }
 
-function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
+function MarkdownMinimapImpl({ content, className }: MarkdownMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -34,7 +43,6 @@ function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
   const drawMinimap = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    const content = contentRef.current;
     if (!canvas || !container || !content) return;
 
     const ctx = canvas.getContext("2d");
@@ -90,10 +98,9 @@ function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
     ctx.strokeStyle = accentStroke;
     ctx.lineWidth = 1;
     ctx.strokeRect(0.5, viewportTop + 0.5, containerWidth - 1, viewportSize - 1);
-  }, [contentRef]);
+  }, [content]);
 
   useEffect(() => {
-    const content = contentRef.current;
     const container = containerRef.current;
     if (!content) return;
 
@@ -125,12 +132,11 @@ function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
       resizeObserver.disconnect();
       themeObserver.disconnect();
     };
-  }, [contentRef, drawMinimap]);
+  }, [content, drawMinimap]);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const canvas = canvasRef.current;
-      const content = contentRef.current;
       if (!canvas || !content) return;
 
       const rect = canvas.getBoundingClientRect();
@@ -143,7 +149,7 @@ function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
         behavior: "smooth",
       });
     },
-    [contentRef]
+    [content]
   );
 
   const handleMouseDown = useCallback(() => {
@@ -159,7 +165,6 @@ function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
       if (!isDragging.current) return;
 
       const canvas = canvasRef.current;
-      const content = contentRef.current;
       if (!canvas || !content) return;
 
       const rect = canvas.getBoundingClientRect();
@@ -169,7 +174,7 @@ function MarkdownMinimapImpl({ contentRef, className }: MarkdownMinimapProps) {
 
       content.scrollTop = Math.max(0, scrollTo);
     },
-    [contentRef]
+    [content]
   );
 
   return (

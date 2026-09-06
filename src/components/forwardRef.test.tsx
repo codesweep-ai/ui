@@ -131,8 +131,7 @@ describe("component root refs", () => {
 
   it("forwards MarkdownMinimap ref", () => {
     const ref = createRef<HTMLDivElement>();
-    const contentRef = createRef<HTMLDivElement>();
-    render(<MarkdownMinimap ref={ref} contentRef={contentRef} />);
+    render(<MarkdownMinimap ref={ref} content={null} />);
     expectComponent(ref, "MarkdownMinimap");
   });
 

@@ -25,8 +25,9 @@ note: >
 
 ```typescript
 interface MarkdownMinimapProps {
-  /** Ref to the scrollable container being summarized. */
-  contentRef: React.RefObject<HTMLDivElement>;
+  /** The scrollable element being summarized. A callback ref on that element
+   *  is the shortest way to supply it: `<div ref={setContent}>`. */
+  content: HTMLElement | null;
   /** Optional className merged onto the root container. */
   className?: string;
 }
@@ -96,7 +97,12 @@ None.
 
 ## Edge Cases
 
-- **`contentRef.current` is null on mount**: silently returns from `drawMinimap` — the initial draw timeout catches the case where content mounts after the minimap.
+- **`content` is null on mount**: nothing is drawn and no listener is attached, which is the
+  right behaviour for a minimap with nothing to map. Passing the element once it exists sets
+  everything up, so a minimap that outlives a document being fetched works without special
+  handling. It takes the element rather than a ref for that reason: a ref keeps its identity
+  when its `current` is filled in, so a component holding one is never told the content
+  arrived.
 - **Content is shorter than viewport** (`scale > 1`): viewport indicator covers the whole canvas; block silhouette is sparse but rendered correctly.
 - **Element with `height: 0`**: forced to `MIN_BLOCK_HEIGHT` (2px) so it's still visible in the silhouette.
 - **No matching descendants** (empty content): canvas shows just the viewport indicator (which covers the whole canvas).
@@ -115,12 +121,12 @@ import { MarkdownViewer } from "@codesweep-ai/ui/markdown";
 import { MarkdownMinimap } from "@codesweep-ai/ui/minimap";
 import { SplitPane } from "@codesweep-ai/ui";
 
-function DocsPage({ content }: { content: string }) {
-  const contentRef = useRef<HTMLDivElement>(null);
+function DocsPage({ markdown }: { markdown: string }) {
+  const [content, setContent] = useState<HTMLDivElement | null>(null);
   return (
     <SplitPane panes={[
-      { id: "content", children: <div ref={contentRef}><MarkdownViewer content={content} /></div> },
-      { id: "minimap", defaultWidth: 120, children: <MarkdownMinimap contentRef={contentRef} /> },
+      { id: "content", children: <div ref={setContent}><MarkdownViewer content={markdown} /></div> },
+      { id: "minimap", defaultWidth: 120, children: <MarkdownMinimap content={content} /> },
     ]} />
   );
 }
@@ -130,7 +136,7 @@ function DocsPage({ content }: { content: string }) {
 
 <!-- docs-compile -->
 ```tsx
-import { useRef } from "react";
+import { useState } from "react";
 import { MarkdownMinimap } from "@codesweep-ai/ui/minimap";
-export function Example() { const contentRef = useRef<HTMLDivElement>(null); return <div><div ref={contentRef}>Document</div><MarkdownMinimap contentRef={contentRef} /></div>; }
+export function Example() { const [content, setContent] = useState<HTMLDivElement | null>(null); return <div><div ref={setContent}>Document</div><MarkdownMinimap content={content} /></div>; }
 ```

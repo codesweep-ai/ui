@@ -279,7 +279,15 @@ function MarkdownViewerImpl<Extra extends object>({
       </div>
     );
   }
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  // The minimap takes the element rather than a ref, so it is told when the
+  // element arrives instead of having to notice. This keeps the ref for the
+  // reads below and mirrors the node into state for the minimap.
+  const [contentElement, setContentElement] = useState<HTMLDivElement | null>(null);
+  const setContent = useCallback((node: HTMLDivElement | null) => {
+    contentRef.current = node;
+    setContentElement(node);
+  }, []);
   const [outlineCollapsed, setOutlineCollapsed] = useState(
     outlineCollapsedProp ?? false
   );
@@ -750,7 +758,7 @@ function MarkdownViewerImpl<Extra extends object>({
       )}
 
       {/* Content area */}
-      <div data-part="scroller" ref={contentRef} className={inline ? "cs-component-markdown-viewer-156" : "cs-component-markdown-viewer-157 "}>
+      <div data-part="scroller" ref={setContent} className={inline ? "cs-component-markdown-viewer-156" : "cs-component-markdown-viewer-157 "}>
         <article data-part="content" data-markdown-content="" className={`${inline ? "markdown-content" : "markdown-content cs-component-markdown-viewer-159"}${density === "dense" ? " markdown-content--dense" : ""}`}>
           <Renderer
             {...(viewerProps as Extra)}
@@ -793,7 +801,7 @@ function MarkdownViewerImpl<Extra extends object>({
             </button>
           </div>
           <div className="cs-component-markdown-viewer-164 ">
-            <MarkdownMinimap contentRef={contentRef} />
+            <MarkdownMinimap content={contentElement} />
           </div>
         </div>
       )}

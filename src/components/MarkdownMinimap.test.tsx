@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { useRef } from "react";
+import { useState } from "react";
 import { MarkdownMinimap } from "./MarkdownMinimap";
 
 // Smoke tests only — MarkdownMinimap draws to a canvas, which jsdom doesn't
@@ -9,11 +9,11 @@ import { MarkdownMinimap } from "./MarkdownMinimap";
 // be meaningfully tested without a real canvas; documented in the spec.
 
 function Harness() {
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [content, setContent] = useState<HTMLDivElement | null>(null);
   return (
     <div style={{ display: "flex", height: 400 }}>
       <div
-        ref={contentRef}
+        ref={setContent}
         style={{ flex: 1, overflowY: "auto" }}
         data-testid="content"
       >
@@ -23,7 +23,7 @@ function Harness() {
         <p>Para 2</p>
       </div>
       <div style={{ width: 100 }}>
-        <MarkdownMinimap contentRef={contentRef} />
+        <MarkdownMinimap content={content} />
       </div>
     </div>
   );
@@ -37,11 +37,11 @@ describe("MarkdownMinimap — smoke", () => {
 
   it("merges consumer className onto the root", () => {
     function H2() {
-      const contentRef = useRef<HTMLDivElement>(null);
+      const [content, setContent] = useState<HTMLDivElement | null>(null);
       return (
         <div>
-          <div ref={contentRef} />
-          <MarkdownMinimap contentRef={contentRef} className="my-mm-class" />
+          <div ref={setContent} />
+          <MarkdownMinimap content={content} className="my-mm-class" />
         </div>
       );
     }
@@ -49,13 +49,8 @@ describe("MarkdownMinimap — smoke", () => {
     expect(container.querySelector(".my-mm-class")).not.toBeNull();
   });
 
-  it("handles null contentRef.current without throwing on mount", () => {
-    function H3() {
-      const contentRef = useRef<HTMLDivElement>(null);
-      // Intentionally don't attach the ref to anything
-      return <MarkdownMinimap contentRef={contentRef} />;
-    }
-    expect(() => render(<H3 />)).not.toThrow();
+  it("handles a null content element without throwing on mount", () => {
+    expect(() => render(<MarkdownMinimap content={null} />)).not.toThrow();
   });
 
   it("renders data-component on the root", () => {
