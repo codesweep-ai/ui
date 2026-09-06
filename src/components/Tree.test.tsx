@@ -25,6 +25,34 @@ describe("Tree", () => {
     render(<Tree nodes={nodes} expandedIds={new Set(["root"])} />);
     await waitFor(() => expect(screen.getByText("src").closest('[role="treeitem"]')).toHaveAttribute("tabindex", "0"));
   });
+  // The row-hover rule carries a class and a pseudo-class, so it outranked the
+  // selection class on its own and a hovered selected row went grey. A real
+  // :hover needs a real cursor, which a headless browser will not give a test,
+  // so this asserts that a rule exists which reaches a selected row and paints
+  // the accent the specification names.
+  it("keeps the accent on a selected row under the pointer", () => {
+    const { container } = render(
+      <Tree nodes={nodes} expandedIds={new Set(["root"])} selectedId="root" />,
+    );
+
+    let rule: CSSStyleRule | undefined;
+    for (const sheet of document.styleSheets) {
+      for (const candidate of sheet.cssRules) {
+        const selector = (candidate as CSSStyleRule).selectorText;
+        if (selector?.includes("cs-component-tree-28") && selector.includes(":hover")) {
+          rule = candidate as CSSStyleRule;
+        }
+      }
+    }
+
+    expect(rule, "no hover rule reaches a selected row").toBeDefined();
+    expect(rule!.style.backgroundColor).toBe("var(--color-accent-bg-hover)");
+
+    const row = container.querySelector(".cs-component-tree-28");
+    expect(row).not.toBeNull();
+    expect(row!.matches(rule!.selectorText.replace(/:hover/g, ""))).toBe(true);
+  });
+
   it("renders top-level node names when expanded", () => {
     render(<Tree nodes={nodes} expandedIds={new Set(["root"])} />);
     expect(screen.getByText("src")).toBeInTheDocument();

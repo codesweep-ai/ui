@@ -354,6 +354,14 @@
     background-color: var(--color-row-hover)
 }
 
+/* A selected row keeps its accent under the pointer, one step stronger. The
+   row-hover rule above carries a class and a pseudo-class, so it outranks the
+   selection class on its own and turned a selected row grey. This needs both
+   classes to win the cascade back. */
+.cs-component-tree-24.cs-component-tree-28:hover {
+    background-color: var(--color-accent-bg-hover)
+}
+
 .cs-component-tree-104:hover,
 .cs-component-tree-112:hover,
 .cs-component-tree-130:hover,
