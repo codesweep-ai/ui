@@ -37,6 +37,10 @@
     {
       "date": "2026-09-06",
       "text": "The pattern half is not fixed. ExplorerDemo still composes an unbounded SectionedTree inside a fixed height Panel; it now scrolls rather than losing content, but whether that is the composition the pattern should teach belongs with CUI-011."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Correcting the note above that called the pattern a second fault. Measured after the fix: the sectioned explorer has two vertical scrollers, the demo card's own frame and the panel body, and none nested inside the panel. Each section's tree fits its content at 580 of 580, so the nested scrollbars the original reports complained about are not present. The composition is a bounded panel whose content scrolls inside it, which is the ordinary explorer sidebar and needs no change. The pattern was only wrong while the component clipped."
     }
   ],
   "links": [

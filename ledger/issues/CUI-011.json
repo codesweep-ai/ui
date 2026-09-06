@@ -8,13 +8,31 @@
   "opened": "2026-09-06",
   "resolved": null,
   "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
   "resolution": null,
-  "details": "A sidebar of several titled nav sections stacked in one scrolling column has no supported route. Each section should be as tall as its own rows, with one scrollbar owned by the sidebar. It is the standard documentation sidebar, and Panel plus Tree is what a consumer reaches for.\n\nBoth components are built to do the opposite. Panel exposes `width` and no height, documented as filling the available flex space. Tree has no height or scroll prop and brings its own `overflow: auto`. Each is designed to fill a container and scroll inside itself.\n\nSo the pattern is only reachable by overriding internals from outside, releasing `height`, `max-height`, `min-height` and `overflow` together down the whole chain. That depends on the internal box structure and breaks silently on a version bump.\n\nGetting the override partly right fails in a way that is very hard to see. Releasing `overflow` without releasing `height` leaves the inner component at its inherited height while its content spills out. An ancestor with `overflow: hidden` clips the overflow, and those rows never count toward the outer scroller's `scrollHeight`. The reporter measured 1344px of scrollHeight for 2562px of nav, with roughly half of a 72 item list unreachable by mouse while still reachable by `scrollIntoView`. It was reported as the last row being slightly clipped.\n\nA partial override producing silent, input-method-dependent content loss is the argument for a first-class mode rather than a documented recipe.\n\nThe proposal is something explicit on both, such as `height=\"auto\"` on Panel and a matching `scroll={false}` on Tree, meaning size to content and let an ancestor own the scrolling. A third report asked for the same thing as `scroll` taking `section` or `container` on SectionedTree.\n\nWorked around in the consuming apps with the override chain described above, plus making the scrolling parent a plain block rather than a flex column, since a flex column shrinks each section to an equal share of its own height."
-  ,
+  "details": "A sidebar of several titled nav sections stacked in one scrolling column has no supported route. Each section should be as tall as its own rows, with one scrollbar owned by the sidebar. It is the standard documentation sidebar, and Panel plus Tree is what a consumer reaches for.\n\nBoth components are built to do the opposite. Panel exposes `width` and no height, documented as filling the available flex space. Tree has no height or scroll prop and brings its own `overflow: auto`. Each is designed to fill a container and scroll inside itself.\n\nSo the pattern is only reachable by overriding internals from outside, releasing `height`, `max-height`, `min-height` and `overflow` together down the whole chain. That depends on the internal box structure and breaks silently on a version bump.\n\nGetting the override partly right fails in a way that is very hard to see. Releasing `overflow` without releasing `height` leaves the inner component at its inherited height while its content spills out. An ancestor with `overflow: hidden` clips the overflow, and those rows never count toward the outer scroller's `scrollHeight`. The reporter measured 1344px of scrollHeight for 2562px of nav, with roughly half of a 72 item list unreachable by mouse while still reachable by `scrollIntoView`. It was reported as the last row being slightly clipped.\n\nA partial override producing silent, input-method-dependent content loss is the argument for a first-class mode rather than a documented recipe.\n\nThe proposal is something explicit on both, such as `height=\"auto\"` on Panel and a matching `scroll={false}` on Tree, meaning size to content and let an ancestor own the scrolling. A third report asked for the same thing as `scroll` taking `section` or `container` on SectionedTree.\n\nWorked around in the consuming apps with the override chain described above, plus making the scrolling parent a plain block rather than a flex column, since a flex column shrinks each section to an equal share of its own height.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed: overflow auto is unconditional at src/styles/components/tree.css:165, and PanelProps at src/components/Panel.tsx:5-14 exposes width with no height." },
-    { "date": "2026-09-06", "text": "Merged from two reports asking for the same capability in different shapes, one on Panel and Tree and one on SectionedTree. The unreachable-content failure the reporter described was caused by their own partial override rather than by kit behaviour, and is recorded here as the argument for the mode, not as a separate defect." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed: overflow auto is unconditional at src/styles/components/tree.css:165, and PanelProps at src/components/Panel.tsx:5-14 exposes width with no height."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Merged from two reports asking for the same capability in different shapes, one on Panel and Tree and one on SectionedTree. The unreachable-content failure the reporter described was caused by their own partial override rather than by kit behaviour, and is recorded here as the argument for the mode, not as a separate defect."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Scope clarified while fixing CUI-018. This is additive rather than a correction: the bounded panel that scrolls its own content works and the Explorer pattern demonstrates it. What is missing is the other layout, where several titled sections each size to their content and one ancestor owns the scrollbar. If that ships, Explorer should probably gain a second card showing it rather than replacing the first, because both layouts are real."
+    }
   ],
-  "links": ["CUI-003", "CUI-004", "CUI-005", "CUI-009"]
+  "links": [
+    "CUI-003",
+    "CUI-004",
+    "CUI-005",
+    "CUI-009"
+  ]
 }
