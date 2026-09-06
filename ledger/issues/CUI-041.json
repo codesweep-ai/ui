@@ -1,0 +1,25 @@
+{
+  "id": "CUI-041",
+  "title": "AppShell's responsive header rules are not implemented",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`components/AppShell.md:131` opens a section headed `Responsive (max-width: 768px)` and promises the header inner switches to `flex-direction: column`, with nav links set to `flex-wrap: wrap`. The edge case at `:204` repeats it, saying many nav items wrap to the next line on mobile.\n\n`src/styles/components/app-shell.css` contains no `@media` block and no `flex-wrap` declaration. The only component stylesheet in the repository with a width media query is `src/styles/components/event-lanes.css:155`.\n\nA consumer planning a mobile header on that promise ships one whose nav overflows instead of stacking.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    }
+  ],
+  "links": []
+}

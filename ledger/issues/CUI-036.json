@@ -1,0 +1,25 @@
+{
+  "id": "CUI-036",
+  "title": "MarkdownMinimap never draws when its content mounts after it",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`components/MarkdownMinimap.md:97` says the initial draw timeout covers the case where the content mounts after the minimap.\n\nIt cannot. `src/components/MarkdownMinimap.tsx:98` returns from the effect when `contentRef.current` is empty, and the `setTimeout` that would schedule the draw sits below it at `:105`. The effect's dependencies are `[contentRef, drawMinimap]` at `:128`, and a ref object does not change identity when its `current` is populated later.\n\nSo the effect never runs a second time. A consumer who mounts the minimap before its content gets a permanently blank canvas, with no scroll listener and no resize observer attached.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    }
+  ],
+  "links": []
+}

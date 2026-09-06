@@ -1,0 +1,25 @@
+{
+  "id": "CUI-034",
+  "title": "StreamingText fires onDone once when motion is reduced",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`components/StreamingText.md:75` says `onDone` fires exactly once per `text` value, after the last character is revealed.\n\n`src/components/StreamingText.tsx:55` returns from the effect early when `done` is set or `prefersReducedMotion()` is true. The reset of `firedDoneRef` sits below that return, at `:61`. The ref therefore stays true after the first message, and no later `text` value fires the callback again.\n\nA consumer chaining messages off `onDone` stalls after the first one, for every user who has asked for reduced motion.\n\n`:83` also guards on `text.length > 0`, so an empty `text` never fires it at all.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    }
+  ],
+  "links": []
+}

@@ -1,0 +1,25 @@
+{
+  "id": "CUI-037",
+  "title": "CheckboxGroup leaves All enabled when the filter matches nothing",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`components/CheckboxGroup.md:214` says both the All and None buttons are disabled when the filter matches nothing.\n\n`src/components/CheckboxGroup.tsx:237` computes `allFilteredSelected` with a leading `filteredOptions.length > 0`, which is false for an empty result. That value reaches the button's `disabled` expression at `:106`, so All stays enabled.\n\nNone behaves as documented, because `:238` calls `every()` on an empty array and gets true.\n\nClicking the live All button does nothing. A reader is told both go inert, and one of them does not.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    }
+  ],
+  "links": []
+}

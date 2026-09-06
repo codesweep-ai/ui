@@ -1,0 +1,27 @@
+{
+  "id": "CUI-045",
+  "title": "Component specifications name DOM attributes the components no longer emit",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Four specifications tell a reader to select on an attribute the component does not render.\n\n- `components/Dropdown.md:154` puts `data-component=\"Dropdown\"` on the root `<select>`. `src/components/Dropdown.tsx:56` puts it on the wrapper `<div>`, and the select carries none. Anyone selecting it to read `.value` gets a div.\n- `components/Dropdown.md:64` puts `data-testid=\"dropdown-empty\"` on the wrapper. `Dropdown.tsx:66` puts it on the select.\n- `components/Card.md:116` and `components/ThemeToggle.md:101` both describe a `title` attribute. Neither component sets one, because the work recorded in CUI-016 moved every native tooltip onto the Tooltip component, which renders a bubble instead.\n- `components/MermaidDiagram.md:99` lists the classes the error branch emits and omits `md-mermaid-error__message`, which `MermaidDiagram.tsx:208` renders and `src/styles/markdown-content.css` does not define.\n\nThe compile gate passes all of these, because it asserts that a documented hook renders rather than that the description of it is right.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    }
+  ],
+  "links": [
+    "CUI-016"
+  ]
+}
