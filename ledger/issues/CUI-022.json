@@ -19,6 +19,14 @@
     {
       "date": "2026-09-06",
       "text": "Extending docs:compile to the patterns is the half that stops this recurring. Rewriting ten examples without it buys one clean day."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Half done in 87dec12, and the half that stops it recurring. docs:compile now reads the patterns directory as well, so each pattern carries one marked example that is type checked and rendered. Patterns have no Traceability section, so there is nothing to assert about the DOM and the contract is that the example compiles and renders without throwing. That alone caught six wrong prop names in examples written from memory: a trace status that does not exist, ChartFrame imported from the wrong entry, a required onSearch, a StatusBadge label passed as children, and Table's selection prop named wrongly."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Left open for the other half. The gate covers the one marked example per pattern, not the illustrative code blocks around it, so the retired utility syntax and the twelve class names that exist nowhere are still in those. Rewriting them is a documentation job with no gate behind it yet, and the marked example is now the one a reader can trust."
     }
   ],
   "links": [

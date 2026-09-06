@@ -4,7 +4,7 @@
   "items": [
     {
       "id": "CUI-022",
-      "why": "The example code is what people paste, and nothing checks it would run."
+      "why": "Half done: the gate is in. The illustrative examples still carry the retired syntax."
     },
     {
       "id": "CUI-006",
