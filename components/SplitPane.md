@@ -61,7 +61,9 @@ interface PaneConfig {
 
 ### Resize Handle
 - Visible width: `4px`.
-- Hit area: `8px` (achieved via `::before` pseudo-element extending `2px` on each side).
+- Hit area: `8px`, from a child element rather than a pseudo-element. It is `0.5rem` wide and
+  offset `-0.25rem`, so the extra grab room sits to the left of the visible handle rather than
+  being split evenly on both sides.
 - Idle: `background: var(--border)` — a resting divider line so adjacent panes stay visually separated even when both have the same surface color (e.g. white card content on both sides).
 - Hover: `background: var(--color-accent)`, `transition: background var(--transition-fast)`.
 - Active (dragging): `background: var(--color-accent)`.
@@ -77,7 +79,7 @@ interface PaneConfig {
 | Default           | Panes at their set or persisted widths                    |
 | Handle hover      | Handle turns `var(--color-accent)`                  |
 | Dragging          | Handle stays colored, body cursor `col-resize`, `user-select: none` |
-| Pane collapsed    | Width `0`, `overflow: hidden`, handle hidden              |
+| Pane collapsed    | Not rendered: the pane and its children leave the DOM     |
 
 ### Responsive
 - No automatic breakpoint changes. On very narrow viewports the `minWidth` constraints still apply.
@@ -121,6 +123,10 @@ key clamps the result between `minWidth` and `maxWidth`, as dragging does.
 - No external drag library — uses native pointer events (`onPointerDown`, `onPointerMove`, `onPointerUp`).
 
 ## Edge Cases
+
+- **Collapsing a pane discards its state.** The pane is unmounted rather than
+  hidden, so scroll position, focus and any uncontrolled input inside it are gone
+  when it comes back. Lift state a consumer needs to survive a collapse.
 
 - **Only one pane**: Renders as a single flex-fill element with no handles.
 - **All panes have fixed width**: Last pane should omit `defaultWidth` to prevent overflow.
