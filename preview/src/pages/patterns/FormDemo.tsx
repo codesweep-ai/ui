@@ -43,7 +43,10 @@ export function FormDemo() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="cs-preview-pages-patterns-form-demo-18 ">
+        {/* noValidate, because this form validates itself. FormGroup forwards `required` to
+            the input, and the browser then refuses to fire submit on an invalid form, so
+            handleSubmit would never run and the error states below would be unreachable. */}
+        <form noValidate onSubmit={handleSubmit} className="cs-preview-pages-patterns-form-demo-18 ">
           <div className="cs-preview-pages-patterns-form-demo-19 ">
             <FormGroup label="First name" htmlFor="first" required error={errors.first}>
               <Input value={first} onChange={(e) => setFirst(e.target.value)} />

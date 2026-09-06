@@ -93,6 +93,22 @@ Pass `error="message"` to the FormGroup. It forwards `aria-invalid={true}` and r
 
 When using `Input` standalone (no FormGroup), pass `error={true}` to paint the red border, but be aware: this is **visual only**. The a11y wiring (`aria-invalid`, `role="alert"`) is FormGroup's job. Standalone `Input` should be rare — only in highly customized layouts where FormGroup's column layout doesn't fit.
 
+### Validating yourself means turning the browser's validation off
+
+A form that does its own validation must set `noValidate`:
+
+```tsx
+<form noValidate onSubmit={handleSubmit}>
+```
+
+FormGroup forwards `required` to the input, which is right: it marks the field for assistive
+technology. The browser then refuses to fire `submit` on an invalid form, so a handler that
+validates and sets `error` never runs, and the error treatment specified above is unreachable. The
+user gets the browser's own bubble instead.
+
+The failure is silent. Nothing throws, the form simply does nothing, and a screenshot of it looks
+the same as one taken before the button was pressed.
+
 ### When to validate
 
 - **On blur** for first validation of a field (don't yell at a user who's still typing).

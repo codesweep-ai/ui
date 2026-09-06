@@ -3,15 +3,15 @@
   "title": "The Form pattern can never show the error states its specification documents",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to recommend how the patterns should be tested",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
   "evidence": {
     "commits": [],
     "integrated": [],
-    "verified": null
+    "verified": "Driven in the built pattern page with Playwright: clicking Create account on an empty form now renders 5 elements with role alert reading Required., Required., Enter a valid email. and Pick a plan., against 0 before the fix. npm run check exit 0."
   },
   "resolution": null,
   "details": "`FormDemo` marks its fields `required` through FormGroup and submits to its own `handleSubmit`, which calls a `validate()` and sets an `error` on each group. The form carries no `noValidate`.\n\nFormGroup forwards `required` to the child input, which is documented and right on its own. The browser then refuses to fire submit on an invalid form, so `handleSubmit` never runs, `validate()` never runs, no `error` is ever set, and the `role=\"alert\"` branch is unreachable. The user sees the browser's own bubble instead of the design system's error treatment.\n\n`patterns/Form.md` documents error states the pattern cannot reach, and the screenshot gate photographs the never-erroring form as correct.\n\nThe fix is a judgement call worth making deliberately rather than quickly. Adding `noValidate` to the demo's form is the smallest change and is what a consumer doing its own validation has to do. Dropping `required` would lose the accessible marking. Either way the lesson belongs in `patterns/Form.md`, because a consumer copying this pattern inherits the same silent failure: native constraint validation and custom validation do not compose without `noValidate`.",
@@ -23,6 +23,14 @@
     {
       "date": "2026-09-06",
       "text": "This is the class of defect the visual gate cannot see, and it is the second one found this way. A form that never errors looks identical to a form that has not been submitted."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Fixed by adding noValidate to the demo's form and writing the rule into patterns/Form.md, which already specified on-submit validation as the final gate without saying that native validation prevents it. `required` stays: it marks the field for assistive technology and that was never the problem."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Making the errors reachable immediately exposed a second defect that had been unobservable while no error ever rendered. See CUI-029."
     }
   ],
   "links": [
