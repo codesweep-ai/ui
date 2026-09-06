@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-036",
-      "why": "A minimap that mounts before its content draws nothing, and how far the fix should reach is a judgement."
-    },
-    {
       "id": "CUI-044",
       "why": "Two Table bullets left: add the documented affordances, or delete them. Both repaint or remove something."
     },
