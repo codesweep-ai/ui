@@ -113,6 +113,11 @@ describe("documented DOM hooks", () => {
       compilerOptions: {
         allowImportingTsExtensions: false,
         noEmit: true,
+        // The root config maps the package's own name to src/, which is where
+        // the preview and the tests read it from. A documented example is what
+        // a consumer pastes, so it resolves through dist/ the way theirs will,
+        // and the way the vitest config below already renders it.
+        paths: {},
       },
       include: ["*.tsx"],
     }, null, 2)}\n`,

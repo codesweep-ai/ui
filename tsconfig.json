@@ -6,6 +6,10 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    "paths": {
+      "@codesweep-ai/ui": ["./src/index.ts"],
+      "@codesweep-ai/ui/*": ["./src/*"]
+    },
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
