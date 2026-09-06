@@ -1,0 +1,27 @@
+{
+  "id": "CUI-051",
+  "title": "A validation error pushes every field below it down the page",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "repository owner (host): \"when the border gets color red, the form fields shift down because of the error messages below them. thats distracting?\"",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "FormGroup renders its error message in flow, below the control. The message appears only once a field is invalid, so every field below it moves down at the moment the user submits.\n\nMeasured in the built preview at 1280 by 900, submitting the Form pattern with every field empty: the Email control moves down 22px, the Plan control 22px, and the Notes control 48px. The form grows from 433px to 481px.\n\nThe Email field is the exception, and it points at the fix. Its helper text is replaced by the error rather than joined by it, so that row does not change height. A field whose message slot is always occupied does not move.\n\nThe choice is a design decision rather than a defect to fix one way. Reserving a message line under every field removes the shift and makes every form permanently taller. Reserving it only after the first submit attempt removes the shift where a user would notice it, at the cost of a rule that depends on form state. Taking the message out of flow avoids both costs and risks it overlapping the field below.\n\nThis affects every consumer of FormGroup, not only the pattern it was noticed in.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Only visible since CUI-020 made the Form pattern reach its error states. Reserving space would change what the visual gate photographs for every form, so the baseline moves with whichever option wins."
+    }
+  ],
+  "links": [
+    "CUI-020"
+  ]
+}
