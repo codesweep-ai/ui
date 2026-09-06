@@ -1,0 +1,22 @@
+{
+  "id": "CUI-031",
+  "title": "The gate fails on a clean install, because typecheck resolves the package name through dist",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "session agent, running npm ci and the gate in a fresh sandbox for the first time",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`npm ci` followed by `npm run check` fails at typecheck on a checkout that has never been built. It reports 77 errors in three preview demo files. Five are `Cannot find module \"@codesweep-ai/ui\"`, and the rest are the implicit `any` parameters that follow from them.\n\n`src/patterns/patterns.wiring.test.tsx` imports three demos from `preview/src/pages/patterns/`, which pulls those demos into the `tsc` program. Each demo imports the package by its own name. Node resolves a self-reference through the `exports` map in `package.json`, and every entry there points into `dist/`. A tree that has never been built has no `dist/`.\n\nA working copy hides this. Any tree that has run `npm run build` once has a `dist/`, and `check` runs `typecheck` before `build`, so the gate reads output it only produces later in the same run.\n\nCI would fail the same way. The check job runs `npm ci` and then `npm run check` on both Node legs, with no build between them. Nothing on this branch has been pushed, so no run has reported it yet.\n\nThe preview and the tests both resolve that import to `src`, through the alias in `preview/vite.config.ts` and the one in `vitest.config.ts`. Only the typecheck reads the built package.",
+  "notes": [],
+  "links": [
+    "CUI-028"
+  ]
+}
