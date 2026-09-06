@@ -46,7 +46,9 @@ The canvas is redrawn from scratch on every scroll/resize/theme change. Three la
 1. **Block silhouette** — for each `h1`–`h6`, `p`, `pre`, `table`, `.md-mermaid`, `.md-alert` descendant of the content container:
    - Position: vertical offset = element's position in the source × `scale` (where `scale = canvasHeight / contentScrollHeight`).
    - Width: full canvas width minus inset (4px for headings, 8px for content).
-   - Height: max of `element.height × scale` and a per-tag minimum (3px for headings, 1px for content).
+   - Height: max of `element.height × scale` and a per-tag minimum, 3px for headings and 2px for
+     content. Every block is floored at 2px before the per-tag minimum applies, so 2px is the
+     smallest a content block can be.
    - Fill: `var(--muted)` for headings, `var(--border)` for non-headings.
 2. **Viewport indicator** — a filled rectangle representing the currently-visible portion of the content:
    - Position: `scrollTop × scale`.

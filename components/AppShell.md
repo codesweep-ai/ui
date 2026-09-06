@@ -40,7 +40,7 @@ interface HeaderProps {
   logoSrc?: string;
   /** Application title */
   title: string;
-  /** Title destination; defaults to "/". Pass null to render no title link. */
+  /** Title destination. Defaults to null, which renders the title as plain text. */
   titleHref?: string | null;   // default: null — no title link
   /** Nav links */
   navItems?: NavItem[];
@@ -92,13 +92,13 @@ interface FooterProps {
 ### Brand mark
 - `display: flex`, `align-items: center`, `gap: var(--space-2)`.
 - **Text title (the convention)**: `title` renders as the brand mark. Color: `var(--color-accent)`, font-weight: `var(--font-weight-bold)`, font-size: `var(--font-size-lg)`. Tools built on this package use their command name and no image.
-- **Title destination**: `titleHref` defaults to `/`. Pass a path or URL for another destination, or `null` to render the title without an anchor.
-- **Single-file artifacts must pass their own `titleHref`.** The `/` default is a
-  server-side assumption: in a page opened over `file://` it resolves to the
-  filesystem root, so it navigates *out of the artifact*. `null` avoids that but
-  leaves the title inert, which is not what a reader expects of a top-left brand
-  mark. Pass a destination that resolves inside the page instead — the same one
-  the viewer's own index nav item uses. The three tools built on this package
+- **Title destination**: `titleHref` defaults to `null`, which renders the title as plain text with no anchor. Pass a path or URL to give it a destination.
+- **Single-file artifacts must pass their own `titleHref`.** Leaving it unset
+  gives an inert title, which is not what a reader expects of a top-left brand
+  mark. `/` is the obvious value to reach for and the wrong one here: in a page
+  opened over `file://` it resolves to the filesystem root, so it navigates *out
+  of the artifact*. Pass a destination that resolves inside the page instead —
+  the same one the viewer's own index nav item uses. The three tools built on this package
   each do exactly that. A viewer that can also export as a linked set resolves
   it at runtime — `?` when it is one file, `index.html` / `../index.html` when
   split; the single-file ones pass `?` or `?view=<their default view>`. A

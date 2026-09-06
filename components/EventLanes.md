@@ -251,7 +251,7 @@ Pointer hit-testing derives lane from y and global index from x, then looks up t
 | `true` | Always render it, including when the viewport window covers the whole axis |
 | `false` | Never render it |
 
-The overview is a compact lane-preserving map: each lane becomes a miniature row, hidden kinds are absent, emphasis dimming is reflected, and selected/linked positions remain visible. Spans and text labels are omitted at overview scale. A two-tone viewport window shows the visible axis range.
+The overview is a compact lane-preserving map: each lane becomes a miniature row, hidden kinds are absent, emphasis dimming is reflected, and selected/linked positions remain visible. Spans and text labels are omitted at overview scale. A single stroked rectangle shows the visible axis range.
 
 Clicking the overview recenters the main viewport. Dragging its window scrolls continuously and clamps at both ends. These actions scroll only; they never select an event. The overview is `aria-hidden` and not a Tab stop because the primary listbox exposes the complete keyboard path.
 

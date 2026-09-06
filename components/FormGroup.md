@@ -26,7 +26,7 @@ Added in `@codesweep-ai/ui@1.3.0`.
 ```typescript
 interface FormGroupProps {
   /** Field label rendered above the control. */
-  label: string;
+  label?: string;
   /**
    * `id` for the control. Required when wrapping a single native input/select/
    * textarea — the label's htmlFor binds to this id. May be omitted when

@@ -55,7 +55,8 @@ interface CodeBlockProps {
 ## Visual Spec
 
 ### Layout
-- Root: `display: flex`, `flex-direction: column`.
+- Root: `display: block`. It becomes `display: flex` with `flex-direction: column` only under
+  `fillHeight`, which is what lets the header and body share a fixed height.
 - Header bar: always present, contains label (source path or language) on the left and copy button on the right.
 - Code area: `display: flex` (line numbers column + code column).
 

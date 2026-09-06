@@ -90,6 +90,8 @@ CardGroup provides `CardGroupContext` to its descendants:
 interface CardGroupContextValue {
   maximizedId: string | null;
   toggle: (id: string) => void;
+  /** When true (default), cards flex to fill the group and scroll internally. */
+  fill: boolean;
 }
 ```
 

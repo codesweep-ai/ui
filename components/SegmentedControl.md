@@ -29,7 +29,8 @@ interface SegmentedControlOption {
   ariaLabel?: string;
 }
 
-interface SegmentedControlProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SegmentedControlProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
   options: SegmentedControlOption[];
   value: string;
   onChange: (value: string) => void;
