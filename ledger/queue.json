@@ -3,6 +3,10 @@
   "updated": "2026-09-06",
   "items": [
     {
+      "id": "CUI-020",
+      "why": "A documented error state that cannot happen, in a pattern people copy."
+    },
+    {
       "id": "CUI-006",
       "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."
     }
