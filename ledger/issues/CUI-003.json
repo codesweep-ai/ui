@@ -3,17 +3,36 @@
   "title": "SectionedTree does not scroll the selected row into view, but Tree does",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an agent building a six-section navigation sidebar against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
+  "evidence": {
+    "commits": [
+      "5d4f99d"
+    ],
+    "integrated": [],
+    "verified": "Measured before fixing: a throwaway test rendering Tree and changing selectedId from outside recorded 0 scrollIntoView calls, so Tree did not do this either. Fixed as an opt-in prop on both. Full suite 606 passed across 60 files, up from 554 across 56 at the start of this work. npm run check exit 0. npm run visual:compare 76/76 screenshots passed, 161 differing pixels against a 0.1% threshold, axe violations 0 in both themes and no rule matching more nodes than the baseline."
+  },
   "resolution": null,
-  "details": "`Tree` scrolls its selected row into view. `SectionedTree`, which composes Trees, does not.\n\nWhen selection is driven from outside the component, by a link elsewhere on the page setting `selectedId`, the selected row can sit off screen in a SectionedTree with no indication. The sidebar shows an unrelated position. The same interaction works in a plain Tree.\n\nThis is filed as a defect rather than a gap because two components meant to compose behave differently on the same input.\n\nWorked around in the consuming app by abandoning SectionedTree for Panel plus Tree per section."
-  ,
+  "details": "`Tree` scrolls its selected row into view. `SectionedTree`, which composes Trees, does not.\n\nWhen selection is driven from outside the component, by a link elsewhere on the page setting `selectedId`, the selected row can sit off screen in a SectionedTree with no indication. The sidebar shows an unrelated position. The same interaction works in a plain Tree.\n\nThis is filed as a defect rather than a gap because two components meant to compose behave differently on the same input.\n\nWorked around in the consuming app by abandoning SectionedTree for Panel plus Tree per section.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed: src/components/Tree.tsx:597 calls scrollIntoView with block nearest. A grep for scrollIntoView across src/components returns no hit in SectionedTree.tsx." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed: src/components/Tree.tsx:597 calls scrollIntoView with block nearest. A grep for scrollIntoView across src/components returns no hit in SectionedTree.tsx."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The report's premise was wrong and the record is corrected here rather than rewritten. Tree does call scrollIntoView, but only for the current search match and for keyboard navigation. An externally-set selectedId scrolled in neither component. Measured with a throwaway test that stubbed Element.prototype.scrollIntoView and counted 0 calls across a selectedId change."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "So this was a missing capability rather than an inconsistency. Fixed as scrollSelectedIntoView on both, defaulting to false, because turning it on by default would change Tree's behaviour for everyone on the strength of a premise that did not hold. Consumers driving selection from a link elsewhere on the page should pass it."
+    }
   ],
-  "links": ["CUI-004", "CUI-011"]
+  "links": [
+    "CUI-004",
+    "CUI-011"
+  ]
 }

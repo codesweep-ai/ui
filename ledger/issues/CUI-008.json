@@ -3,17 +3,41 @@
   "title": "Tree rows can only scroll horizontally, never truncate or wrap",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
+  "evidence": {
+    "commits": [
+      "5d4f99d"
+    ],
+    "integrated": [],
+    "verified": "npx vitest run src/components/Tree.overflow.test.tsx: 8 passed. visual:compare shows the truncated label and the untouched focus ring at 76/76. Full suite 606 passed across 60 files, up from 554 across 56 at the start of this work. npm run check exit 0. npm run visual:compare 76/76 screenshots passed, 161 differing pixels against a 0.1% threshold, axe violations 0 in both themes and no rule matching more nodes than the baseline."
+  },
   "resolution": null,
-  "details": "A Tree row carries `min-width: 100%` and its scroller `overflow: auto`, so a long label widens the row and produces a horizontal scrollbar. The reporter measured a 599px row inside a 403px scroller.\n\nIn a narrow sidebar holding several trees that is several nested horizontal scrollbars, and there is no prop to opt out of it.\n\nThe proposal is `labelOverflow` taking `scroll`, `truncate` or `wrap`, defaulting to `scroll` so today's behaviour is unchanged. `truncate` would ellipsize and `wrap` would allow multiple lines, which pairs with the alignment record.\n\nWorked around in the consuming app with a CSS override on the generated class name."
-  ,
+  "details": "A Tree row carries `min-width: 100%` and its scroller `overflow: auto`, so a long label widens the row and produces a horizontal scrollbar. The reporter measured a 599px row inside a 403px scroller.\n\nIn a narrow sidebar holding several trees that is several nested horizontal scrollbars, and there is no prop to opt out of it.\n\nThe proposal is `labelOverflow` taking `scroll`, `truncate` or `wrap`, defaulting to `scroll` so today's behaviour is unchanged. `truncate` would ellipsize and `wrap` would allow multiple lines, which pairs with the alignment record.\n\nWorked around in the consuming app with a CSS override on the generated class name.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed: min-width 100% at src/styles/components/tree.css:85 and overflow auto at tree.css:165. TreeProps carries no overflow prop." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed: min-width 100% at src/styles/components/tree.css:85 and overflow auto at tree.css:165. TreeProps carries no overflow prop."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Fixed as labelOverflow, defaulting to truncate. The repository owner chose consistency with the other ten components over compatibility, so this changes how an existing app's trees look. scroll restores the old behaviour."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The first attempt regressed the focus ring. Dropping min-width on the row let it shrink to its content, and the ring shrank with it, which visual:compare caught as 543 differing pixels on the tree keyboard-navigation capture. The row now keeps max-width 100% and the label shrinks instead."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "If you worked around this in a consumer app, remove the CSS override that released overflow on the generated class names. It now fights the component. Where you want the old sideways scrolling, ask for labelOverflow=\"scroll\" rather than overriding."
+    }
   ],
-  "links": ["CUI-005", "CUI-007", "CUI-014"]
+  "links": [
+    "CUI-005",
+    "CUI-007",
+    "CUI-014"
+  ]
 }

@@ -7,14 +7,6 @@
       "why": "The escape hatch every other record is currently forced through, and it breaks on any rebuild."
     },
     {
-      "id": "CUI-003",
-      "why": "Small self-contained defect that makes two components meant to compose behave the same way."
-    },
-    {
-      "id": "CUI-004",
-      "why": "Removes chrome a consumer cannot turn off, and restores a choice plain Tree already offers."
-    },
-    {
       "id": "CUI-006",
       "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."
     }

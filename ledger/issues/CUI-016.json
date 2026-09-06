@@ -3,15 +3,18 @@
   "title": "Ship a Tooltip component and move every native title tooltip onto it",
   "type": "improvement",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "the repository owner, deciding how to fix CUI-008",
   "opened": "2026-09-06",
-  "resolved": null,
+  "resolved": "2026-09-06",
   "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "8a781bd",
+      "31b2728"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "npx vitest run src/components/Tooltip.test.tsx: 13 passed, covering the hover delay, focus opening with no delay, Escape, the hoverable bubble, both describedBy modes, overflowOnly in each direction, disabled, and that the trigger keeps its own handlers and ref. Full suite 606 passed across 60 files, up from 554 across 56 at the start of this work. npm run check exit 0. npm run visual:compare 76/76 screenshots passed, 161 differing pixels against a 0.1% threshold, axe violations 0 in both themes and no rule matching more nodes than the baseline."
   },
   "resolution": null,
   "details": "The kit has no tooltip component and uses the browser's native `title` attribute instead. `Table` attaches one on hover, and only when the text is actually cut off, by comparing `scrollWidth` against `clientWidth`. `patterns/DataTable.md` documents that as the expected behaviour, so it is a decision rather than an oversight.\n\nA native `title` never appears on keyboard focus. Tab to a truncated row and there is no way to read the full text, so the affordance exists for mouse users alone. It also cannot be styled, cannot be dismissed, and disappears if the pointer moves onto it.\n\nOne nuance decides the design. When text is truncated with an ellipsis the full string is still in the DOM, so a screen reader already reads it. A tooltip repeating it must therefore be hidden from assistive technology or the name is announced twice. A tooltip carrying new information must be announced. The component needs both modes and the caller picks.\n\nAgreed shape: shows on hover after a delay and on keyboard focus immediately, dismissible with Escape, stays open when the pointer moves onto it, and no collision detection in this pass. That is the WCAG 1.4.13 bar for content on hover or focus.\n\nEvery existing `title` used as a tooltip moves onto it in the same pass, so the kit ends with one mechanism rather than two.",
@@ -19,6 +22,14 @@
     {
       "date": "2026-09-06",
       "text": "Filed before building, at the repository owner's direction, after they chose the accessible scope and a full retrofit over a staged one. Driven by CUI-008, which needs somewhere to put the full text once a Tree label is cut."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Shipped in two commits: the component, then the migration of every native title onto it. Table and EventLanes keep their truncation measurement through overflowOnly. Where an accessible name already carried the text the bubble is visual only; Card's tooltip says more than its name does, so it stays announced."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Two things deliberately not done. There is no collision detection, so a bubble near a viewport edge can clip, and the preview's new Tooltip section is not in the visual baseline, whose capture list is fixed at 35 components."
     }
   ],
   "links": [
