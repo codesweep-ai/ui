@@ -55,11 +55,11 @@ function D3BarChart({ theme }: { theme: ChartTheme }) {
     // Axes — styled entirely through the theme bridge (no inline colors).
     const xAxis = svg
       .append("g")
-      .attr("cs-preview-pages-patterns-chart-demo-14", `translate(0,${H - margin.bottom})`)
+      .attr("transform", `translate(0,${H - margin.bottom})`)
       .call(d3.axisBottom(x));
     const yAxis = svg
       .append("g")
-      .attr("cs-preview-pages-patterns-chart-demo-14", `translate(${margin.left},0)`)
+      .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y).ticks(4));
     styleAxis(xAxis, theme);
     styleAxis(yAxis, theme);
