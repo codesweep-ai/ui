@@ -3,15 +3,19 @@
   "title": "Prop tables and interfaces disagree with the components they document",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "documentation passes, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "bfc6163",
+      "c210ac2",
+      "c254f73"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Each of the nine claims was read against the source before rewriting. `SplitPane.tsx:165` returns null for a collapsed pane, `SegmentedControl.tsx:15` carries the `Omit`, `FormGroup.tsx:15` declares `label` optional, `AppShell.tsx:35` defaults `titleHref` to null, `CardGroupContext.ts` carries `fill`, `MarkdownMinimap.tsx:70` floors every block at 2px, `code-block.css:10` applies flex to a class `CodeBlock.tsx:178` adds only under `fillHeight`, and `EventLanes.tsx:613` draws one stroked rectangle. `npm run check` exits 0."
   },
   "resolution": null,
   "details": "- `components/SegmentedControl.md:32` prints the props interface without the `Omit` the code carries at `src/components/SegmentedControl.tsx:15`. `Omit<..., \"onChange\">` is load bearing, so a reader who copies the printed interface to wrap the component hits a type error the document does not warn about.\n- `components/FormGroup.md:29` declares `label` required. `src/components/FormGroup.tsx:15` declares it optional, and the comment above it documents the unlabelled composite-control case the specification never mentions.\n- `components/AppShell.md:43` says `titleHref` defaults to `/`. `src/components/AppShell.tsx:35` defaults it to `null` and renders an inert `<span>`. The document contradicts itself at `:44`.\n- `components/CardGroup.md:90` prints the context value as `maximizedId` and `toggle`. `src/components/CardGroupContext.ts` also carries `fill`.\n- `components/SplitPane.md:80` describes a collapsed pane as zero width with hidden overflow. `src/components/SplitPane.tsx:165` returns null, so its children and their state leave the DOM.\n- `components/MarkdownMinimap.md:49` gives content blocks a 1px minimum. `MarkdownMinimap.tsx:70` floors every block at 2px first, and the same document says 2px at `:99`.\n- `components/CodeBlock.md:58` gives the root `display: flex`. `src/styles/components/code-block.css:10` applies that to a class `CodeBlock.tsx:178` adds only in `fillHeight` mode.\n- `components/EventLanes.md:254` describes a two-tone viewport window. `src/components/EventLanes.tsx:613` draws a single stroked rectangle, and the comment above it records the removal.\n- `components/FormGroup.md:81` says `error` is forwarded to every child. `FormGroup.tsx:76` forwards it only to component children, never to a native element.",
@@ -27,6 +31,10 @@
     {
       "date": "2026-09-06",
       "text": "The FormGroup error-forwarding bullet is done, in c210ac2. FormGroup forwards no private prop now, so the Behavior table no longer claims one, and the question of whether it reaches a native child does not arise. The `label` bullet on the same component is still open, along with the other seven."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The AppShell entry needed more than a value. Its advice about single-file artifacts was argued from a `/` default that does not exist, so the reasoning was rebuilt on the inert default that does, keeping the advice intact. The error-forwarding bullet was closed earlier by the work in CUI-029."
     }
   ],
   "links": []

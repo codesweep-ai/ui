@@ -31,6 +31,10 @@
     {
       "date": "2026-09-06",
       "text": "The placeholder bullet is done, in 92ce7e2. The owner chose to document the colour that ships rather than repaint every placeholder, so `components/Input.md` and `components/SearchInput.md` now name `var(--color-neutral)`. The Table, StatusBadge and Panel bullets are still open."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The StatusBadge and Panel bullets are done, in f866878, on the same principle the owner set for the placeholder: name what ships. StatusBadge is semibold through the `text-label-upper` utility, and Panel's title is `--font-size-label` at 0.75rem rather than a hard-coded 11px.\n\nThe two Table bullets are left open, and they are a different shape. Both are absences rather than wrong values: no `:hover` rule for a sortable header, and no `var(--card)` background. Naming what ships would mean deleting two documented affordances, and adding them would repaint every table. Either way it is a product decision rather than a correction."
     }
   ],
   "links": []

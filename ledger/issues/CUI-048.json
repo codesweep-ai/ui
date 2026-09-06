@@ -19,6 +19,10 @@
     {
       "date": "2026-09-06",
       "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation against the tree at 0ef7ea4."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The states table is corrected, in f4ea7c5. It now names `--color-header-text-muted` for an idle link and the accent `color-mix` for an active one, which is what `app-shell.css` paints and what the document's own accessibility section already said.\n\nThe focus half is left open. `app-shell.css` still has no `:focus` or `:focus-visible` rule, so the table now says a keyboard user gets the browser default. Whether the header should carry a focus ring of its own, and what it should look like, is a design decision rather than a correction."
     }
   ],
   "links": [

@@ -3,15 +3,17 @@
   "title": "Dropdown's chevron is a rendered icon, not the background image its specification describes",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "documentation passes, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "a4c0e11"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`Dropdown.tsx:2` imports `ChevronDown` and `:100` renders it, and `background-image` appears zero times in `dropdown.css`. `npm run check` exits 0."
   },
   "resolution": null,
   "details": "`components/Dropdown.md:100` says the arrow is drawn with `appearance: none` and a custom background SVG or pseudo-element. `:101` specifies a right-aligned chevron using CSS `background-image` with an inline SVG data URI.\n\n`src/components/Dropdown.tsx:100` renders a lucide `ChevronDown` as a sibling of the select. `src/styles/components/dropdown.css` has no `background-image` rule anywhere, and absolutely positions the icon instead.\n\nA consumer hiding or restyling the arrow targets a background property that does not exist, and does not expect the extra SVG node the component puts in the DOM.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-06",
       "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation against the tree at 0ef7ea4."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Documented as the element it is, so a consumer restyling the arrow targets the node rather than a background property that was never there."
     }
   ],
   "links": []

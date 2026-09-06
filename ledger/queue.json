@@ -1,34 +1,38 @@
 {
-  "recommendedBy": "session agent, working one component at a time",
+  "recommendedBy": "session agent, after the documentation passes",
   "updated": "2026-09-06",
   "items": [
     {
       "id": "CUI-006",
-      "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."
+      "why": "A silent unstyled render is a bad failure mode, and the fix adds runtime behaviour the owner should shape."
     },
     {
       "id": "CUI-036",
-      "why": "A minimap that mounts before its content draws nothing, ever, and the fix is a judgement about how far to reach."
+      "why": "A minimap that mounts before its content draws nothing, and how far the fix should reach is a judgement."
     },
     {
-      "id": "CUI-046",
-      "why": "Four drifts in one specification, including a selector it invites consumers to trust."
+      "id": "CUI-049",
+      "why": "Tooltip's disabled prop is an escape hatch that does not work. Fixing the code or the promise is a choice."
     },
     {
-      "id": "CUI-045",
-      "why": "Four specifications naming attributes the components stopped emitting; all documentation, no decisions."
+      "id": "CUI-044",
+      "why": "Two Table bullets left: add the documented affordances, or delete them. Both repaint or remove something."
+    },
+    {
+      "id": "CUI-048",
+      "why": "The header has no focus rule at all, and what ring it should carry is a design decision."
     },
     {
       "id": "CUI-041",
       "why": "A responsive header the stylesheet has no media query for."
     },
     {
-      "id": "CUI-052",
-      "why": "Re-recording a baseline should produce a diff a reviewer can read."
+      "id": "CUI-030",
+      "why": "A section the gate has never once photographed. The record already specifies the fix."
     },
     {
-      "id": "CUI-030",
-      "why": "A section the gate has never once photographed."
+      "id": "CUI-052",
+      "why": "Re-recording a baseline should produce a diff a reviewer can read."
     }
   ]
 }
