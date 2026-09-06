@@ -51,6 +51,12 @@ and `utilities.css` holds the shared uppercase-label helper.
 `styles/components.css` is an aggregate that loads every component at once. Use
 it only where bundle size does not matter.
 
+Miss a sheet and the component renders as unstyled markup rather than failing,
+so the library says so for you. In a development build, a component whose own
+stylesheet is absent logs one warning naming itself and the sheet to import.
+The check is compiled out of a production build, and it reads a marker property
+each sheet sets rather than guessing from appearance.
+
 ## 4. Apply the theme before React paints
 
 Both themes ship, and the stored choice has to reach the page before it paints.

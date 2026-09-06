@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-006",
-      "why": "A silent unstyled render is a bad failure mode, and the fix adds runtime behaviour the owner should shape."
-    },
-    {
       "id": "CUI-036",
       "why": "A minimap that mounts before its content draws nothing, and how far the fix should reach is a judgement."
     },

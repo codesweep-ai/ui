@@ -3,17 +3,33 @@
   "title": "A wrong stylesheet import set renders every component unstyled with no warning",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an agent building a consumer app against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolved": "2026-09-06",
+  "stint": "stylesheet warning pass, 2026-09-06",
+  "evidence": {
+    "commits": [
+      "3c44857"
+    ],
+    "integrated": [],
+    "verified": "Two browser tests, because the check reads a custom property off a computed style and jsdom computes none. With every sheet loaded, rendering a Button logs nothing. With the marker rule deleted from the live stylesheet, which is the state a consumer reaches by importing no component sheets, rendering a Chip logs exactly one warning naming `Chip` and `styles/components/chip.css`. Unhooking the check fails that test with `expected \"Mock\" to be called 1 times, but got 0 times`. `npm run ci` exits 0 with every gate run, 635 tests, visual:compare 104/104 at 0 differing pixels, axe 0, and size:subpaths PASS."
+  },
   "resolution": null,
-  "details": "A consumer that imports `styles/tokens.css` and `styles/base.css` without the component sheets gets a page where every component renders as unstyled stacked blocks. Nothing errors and nothing warns. One app ran that way unnoticed, with 415 CSS rules loaded where it should have had 1742.\n\n`core.css` is three imports: tokens, base and utilities. It carries no component styles, so loading it alone is not enough either.\n\nThe report proposed folding the component styles into `core.css`. That conflicts with the per-component design INSTALL.md documents, which exists so a consumer pays only for what it renders. The defect worth fixing is the silence, not the packaging. A component that renders with no stylesheet should say so once, in development, rather than rendering as bare markup.\n\nWorked around in the consuming app by adding the missing import once the cause was found."
-  ,
+  "details": "A consumer that imports `styles/tokens.css` and `styles/base.css` without the component sheets gets a page where every component renders as unstyled stacked blocks. Nothing errors and nothing warns. One app ran that way unnoticed, with 415 CSS rules loaded where it should have had 1742.\n\n`core.css` is three imports: tokens, base and utilities. It carries no component styles, so loading it alone is not enough either.\n\nThe report proposed folding the component styles into `core.css`. That conflicts with the per-component design INSTALL.md documents, which exists so a consumer pays only for what it renders. The defect worth fixing is the silence, not the packaging. A component that renders with no stylesheet should say so once, in development, rather than rendering as bare markup.\n\nWorked around in the consuming app by adding the missing import once the cause was found.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed: src/styles/core.css is @import of tokens.css, base.css and utilities.css only. The 415 and 1742 rule counts come from the report and were not re-measured here." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed: src/styles/core.css is @import of tokens.css, base.css and utilities.css only. The 415 and 1742 rule counts come from the report and were not re-measured here."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The owner chose a development-time check across every component rather than a single sentinel. That is the right shape for this package: the stylesheets are per component, so a consumer can hold `tree.css` and be missing `card.css`, and a global check can only see the case where nothing at all is loaded. Each sheet sets a marker custom property on its own root, and the component reads it once. 33 components reach the check through `forwardRefToRoot`; Card, CardGroup, Input and Modal forward their own refs and were wired individually."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Two mistakes were caught by measuring rather than by review. The first guard used `import.meta.env.DEV`, which this package's own build replaces: the published copy carried an empty function and would have warned nobody. Reading the built file showed it. The guard is now the consumer's `process.env.NODE_ENV`, which their bundler replaces. The second was the direction of the fallback: bailing when `process` is undefined turned the check off wherever it was not defined, including the browser tests, and the full suite failed where the file alone had passed. It now bails only when it can see production, so an environment that cannot tell warns rather than stays quiet."
+    }
   ],
   "links": []
 }
