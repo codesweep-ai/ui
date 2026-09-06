@@ -134,6 +134,17 @@ import { Tooltip } from "@codesweep-ai/ui";
 </Tooltip>
 ```
 
+`overflowOnly` compares the trigger's scroll width against its client width, so
+the trigger has to be the element that truncates:
+
+```css
+.truncated {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+```
+
 ## Compiling usage example
 
 The bubble is the only element this component renders, and it exists only while the tooltip is

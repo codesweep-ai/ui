@@ -405,6 +405,65 @@ function checkExampleImports(specs) {
 }
 
 // ===========================================================================
+// 6. Documented class hygiene (FAIL)
+//    A code block in a specification is the part somebody pastes. A class name
+//    in one that nothing defines renders unstyled markup, and leaves a reader
+//    no way to tell which half of the class list was ever real. docs:compile
+//    type-checks the marked example, and is indifferent to its class
+//    attributes.
+//
+//    A name resolves if a css block in the same document defines it, or if any
+//    stylesheet under src/styles/ ships it. Names carrying a brace are skipped,
+//    because those are interpolated at render time rather than written down.
+// ===========================================================================
+
+const DOC_FENCE = /```(\w*)\n([\s\S]*?)```/g;
+const CLASS_ATTR = /class(?:Name)?="([^"]*)"/g;
+const CSS_SELECTOR = /\.([A-Za-z][\w-]*)/g;
+
+function shippedClasses() {
+  const names = new Set();
+  for (const file of walk(join(ROOT, "src", "styles"), (f) => f.endsWith(".css"))) {
+    for (const m of stripCssComments(read(file)).matchAll(CSS_SELECTOR)) names.add(m[1]);
+  }
+  return names;
+}
+
+function checkDocumentedClasses() {
+  const shipped = shippedClasses();
+  for (const dir of ["components", "patterns"]) {
+    for (const file of walk(join(ROOT, dir), (f) => f.endsWith(".md")).sort()) {
+      const source = read(file);
+      const blocks = [...source.matchAll(DOC_FENCE)];
+
+      const local = new Set();
+      for (const [, lang, body] of blocks) {
+        if (lang !== "css") continue;
+        for (const m of stripCssComments(body).matchAll(CSS_SELECTOR)) local.add(m[1]);
+      }
+
+      for (const block of blocks) {
+        const [, lang, body] = block;
+        if (lang !== "tsx" && lang !== "jsx" && lang !== "html") continue;
+        const fenceLine = lineOf(source, block.index);
+        for (const attr of body.matchAll(CLASS_ATTR)) {
+          const where = `${rel(file)}:${fenceLine + lineOf(body, attr.index)}`;
+          for (const name of attr[1].split(/\s+/).filter(Boolean)) {
+            if (name.includes("{") || name.includes("}")) continue;
+            if (local.has(name) || shipped.has(name)) continue;
+            fail(
+              "doc-classes",
+              where,
+              `class "${name}" is defined by no css block in this document and by no stylesheet under src/styles/`,
+            );
+          }
+        }
+      }
+    }
+  }
+}
+
+// ===========================================================================
 // main
 // ===========================================================================
 
@@ -416,6 +475,7 @@ checkDocReferences(specs, exports_);
 checkDocumentedHooks(specs);
 checkClassHygiene();
 checkExampleImports(specs);
+checkDocumentedClasses();
 
 const failures = findings.filter((f) => f.level === "FAIL");
 const warnings = findings.filter((f) => f.level === "WARN");
