@@ -3,15 +3,17 @@
   "title": "No pattern was updated for the props added to fix the consumer reports",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "c1a44b5"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The Explorer demo now renders one filter box where it rendered two, measured in the built page: one input with the filter placeholder inside the sectioned explorer, against two before. patterns/Explorer.md documents the per-section choice, the overflow modes, the selection scroll and the data-part hooks; patterns/MasterDetail.md documents the hooks it composes. npm run check exit 0, pattern suites 5 passed, visual:compare 94/94."
   },
   "resolution": null,
   "details": "The kit gained `labelOverflow`, `alignLabel`, `scrollSelectedIntoView`, `filterable`, `expandAllControl` and a set of `data-part` hooks, each in response to a closed record here. A grep across `patterns/*.md` for any of those names returns nothing, and nothing under `preview/src/pages/patterns/` has been touched since the repository's first commit.\n\nCONTRIBUTING now lists patterns as the fifth file that moves with a component, and says the visual gate cannot tell whether a pattern still teaches the right composition after a component gains a prop. This is that failure, several times over.\n\nThe sharpest instance: CUI-004 was filed by someone whose six-section sidebar grew six filter boxes. `patterns/Explorer.md` still presents independent per-section filters as the multi-section shape and never mentions turning them off.",
@@ -19,6 +21,14 @@
     {
       "date": "2026-09-06",
       "text": "Filed against the patterns rather than reopening the component records, which are closed correctly. The components do what they should; the worked examples have not caught up."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The first attempt turned the expand-all control off as well, and that was wrong twice over. Two sections is not the six that prompted CUI-004, so the control is proportionate here; and removing it stopped the visual capture expanding the trees, so the gate began photographing a collapsed sidebar and lost the coverage CUI-017 had just added. The filter and the expand control are separate levers and the pattern now says so."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The filter change is invisible to the visual gate, confirmed by reverting it and comparing: 0 differing pixels either way. The capture expands trees but never opens a collapsed section, so the Dependencies section is never photographed. Filed as CUI-030."
     }
   ],
   "links": [

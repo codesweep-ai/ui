@@ -1,0 +1,28 @@
+{
+  "id": "CUI-030",
+  "title": "Pattern captures never open a collapsed section, so half a sidebar is never photographed",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while updating the Explorer pattern for CUI-025",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`capturePatterns` clicks every expand-all control before it photographs a page, which expands the trees inside a section. It does not open a section that is collapsed, and SectionedTree keeps that state separately.\n\nSo the Explorer pattern's Dependencies section is never in a capture. Removing its filter box changed the rendered page and produced 0 differing pixels, confirmed by reverting the change and comparing both ways.\n\nThe fix is a few lines: click each section header whose control reports it collapsed, in the same place the expand-all clicks happen. It changes the baseline, so it wants its own pass rather than riding along with a content change.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "The same shape as the reason those captures expand trees at all: a pattern at rest hides the composition that is worth watching. This is the half of that argument the implementation missed."
+    }
+  ],
+  "links": [
+    "CUI-017",
+    "CUI-025"
+  ]
+}
