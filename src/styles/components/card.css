@@ -59,6 +59,13 @@
     gap: var(--space-4)
 }
 
+/* The containing block a Card promises its contents. Without it a badge or a
+   menu positioned inside one lands against whichever ancestor does establish
+   one, which is usually the page. */
+.cs-component-card-19 {
+    position: relative
+}
+
 .cs-component-card-19 {
     overflow: hidden
 }
