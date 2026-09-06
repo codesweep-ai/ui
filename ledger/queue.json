@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-002",
-      "why": "A core markdown feature renders its own markers, and the two renderers disagree while a test claims they agree."
-    },
-    {
       "id": "CUI-005",
       "why": "The escape hatch every other record is currently forced through, and it breaks on any rebuild."
     },

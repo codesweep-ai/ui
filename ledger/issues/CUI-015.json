@@ -1,0 +1,27 @@
+{
+  "id": "CUI-015",
+  "title": "The two parsers disagree on triple-marker emphasis such as ***both***",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while adding single-marker emphasis for CUI-002",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`***both***` renders as `<strong>*both</strong>*` through the lightweight parser and as `<em><strong>both</strong></em>` through the rich one. The lightweight parser matches the leading `**` first, and the `*both` left inside it never closes, so the marker is printed.\n\nThis predates the emphasis work in CUI-002 and is unchanged by it. Both builds were rendered and produce identical output, so the branch added there neither caused nor worsened it.\n\nIt is filed because `MarkdownViewer.conformance.test.tsx` asserts the two parsers produce the same DOM, and that claim is not true for this input. The corpus does not contain a triple marker, so the assertion passes.\n\nSeverity is low because triple markers are rare in the documents this renderer is aimed at. The honest options are to fix the nesting, or to write down that the lightweight subset excludes it and keep the corpus honest about what it covers.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Measured both ways. With the emphasis branch and with it reverted, the lightweight parser produces <strong>*both</strong>* for ***both***, so the divergence is pre-existing."
+    }
+  ],
+  "links": [
+    "CUI-002"
+  ]
+}

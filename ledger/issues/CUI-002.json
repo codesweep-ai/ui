@@ -3,18 +3,40 @@
   "title": "LightweightMarkdown never renders single-marker emphasis, so *text* shows its markers",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
+  "evidence": {
+    "commits": [
+      "10ca181"
+    ],
+    "integrated": [],
+    "verified": "npx vitest run src/components/MarkdownViewer.conformance.test.tsx: 14 passed, of which 10 are new assertions run against both parsers. Reverting only src/components/LightweightMarkdown.tsx fails 3 of them, including the corpus comparison, which is the evidence the widened corpus now guards the invariant. Full suite 579 passed across 57 files, up from 569. npm run check exit 0."
+  },
   "resolution": null,
-  "details": "`parseInline` in `src/components/LightweightMarkdown.tsx` has branches for backslash escapes, code spans, images, links, `**` and `__` for strong, `~~` for strikethrough, and hard breaks. It has no branch for a single `*` or `_`, so emphasis falls through to the literal-text path and the markers are printed.\n\nTo a reader the failure looks intermittent: bold renders and italic does not.\n\nThe lightweight parser is what the default `MarkdownViewer` export uses. The rich parser renders `<em>` correctly, so the two disagree. That contradicts the invariant asserted by `MarkdownViewer.conformance.test.tsx`, which claims both parsers produce the same DOM.\n\nThat test passes only because `markdownConformanceCorpus` never contains single-marker emphasis. It exercises `**bold text**` and `**strong text**` and nothing else. Widening the corpus belongs to this record, because a fix that leaves the corpus thin leaves the invariant unguarded.\n\nWorked around in the consuming app by pre-converting single markers to double before handing content to the viewer."
-  ,
+  "details": "`parseInline` in `src/components/LightweightMarkdown.tsx` has branches for backslash escapes, code spans, images, links, `**` and `__` for strong, `~~` for strikethrough, and hard breaks. It has no branch for a single `*` or `_`, so emphasis falls through to the literal-text path and the markers are printed.\n\nTo a reader the failure looks intermittent: bold renders and italic does not.\n\nThe lightweight parser is what the default `MarkdownViewer` export uses. The rich parser renders `<em>` correctly, so the two disagree. That contradicts the invariant asserted by `MarkdownViewer.conformance.test.tsx`, which claims both parsers produce the same DOM.\n\nThat test passes only because `markdownConformanceCorpus` never contains single-marker emphasis. It exercises `**bold text**` and `**strong text**` and nothing else. Widening the corpus belongs to this record, because a fix that leaves the corpus thin leaves the invariant unguarded.\n\nWorked around in the consuming app by pre-converting single markers to double before handing content to the viewer.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed against src/components/LightweightMarkdown.tsx:142-147, which matches `**` and `__` only. Reproduced with a throwaway vitest file: `*italic* and _also_ and **bold**` renders 0 `<em>`, 1 `<strong>`, and the literal text `*italic*`." },
-    { "date": "2026-09-06", "text": "Corpus gap confirmed by reading src/test/markdownConformance.ts in full." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed against src/components/LightweightMarkdown.tsx:142-147, which matches `**` and `__` only. Reproduced with a throwaway vitest file: `*italic* and _also_ and **bold**` renders 0 `<em>`, 1 `<strong>`, and the literal text `*italic*`."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Corpus gap confirmed by reading src/test/markdownConformance.ts in full."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Fixed by adding an emphasis branch after the two-marker forms, so `**` is never read as a pair of `*`. It carries two flanking rules taken from CommonMark: a marker followed by whitespace opens nothing, and `_` does not emphasise inside a word. The second is what leaves snake_case identifiers alone, and the corpus now asserts it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "If you worked around this in a consumer app, undo it. A pre-pass that rewrote single markers to double before handing content to the viewer will now produce bold where the author wrote italic, so it is worse than doing nothing once this ships. Remove it rather than leaving both."
+    }
   ],
-  "links": ["CUI-001"]
+  "links": [
+    "CUI-001",
+    "CUI-015"
+  ]
 }
