@@ -54,7 +54,7 @@ interface PanelProps {
 - Height: `40px`, `flex-shrink: 0`.
 - `display: flex`, `align-items: center`, `justify-content: space-between`.
 - Padding: `0 var(--space-4)`.
-- Title: `font-size: 11px`, `text-transform: uppercase`, `letter-spacing: 0.5px`, `font-weight: var(--font-weight-semibold)`, `color: var(--muted)`.
+- Title: the `text-label-upper` utility, which is `font-size: var(--font-size-label)` resolving to `var(--font-size-xs)` at `0.75rem`, `text-transform: uppercase`, `letter-spacing: var(--letter-spacing-wide)`, `font-weight: var(--font-weight-semibold)`, `color: var(--muted)`.
 - Actions slot: rendered on the right side of the header.
 - Collapse button: uses `PanelLeftClose` icon (16px) from lucide-react.
 

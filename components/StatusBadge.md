@@ -57,7 +57,7 @@ interface StatusBadgeProps {
 - Text-transform: `uppercase` (the supplied label is visually uppercased).
 - Letter-spacing: `0.5px`.
 - Color: `var(--muted)`.
-- Font-weight: `var(--font-weight-medium)`.
+- Font-weight: `var(--font-weight-semibold)`, from the `text-label-upper` utility the label carries.
 - With `emphasis="label"`, the two highest severities use status color: `error` uses `--color-error-text` and `severe` uses the existing `--color-severe` token. Other statuses remain `--muted`.
 
 ### Status Dot
