@@ -95,7 +95,7 @@ with prefix/suffix:
 | Font-size (md)  | `var(--font-size-sm)`                                           |
 | Font-family     | `var(--font-family-sans)`                                       |
 | Color           | `var(--fg)`                                                     |
-| Placeholder     | `var(--muted)`                                                  |
+| Placeholder     | `var(--color-neutral)`                                          |
 
 ### States
 

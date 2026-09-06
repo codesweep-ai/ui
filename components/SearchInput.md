@@ -78,7 +78,7 @@ For "no results" semantics inside a Table or other container, prefer the contain
 ### Styling
 
 - **Container**: `border: 1px solid var(--border)`, `border-radius: var(--radius-sm)`, `background: var(--card)`.
-- **Input**: transparent background, no border, `padding: var(--space-2) var(--space-3)`, `font-size: var(--font-size-sm)`, `color: var(--fg)`, placeholder `color: var(--muted)`.
+- **Input**: transparent background, no border, `padding: var(--space-2) var(--space-3)`, `font-size: var(--font-size-sm)`, `color: var(--fg)`, placeholder `color: var(--color-neutral)`.
 - **Buttons**: transparent background, no border, `color: var(--muted)`, `padding: 0 var(--space-2)`.
 
 ### States
@@ -90,7 +90,7 @@ For "no results" semantics inside a Table or other container, prefer the contain
 | Focus-within   | `ring: 2px var(--color-accent)`                           |
 | Button hover   | `color: var(--fg)`                                              |
 | Disabled       | `opacity: 0.5`, `cursor: not-allowed`                          |
-| Placeholder    | `color: var(--muted)`                                           |
+| Placeholder    | `color: var(--color-neutral)`                                   |
 
 ### Responsive
 
