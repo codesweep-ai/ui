@@ -1,0 +1,20 @@
+{
+  "id": "CUI-001",
+  "title": "escapeMarkdownHtml escapes < inside code, corrupting code spans, fences and mermaid diagrams",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`escapeMarkdownHtml` in `src/lib/markdownUrl.ts` replaces every `<` that opens a tag with `&lt;`, and `MarkdownViewer` applies it to the whole document before either renderer sees it. The escape does not know where code begins, so it corrupts verbatim regions.\n\nTwo symptoms. Inline `` `Array<string>` `` renders on the page as the literal text `Array&lt;string>`, because neither renderer decodes entities back inside code. And a `<br/>` inside a ```mermaid fence reaches MermaidDiagram as `&lt;br/>`, so mermaid emits a stray `br` in the node label instead of a line break.\n\nIn prose the bug is invisible, because the lightweight parser's `appendText` decodes entities again. That is why it survived: it only shows up inside code, and it shows up on every TypeScript generic.\n\nThe escape exists to keep raw HTML out of react-markdown's tree, where a consumer's rehype plugin would render it. A fix must keep prose escaping byte for byte identical and exempt only regions both renderers already treat as literal text.\n\nWorked around in the consuming app by post-processing the rendered DOM to undo the entity."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed against src/lib/markdownUrl.ts:25 and src/components/MarkdownViewer.tsx:756. Reproduced with a throwaway vitest file: the escaper's output contains `Array&lt;string>` and `one&lt;br/>two`, both asserted and passing." },
+    { "date": "2026-09-06", "text": "The report arrived with a full fix and a claim of 565 tests passing across 57 files. That work is not in this repository, whose baseline is 554 across 56. Treating the design as a proposal rather than as landed work." }
+  ],
+  "links": ["CUI-002"]
+}

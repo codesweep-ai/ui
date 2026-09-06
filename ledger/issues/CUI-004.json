@@ -1,0 +1,19 @@
+{
+  "id": "CUI-004",
+  "title": "SectionedTree forces a filter box and an expand-all control on every section",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent building a six-section navigation sidebar against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`SectionedTree` renders a filter input and an expand-all control for every section, and neither can be turned off. It sets `filterable`, `onToggleExpandAll` and `allExpanded` on each child Tree itself, and exposes none of them on its own props.\n\nWith six sections that is six filter boxes and six expand-all controls, most of them over sections of two to eleven items. In a 300px sidebar the chrome outweighed the content.\n\nThe inconsistency is the argument for calling this a defect. Plain `Tree` offers `filterable` as opt-in. `SectionedTree` composes Trees and removes a choice the composed component gives.\n\nWorked around in the consuming app by abandoning SectionedTree for Panel plus Tree per section, with a filter only on sections above twenty items. That took six filter boxes down to two."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: src/components/SectionedTree.tsx:311-315 passes filterable, onToggleExpandAll and allExpanded unconditionally. SectionedTreeProps at lines 26-48 exposes none of the three." }
+  ],
+  "links": ["CUI-003", "CUI-011"]
+}

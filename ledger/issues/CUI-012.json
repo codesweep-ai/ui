@@ -1,0 +1,19 @@
+{
+  "id": "CUI-012",
+  "title": "storageKey persists arrangement on some components and not others",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "agents building two consumer apps against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`SplitPane` takes a `storageKey` and persists its width. `useTheme` and `ThemeToggle` take one too. `Panel`, `Tree` and `MarkdownViewer` have no equivalent, so every consumer that wants panel open state, tree expansion or viewer panes to survive a reload writes its own localStorage code, each with its own try and catch for private mode and quota errors.\n\nThe proposal is to adopt `storageKey` as a kit-wide convention for user-arrangement state, with storage failures degrading to in-memory rather than throwing.\n\nThis is filed low because each component can adopt it independently and nothing is broken today. It is worth deciding once so the components that adopt it agree on the name and the failure behaviour."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: storageKey appears on src/lib/useTheme.ts, src/components/ThemeToggle.tsx and src/components/SplitPane.tsx, and on no other component." }
+  ],
+  "links": ["CUI-010"]
+}

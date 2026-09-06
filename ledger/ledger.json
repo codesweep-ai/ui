@@ -1,0 +1,8 @@
+{
+  "project": "ui",
+  "idPrefix": "CUI",
+  "schemaVersion": "issue.v1",
+  "staleAfterDays": 14,
+  "toolVersion": "0.3.3",
+  "description": "@codesweep-ai/ui is a library of React components and design tokens for agent and LLM interfaces. This ledger tracks its defects, improvements and ideas."
+}

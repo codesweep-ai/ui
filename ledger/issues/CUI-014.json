@@ -1,0 +1,17 @@
+{
+  "id": "CUI-014",
+  "title": "Decide whether driving Tree and SectionedTree as navigation is supported",
+  "type": "feature-idea",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while triaging five consumer reports for the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "Five of the records filed alongside this one come from driving Tree and SectionedTree as navigation sidebars rather than as file trees: the row alignment, the label overflow, the missing scroll into view, the forced per-section chrome, and the absent content-height mode.\n\nThe components are written for file trees. Nav sidebars want different defaults on nearly every axis, which is why each report arrives as a separate prop request.\n\nThe question is worth answering once, on the record, rather than per prop. If navigation is a supported use, the answer is probably a documented pattern or a variant that sets those defaults together, and the individual props follow from it. If it is not, the records should say so and the answer to a consumer is to compose primitives.\n\nOne of the reports raised this and nobody answered it. Filed so it is not re-litigated five times."
+  ,
+  "notes": [],
+  "links": ["CUI-003", "CUI-004", "CUI-007", "CUI-008", "CUI-011"]
+}

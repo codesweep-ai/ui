@@ -1,0 +1,20 @@
+{
+  "id": "CUI-013",
+  "title": "The chart theming bridge resolves colour but not typography, so marks cannot measure text",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent hand-drawing charts against the useChartTheme bridge on 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`patterns/Chart.md` states that the kit ships no chart primitives, only a theming bridge: draw the marks yourself and take every value from `useChartTheme()`. The reason given is that d3 and canvas need concrete values such as `#1ee0ca` rather than `var(--color-accent)`.\n\nThat reasoning applies to type as much as to colour, and the bridge stops at colour. `ChartTheme` carries sixteen colour fields and no typography at all. There is no family, no size, no weight, and no way to ask how wide a string will render.\n\nThe kit already accepts that chart consumers need this. There is a dedicated `--font-size-chart-axis` token, and `styleAxis()` applies it along with `--font-family-mono` to axis text. It passes them as `var(...)` strings, which works for SVG and DOM text and is unusable for the two things a drawing consumer needs. `ctx.font` will not accept a `var()` string, and nothing can be laid out around text whose width is unknown.\n\nMeasurement is the part that bites. Any chart drawing a labelled box, a legend chip or a truncated tick has to know the label width before it draws. With no way to ask, a consumer either reimplements a twenty-line probe or hard-codes a per-character estimate. The estimate is what ships, because it is one line and looks right on the strings it was tested against. It is a design token copied into a magic number, so it rots silently when the type scale moves. The reporter estimated 7.4px per character against a real 8.39px and drew labels wider than the boxes around them.\n\nThe proposal is to extend the existing bridge with a resolved `fontFamily`, a resolved `fontSizeAxis` in pixels, and a `measureText` helper backed by a cached canvas context. Two details matter: invalidate the cached font on a theme flip, the same way colours are re-read, and account for web fonts settling after `document.fonts.ready`.\n\nWorked around in the consuming app with the per-character estimate described above."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: ChartTheme at src/lib/chartTheme.ts:7-24 is sixteen colour fields with no typography, and styleAxis at chartTheme.ts:98-99 passes var(--font-family-mono) and var(--font-size-chart-axis) through as CSS strings." },
+    { "date": "2026-09-06", "text": "The report names a companion useChartTheme and useTheme split-brain defect as filed separately. That report was not supplied, so nothing is recorded for it here. Ask the reporter for it before assuming this record covers it." }
+  ],
+  "links": []
+}

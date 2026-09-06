@@ -1,0 +1,20 @@
+{
+  "id": "CUI-002",
+  "title": "LightweightMarkdown never renders single-marker emphasis, so *text* shows its markers",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`parseInline` in `src/components/LightweightMarkdown.tsx` has branches for backslash escapes, code spans, images, links, `**` and `__` for strong, `~~` for strikethrough, and hard breaks. It has no branch for a single `*` or `_`, so emphasis falls through to the literal-text path and the markers are printed.\n\nTo a reader the failure looks intermittent: bold renders and italic does not.\n\nThe lightweight parser is what the default `MarkdownViewer` export uses. The rich parser renders `<em>` correctly, so the two disagree. That contradicts the invariant asserted by `MarkdownViewer.conformance.test.tsx`, which claims both parsers produce the same DOM.\n\nThat test passes only because `markdownConformanceCorpus` never contains single-marker emphasis. It exercises `**bold text**` and `**strong text**` and nothing else. Widening the corpus belongs to this record, because a fix that leaves the corpus thin leaves the invariant unguarded.\n\nWorked around in the consuming app by pre-converting single markers to double before handing content to the viewer."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed against src/components/LightweightMarkdown.tsx:142-147, which matches `**` and `__` only. Reproduced with a throwaway vitest file: `*italic* and _also_ and **bold**` renders 0 `<em>`, 1 `<strong>`, and the literal text `*italic*`." },
+    { "date": "2026-09-06", "text": "Corpus gap confirmed by reading src/test/markdownConformance.ts in full." }
+  ],
+  "links": ["CUI-001"]
+}

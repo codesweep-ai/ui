@@ -1,0 +1,19 @@
+{
+  "id": "CUI-007",
+  "title": "Tree centres its row content, so a wrapping label misaligns the leaf icon",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "Tree rows are laid out with `align-items: center`, and there is no prop to change it. A `renderLabel` that returns two lines, such as a filename above a description, leaves the leaf icon floating at the vertical middle of the row instead of sitting on the first line. The reporter measured the icon centre at 131px against a first-line centre of 123px.\n\nCentring is right for the single-line labels Tree anticipates. It is wrong the moment `renderLabel` wraps, and `renderLabel` is a public prop, so wrapping is a supported input.\n\nThe proposal is `alignLabel` taking `center` or `start`, defaulting to `center`, or aligning to the first line automatically when the label wraps.\n\nWorked around in the consuming app with a CSS override on the generated class name."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: align-items center at src/styles/components/tree.css:136, and TreeProps carries no alignment prop." }
+  ],
+  "links": ["CUI-005", "CUI-014"]
+}

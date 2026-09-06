@@ -1,0 +1,19 @@
+{
+  "id": "CUI-003",
+  "title": "SectionedTree does not scroll the selected row into view, but Tree does",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent building a six-section navigation sidebar against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`Tree` scrolls its selected row into view. `SectionedTree`, which composes Trees, does not.\n\nWhen selection is driven from outside the component, by a link elsewhere on the page setting `selectedId`, the selected row can sit off screen in a SectionedTree with no indication. The sidebar shows an unrelated position. The same interaction works in a plain Tree.\n\nThis is filed as a defect rather than a gap because two components meant to compose behave differently on the same input.\n\nWorked around in the consuming app by abandoning SectionedTree for Panel plus Tree per section."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: src/components/Tree.tsx:597 calls scrollIntoView with block nearest. A grep for scrollIntoView across src/components returns no hit in SectionedTree.tsx." }
+  ],
+  "links": ["CUI-004", "CUI-011"]
+}

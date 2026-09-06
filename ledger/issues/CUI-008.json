@@ -1,0 +1,19 @@
+{
+  "id": "CUI-008",
+  "title": "Tree rows can only scroll horizontally, never truncate or wrap",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "A Tree row carries `min-width: 100%` and its scroller `overflow: auto`, so a long label widens the row and produces a horizontal scrollbar. The reporter measured a 599px row inside a 403px scroller.\n\nIn a narrow sidebar holding several trees that is several nested horizontal scrollbars, and there is no prop to opt out of it.\n\nThe proposal is `labelOverflow` taking `scroll`, `truncate` or `wrap`, defaulting to `scroll` so today's behaviour is unchanged. `truncate` would ellipsize and `wrap` would allow multiple lines, which pairs with the alignment record.\n\nWorked around in the consuming app with a CSS override on the generated class name."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: min-width 100% at src/styles/components/tree.css:85 and overflow auto at tree.css:165. TreeProps carries no overflow prop." }
+  ],
+  "links": ["CUI-005", "CUI-007", "CUI-014"]
+}

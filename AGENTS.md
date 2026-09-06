@@ -14,3 +14,5 @@ answer from the code. When nothing covers it, say so instead of guessing.
   tokens must be. A change starts here.
 - [CONTRIBUTING.md](CONTRIBUTING.md) · conventions, and the gates a change has
   to pass. Read it before your first change.
+- [ledger/AGENTS.md](ledger/AGENTS.md) · this repository keeps a ledger of open
+  issues. Read it before you start work.

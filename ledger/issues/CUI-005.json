@@ -1,0 +1,19 @@
+{
+  "id": "CUI-005",
+  "title": "No stable styling hooks, so consumer overrides target generated class names",
+  "type": "improvement",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "agents building two consumer apps against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "Components carry `data-component` on their root and nothing on the structure beneath it. A consumer who has to reach inside one has only the generated class names, such as `cs-component-tree-142` and `cs-component-panel-20`. Those change on any rebuild, so the selector silently stops matching and the override quietly disappears.\n\nThe proposal is a stable `data-part` attribute on the structural elements, with values along the lines of `row`, `icon`, `scroller`, `header` and `body`, on Tree, SectionedTree, Panel and MarkdownViewer.\n\nThis is ranked high despite being an improvement. It is the escape hatch that every other record on this list is currently forced through, and it is an escape hatch that breaks on upgrade.\n\nWorked around in the consuming apps by targeting the generated names, which is the failure this record describes."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: a grep for data-part across src returns nothing. The generated names quoted in the report match the pattern emitted today, for example cs-component-panel-5 in src/styles/components/panel.css." }
+  ],
+  "links": ["CUI-007", "CUI-008", "CUI-009", "CUI-011"]
+}

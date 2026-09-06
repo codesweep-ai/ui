@@ -1,0 +1,19 @@
+{
+  "id": "CUI-009",
+  "title": "Panel collapsed hides its own header, leaving nothing to restore it",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "agents building two consumer apps against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "Panel's `collapsed` prop sets `width: 0`, `overflow: hidden` and `border-style: none`, all with `!important`. That is the right behaviour for a side panel collapsing to an edge.\n\nIn a vertical stack it hides the title bar and any toggle along with the body, so nothing remains on screen to click to restore it. `PanelProps` exposes `width` and no direction, so a consumer cannot ask for the other axis.\n\nEvery app that wants a vertical disclosure therefore rebuilds one by hand: a chevron button in the `actions` slot, `aria-expanded` and `aria-controls` wiring, and CSS to hide the body. That is accessibility plumbing being reimplemented per app, which is what a kit exists to prevent.\n\nThe proposal is a disclosure variant, either `collapsible` with a `direction` of `horizontal` or `vertical`, or a dedicated component, keeping the header visible and shipping the toggle and the ARIA wiring.\n\nWorked around in the consuming apps by building that disclosure by hand."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: the collapsed class cs-component-panel-5 sets width 0, overflow hidden and border-style none, at src/styles/components/panel.css lines 24, 57 and 79. PanelProps at src/components/Panel.tsx:5-14 has no direction and no height." }
+  ],
+  "links": ["CUI-005", "CUI-011"]
+}

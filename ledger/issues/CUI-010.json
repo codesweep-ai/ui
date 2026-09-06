@@ -1,0 +1,19 @@
+{
+  "id": "CUI-010",
+  "title": "MarkdownViewer outline and minimap collapse state cannot be observed",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`outlineCollapsed` and `minimapCollapsed` seed internal state and are never read again. There is no change callback, so a consumer cannot learn that the user collapsed a pane.\n\nThe cost is larger than it sounds. A viewer is typically keyed per document, so it remounts on every document switch and both panes reset. The user's choice is lost on each navigation, not merely on reload.\n\nWith no callback the only route open to the consumer was a capture-phase click listener matching the component's own aria-labels, against the pattern `/^(Collapse|Expand) (outline|minimap)$/`. That reaches into the component's accessible names, which are not an API, and it breaks the moment a label is reworded.\n\nThe proposal is `onOutlineCollapsedChange` and `onMinimapCollapsedChange`, or an internal `storageKey` that persists the state.\n\nWorked around in the consuming app with exactly that aria-label listener."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: src/components/MarkdownViewer.tsx:283-287 seeds useState from the props and never syncs back. No onOutlineCollapsedChange or onMinimapCollapsedChange exists in the file." }
+  ],
+  "links": ["CUI-012"]
+}

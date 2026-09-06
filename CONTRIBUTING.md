@@ -27,6 +27,21 @@ it is, and whether a test fails without the change.
 By opening a pull request you agree that your contribution ships under the
 [Apache 2.0 licence](LICENSE) this project is released under.
 
+## The ledger
+
+This repository keeps a ledger of open issues in `ledger/`. Read
+[`ledger/AGENTS.md`](ledger/AGENTS.md) before you start work, and follow it as
+you go. Records are JSON, `ledger.html` is generated from them, and the two
+travel together in one commit.
+
+A commit that touches `ledger/` needs `cs-ledger render && cs-ledger check` to
+pass first. `npm run ledger` runs the check half.
+
+`cs-ledger` is a Go binary from
+[codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) rather than a
+dependency of this package. `npm run ci` does not gate on it, so a clone without
+it still passes every other gate.
+
 ## Before you push
 
 One command:

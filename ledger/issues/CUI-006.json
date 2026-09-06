@@ -1,0 +1,19 @@
+{
+  "id": "CUI-006",
+  "title": "A wrong stylesheet import set renders every component unstyled with no warning",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "an agent building a consumer app against 0.2.0, relayed by the repository owner",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "A consumer that imports `styles/tokens.css` and `styles/base.css` without the component sheets gets a page where every component renders as unstyled stacked blocks. Nothing errors and nothing warns. One app ran that way unnoticed, with 415 CSS rules loaded where it should have had 1742.\n\n`core.css` is three imports: tokens, base and utilities. It carries no component styles, so loading it alone is not enough either.\n\nThe report proposed folding the component styles into `core.css`. That conflicts with the per-component design INSTALL.md documents, which exists so a consumer pays only for what it renders. The defect worth fixing is the silence, not the packaging. A component that renders with no stylesheet should say so once, in development, rather than rendering as bare markup.\n\nWorked around in the consuming app by adding the missing import once the cause was found."
+  ,
+  "notes": [
+    { "date": "2026-09-06", "text": "Confirmed: src/styles/core.css is @import of tokens.css, base.css and utilities.css only. The 415 and 1742 rule counts come from the report and were not re-measured here." }
+  ],
+  "links": []
+}
