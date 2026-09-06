@@ -102,11 +102,18 @@ function SplitPaneImpl({ panes, className }: SplitPaneProps) {
           widths
         );
 
+        // The handle sizes the pane on its right when the left one is
+        // flex-fill, and `direction` is -1 there, so an arrow key moves the
+        // width the opposite way. Both bounds have to hold whichever way it
+        // moves, so clamp between them rather than take the one bound that
+        // matches the key. Pointer drag below has always done this.
+        const clamp = (width: number) => Math.min(max, Math.max(min, width));
+
         let newWidth = currentWidth;
         if (e.key === "ArrowRight") {
-          newWidth = Math.min(max, currentWidth + step * direction);
+          newWidth = clamp(currentWidth + step * direction);
         } else if (e.key === "ArrowLeft") {
-          newWidth = Math.max(min, currentWidth - step * direction);
+          newWidth = clamp(currentWidth - step * direction);
         } else if (e.key === "Home") {
           newWidth = min;
         } else if (e.key === "End") {

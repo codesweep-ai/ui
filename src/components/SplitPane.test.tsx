@@ -81,6 +81,28 @@ describe("SplitPane", () => {
     expect(screen.getByRole("separator")).toHaveAttribute("aria-valuenow", "100");
   });
 
+  // Every other keyboard test here gives the left pane a defaultWidth, which
+  // makes `direction` +1 and hides this. When the left pane is flex-fill the
+  // handle sizes the pane on its right, `direction` is -1, and each key used to
+  // be held against the bound it was moving away from.
+  it("clamps the keyboard resize when the handle sizes the right pane", async () => {
+    render(
+      <SplitPane
+        panes={[
+          { id: "left", children: <div>L</div> },
+          { id: "right", defaultWidth: 300, minWidth: 200, maxWidth: 320, children: <div>R</div> },
+        ]}
+      />
+    );
+    screen.getByRole("separator").focus();
+
+    await userEvent.keyboard("{ArrowLeft>6/}");
+    expect(screen.getByRole("separator")).toHaveAttribute("aria-valuenow", "320");
+
+    await userEvent.keyboard("{ArrowRight>20/}");
+    expect(screen.getByRole("separator")).toHaveAttribute("aria-valuenow", "200");
+  });
+
   it("Home sets width to min, End sets width to max", async () => {
     render(
       <SplitPane

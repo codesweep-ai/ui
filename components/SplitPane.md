@@ -93,10 +93,14 @@ interface PaneConfig {
 ### Keyboard
 | Key         | Action                                     |
 |-------------|--------------------------------------------|
-| ArrowLeft   | Decrease pane width by 10px (when handle focused) |
-| ArrowRight  | Increase pane width by 10px (when handle focused) |
+| ArrowLeft   | Move the handle 10px left (when handle focused) |
+| ArrowRight  | Move the handle 10px right (when handle focused) |
 | Home        | Set pane to minWidth                       |
 | End         | Set pane to maxWidth                       |
+
+The width that changes is the fixed-width pane's, chosen as Handle target selection describes
+above. When that pane is the one on the right, ArrowLeft grows it and ArrowRight shrinks it. Every
+key clamps the result between `minWidth` and `maxWidth`, as dragging does.
 
 ### Accessibility
 - Resize handle: `role="separator"`, `aria-orientation="vertical"`, `tabIndex={0}`.
