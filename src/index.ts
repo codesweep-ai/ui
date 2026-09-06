@@ -45,6 +45,8 @@ export { Toast } from "./components/Toast";
 export type { ToastProps } from "./components/Toast";
 export { ToastContainer } from "./components/ToastContainer";
 export type { ToastContainerProps } from "./components/ToastContainer";
+export { Tooltip } from "./components/Tooltip";
+export type { TooltipProps } from "./components/Tooltip";
 export { toast, subscribeToasts } from "./lib/toast";
 export type { ToastItem, ToastOptions, ToastVariant } from "./lib/toast";
 export type { TableColumn } from "./components/Table";

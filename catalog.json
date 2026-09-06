@@ -1,7 +1,7 @@
 {
   "$generated": "Do not edit. Run `npm run catalog`. Source: spec frontmatter.",
   "counts": {
-    "components": 36,
+    "components": 37,
     "patterns": 10
   },
   "components": [
@@ -1360,6 +1360,49 @@
       ],
       "patterns": [],
       "note": null
+    },
+    {
+      "spec": "components/Tooltip.md",
+      "name": "Tooltip",
+      "summary": "Accessible hover and focus tooltip, with an overflow-only mode for labels cut off by their container.",
+      "keywords": [
+        "tooltip",
+        "hover",
+        "focus",
+        "popover",
+        "hint",
+        "truncation",
+        "ellipsis",
+        "overflow",
+        "title attribute",
+        "accessible tooltip",
+        "describedby",
+        "escape to dismiss",
+        "keyboard"
+      ],
+      "since": "0.3.0",
+      "status": "stable",
+      "use_when": [
+        "A truncated label needs to offer its full text",
+        "A control needs a hint its accessible name does not already carry",
+        "Replacing a native `title`, which never appears on keyboard focus"
+      ],
+      "avoid_when": [
+        "The content is essential rather than supplementary — put it on the page",
+        "Hover readouts inside a chart → ChartTooltip",
+        "The content is interactive (links, buttons) — a tooltip is not a popover"
+      ],
+      "related": [
+        "ChartTooltip",
+        "Tree",
+        "SectionedTree",
+        "Table",
+        "EventLanes"
+      ],
+      "patterns": [
+        "DataTable"
+      ],
+      "note": "Pass describedBy={false} whenever the bubble only repeats text already in the DOM, such as a truncated label. The element itself is what a screen reader reads; announcing the bubble too says the same thing twice."
     },
     {
       "spec": "components/Tree.md",

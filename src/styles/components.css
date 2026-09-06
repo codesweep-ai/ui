@@ -34,4 +34,5 @@
 @import "./components/theme-toggle.css";
 @import "./components/toast.css";
 @import "./components/toast-container.css";
+@import "./components/tooltip.css";
 @import "./components/tree.css";

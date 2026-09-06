@@ -36,6 +36,7 @@ import {
   ToastContainer,
   toast,
   type ToastItem,
+  Tooltip,
 } from "@codesweep-ai/ui";
 import { CodeBlock } from "@codesweep-ai/ui/code";
 import { MarkdownMinimap } from "@codesweep-ai/ui/minimap";
@@ -76,7 +77,7 @@ const sectionTitles = [
   "SegmentedControl", "SplitPane", "Master-Detail (contained SplitPane)",
   "CodeBlock", "MarkdownMinimap", "MarkdownViewer", "MermaidDiagram", "Modal",
   "PulseBadge", "AgentStatus", "StreamingText", "AgentTrace",
-  "ChartFrame", "ChartTooltip", "Toast", "ToastContainer",
+  "ChartFrame", "ChartTooltip", "Toast", "ToastContainer", "Tooltip",
 ];
 
 // Alphabetical order for both the Contents index and the section bodies.
@@ -1349,6 +1350,41 @@ export function ComponentsPage() {
           Token-styled, absolutely-positioned tooltip. The chart supplies cursor coordinates + content; the box owns the chrome.
         </p>
         <ChartTooltipDemo />
+      </Section>
+
+      {/* Tooltip */}
+      <Section title="Tooltip">
+        <p className="cs-preview-pages-components-page-305 ">
+          Hover <em>and</em> keyboard focus, dismissible with Escape, and hoverable so its text can be
+          selected. Tab to the buttons below to see it open without a pointer. The third only opens
+          when its label is actually cut off.
+        </p>
+        <div className="cs-preview-pages-components-page-505 ">
+          <Tooltip content="Plain hint, announced through aria-describedby">
+            <Button variant="secondary">Described</Button>
+          </Tooltip>
+          <Tooltip content="Sits below its trigger" side="bottom">
+            <Button variant="secondary">Below</Button>
+          </Tooltip>
+          <Tooltip
+            content="a/very/long/path/that/does/not/fit/in/the/box.tsx"
+            describedBy={false}
+            overflowOnly
+          >
+            <span
+              style={{
+                display: "block",
+                maxWidth: "10rem",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              tabIndex={0}
+            >
+              a/very/long/path/that/does/not/fit/in/the/box.tsx
+            </span>
+          </Tooltip>
+        </div>
       </Section>
 
       {/* Toast */}

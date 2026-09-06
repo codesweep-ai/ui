@@ -373,6 +373,19 @@ Host for the toast system — mount once at the app root and call `toast.success
 - related: Toast
 - spec: [components/ToastContainer.md](components/ToastContainer.md)
 
+### Tooltip  ·  since 0.3.0
+Accessible hover and focus tooltip, with an overflow-only mode for labels cut off by their container.
+- intents: `tooltip`, `hover`, `focus`, `popover`, `hint`, `truncation`, `ellipsis`, `overflow`, `title attribute`, `accessible tooltip`, `describedby`, `escape to dismiss`, `keyboard`
+- use when: A truncated label needs to offer its full text
+- use when: A control needs a hint its accessible name does not already carry
+- use when: Replacing a native `title`, which never appears on keyboard focus
+- avoid when: The content is essential rather than supplementary — put it on the page
+- avoid when: Hover readouts inside a chart → ChartTooltip
+- avoid when: The content is interactive (links, buttons) — a tooltip is not a popover
+- ⚠ Pass describedBy={false} whenever the bubble only repeats text already in the DOM, such as a truncated label. The element itself is what a screen reader reads; announcing the bubble too says the same thing twice.
+- related: ChartTooltip, Tree, SectionedTree, Table, EventLanes · patterns: DataTable
+- spec: [components/Tooltip.md](components/Tooltip.md)
+
 ### Tree  ·  since 1.0.0
 Hierarchical tree view with expand/collapse, selection, search/filter, and optional drag-to-reorder.
 - intents: `tree`, `hierarchy`, `file tree`, `expand collapse`, `treeview`, `navigation`, `folder`, `nodes`, `filterable`, `search tree`, `drag reorder`, `file browser`, `ast`

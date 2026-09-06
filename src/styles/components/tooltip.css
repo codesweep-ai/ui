@@ -1,0 +1,45 @@
+/* tooltip component styles. */
+
+/* Matches ChartTooltip's chrome exactly, so the two tooltips in the kit read as
+   one thing. The one deliberate difference is pointer-events: a chart tooltip
+   tracks the cursor and must not intercept it, while this one has to be
+   hoverable so a pointer can travel onto it and the text inside can be
+   selected. */
+.cs-tooltip {
+    position: fixed;
+    z-index: var(--z-tooltip);
+    max-width: var(--tooltip-max-width);
+    border-radius: var(--radius-sm);
+    border-width: .0625rem;
+    border-style: solid;
+    border-color: var(--border);
+    background-color: var(--card);
+    box-shadow: var(--shadow-md);
+    color: var(--fg);
+    font-size: var(--font-size-xs);
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+    /* A tooltip exists to show text too long for its space, so it must be able
+       to break a long unbroken string such as a path. */
+    overflow-wrap: anywhere
+}
+
+/* The component sets the anchor point from the trigger's rect and the offset
+   lives here, so the gap stays a token rather than arithmetic in TypeScript. */
+.cs-tooltip[data-side="top"] {
+    transform: translate(-50%, calc(-100% - var(--space-2)))
+}
+
+.cs-tooltip[data-side="bottom"] {
+    transform: translate(-50%, var(--space-2))
+}
+
+.cs-tooltip[data-side="left"] {
+    transform: translate(calc(-100% - var(--space-2)), -50%)
+}
+
+.cs-tooltip[data-side="right"] {
+    transform: translate(var(--space-2), -50%)
+}
