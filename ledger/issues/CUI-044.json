@@ -23,6 +23,10 @@
     {
       "date": "2026-09-06",
       "text": "The SplitPane bullet is done, in bfc6163. `components/SplitPane.md` now describes the hit area as the child element it is, `0.5rem` wide and offset `-0.25rem`, rather than a `::before` extending evenly on both sides. The Table, StatusBadge, Panel and placeholder bullets are still open."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The placeholder bullet needs a decision and was left alone during the Input pass. `components/Input.md:98` and `components/SearchInput.md:81` say `var(--muted)`, and both sheets use `var(--color-neutral)`. Changing the sheets repaints every placeholder in both themes and moves the baseline. Changing the documents blesses the colour that ships today. Neither is obviously right, so it is for the repository owner rather than a session agent."
     }
   ],
   "links": []

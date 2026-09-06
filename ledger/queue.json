@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-038",
-      "why": "Next pass is Input, which carries CUI-039 and the placeholder bullet of CUI-044 with it."
-    },
-    {
       "id": "CUI-042",
       "why": "Skeleton sends a consumer to the wrong stylesheet, which is CUI-006's failure with a documented cause."
     },
@@ -25,6 +21,14 @@
     {
       "id": "CUI-036",
       "why": "A minimap that mounts before its content draws nothing, ever."
+    },
+    {
+      "id": "CUI-035",
+      "why": "A hovered selection turns grey, which is the opposite of what the spec describes."
+    },
+    {
+      "id": "CUI-044",
+      "why": "Its placeholder bullet needs an owner decision: repaint every placeholder, or document the colour that ships."
     },
     {
       "id": "CUI-030",
