@@ -112,9 +112,22 @@ function section(page, title) {
   }).first();
 }
 
-async function screenshot(locator, file) {
+async function screenshot(locator, file, options = {}) {
   await locator.scrollIntoViewIfNeeded();
-  await locator.screenshot({ path: file, animations: "disabled" });
+  await locator.screenshot({ path: file, animations: "disabled", ...options });
+}
+
+// Live numbers that belong to another gate.
+//
+// The markdown viewer pattern prints the bundle size of each parser flavour,
+// read from the figures `size:subpaths` records. Every change that moves a byte
+// moves those digits, so this capture would fail on almost every commit while
+// telling nobody anything: the sizes already have a gate, and it reports them
+// properly rather than as a pixel count. Masking them leaves the layout, which
+// is what this gate is for, and drops the readout.
+function masksFor(page, pattern) {
+  if (pattern !== "markdown-viewer") return [];
+  return [page.getByText(/\d[\d,]* B raw/)];
 }
 
 /**
@@ -140,7 +153,12 @@ async function capturePatterns(page, theme, outputDir) {
       }
     });
     await page.waitForFunction(() => document.fonts.status === "loaded");
-    await screenshot(page.locator("main"), path.join(outputDir, theme, `pattern-${pattern}.png`));
+    const mask = masksFor(page, pattern);
+    await screenshot(
+      page.locator("main"),
+      path.join(outputDir, theme, `pattern-${pattern}.png`),
+      mask.length ? { mask } : {},
+    );
   }
   await page.emulateMedia({ reducedMotion: null });
 }
