@@ -38,7 +38,11 @@ export interface ToastProps {
  */
 function ToastImpl({ item, onDismiss, className }: ToastProps) {
   const Icon = ICONS[item.variant];
-  const isAlert = item.variant === "warning" || item.variant === "error";
+  // `important` escalates the live region on its own, so an informational
+  // toast a consumer marks important is announced assertively rather than
+  // waiting for the screen reader to finish what it was saying.
+  const isAlert =
+    item.important || item.variant === "warning" || item.variant === "error";
   return (
     <div
       data-component="Toast"

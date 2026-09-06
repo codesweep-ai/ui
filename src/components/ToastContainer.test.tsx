@@ -49,6 +49,19 @@ describe("ToastContainer", () => {
     expect(screen.queryByText("Stay")).not.toBeInTheDocument();
   });
 
+  // The escalation was read from the variant alone, so `important` on an info
+  // toast changed nothing. The existing test pairs it with `error`, which is
+  // already an alert, and passed either way.
+  it("important: true announces an info toast assertively", () => {
+    render(<ToastContainer />);
+    act(() => {
+      toast.info("Deploy failed", { important: true });
+    });
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Deploy failed");
+    expect(alert).toHaveAttribute("aria-live", "assertive");
+  });
+
   it("stacks multiple toasts and the dismiss button removes the right one", () => {
     render(<ToastContainer />);
     act(() => {
