@@ -187,6 +187,49 @@ async function assertNothingClipped(page, theme, pattern) {
   }
 }
 
+/**
+ * One more frame per pattern, with every scrolling box run to its end.
+ *
+ * The first frame photographs each box where it rests, and the expand-all pass
+ * above pushes content out of the boxes that scroll. The Explorer's second
+ * section sits at y=1695 inside a sidebar 408px tall once its sibling is
+ * expanded, so no capture has ever contained it: removing that section's
+ * filter box changed the page and produced 0 differing pixels.
+ *
+ * The frame is taken only when scrolling reveals an element the first frame did
+ * not already show whole. That is the question worth asking, and it needs no
+ * threshold to answer: a box hiding a few pixels of padding reveals nothing and
+ * is skipped, and a box hiding a section reveals it and is not. The one pixel
+ * of slack is rounding, the same allowance assertNothingClipped makes.
+ */
+async function scrollToEndRevealingSomething(page) {
+  return page.evaluate(() => {
+    const main = document.querySelector("main");
+    if (!main) return false;
+    const scrollers = [...main.querySelectorAll("*")].filter((el) => {
+      const { overflowY } = getComputedStyle(el);
+      return /auto|scroll|overlay/.test(overflowY) && el.scrollHeight > el.clientHeight;
+    });
+    if (!scrollers.length) return false;
+
+    const shownWhole = (scroller) => {
+      const box = scroller.getBoundingClientRect();
+      return new Set(
+        [...scroller.querySelectorAll("[data-component], [data-part]")].filter((el) => {
+          const rect = el.getBoundingClientRect();
+          return rect.top >= box.top - 1 && rect.bottom <= box.bottom + 1;
+        }),
+      );
+    };
+
+    const before = scrollers.map(shownWhole);
+    for (const scroller of scrollers) scroller.scrollTop = scroller.scrollHeight;
+    const after = scrollers.map(shownWhole);
+
+    return after.some((set, i) => [...set].some((el) => !before[i].has(el)));
+  });
+}
+
 async function capturePatterns(page, theme, outputDir) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const pattern of PATTERNS) {
@@ -201,11 +244,20 @@ async function capturePatterns(page, theme, outputDir) {
     await assertNothingClipped(page, theme, pattern);
 
     const mask = masksFor(page, pattern);
+    const options = mask.length ? { mask } : {};
     await screenshot(
       page.locator("main"),
       path.join(outputDir, theme, `pattern-${pattern}.png`),
-      mask.length ? { mask } : {},
+      options,
     );
+
+    if (await scrollToEndRevealingSomething(page)) {
+      await screenshot(
+        page.locator("main"),
+        path.join(outputDir, theme, `pattern-${pattern}-scrolled.png`),
+        options,
+      );
+    }
   }
   await page.emulateMedia({ reducedMotion: null });
 }
