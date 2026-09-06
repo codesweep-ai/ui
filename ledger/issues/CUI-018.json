@@ -3,15 +3,17 @@
   "title": "Panel clips content taller than itself, with no scrollbar and no way to reach it by mouse",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "user report (repository owner): \"the Explorer - Sectioned Tree entries are not scrolling for me\"",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "a49c3aa"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "npx vitest run src/components/Panel.scroll.test.tsx: 4 passed, in browser mode because jsdom computes no layout and would pass against a panel that clips everything. Reverting only panel.css fails 2 of the 4. Driven in the real Explorer pattern with Playwright: a mouse wheel over the panel moves scrollTop from 0 to 700 to 1701, which is the full previously hidden extent, against 0 before the fix. Full suite 613 passed across 61 files. npm run check exit 0. visual:compare 76/76 with axe violations 0, so no panel in the captured set gained a scrollbar."
   },
   "resolution": null,
   "details": "Panel's body carries `overflow: hidden`. Content taller than the Panel is therefore clipped with no scrollbar, and Panel exposes `width` and nothing for height or scrolling, so a consumer cannot ask for anything else without overriding internals.\n\nMeasured in the Explorer pattern with Playwright. The Panel body is 408px tall around 2109px of content, so 1701px of a 65 row tree is off screen. A real wheel gesture over the tree moves nothing: no box inside the card changes `scrollTop`, and the window does not move either.\n\nThe content is not gone, which is what makes this hard to see. A box with `overflow: hidden` still scrolls programmatically, so `scrollIntoView` on the last row takes the body's `scrollTop` from 0 to 1685 and brings it into view. Keyboard navigation and any link-driven selection therefore work, and only the mouse fails. That is the input-method-dependent content loss one of the original consumer reports described, except here it is the kit's own component doing the clipping rather than a consumer's override.\n\nTwo faults, and they are separable. Panel losing content silently is the component fault and the one to fix: either the body scrolls when it overflows, or Panel gains a prop that says what to do, but clipping without a scrollbar should not be the default. The Explorer pattern composing an unbounded SectionedTree inside a fixed height Panel is the second, and patterns are the worked examples people copy, so it currently teaches the broken composition.\n\nDeciding this properly means deciding CUI-011 with it. A content-height mode on Tree and Panel is the other half of the same question.",
@@ -23,6 +25,18 @@
     {
       "date": "2026-09-06",
       "text": "Not fixed here. Making Panel's body scroll changes the layout of every Panel in every consumer, so it is the repository owner's call rather than a fix to slip into a Tree change."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Fixed by making the body `overflow: auto`. That is not a new decision: components/Panel.md has always specified `flex: 1`, `overflow-y: auto`, `min-height: 0` for the content area, and the stylesheet said `hidden`. The spec was right and the CSS was wrong, so this restores the documented behaviour rather than changing it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The gates could not have caught this. check-integrity compares documented DOM hooks against the source, not documented CSS properties against the stylesheet, so a spec and a stylesheet disagreeing about overflow goes unnoticed. Worth a record of its own if the same shape turns up again."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The pattern half is not fixed. ExplorerDemo still composes an unbounded SectionedTree inside a fixed height Panel; it now scrolls rather than losing content, but whether that is the composition the pattern should teach belongs with CUI-011."
     }
   ],
   "links": [

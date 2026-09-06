@@ -23,6 +23,10 @@
     {
       "date": "2026-09-06",
       "text": "Partly done in 5d4f99d and 8a781bd. Tree carries data-part on its scroller, rows, labels and icons; SectionedTree on its sections, headers and bodies; Table on its truncatable cell; Tooltip on its bubble. Panel and MarkdownViewer still have none, so this stays open. The convention is settled by the parts above: name the structural element, not its role in one layout."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Panel now carries data-part on its header and body, added in a49c3aa alongside the overflow fix. MarkdownViewer is the last component on the list with none."
     }
   ],
   "links": [
