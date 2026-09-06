@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, after two independent reviews of the patterns",
+  "recommendedBy": "session agent, re-triaged with CUI-022 in flight",
   "updated": "2026-09-06",
   "items": [
-    {
-      "id": "CUI-022",
-      "why": "Half done: the gate is in. The illustrative examples still carry the retired syntax."
-    },
     {
       "id": "CUI-006",
       "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."

@@ -3,11 +3,11 @@
   "title": "Pattern example code is written in a retired class syntax and names classes that do not exist",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "in-progress",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
   "resolved": null,
-  "stint": null,
+  "stint": "sandbox-verify, 2026-09-06",
   "evidence": {
     "commits": [],
     "integrated": [],
@@ -27,6 +27,10 @@
     {
       "date": "2026-09-06",
       "text": "Left open for the other half. The gate covers the one marked example per pattern, not the illustrative code blocks around it, so the retired utility syntax and the twelve class names that exist nowhere are still in those. Rewriting them is a documentation job with no gate behind it yet, and the marked example is now the one a reader can trust."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Starting the other half. Measured across the ten pattern documents: 85 class references in JSX blocks that resolve to nothing, in eight files. Chart.md and ComponentStates.md use no classes and are already clean. The 85 split three ways: retired utility names such as `flex` and `mt-1`, arbitrary-value syntax such as `[color:var(--fg)]`, and invented semantic names such as `dashboard-stat`. Only `text-label-upper` resolves, to `src/styles/utilities.css`."
     }
   ],
   "links": [
