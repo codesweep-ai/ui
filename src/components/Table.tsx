@@ -16,6 +16,7 @@ import { SearchInput } from "./SearchInput";
 import { Dropdown } from "./Dropdown";
 import { Button } from "./Button";
 import { Skeleton } from "./Skeleton";
+import { Tooltip } from "./Tooltip";
 
 const LOADING_ROW_COUNT = 8;
 
@@ -71,11 +72,6 @@ interface TableProps<T> {
   emptyHint?: string;
   /** Empty state CTA. */
   emptyAction?: { label: string; onClick: () => void };
-}
-
-function handleTruncationHover(e: React.MouseEvent<HTMLDivElement>) {
-  const el = e.currentTarget;
-  el.title = el.scrollWidth > el.clientWidth ? (el.textContent || "") : "";
 }
 
 function matchesFilter<T>(
@@ -453,12 +449,15 @@ function TableImpl<T>({
                       {col.wrap ? (
                         col.cell(row, activeFilterQuery)
                       ) : (
-                        <div
-                          className="cs-component-table-83 "
-                          onMouseEnter={handleTruncationHover}
+                        <Tooltip
+                          content={col.cell(row, activeFilterQuery)}
+                          describedBy={false}
+                          overflowOnly
                         >
-                          {col.cell(row, activeFilterQuery)}
-                        </div>
+                          <div data-part="cell" className="cs-component-table-83 ">
+                            {col.cell(row, activeFilterQuery)}
+                          </div>
+                        </Tooltip>
                       )}
                     </td>
                   ))}

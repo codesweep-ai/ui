@@ -41,7 +41,7 @@ interface EventLane {
   id: string;
   /** Visible lane label and the lane name included in option announcements. */
   label: string;
-  /** Optional native tooltip for the visible lane label. */
+  /** Optional tooltip for the visible lane label. */
   title?: string;
   /** Optional context included in event option announcements. */
   description?: string;
@@ -153,7 +153,7 @@ This choice matches the multi-lane profile directly. The dense profile treats ar
 
 `lanes` defines visible row order. Lane IDs are unique. Events and spans whose `lane` does not match a declared lane are invalid and are not painted or exposed as options. A lane with no events still renders its label and empty row so multi-agent layouts do not jump when filtering.
 
-Lane labels are DOM text, not canvas pixels. They remain visible in a sticky leading gutter while the global axis scrolls horizontally. `title` supplies a native tooltip; `description` adds context to every event option announcement for that lane. The canvas rows, ruler, and overview begin after the same gutter and share the same x-coordinate system.
+Lane labels are DOM text, not canvas pixels. They remain visible in a sticky leading gutter while the global axis scrolls horizontally. `title` supplies a [Tooltip](Tooltip.md) on hover or focus; `description` adds context to every event option announcement for that lane. The canvas rows, ruler, and overview begin after the same gutter and share the same x-coordinate system.
 
 ### Spans
 

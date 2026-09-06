@@ -119,7 +119,7 @@ interface TableColumn<T> {
   sortable?: boolean;
   align?: "left" | "center" | "right";
   width?: string;            // percentage or fixed (e.g., "13%", "100px")
-  wrap?: boolean;            // default false — nowrap with truncation tooltip
+  wrap?: boolean;            // default false — nowrap, with a Tooltip carrying the full text
   searchValue?: (row: T) => string;  // enables filtering on this column
 }
 ```
@@ -292,7 +292,7 @@ When using `fixed` layout, column widths are percentages:
 | Click sortable header  | Toggles sort direction on that column                |
 | Prev / Next buttons    | Navigate between pages                               |
 | Filter changes         | Resets to page 1 automatically                       |
-| Hover truncated cell   | Native tooltip shows full text                       |
+| Hover or focus truncated cell | Tooltip shows the full text                   |
 
 ## Do / Don't
 

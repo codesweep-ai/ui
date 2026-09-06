@@ -3,6 +3,7 @@
 import { forwardRef } from "react";
 import { ChevronDown, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
 import { cn } from "../lib/cn";
+import { Tooltip } from "./Tooltip";
 import { useCardGroup } from "./CardGroupContext";
 import { Skeleton } from "./Skeleton";
 
@@ -138,22 +139,27 @@ export const Card = forwardRef<HTMLElement, CardProps>(function CardImpl({
                 </button>
               )}
               {isMaximizable && (
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    group.toggle(id);
-                  }}
-                  className="cs-component-card-24 "
-                  // "Maximize"/"Minimize" named the icon, not the behaviour:
-                  // this solos the card and *hides its siblings*, which reads
-                  // as expand/collapse and is not (OPEN.md §7.13). Collapse is
-                  // a separate control, above, behind `collapsible`.
-                  aria-label={isMaximized ? "Show all cards" : "Show only this card"}
-                  title={isMaximized ? "Show all cards" : "Show only this card — its siblings are hidden"}
+                <Tooltip
+                  content={
+                    isMaximized ? "Show all cards" : "Show only this card — its siblings are hidden"
+                  }
                 >
-                  <Icon className="cs-component-card-27 " />
-                </button>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      group.toggle(id);
+                    }}
+                    className="cs-component-card-24 "
+                    // "Maximize"/"Minimize" named the icon, not the behaviour:
+                    // this solos the card and *hides its siblings*, which reads
+                    // as expand/collapse and is not (OPEN.md §7.13). Collapse is
+                    // a separate control, above, behind `collapsible`.
+                    aria-label={isMaximized ? "Show all cards" : "Show only this card"}
+                  >
+                    <Icon className="cs-component-card-27 " />
+                  </button>
+                </Tooltip>
               )}
             </span>
           )}

@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import { cn } from "../lib/cn";
+import { Tooltip } from "./Tooltip";
 import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 import { ChartTooltip } from "./ChartTooltip";
 
@@ -24,7 +25,7 @@ export interface EventLane {
   id: string;
   /** Visible label and accessible lane name. */
   label: string;
-  /** Optional native tooltip for the visible lane label. */
+  /** Optional tooltip for the visible lane label. */
   title?: string;
   /** Optional context included in event option announcements. */
   description?: string;
@@ -789,16 +790,16 @@ function EventLanesImpl<K extends string = string>({
         <div data-event-lanes-labels="" className="cs-component-event-lanes-labels" aria-hidden="true">
           {hasRuler && <div className="cs-component-event-lanes-ruler-label">{rulerLabel}</div>}
           {(lanes.length > 0 ? lanes : [{ id: "empty", label: "Events" }]).map((lane) => (
-            <div
-              key={lane.id}
-              data-event-lane-label={lane.id}
-              data-event-lane-title={lane.title}
-              data-event-lane-description={lane.description}
-              title={lane.title}
-              className={cn("cs-component-event-lanes-label", "className" in lane && lane.className)}
-            >
-              {lane.label}
-            </div>
+            <Tooltip key={lane.id} content={lane.title ?? ""} disabled={!lane.title}>
+              <div
+                data-event-lane-label={lane.id}
+                data-event-lane-title={lane.title}
+                data-event-lane-description={lane.description}
+                className={cn("cs-component-event-lanes-label", "className" in lane && lane.className)}
+              >
+                {lane.label}
+              </div>
+            </Tooltip>
           ))}
         </div>
         <div className="cs-component-event-lanes-axis-cell">

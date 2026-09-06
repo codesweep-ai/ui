@@ -120,7 +120,7 @@ interface TableColumn<T> {
 ### Truncation (nowrap default)
 - By default (`wrap: false`), cell content is rendered inside a wrapper `<div>` with `overflow: hidden; text-overflow: ellipsis; white-space: nowrap`.
 - This produces single-line rows with consistent height across all pages.
-- When text is truncated (i.e. `scrollWidth > clientWidth`), a native `title` tooltip shows the full text on hover. The tooltip is set dynamically on `mouseenter` — it only appears when content actually overflows.
+- When text is truncated (i.e. `scrollWidth > clientWidth`), [Tooltip](Tooltip.md) shows the full text on hover **and on keyboard focus**. It uses `overflowOnly`, so it measures at open time and appears only when content actually overflows, and `describedBy={false}`, because the cell already carries the full text for a screen reader. Before 0.3.0 this was a native `title`, which never reached a keyboard user.
 - For truncation to take effect, the column must have a constrained width. Use the `width` prop on the column (e.g. `"30%"`, `"200px"`) combined with `fixed` table layout.
 - Set `wrap: true` on a column to allow multi-line content (no truncation, no tooltip).
 - **Columns containing structured UI elements** (e.g. `StatusBadge`, buttons, icons) should use `wrap: true` — truncating a badge or button produces broken visuals, not a meaningful ellipsis.

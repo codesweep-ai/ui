@@ -4,6 +4,7 @@ import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 
 import { Sun, Moon, Monitor } from "lucide-react";
 import { cn } from "../lib/cn";
+import { Tooltip } from "./Tooltip";
 import { useTheme } from "../lib/useTheme";
 
 interface ThemeToggleProps {
@@ -63,23 +64,24 @@ function ThemeToggleImpl({
   const Icon = mode === "light" ? Sun : mode === "dark" ? Moon : Monitor;
 
   return (
-    <button
-      data-component="ThemeToggle"
-      onClick={cycle}
-      className={cn(
-        "cs-component-theme-toggle-32 ",
-        "cs-component-theme-toggle-33 ",
-        "cs-component-theme-toggle-34 ",
-        "cs-component-theme-toggle-35 ",
-        "cs-component-theme-toggle-36 ",
-        "cs-component-theme-toggle-37 ",
-        className
-      )}
-      aria-label={`Toggle theme. Current: ${mode}`}
-      title={`Theme: ${mode}. Click to cycle.`}
-    >
-      <Icon className="cs-component-theme-toggle-42 " />
-    </button>
+    <Tooltip content={`Theme: ${mode}. Click to cycle.`} describedBy={false}>
+      <button
+        data-component="ThemeToggle"
+        onClick={cycle}
+        className={cn(
+          "cs-component-theme-toggle-32 ",
+          "cs-component-theme-toggle-33 ",
+          "cs-component-theme-toggle-34 ",
+          "cs-component-theme-toggle-35 ",
+          "cs-component-theme-toggle-36 ",
+          "cs-component-theme-toggle-37 ",
+          className
+        )}
+        aria-label={`Toggle theme. Current: ${mode}`}
+      >
+        <Icon className="cs-component-theme-toggle-42 " />
+      </button>
+    </Tooltip>
   );
 }
 

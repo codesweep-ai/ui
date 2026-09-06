@@ -164,7 +164,12 @@ describe("EventLanes", () => {
       />,
     );
     expect(screen.getByText("Worker")).toHaveClass("worker-lane");
-    expect(screen.getByText("Worker")).toHaveAttribute("title", "Worker tooltip");
+    // `title` used to be a native tooltip, which never reached a keyboard user.
+    // It is a Tooltip now, so it opens on focus as well as hover.
+    expect(screen.getByText("Worker")).not.toHaveAttribute("title");
+    fireEvent.focus(screen.getByText("Worker"));
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Worker tooltip");
+    fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.getByText("Elapsed")).toBeInTheDocument();
     expect(container.querySelector('[data-event-index="2"]')).toHaveAccessibleName(/Background worker/);
     expect(ruler).toHaveBeenCalledWith(expect.objectContaining({ start: 0, end: 7, cellWidth: 20, width: 169 }));
