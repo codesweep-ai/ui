@@ -142,6 +142,51 @@ function masksFor(page, pattern) {
  * capture lands mid-animation and the baseline disagrees with itself between
  * runs. StreamingText already snaps to its full text under the OS setting.
  */
+/**
+ * No box may hide content that a pointer cannot scroll to.
+ *
+ * A screenshot cannot see this. Clipped content is simply absent from the
+ * image, so the baseline records the broken state as correct and every later
+ * run agrees with it. That is how a panel came to hide 1701px of a tree with
+ * this gate green.
+ *
+ * It runs here, against the real page, rather than as a unit test over a
+ * mounted demo. The bug only exists when the page's own layout bounds the box:
+ * a demo mounted in a host of its own either gets squeezed into a shape the app
+ * never renders, and reports clipping that is not real, or is left free to size
+ * itself, and can no longer clip at all. Both were measured before this landed.
+ */
+async function assertNothingClipped(page, theme, pattern) {
+  const clipped = await page.evaluate(() =>
+    [...document.querySelectorAll("*")]
+      .filter((el) => {
+        // The document itself is not a clipping box: the window scrolls it, and
+        // this page hands its scrolling to a main region rather than the root.
+        if (el === document.documentElement || el === document.body) return false;
+        // A box showing almost nothing is collapsed, not clipping. A CardGroup
+        // soloing one card leaves its siblings 2px tall around their content,
+        // which is deliberate and is not content anybody is being denied.
+        if (el.clientHeight < 8) return false;
+        // A couple of pixels is rounding, not hidden content.
+        if (el.scrollHeight - el.clientHeight <= 2) return false;
+        const { overflowY } = getComputedStyle(el);
+        // `visible` does not clip: the content spills out and an ancestor
+        // scrolls it. Only a box that clips without scrolling loses it.
+        return overflowY !== "visible" && !/auto|scroll|overlay/.test(overflowY);
+      })
+      .map((el) => {
+        const name = el.getAttribute("data-component") ?? el.tagName.toLowerCase();
+        const part = el.getAttribute("data-part");
+        return `${name}${part ? `[${part}]` : ""} hides ${el.scrollHeight - el.clientHeight}px`;
+      }),
+  );
+  if (clipped.length) {
+    throw new Error(
+      `${theme}: the ${pattern} pattern hides content a pointer cannot reach — ${clipped.join(", ")}`,
+    );
+  }
+}
+
 async function capturePatterns(page, theme, outputDir) {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const pattern of PATTERNS) {
@@ -153,6 +198,8 @@ async function capturePatterns(page, theme, outputDir) {
       }
     });
     await page.waitForFunction(() => document.fonts.status === "loaded");
+    await assertNothingClipped(page, theme, pattern);
+
     const mask = masksFor(page, pattern);
     await screenshot(
       page.locator("main"),

@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
@@ -19,6 +20,13 @@ const browserSuites = [
 
 export default defineConfig({
   plugins: [react()],
+  // The pattern suites import the preview's demos, which is the point: a test
+  // that restated the composition could pass while the demo the specification
+  // documents, and the screenshot gate photographs, was broken. Those demos
+  // import the package by name, so without this they do not resolve at all.
+  resolve: {
+    alias: { "@codesweep-ai/ui": path.resolve(import.meta.dirname, "src") },
+  },
   test: {
     projects: [
       {
