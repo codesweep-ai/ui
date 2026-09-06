@@ -9,7 +9,9 @@
   "resolved": "2026-09-06",
   "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "9fb3e1a"
+    ],
     "integrated": [],
     "verified": "Driven in the built pattern page with Playwright: clicking Create account on an empty form now renders 5 elements with role alert reading Required., Required., Enter a valid email. and Pick a plan., against 0 before the fix. npm run check exit 0."
   },

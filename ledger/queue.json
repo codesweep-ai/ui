@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-020",
-      "why": "A documented error state that cannot happen, in a pattern people copy."
-    },
-    {
       "id": "CUI-028",
       "why": "Both defects above are invisible to a screenshot. This is what would have caught them."
     },
@@ -21,6 +17,10 @@
     {
       "id": "CUI-006",
       "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."
+    },
+    {
+      "id": "CUI-029",
+      "why": "An alert that announces nothing, newly visible now the Form pattern can error at all."
     }
   ]
 }
