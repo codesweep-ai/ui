@@ -50,7 +50,7 @@ interface SectionedTreeProps<T extends TreeNode = TreeNode> {
   labelOverflow?: "truncate" | "scroll" | "wrap";
   /** Passed to every section's Tree. Default: "center" */
   alignLabel?: "center" | "start";
-  /** Passed to every section's Tree. Default: false */
+  /** Passed to every section's Tree. Default: true */
   scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content. Default: false */
   flipped?: boolean;

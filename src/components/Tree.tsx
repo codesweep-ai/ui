@@ -71,11 +71,11 @@ interface TreeProps<T extends TreeNode> {
    */
   alignLabel?: "center" | "start";
   /**
-   * Scroll the selected row into view when `selectedId` changes. Default: false.
+   * Scroll the selected row into view when `selectedId` changes. Default: true.
    *
-   * Off by default because it is new behaviour rather than a restored parity. Search matches and
-   * keyboard navigation have always scrolled; a selection set from outside the component, by a
-   * link elsewhere on the page, never has. Turn it on where the page drives the selection.
+   * New in 0.3.0. Search matches and keyboard navigation have always scrolled; a selection set
+   * from outside the component, by a link elsewhere on the page, never did, in this component or
+   * in SectionedTree. Pass false where the page must not move on selection.
    */
   scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content */
@@ -509,7 +509,7 @@ function TreeImpl<T extends TreeNode>({
   allExpanded,
   labelOverflow = "truncate",
   alignLabel = "center",
-  scrollSelectedIntoView = false,
+  scrollSelectedIntoView = true,
   flipped = false,
   reorderable = false,
   onReorder,
@@ -622,16 +622,27 @@ function TreeImpl<T extends TreeNode>({
     );
   }, [visibleOrderedNodes]);
 
+  // Animation is for a move the user just asked for. It honours the OS setting the way
+  // StreamingText and the animated stylesheets already do, and a caller can decline it outright.
+  const scrollBehavior = (wanted: ScrollBehavior): ScrollBehavior => {
+    if (wanted !== "smooth") return wanted;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    return reduced ? "auto" : "smooth";
+  };
+
   // Scroll to current match — vertically to the row, horizontally to the highlight
   const scrollToNode = useCallback(
-    (nodeId: string | null) => {
+    (nodeId: string | null, behavior: ScrollBehavior = "smooth") => {
       if (!nodeId || !containerRef.current) return;
       requestAnimationFrame(() => {
         const el = containerRef.current?.querySelector(
           `[data-tree-node-id="${nodeId}"]`
         );
         if (!el) return;
-        el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        el.scrollIntoView({ block: "nearest", behavior: scrollBehavior(behavior) });
         // Scroll the first highlight mark into horizontal view
         const mark = el.querySelector("mark");
         if (mark && containerRef.current) {
@@ -654,7 +665,12 @@ function TreeImpl<T extends TreeNode>({
 
   useEffect(() => {
     if (!scrollSelectedIntoView) return;
-    scrollToNode(selectedId ?? null);
+    // Instant, not smooth. The other two callers scroll because the user just acted on this tree,
+    // where an animation helps them follow the move. This one fires because something elsewhere on
+    // the page changed the selection, so the tree moves on its own: an animation there draws the
+    // eye to movement nobody asked for, and rapid selection changes queue smooth scrolls against
+    // each other.
+    scrollToNode(selectedId ?? null, "auto");
   }, [scrollSelectedIntoView, selectedId, scrollToNode]);
 
   const goNextMatch = () => {

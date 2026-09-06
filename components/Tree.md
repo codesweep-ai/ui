@@ -53,7 +53,7 @@ interface TreeProps<T extends TreeNode> {
   labelOverflow?: "truncate" | "scroll" | "wrap";
   /** How a row lines up its icon against its label. Default: "center" */
   alignLabel?: "center" | "start";
-  /** Scroll the selected row into view when selectedId changes. Default: false */
+  /** Scroll the selected row into view when selectedId changes. Default: true */
   scrollSelectedIntoView?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content. Default: false */
   flipped?: boolean;
@@ -127,6 +127,16 @@ In every state, the outer container chrome (border, filter bar) stays where appl
 | `wrap` | The label runs onto another line. Pair with `alignLabel="start"` so the icon stays on the first line. |
 
   The tooltip passes `describedBy={false}`, because the full name is already on the element and a screen reader reads it from there.
+
+- Scrolling: three things scroll a row into view, and they do not all animate.
+
+| Cause | Animated |
+|---|---|
+| Search match (next/previous) | Yes, because the user just asked for the move |
+| Arrow-key navigation | Yes, same reason |
+| `selectedId` changing from outside (`scrollSelectedIntoView`) | **No.** The tree moves because the page changed, not because the user acted on it |
+
+  Every animated case drops to an instant scroll under `prefers-reduced-motion: reduce`.
 
 ### Icon Mapping
 | Element          | Icon             | Size  |

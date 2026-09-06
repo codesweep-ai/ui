@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { Tree, type TreeNode } from "./Tree";
 
@@ -102,5 +102,74 @@ describe("Tree truncation tooltip", () => {
     // must stay out of the accessibility tree.
     expect(screen.getByRole("tooltip", { hidden: true })).toHaveAttribute("aria-hidden", "true");
     expect(long).not.toHaveAttribute("aria-describedby");
+  });
+});
+
+describe("Tree selection scrolling", () => {
+  const nodesWithBranch: TreeNode[] = [
+    { id: "a", name: "a.tsx", type: "leaf" },
+    { id: "b", name: "b.tsx", type: "leaf" },
+  ];
+
+  function withStubs(reducedMotion: boolean, run: (spy: ReturnType<typeof vi.fn>) => void) {
+    const spy = vi.fn();
+    const originalScroll = Element.prototype.scrollIntoView;
+    const originalRaf = globalThis.requestAnimationFrame;
+    const originalMatch = window.matchMedia;
+    Element.prototype.scrollIntoView = spy;
+    globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) => {
+      cb(0);
+      return 0;
+    }) as typeof globalThis.requestAnimationFrame;
+    window.matchMedia = ((query: string) => ({
+      matches: reducedMotion,
+      media: query,
+      addEventListener() {},
+      removeEventListener() {},
+    })) as unknown as typeof window.matchMedia;
+    try {
+      run(spy);
+    } finally {
+      Element.prototype.scrollIntoView = originalScroll;
+      globalThis.requestAnimationFrame = originalRaf;
+      window.matchMedia = originalMatch;
+    }
+  }
+
+  it("scrolls a selection set from outside the component by default, without animating", () => {
+    // The tree moves because the page changed, not because the user acted on it,
+    // so it reorients instantly rather than drawing the eye to the movement.
+    withStubs(false, (spy) => {
+      const { rerender } = render(
+        <Tree nodes={nodesWithBranch} expandedIds={new Set()} selectedId="a" />,
+      );
+      spy.mockClear();
+      rerender(<Tree nodes={nodesWithBranch} expandedIds={new Set()} selectedId="b" />);
+      expect(spy).toHaveBeenCalledWith({ block: "nearest", behavior: "auto" });
+    });
+  });
+
+  it("stays put when asked not to scroll", () => {
+    withStubs(false, (spy) => {
+      const { rerender } = render(
+        <Tree nodes={nodesWithBranch} expandedIds={new Set()} selectedId="a" scrollSelectedIntoView={false} />,
+      );
+      spy.mockClear();
+      rerender(
+        <Tree nodes={nodesWithBranch} expandedIds={new Set()} selectedId="b" scrollSelectedIntoView={false} />,
+      );
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  it("still does not animate when the OS asks for reduced motion", () => {
+    withStubs(true, (spy) => {
+      const { rerender } = render(
+        <Tree nodes={nodesWithBranch} expandedIds={new Set()} selectedId="a" />,
+      );
+      spy.mockClear();
+      rerender(<Tree nodes={nodesWithBranch} expandedIds={new Set()} selectedId="b" />);
+      expect(spy).toHaveBeenCalledWith({ block: "nearest", behavior: "auto" });
+    });
   });
 });
