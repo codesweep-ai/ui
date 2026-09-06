@@ -143,6 +143,26 @@ describe("Tooltip", () => {
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
 
+  // `disabled` is the escape hatch for a trigger that cannot take a ref. React
+  // warns when a function component is given one, so the warning is the
+  // observable: cloning the child in would produce it.
+  it("leaves a trigger that cannot take a ref untouched when disabled", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    function PlainTrigger() {
+      return <button type="button">Save</button>;
+    }
+
+    render(
+      <Tooltip content="Save the document" disabled>
+        <PlainTrigger />
+      </Tooltip>,
+    );
+
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+    expect(consoleError).not.toHaveBeenCalled();
+    consoleError.mockRestore();
+  });
+
   it("never opens when disabled", () => {
     render(
       <Tooltip content="the full path" disabled>

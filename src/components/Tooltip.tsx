@@ -151,6 +151,12 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(function TooltipImp
 
   if (!isValidElement(children)) return children ?? null;
 
+  // Return the trigger untouched rather than clone it with handlers that can
+  // never fire. `disabled` is the escape hatch for a child that cannot take a
+  // ref, and cloning one in to reach a tooltip that will not open is the thing
+  // the caller asked to avoid.
+  if (disabled) return children;
+
   const child = children as ReactElement<TriggerProps>;
   const childProps = child.props;
 

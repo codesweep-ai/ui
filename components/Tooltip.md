@@ -110,7 +110,9 @@ None.
 ## Edge Cases
 
 - **A trigger that is not a single element**: `children` must be one React element. Anything else is returned untouched and no tooltip is attached.
-- **`disabled`**: the trigger renders exactly as passed, with no handlers attached.
+- **`disabled`**: the trigger renders exactly as passed, with no handlers attached and no ref
+  taken. This is the escape hatch for a child that cannot accept a ref. A ref forwarded to the
+  `Tooltip` itself is not attached either, because nothing is cloned to attach it to.
 - **Scrolling while open**: the position is measured once at open. The bubble closes on Escape, on blur and on leaving the trigger, so it does not outlive its measurement, but it does not follow a scroll.
 - **`overflowOnly` in jsdom**: jsdom lays nothing out, so both metrics read `0` and nothing ever looks clipped. Tests must stub `scrollWidth` / `clientWidth`.
 
