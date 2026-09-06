@@ -397,8 +397,12 @@
 
 /* A flex child will not shrink below its content unless min-width says so, and
    without the shrink there is nothing for the ellipsis to do. */
+/* Shrink, but never grow. `flex: 1 1 auto` here stretched the label across the
+   whole row, which a flipped tree renders as text pinned to the far edge
+   instead of sitting beside its icon. Truncation only needs the shrink, which
+   min-width unlocks. */
 [data-component="Tree"][data-label-overflow="truncate"] [data-part="label"] {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis
@@ -409,7 +413,7 @@
 }
 
 [data-component="Tree"][data-label-overflow="wrap"] [data-part="label"] {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
     white-space: normal;
     overflow-wrap: anywhere
