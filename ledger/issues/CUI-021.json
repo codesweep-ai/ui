@@ -3,15 +3,17 @@
   "title": "The Chart pattern's d3 example never translates its axes, so the reference chart is wrong",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "11fa636"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Measured in the built page with Playwright: the x-axis group now carries transform translate(0,212) and computes to a matrix with e 0 and f 212, against e 0 and f 0 before. The rendered chart shows the category labels along the bottom and a readable 0 to 500 y-axis scale, where before the labels printed across the top and the scale was a bare line. npm run check exit 0, visual:compare 94/94 after re-recording, axe violations 0."
   },
   "resolution": null,
   "details": "`ChartDemo.tsx` calls `.attr(\"cs-preview-pages-patterns-chart-demo-14\", `translate(...)`)` on both axis groups. The attribute name was replaced by a generated class name, presumably by a rewrite that walked class strings and caught this one because its value looked like a class. The axes are therefore never translated: the x-axis labels print across the top of the plot and the y-axis ticks fall outside the SVG.\n\n`patterns/Chart.md` names this file as the worked example of imperative charting with `styleAxis` and `ChartTooltip`. It is what a consumer copies to learn the charting bridge.\n\nNothing catches it. d3's `.attr()` takes any name, so typecheck and lint both pass, and the rule the stray name points at is dead Tailwind residue in `preview/src/preview.css` referencing `--tw-*` variables this repository never defines.\n\nFix: restore `.attr(\"transform\", ...)` on both, and delete the orphan rule.",
@@ -19,6 +21,14 @@
     {
       "date": "2026-09-06",
       "text": "Confirmed by reading the source. The reviewer additionally probed the built page and found the group carrying the stray attribute with an identity transform matrix and a bounding box at the top of the plot."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The pattern gate closed in CUI-017 caught this, which is the first thing it has caught that was not planted. It reported 1021 and 1066 differing pixels on the two chart captures. Both are under the 0.1% per-image ratio, so the absolute floor added in that record is what made the difference: without it this fix would have landed silently, exactly as the original breakage did."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The dead rule the stray attribute name pointed at was removed with it. It set a transform built from six --tw-* custom properties, none of which this repository defines."
     }
   ],
   "links": [

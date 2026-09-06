@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-021",
-      "why": "The reference chart for the whole charting bridge renders its axes in the wrong place, and every gate passes over it."
-    },
-    {
       "id": "CUI-020",
       "why": "A documented error state that cannot happen, in a pattern people copy."
     },
