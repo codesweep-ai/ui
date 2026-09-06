@@ -1,0 +1,33 @@
+{
+  "id": "CUI-018",
+  "title": "Panel clips content taller than itself, with no scrollbar and no way to reach it by mouse",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "user report (repository owner): \"the Explorer - Sectioned Tree entries are not scrolling for me\"",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Panel's body carries `overflow: hidden`. Content taller than the Panel is therefore clipped with no scrollbar, and Panel exposes `width` and nothing for height or scrolling, so a consumer cannot ask for anything else without overriding internals.\n\nMeasured in the Explorer pattern with Playwright. The Panel body is 408px tall around 2109px of content, so 1701px of a 65 row tree is off screen. A real wheel gesture over the tree moves nothing: no box inside the card changes `scrollTop`, and the window does not move either.\n\nThe content is not gone, which is what makes this hard to see. A box with `overflow: hidden` still scrolls programmatically, so `scrollIntoView` on the last row takes the body's `scrollTop` from 0 to 1685 and brings it into view. Keyboard navigation and any link-driven selection therefore work, and only the mouse fails. That is the input-method-dependent content loss one of the original consumer reports described, except here it is the kit's own component doing the clipping rather than a consumer's override.\n\nTwo faults, and they are separable. Panel losing content silently is the component fault and the one to fix: either the body scrolls when it overflows, or Panel gains a prop that says what to do, but clipping without a scrollbar should not be the default. The Explorer pattern composing an unbounded SectionedTree inside a fixed height Panel is the second, and patterns are the worked examples people copy, so it currently teaches the broken composition.\n\nDeciding this properly means deciding CUI-011 with it. A content-height mode on Tree and Panel is the other half of the same question.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Pre-existing, not introduced by the Tree work. The whole ancestor chain from the deepest row to the body was captured on this branch and on a build of main, and the two are identical: the Panel body reports client 408 and scroll 2109 with overflow hidden in both, and the wheel moves nothing in both."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Not fixed here. Making Panel's body scroll changes the layout of every Panel in every consumer, so it is the repository owner's call rather than a fix to slip into a Tree change."
+    }
+  ],
+  "links": [
+    "CUI-011",
+    "CUI-009",
+    "CUI-017"
+  ]
+}

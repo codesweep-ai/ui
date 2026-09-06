@@ -3,6 +3,10 @@
   "updated": "2026-09-06",
   "items": [
     {
+      "id": "CUI-018",
+      "why": "Content is on screen for a keyboard and gone for a mouse. 1701px of it in the Explorer pattern."
+    },
+    {
       "id": "CUI-005",
       "why": "The escape hatch every other record is currently forced through, and it breaks on any rebuild."
     },
