@@ -1,0 +1,32 @@
+{
+  "id": "CUI-017",
+  "title": "The visual gate captures components but not patterns, so a pattern can break unseen",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "user report (repository owner): \"a couple of things broke on the Explorer pattern\", after the Tree work in CUI-008",
+  "opened": "2026-09-06",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`visual:capture` records 35 components and 3 interaction states per theme. It records no patterns. A pattern composes several components, which is exactly where a change that is right for one component in isolation goes wrong, and nothing looks at them.\n\nThis is not theoretical. A `flex: 1 1 auto` added to Tree's label for CUI-008 made the label fill its row. In a flipped tree, which lays its row out with `row-reverse`, that pinned every label to the far edge instead of beside its icon. The label measured 231px wide at an 8px gap from the row's left edge, where it should have been 20px wide at a 219px gap. `visual:compare` passed 76 of 76 screenshots throughout, because the Explorer pattern is not among them. The repository owner found it by opening the page.\n\nThe capture list is also fixed rather than derived: it stayed at 35 components while the catalog went to 37, so the Tooltip added in CUI-016 is not captured either. A new component joins the gate only if somebody remembers to add it.\n\nTwo things worth separating. Adding the nine pattern tabs to the baseline closes most of the hole. Deriving the list from the catalog stops it reopening.",
+  "notes": [
+    {
+      "date": "2026-09-06",
+      "text": "Found by sweeping all nine pattern tabs in both themes against a build of main, which is what the gate should have been doing. After fixing the flex, every pattern matched except two that differ for good reasons: the markdown viewer demo prints bundle sizes, which grew from 166,136 to 167,230 bytes, and the agent activity demo captures a streaming cursor mid-animation."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The discipline half is written down: CONTRIBUTING.md now lists patterns as a fifth file that moves with a component, and says plainly that nothing enforces it. This record is the enforcement half."
+    }
+  ],
+  "links": [
+    "CUI-008",
+    "CUI-016"
+  ]
+}

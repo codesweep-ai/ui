@@ -132,9 +132,21 @@ Four files move together:
    table.
 3. The matching preview section or pattern demo.
 4. `src/index.ts`, when the public export changes.
+5. Any pattern that composes the component, under `patterns/`.
 
 Run `npm run catalog` after editing frontmatter. `CATALOG.md` and `catalog.json`
 are generated, and an edit to either by hand is undone by the next run.
+
+**Look at the patterns.** They are the worked examples of how the components are
+meant to be composed. A change that is right for a component on its own can
+still be wrong in the pattern that uses it. Whether a pattern needs updating is a
+judgement call, but looking is not: open the ones under `patterns/` that name the
+component, and drive them in `npm run preview`.
+
+Nothing enforces this. The visual gate captures components, not patterns, so a
+pattern can break while `visual:compare` stays green. That is not theoretical: a
+`flex` shorthand added to Tree's label passed 76/76 and still pinned every label
+in the flipped Explorer to the wrong edge of its row.
 
 ## Trying your build elsewhere
 
