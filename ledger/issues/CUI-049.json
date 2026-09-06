@@ -3,15 +3,17 @@
   "title": "Tooltip's disabled prop still clones the trigger and attaches handlers",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "Tooltip pass, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "b7fce72"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Reverting the fix fails the new test with `expected \"error\" to not be called at all, but actually been called 1 times`, which is React warning that a function component was given a ref. It passes with the fix, 14 tests. `npm run ci` exits 0 with every gate run, 633 tests, visual:compare 94/94 at 0 differing pixels."
   },
   "resolution": null,
   "details": "`components/Tooltip.md:113` says that with `disabled` set, the trigger renders exactly as passed, with no handlers attached.\n\n`src/components/Tooltip.tsx:157` calls `cloneElement` unconditionally. It replaces the child's ref and wraps `onMouseEnter`, `onMouseLeave`, `onFocus` and `onBlur`. `disabled` is read only inside `show()`, at `:116`.\n\nThe tooltip never opens when disabled, so the visible behaviour is right. What is wrong is the escape hatch. A consumer whose child cannot take a ref is told that `disabled` leaves it untouched, and it does not.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-06",
       "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation against the tree at 0ef7ea4."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The owner chose to fix the code rather than retract the promise, because the promise is the escape hatch for a trigger that cannot take a ref and the workaround it saves is a conditional render at every call site. A ref forwarded to the Tooltip itself is not attached while disabled either, since nothing is cloned to attach it to, and the specification now says so."
     }
   ],
   "links": [

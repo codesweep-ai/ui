@@ -3,15 +3,17 @@
   "title": "Pattern captures never open a collapsed section, so half a sidebar is never photographed",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while updating the Explorer pattern for CUI-025",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "visual gate pass, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "7a92288"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Verified with the experiment this record was filed on. Turning the Explorer demo's Dependencies section filterable used to change the page and produce 0 differing pixels. With the second frame it fails the gate: 3109 pixels in dark and 3122 in light, both on `pattern-explorer-scrolled.png`, while `pattern-explorer.png` still reports 0. That split is the defect and its fix in one measurement. The rule qualified 5 of the 9 pattern pages, and the baseline grew from 94 captures to 104. `npm run ci` exits 0 with every gate run, 633 tests, visual:compare 104/104 at 0 differing pixels, axe 0."
   },
   "resolution": null,
   "details": "`capturePatterns` clicks every expand-all control before it photographs a page, which expands the trees inside a section. It does not open a section that is collapsed, and SectionedTree keeps that state separately.\n\nSo the Explorer pattern's Dependencies section is never in a capture. Removing its filter box changed the rendered page and produced 0 differing pixels, confirmed by reverting the change and comparing both ways.\n\nThe fix is a few lines: click each section header whose control reports it collapsed, in the same place the expand-all clicks happen. It changes the baseline, so it wants its own pass rather than riding along with a content change.",
@@ -31,6 +33,14 @@
     {
       "date": "2026-09-06",
       "text": "The fix is now a judgement rather than the few lines this record promised. A second capture with the sidebar scrolled to its end is the most faithful option and adds a frame per pattern. Expanding less would keep everything in view and give up the reason the captures expand at all. Photographing the scroller at its full height means rendering a layout the application never shows, which is the trap the comment above `assertNothingClipped` already warns about."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The second frame is taken only when running the scrollers to their end brings an element into view that the first frame did not already show whole. An earlier draft gated it on a hidden-pixel threshold of 100, which the repository owner rejected: the number encoded a guess rather than a fact, unlike the 2px rounding and 8px collapsed allowances in `assertNothingClipped` that each name something physical. The behavioural test needs no threshold, and it skipped the `form` page, which hides 22 pixels of padding and reveals nothing."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Two boxes are still sampled rather than covered. The markdown-viewer page has a scroller hiding 5250px, so a frame at each end misses what lies between them. That is a limit of photographing a scroll position rather than a defect in this fix, and it wants a different technique if it ever matters."
     }
   ],
   "links": [

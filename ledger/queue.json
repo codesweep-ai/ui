@@ -11,10 +11,6 @@
       "why": "A minimap that mounts before its content draws nothing, and how far the fix should reach is a judgement."
     },
     {
-      "id": "CUI-049",
-      "why": "Tooltip's disabled prop is an escape hatch that does not work. Fixing the code or the promise is a choice."
-    },
-    {
       "id": "CUI-044",
       "why": "Two Table bullets left: add the documented affordances, or delete them. Both repaint or remove something."
     },
@@ -25,10 +21,6 @@
     {
       "id": "CUI-041",
       "why": "A responsive header the stylesheet has no media query for."
-    },
-    {
-      "id": "CUI-030",
-      "why": "A section the gate has never once photographed. The record already specifies the fix."
     },
     {
       "id": "CUI-052",
