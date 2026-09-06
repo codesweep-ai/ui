@@ -3,15 +3,20 @@
   "title": "No stable styling hooks, so consumer overrides target generated class names",
   "type": "improvement",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "agents building two consumer apps against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "add-ledger, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "31b2728",
+      "5d4f99d",
+      "a49c3aa",
+      "7aa6ae7"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Every component named in the report now carries data-part: Tree on its scroller, rows, labels and icons; SectionedTree on its sections, headers and bodies; Panel on its header and body; MarkdownViewer on its scroller, document, outline, outline nav and minimap, with named rails for the collapsed panes. Table names its truncatable cell and Tooltip its bubble. npx vitest run: 615 passed across 61 files, including hook assertions in Tree.overflow, SectionedTree.chrome, Panel.scroll, Tooltip and MarkdownViewer.states. npm run docs:compile: 37 passed, which is what holds the MarkdownViewer parts to its specification. npm run check exit 0, visual:compare 94/94 with axe violations 0."
   },
   "resolution": null,
   "details": "Components carry `data-component` on their root and nothing on the structure beneath it. A consumer who has to reach inside one has only the generated class names, such as `cs-component-tree-142` and `cs-component-panel-20`. Those change on any rebuild, so the selector silently stops matching and the override quietly disappears.\n\nThe proposal is a stable `data-part` attribute on the structural elements, with values along the lines of `row`, `icon`, `scroller`, `header` and `body`, on Tree, SectionedTree, Panel and MarkdownViewer.\n\nThis is ranked high despite being an improvement. It is the escape hatch that every other record on this list is currently forced through, and it is an escape hatch that breaks on upgrade.\n\nWorked around in the consuming apps by targeting the generated names, which is the failure this record describes.",
@@ -27,6 +32,18 @@
     {
       "date": "2026-09-06",
       "text": "Panel now carries data-part on its header and body, added in a49c3aa alongside the overflow fix. MarkdownViewer is the last component on the list with none."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Closed across four commits rather than one, because each component gained its hooks alongside the change that needed them. That is also why it took until now to finish: the hooks were a means to an end each time rather than the job."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The MarkdownViewer panes are verified by docs:compile, since the specification's example now renders the outline and the minimap. The two rails are named in prose instead: a pane and its rail never appear together, so no single render can prove both and the gate would fail on whichever was absent."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "If you worked around this by targeting generated names such as cs-component-tree-142 or cs-component-panel-20, replace the selector with the data-part one and the override stops breaking on upgrade. That is the whole point of the record: the old selectors will keep changing."
     }
   ],
   "links": [

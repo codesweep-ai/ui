@@ -3,10 +3,6 @@
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-005",
-      "why": "The escape hatch every other record is currently forced through, and it breaks on any rebuild."
-    },
-    {
       "id": "CUI-006",
       "why": "A silent unstyled render is a bad failure mode for a design system, and one app shipped that way unnoticed."
     }
