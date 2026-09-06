@@ -78,7 +78,10 @@ When a *single* React element is passed as children, FormGroup clones it to forw
 | `aria-describedby`| The id of the helper or error span (error takes precedence). Does NOT overwrite a child-supplied value. |
 | `aria-invalid`    | `true` when `error` is set. Does NOT overwrite a child-supplied value. |
 | `required`        | Forwarded from FormGroup `required={true}`. Does NOT overwrite a child-supplied value. |
-| `error`           | `true` when FormGroup `error="…"` is set — the `Input` reads this as a boolean to paint the red border. Components that don't recognize this prop ignore it harmlessly. |
+
+FormGroup forwards no private prop. A control paints its error border from the
+`aria-invalid` above, which is the standard signal and reaches an element child
+and a component child alike.
 
 When multiple children are passed (or a fragment), the consumer is responsible for wiring these props themselves on the relevant control. The label's `htmlFor` is only set when the consumer explicitly supplies `htmlFor` to FormGroup, since the auto-generated id wouldn't be visible to know which child to bind.
 

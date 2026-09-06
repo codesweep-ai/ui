@@ -63,11 +63,17 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
       ...rest
     } = props;
 
+    // FormGroup marks an invalid child with aria-invalid rather than passing a
+    // private prop, so the border follows the ARIA state as well as `error`.
+    // A consumer using Input on its own still sets `error` directly.
+    const ariaInvalid = (props as { "aria-invalid"?: boolean | "true" | "false" })["aria-invalid"];
+    const invalid = error || ariaInvalid === true || ariaInvalid === "true";
+
     const wrapperClass = cn(
       "cs-component-input-21 ",
       "cs-component-input-22 ",
       "cs-component-input-23",
-      error
+      invalid
         ? "cs-component-input-24"
         : "cs-component-input-25 ",
       disabled && "cs-component-input-26 ",

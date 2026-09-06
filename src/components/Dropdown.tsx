@@ -45,12 +45,18 @@ function DropdownImpl({
   helper,
   error,
   "aria-label": ariaLabel,
+  "aria-invalid": ariaInvalidProp,
   ...selectProps
 }: DropdownProps) {
   const generatedId = useId();
   const controlId = id ?? generatedId;
   const isEmpty = options.length === 0;
   const hasError = !!error;
+  // FormGroup marks an invalid child with aria-invalid. Read it rather than
+  // overwrite it, so a Dropdown inside an errored FormGroup paints its border
+  // while the group keeps ownership of the message.
+  const invalid =
+    hasError || ariaInvalidProp === true || ariaInvalidProp === "true";
 
   const control = (
     <div id={`${controlId}-wrapper`} data-component="Dropdown" className={cn("cs-component-dropdown-6 ", className)}>
@@ -61,7 +67,7 @@ function DropdownImpl({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled || isEmpty}
         required={required}
-        aria-invalid={hasError || undefined}
+        aria-invalid={invalid || undefined}
         aria-label={ariaLabel ?? (!label ? placeholder ?? "Select option" : undefined)}
         data-testid={isEmpty ? "dropdown-empty" : undefined}
         className={cn(
@@ -72,7 +78,7 @@ function DropdownImpl({
           "cs-component-dropdown-12 ",
           "cs-component-dropdown-13 ",
           "cs-component-dropdown-14",
-          hasError
+          invalid
             ? "cs-component-dropdown-15 "
             : "cs-component-dropdown-16 ",
           disabled && "cs-component-dropdown-17 ",

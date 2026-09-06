@@ -53,15 +53,15 @@ function FormGroupImpl({
   const describedBy = errorId ?? helperId;
 
   // If a single React element is passed, clone it to forward id / aria props.
-  // - DOM elements (input/select/textarea/...) receive DOM-safe attrs only.
-  // - Component children additionally receive `error` (boolean) so design-
-  //   system components like Input can paint their error border in sync.
+  // Every child gets the same DOM-safe attributes, whether it is an element or
+  // a component. A control paints its error border from `aria-invalid`, which
+  // is the standard signal and is already forwarded here, so nothing private
+  // passes between FormGroup and the controls it wraps.
   // Composite children (multiple nodes, fragments) are rendered as-is.
   const childArr = Children.toArray(children);
   let enhancedChildren: React.ReactNode = children;
   if (childArr.length === 1 && isValidElement(childArr[0])) {
     const child = childArr[0] as React.ReactElement<Record<string, unknown>>;
-    const isDomElement = typeof child.type === "string";
     const next: Record<string, unknown> = {
       id: (child.props.id as string | undefined) ?? controlId,
       "aria-describedby":
@@ -73,10 +73,6 @@ function FormGroupImpl({
         (child.props.required as boolean | undefined) ??
         (required || undefined),
     };
-    if (!isDomElement) {
-      next.error =
-        (child.props.error as boolean | undefined) ?? (error ? true : undefined);
-    }
     enhancedChildren = cloneElement(child, next);
   }
 

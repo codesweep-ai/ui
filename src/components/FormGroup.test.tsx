@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { FormGroup } from "./FormGroup";
 import { Input } from "./Input";
+import { Dropdown } from "./Dropdown";
 
 describe("FormGroup", () => {
   it("renders label above the control", () => {
@@ -99,7 +100,7 @@ describe("FormGroup", () => {
     expect(screen.getByPlaceholderText("x").getAttribute("aria-invalid")).toBe("true");
   });
 
-  it("forwards error prop to Input child (paints error border)", () => {
+  it("an Input in an errored group paints its error border", () => {
     const { container } = render(
       <FormGroup label="x" htmlFor="x" error="bad">
         <Input placeholder="x" />
@@ -107,6 +108,28 @@ describe("FormGroup", () => {
     );
     const wrapper = container.querySelector('[data-component="Input"]')!;
     expect(wrapper.className).toContain("cs-component-input-24");
+  });
+
+  // Dropdown declares `error` as the message string and renders its own
+  // FormGroup when it is set. While FormGroup forwarded a boolean `error`, a
+  // Dropdown inside an errored group read `true` as a message, wrapped itself
+  // in a second group, and rendered an alert containing nothing.
+  it("a Dropdown in an errored group paints its border and nests no second group", () => {
+    const { container } = render(
+      <FormGroup label="Plan" htmlFor="plan" error="Pick a plan.">
+        <Dropdown value="" onChange={() => {}} options={[{ value: "a", label: "A" }]} />
+      </FormGroup>,
+    );
+
+    expect(container.querySelectorAll('[data-component="FormGroup"]')).toHaveLength(1);
+
+    const alerts = [...container.querySelectorAll('[role="alert"]')];
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0].textContent).toBe("Pick a plan.");
+
+    const select = container.querySelector("select")!;
+    expect(select.getAttribute("aria-invalid")).toBe("true");
+    expect(select.className).toContain("cs-component-dropdown-15");
   });
 
   it("label's htmlFor is set only when consumer provides htmlFor", () => {
