@@ -52,13 +52,18 @@ function StreamingTextImpl({
   const firedDoneRef = useRef(false);
 
   useEffect(() => {
+    // Reset above the branch, not below it. A new `text` has not fired its
+    // callback yet whether or not it is going to animate on the way there, and
+    // resetting after the early return left the ref true for every message
+    // after the first when motion is reduced.
+    firedDoneRef.current = false;
+
     if (done || prefersReducedMotion()) {
       setRevealed(text.length);
       return;
     }
     // Reset when the target text changes (new message).
     setRevealed((r) => Math.min(r, text.length));
-    firedDoneRef.current = false;
 
     if (speed <= 0) {
       setRevealed(text.length);

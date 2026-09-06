@@ -72,7 +72,8 @@ useEffect(() => {
 
 ### `onDone`
 
-Fires exactly once per `text` value, after the last character is revealed.
+Fires exactly once per `text` value, after the last character is revealed. An empty `text`
+reveals no characters and does not fire it.
 
 ### Reduced motion
 

@@ -117,6 +117,33 @@ describe("StreamingText", () => {
     expect(wrapper.textContent).toBe("motion-off");
   });
 
+  // The ref that keeps onDone to one call per text was reset below the early
+  // return for reduced motion, so it stayed true after the first message and
+  // no later text fired at all.
+  it("fires onDone for every text when motion is reduced", () => {
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      configurable: true,
+      value: (q: string) => ({
+        matches: true,
+        media: q,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        onchange: null,
+        dispatchEvent: () => false,
+      }),
+    });
+
+    const onDone = vi.fn();
+    const { rerender } = render(<StreamingText text="first" onDone={onDone} />);
+    expect(onDone).toHaveBeenCalledTimes(1);
+
+    rerender(<StreamingText text="second" onDone={onDone} />);
+    expect(onDone).toHaveBeenCalledTimes(2);
+  });
+
   it("merges className on the wrapper", () => {
     render(<StreamingText text="x" done className="custom-stream" />);
     expect(
