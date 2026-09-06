@@ -19,6 +19,10 @@
     {
       "date": "2026-09-06",
       "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The SplitPane bullet is done, in bfc6163. `components/SplitPane.md` now describes the hit area as the child element it is, `0.5rem` wide and offset `-0.25rem`, rather than a `::before` extending evenly on both sides. The Table, StatusBadge, Panel and placeholder bullets are still open."
     }
   ],
   "links": []

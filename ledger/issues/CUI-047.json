@@ -19,6 +19,10 @@
     {
       "date": "2026-09-06",
       "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The SplitPane bullet is done, in bfc6163. The States table now says a collapsed pane is not rendered, and an edge case says what that costs: scroll position, focus and uncontrolled input inside it are discarded. The other eight bullets are still open."
     }
   ],
   "links": []

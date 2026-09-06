@@ -3,15 +3,17 @@
   "title": "SplitPane's keyboard resize clamps against the bound it is moving away from",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "SplitPane pass, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "7b6d87d"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Reverting the fix fails exactly the new test and nothing else. `npx vitest run src/components/SplitPane.test.tsx` exits 1 on `clamps the keyboard resize when the handle sizes the right pane`, and exits 0 with the fix in place. The test drives a SplitPane whose left pane is flex-fill. It holds ArrowLeft six times against a 320px maximum and reads `aria-valuenow` 320, then holds ArrowRight twenty times against a 200px minimum and reads 200. Unclamped those reach 360 and 120. `npm run ci` exits 0 reporting every gate ran, with 625 tests passing where 624 passed before, visual:compare 94/94 at 0 differing pixels, and axe violations 0."
   },
   "resolution": null,
   "details": "`resolvePane` returns `direction: -1` when the left pane is the flex-fill one, because the handle then sizes the pane on its right (`src/components/SplitPane.tsx:45`).\n\nThe arrow handlers do not account for that sign. `SplitPane.tsx:107` computes `Math.min(max, currentWidth + step * direction)` for ArrowRight, and `:108` computes `Math.max(min, currentWidth - step * direction)` for ArrowLeft. With `direction` at -1, each key is clamped against the bound it is moving away from. Holding ArrowLeft grows the pane past `maxWidth` without limit, and holding ArrowRight shrinks it below `minWidth`.\n\nThe arrows are also inverted against the key table at `components/SplitPane.md:96`, which gives ArrowLeft as decrease and ArrowRight as increase.\n\nPointer drag clamps correctly at `SplitPane.tsx:137`, so only the keyboard path is affected. That is the accessible path, which makes it the worse half to have broken.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-06",
       "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Fixed by clamping between both bounds, which is what pointer drag already did. The arrow keys were not inverted after all: they move the handle, and the width that changes belongs to whichever pane is fixed. The key table said the arrows change a width without saying whose, so it now says. Handled in one pass with the SplitPane items in CUI-044 and CUI-047."
     }
   ],
   "links": []

@@ -1,14 +1,14 @@
 {
-  "recommendedBy": "session agent, after a three-way review of the component specifications",
+  "recommendedBy": "session agent, working one component at a time",
   "updated": "2026-09-06",
   "items": [
     {
-      "id": "CUI-032",
-      "why": "The only open high: keyboard resize is unbounded, and the keyboard is the accessible path."
+      "id": "CUI-038",
+      "why": "Next pass is Input, which carries CUI-039 and the placeholder bullet of CUI-044 with it."
     },
     {
       "id": "CUI-042",
-      "why": "The specification itself sends a consumer to the wrong stylesheet, which is CUI-006's failure with a documented cause."
+      "why": "Skeleton sends a consumer to the wrong stylesheet, which is CUI-006's failure with a documented cause."
     },
     {
       "id": "CUI-006",
@@ -24,7 +24,7 @@
     },
     {
       "id": "CUI-029",
-      "why": "An alert that announces nothing, newly visible now the Form pattern can error at all."
+      "why": "Needs your call on which convention wins before the Dropdown pass can finish."
     },
     {
       "id": "CUI-030",
