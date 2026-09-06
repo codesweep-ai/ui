@@ -3,15 +3,17 @@
   "title": "A Dropdown inside an errored FormGroup nests a second FormGroup and renders an empty alert",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while verifying the Form pattern fix for CUI-020",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-06",
+  "stint": "FormGroup pass, 2026-09-06",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "c210ac2"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Reverting the change fails exactly the new test and nothing else: `npx vitest run src/components/FormGroup.test.tsx` exits 1 on `a Dropdown in an errored group paints its border and nests no second group`, and exits 0 with it, 17 tests passing. Measured in the built preview after a failed submit of the Form pattern, before the fix: 6 FormGroup elements for 5 fields, and 5 alerts of which one was empty, the empty one nested inside the Plan group. `npm run ci` exits 0 with every gate run, 626 tests, visual:compare 94/94 at 0 differing pixels, axe violations 0, so the change is visually inert."
   },
   "resolution": null,
   "details": "FormGroup forwards `error` to component children as a boolean, deliberately, so a design system control can paint its error border in sync with the message. Dropdown declares `error` as a string, the message to show.\n\nSo a Dropdown inside a FormGroup with an error receives `error={true}`, reads it as a message, takes its chrome branch and renders a second FormGroup inside the first. That inner group renders `<span role=\"alert\">{true}</span>`, and React renders nothing for `true`, so the page carries a live region that announces nothing.\n\nMeasured in the Form pattern after a failed submit: six FormGroup elements for five fields, and five alert elements of which one is empty. The empty one is the nested group around the plan Dropdown. A screen reader meets an alert with no text, and the DOM carries a duplicated field wrapper.\n\nThe fix is a judgement about which convention wins. Dropdown could treat a boolean error as paint the border and render no chrome, which keeps both props as documented. Or FormGroup could stop forwarding to children that declare a string error. The first is smaller and keeps each component's documented contract intact.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-06",
       "text": "Found because fixing CUI-020 made the error states reachable for the first time, so this had never been observable: no error ever rendered in that pattern. Anchors: FormGroup.tsx:77-78 forwards the boolean, Dropdown.tsx:31 declares the string, Dropdown.tsx:108 branches on truthiness."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The repository owner chose the third option rather than either in the original record. FormGroup now forwards no private prop at all. Input and Dropdown both paint their error border from `aria-invalid`, which FormGroup already forwarded and which reaches an element child and a component child alike. Dropdown never receives a boolean `error`, so the nested group cannot recur, and Dropdown keeps its documented string prop for standalone use."
     }
   ],
   "links": [

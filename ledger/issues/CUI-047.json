@@ -23,6 +23,10 @@
     {
       "date": "2026-09-06",
       "text": "The SplitPane bullet is done, in bfc6163. The States table now says a collapsed pane is not rendered, and an edge case says what that costs: scroll position, focus and uncontrolled input inside it are discarded. The other eight bullets are still open."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "The FormGroup error-forwarding bullet is done, in c210ac2. FormGroup forwards no private prop now, so the Behavior table no longer claims one, and the question of whether it reaches a native child does not arise. The `label` bullet on the same component is still open, along with the other seven."
     }
   ],
   "links": []

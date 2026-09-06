@@ -23,8 +23,8 @@
       "why": "Reduced motion silently breaks any consumer chaining messages off onDone."
     },
     {
-      "id": "CUI-029",
-      "why": "Needs your call on which convention wins before the Dropdown pass can finish."
+      "id": "CUI-036",
+      "why": "A minimap that mounts before its content draws nothing, ever."
     },
     {
       "id": "CUI-030",
