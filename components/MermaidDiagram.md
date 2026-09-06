@@ -16,8 +16,8 @@ avoid_when:
 related: [MarkdownViewer, ChartFrame]
 patterns: [MarkdownViewer]
 note: >
-  Mermaid's securityLevel is "loose" — treat the chart prop as trusted input
-  and sanitize before passing user-submitted Mermaid source.
+  Mermaid runs at securityLevel "strict" with HTML labels off, so click
+  directives in a chart do not fire.
 ---
 
 # MermaidDiagram
@@ -82,11 +82,13 @@ Uses React's `useId()` (with colons stripped) to produce a stable, unique render
 
 ### Security
 
-`mermaid.initialize({ securityLevel: "loose" })` — allows HTML and click handlers in node labels. Consumers MUST treat the `chart` prop as trusted source (don't pass user-submitted Markdown directly without sanitizing the Mermaid blocks).
+`mermaid.initialize({ securityLevel: "strict", htmlLabels: false })`. HTML in node labels is encoded rather than rendered, and click callbacks are disabled. A test pins the level, so a change to it is a deliberate one.
 
 ### Interaction (click handlers)
 
-The component applies the `bindFunctions` returned by `mermaid.render()` to the mounted SVG after each render (and after sketch styling). Mermaid only *returns* these handlers — they must be bound to the live DOM or `click` directives no-op. So a `click <nodeId> <callbackName>` directive in the chart fires `window.<callbackName>(<nodeId>)` on click (the node id is mermaid's internal id). Register the callback on `window` before/while the diagram is mounted.
+Not supported at the current security level. The component applies the `bindFunctions` returned by `mermaid.render()` to the mounted SVG after each render, which is what a `click <nodeId> <callbackName>` directive would need, but mermaid produces no click callbacks at `strict`. A chart written with one renders and does nothing.
+
+Supporting them means moving to `loose`, which also renders HTML in node labels and makes the `chart` prop a trusted input. That is a security trade-off rather than a setting to flip.
 
 ## Persistence
 
@@ -97,6 +99,8 @@ None.
 - `mermaid` (v11+) — the rendering engine
 - `lucide-react` `AlertTriangle` for the error icon
 - CSS classes `md-mermaid`, `md-mermaid-error`, `md-mermaid-error__header`, `md-mermaid-error__code` — defined in `src/styles/markdown-content.css`
+- Also emitted, and carrying no rules of their own: `md-mermaid-error__message` on the error text,
+  and `md-mermaid--sketch` on the root in sketch mode. Both are available to a consumer as hooks
 
 Consumers using `MermaidDiagram` must import the markdown CSS:
 

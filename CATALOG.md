@@ -217,7 +217,7 @@ Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-
 - use when: Showing an agent-architecture diagram in the hand-drawn motif (sketch={true})
 - avoid when: General chart/data visualization → ChartFrame
 - avoid when: Static SVG or image → use an img/svg element directly
-- ⚠ Mermaid's securityLevel is "loose" — treat the chart prop as trusted input and sanitize before passing user-submitted Mermaid source.
+- ⚠ Mermaid runs at securityLevel "strict" with HTML labels off, so click directives in a chart do not fire.
 - related: MarkdownViewer, ChartFrame · patterns: MarkdownViewer
 - spec: [components/MermaidDiagram.md](components/MermaidDiagram.md)
 

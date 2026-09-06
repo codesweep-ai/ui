@@ -792,7 +792,7 @@
       "patterns": [
         "MarkdownViewer"
       ],
-      "note": "Mermaid's securityLevel is \"loose\" — treat the chart prop as trusted input and sanitize before passing user-submitted Mermaid source."
+      "note": "Mermaid runs at securityLevel \"strict\" with HTML labels off, so click directives in a chart do not fire."
     },
     {
       "spec": "components/Modal.md",
