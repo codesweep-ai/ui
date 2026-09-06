@@ -19,6 +19,10 @@
     {
       "date": "2026-09-06",
       "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    },
+    {
+      "date": "2026-09-06",
+      "text": "Attempted and reverted, because the one-line fix is not visually inert. Adding `position: relative` to the Card root fails the visual gate at 90 of 94: `code-block` changes 1.79% and 1.82% of pixels, and `mermaid-diagram` 0.53% and 0.64%, in light and dark. The captures keep their dimensions, and no whole-pixel shift explains the difference: comparing the new render against the baseline at every offset from -2 to +2 in both axes, the smallest difference is at zero offset. So the text is rasterised differently rather than moved, which is what promoting the card to a containing block does to the subpixel positions of its descendants. Accepting the fix means re-recording four captures for a containing block nothing in the library currently uses. Correcting the specification instead costs nothing and leaves a consumer without the anchor. That is a decision for the repository owner."
     }
   ],
   "links": []
