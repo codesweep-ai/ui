@@ -684,6 +684,7 @@ function MarkdownViewerImpl<Extra extends object>({
       {outline && !outlineCollapsed && (
         <>
           <div
+            data-part="outline"
             className="cs-component-markdown-viewer-136 "
             style={{ width: outlineWidth }}
           >
@@ -700,7 +701,7 @@ function MarkdownViewerImpl<Extra extends object>({
                 <PanelLeftClose className="cs-component-markdown-viewer-112 " />
               </button>
             </div>
-            <nav ref={outlineNavRef} className="cs-component-markdown-viewer-140 ">
+            <nav data-part="outline-nav" ref={outlineNavRef} className="cs-component-markdown-viewer-140 ">
               {headings.map((h, i) => (
                 <button
                   key={`${h.slug}-${i}`}
@@ -737,7 +738,7 @@ function MarkdownViewerImpl<Extra extends object>({
 
       {/* Outline collapsed toggle */}
       {outline && outlineCollapsed && (
-        <div className="cs-component-markdown-viewer-154 ">
+        <div data-part="outline-rail" className="cs-component-markdown-viewer-154 ">
           <button
             onClick={() => setOutlineCollapsed(false)}
             className="cs-component-markdown-viewer-155 "
@@ -749,8 +750,8 @@ function MarkdownViewerImpl<Extra extends object>({
       )}
 
       {/* Content area */}
-      <div ref={contentRef} className={inline ? "cs-component-markdown-viewer-156" : "cs-component-markdown-viewer-157 "}>
-        <article data-markdown-content="" className={`${inline ? "markdown-content" : "markdown-content cs-component-markdown-viewer-159"}${density === "dense" ? " markdown-content--dense" : ""}`}>
+      <div data-part="scroller" ref={contentRef} className={inline ? "cs-component-markdown-viewer-156" : "cs-component-markdown-viewer-157 "}>
+        <article data-part="content" data-markdown-content="" className={`${inline ? "markdown-content" : "markdown-content cs-component-markdown-viewer-159"}${density === "dense" ? " markdown-content--dense" : ""}`}>
           <Renderer
             {...(viewerProps as Extra)}
             content={escapeMarkdownHtml(content)}
@@ -761,7 +762,7 @@ function MarkdownViewerImpl<Extra extends object>({
 
       {/* Minimap collapsed toggle */}
       {minimap && minimapCollapsed && (
-        <div className="cs-component-markdown-viewer-160 ">
+        <div data-part="minimap-rail" className="cs-component-markdown-viewer-160 ">
           <button
             onClick={() => setMinimapCollapsed(false)}
             className="cs-component-markdown-viewer-155 "
@@ -775,6 +776,7 @@ function MarkdownViewerImpl<Extra extends object>({
       {/* Minimap panel */}
       {minimap && (
         <div
+          data-part="minimap"
           className="cs-component-markdown-viewer-161 "
           style={{ width: minimapCollapsed ? 0 : MINIMAP_WIDTH }}
         >

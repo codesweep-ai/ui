@@ -103,6 +103,10 @@ Suppresses the outer full-height flex wrapper, the content area's flex/overflow 
 ### GitHub Alerts
 5 variants: note, tip, important, warning, caution — each with left border color, tinted background, icon + title row.
 
+A collapsed pane is replaced by a rail, `data-part="outline-rail"` or `data-part="minimap-rail"`.
+A pane and its rail are never in the DOM together, which is why the rails are named here rather than
+under Traceability: no single render carries both.
+
 ## Behavior
 
 ### Scroll Sync
@@ -187,6 +191,9 @@ Without this import, markdown elements will render unstyled.
 ## Traceability
 
 - Root: `data-component="MarkdownViewer"`.
+- Structural parts, for a consumer who has to reach inside: `data-part="scroller"` around the
+  document, `data-part="content"` on the document itself, `data-part="outline"` with
+  `data-part="outline-nav"` inside it, and `data-part="minimap"`.
 - Rendered prose region: `data-markdown-content`.
 - Paragraphs: `data-markdown-paragraph`.
 - Ordered and unordered lists: `data-markdown-list="ordered"` and `data-markdown-list="unordered"`.
@@ -207,6 +214,6 @@ checking for `dangerouslySetInnerHTML` on a markdown path.
 import { MarkdownViewer } from "@codesweep-ai/ui/markdown";
 import { MarkdownViewer as RichMarkdownViewer } from "@codesweep-ai/ui/markdown/rich";
 export function Example() {
-  return <><MarkdownViewer content={"# Scan result\n\nA paragraph.\n\n- Open\n- Closed\n\n1. First\n2. Second\n\n> Review complete."} /><RichMarkdownViewer content="| Result |\n| --- |\n| Pass |" rehypePlugins={[]} /></>;
+  return <><MarkdownViewer outline minimap content={"# Scan result\n\nA paragraph.\n\n- Open\n- Closed\n\n1. First\n2. Second\n\n> Review complete."} /><RichMarkdownViewer content="| Result |\n| --- |\n| Pass |" rehypePlugins={[]} /></>;
 }
 ```

@@ -95,3 +95,32 @@ describe("MarkdownViewer — empty state", () => {
     expect(screen.queryByTestId("markdownviewer-empty")).not.toBeInTheDocument();
   });
 });
+
+describe("MarkdownViewer styling hooks", () => {
+  it("names its structural parts so an override need not use a generated class", () => {
+    const { container } = render(
+      <MarkdownViewer content={"# One\n\ntext\n\n## Two"} outline minimap />,
+    );
+
+    expect(container.querySelector('[data-part="outline"]')).not.toBeNull();
+    expect(container.querySelector('[data-part="outline-nav"]')).not.toBeNull();
+    expect(container.querySelector('[data-part="scroller"]')).not.toBeNull();
+    expect(container.querySelector('[data-part="content"]')).not.toBeNull();
+    expect(container.querySelector('[data-part="minimap"]')).not.toBeNull();
+  });
+
+  it("names the rails that stand in for a collapsed pane", () => {
+    const { container } = render(
+      <MarkdownViewer
+        content={"# One\n\ntext"}
+        outline
+        minimap
+        outlineCollapsed
+        minimapCollapsed
+      />,
+    );
+
+    expect(container.querySelector('[data-part="outline-rail"]')).not.toBeNull();
+    expect(container.querySelector('[data-part="minimap-rail"]')).not.toBeNull();
+  });
+});
