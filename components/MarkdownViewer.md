@@ -37,6 +37,9 @@ Markdown renderer with heading outline navigation and canvas minimap. `@codeswee
 | `minimapCollapsed` | `boolean` | `false` | Initial collapsed state of minimap |
 | `onLinkClick` | `(href: string) => void` | — | Handler for internal (non-http, non-anchor) link clicks |
 | `codeRenderers` | `Record<string, ComponentType<{ code: string }>>` | — | Custom renderers for specific code block languages |
+| `onImageSrc` | `(src: string) => Promise<string \| undefined> \| string \| undefined` | — | Resolve an image `src` before it renders, synchronously or asynchronously |
+| `onHeadingNavigate` | `(slug: string) => void` | — | Called with the heading slug when the outline navigates to a heading |
+| `initialHeading` | `string \| null` | — | Heading id to scroll to on mount, and again whenever it changes |
 | `inline` | `boolean` | `false` | Render as an inline embed — no internal scroll, no outline/minimap panels (suppressed even if requested), flows with the parent's natural layout. Use for embedding rendered markdown inside a scrollable page where the outer page is the only scroll surface. |
 | `density` | `"default" \| "dense"` | `"default"` | Compact prose and heading scale for narrow detail panes. |
 | `className` | `string` | — | Additional CSS class on root element |
@@ -88,12 +91,13 @@ Suppresses the outer full-height flex wrapper, the content area's flex/overflow 
 - Heading items indented by level: `paddingLeft: (level - minLevel) * 12 + 12`px
 - Active heading: `background: var(--color-accent-bg-strong)` and `color: var(--fg)`
 - **Resizable**: drag the right edge to resize (default 200px, min 120px, max 400px). Uses the same pointer-event drag pattern as `SplitPane` — accent highlight stripe on hover, `col-resize` cursor
-- Collapsed: width transitions to 0, small `PanelLeftOpen` button on content edge
+- Collapsed: the panel is unmounted, and a rail takes its place carrying a small `PanelLeftOpen` button on the content edge
 
 ### Minimap Panel
 - Header: "Minimap" label + `PanelRightClose`/`PanelRightOpen` toggle
 - Canvas renders heading blocks (wider, `--muted` color) and content blocks (narrower, `--border` color)
 - Viewport indicator: semi-transparent rect with `--color-accent-bg-strong` fill and `--color-link` stroke
+- Collapsed: the panel stays in the DOM at `width: 0`, and a rail with a `PanelRightOpen` button renders beside it
 
 ### Code Blocks
 - Rounded container with header bar (language label + copy button) and code area
@@ -103,9 +107,10 @@ Suppresses the outer full-height flex wrapper, the content area's flex/overflow 
 ### GitHub Alerts
 5 variants: note, tip, important, warning, caution — each with left border color, tinted background, icon + title row.
 
-A collapsed pane is replaced by a rail, `data-part="outline-rail"` or `data-part="minimap-rail"`.
-A pane and its rail are never in the DOM together, which is why the rails are named here rather than
-under Traceability: no single render carries both.
+A collapsed pane gains a rail, `data-part="outline-rail"` or `data-part="minimap-rail"`. The two
+panes do not collapse the same way. A collapsed outline is unmounted, so it and its rail are never
+in the DOM together. A collapsed minimap stays at `width: 0` beside its rail, so
+`[data-part="minimap"]` still matches and is not proof that the pane is showing.
 
 ## Behavior
 
@@ -182,7 +187,7 @@ Without this import, markdown elements will render unstyled.
 
 ## Edge Cases
 
-- **Empty content**: Renders empty article, outline shows no headings
+- **Empty content**: Renders the empty block described under State coverage, not an empty article. The outline shows no headings
 - **No headings**: Outline panel shows empty nav, still collapsible
 - **Unconfigured code-fence language**: Renders as a plain fenced code block
 - **Very long documents**: Canvas minimap scales proportionally, viewport indicator shrinks
