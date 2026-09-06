@@ -39,8 +39,13 @@ pass first. `npm run ledger` runs the check half.
 
 `cs-ledger` is a Go binary from
 [codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) rather than a
-dependency of this package. `npm run ci` does not gate on it, so a clone without
-it still passes every other gate.
+dependency of this package. `npm run ci` does not gate on it, so a clone
+without it still passes every other gate. CI does gate on it: the
+`ledger check` job in `ci.yml` installs a pinned version and runs it.
+
+That pin is not decoration. `check` compares the committed page against the
+renderer that wrote it, so a newer binary reports a good page as stale. Moving
+the pin means re-rendering `ledger.html` in the same commit.
 
 ## Before you push
 

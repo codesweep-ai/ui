@@ -108,6 +108,34 @@ jobs:
       - run: npx puppeteer browsers install chrome
       - run: npm run preview:rich-check
 
+  # The ledger's freshness gate. CONTRIBUTING.md asks for a render and a check
+  # before every commit that touches ledger/, and until this job nothing enforced
+  # it: ledger.html is generated, so a record edited without a re-render reaches
+  # main as a page that disagrees with its own JSON.
+  #
+  # cs-ledger is a Go binary rather than a dependency of this package, which is
+  # why it is installed here and nowhere else. `npm run check` stays runnable on
+  # a clone that has no Go, and `npm run ledger` is the local half for anyone who
+  # does.
+  #
+  # The version is pinned, and has to be. `check` compares the committed page
+  # against the renderer that wrote it, so a newer binary reports a perfectly
+  # good page as coming from a different renderer. Moving the pin means
+  # re-rendering the page in the same commit.
+  ledger:
+    name: ledger check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+      - name: install the pinned cs-ledger and check the ledger
+        run: |
+          go install github.com/codesweep-ai/ledger/cmd/cs-ledger@v0.0.0-20260826154712-f3d4cf8989eb
+          "$(go env GOPATH)/bin/cs-ledger" check
+
   oss:
     name: open-source readiness
     runs-on: ubuntu-latest
