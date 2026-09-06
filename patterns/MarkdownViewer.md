@@ -171,7 +171,7 @@ function DocBrowser({ tree, documents }) {
           children: doc ? (
             <MarkdownViewer content={doc.content} outline minimap />
           ) : (
-            <div className="h-full flex items-center justify-center [color:var(--muted)]">
+            <div className="docs-empty">
               Select a document
             </div>
           ),
@@ -179,6 +179,18 @@ function DocBrowser({ tree, documents }) {
       ]}
     />
   );
+}
+```
+
+The class the example uses, in plain CSS:
+
+```css
+.docs-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--muted);
 }
 ```
 

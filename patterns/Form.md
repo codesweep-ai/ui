@@ -35,7 +35,7 @@ Don't render a `<label>` or helper text manually next to an input. FormGroup aut
 
 ## Stacking
 
-Forms are vertical stacks of FormGroups. Use `display: flex; flex-direction: column; gap: var(--space-4)` on the form container (or use a wrapper component if one emerges).
+Forms are vertical stacks of FormGroups.
 
 ```tsx
 <form
@@ -55,6 +55,16 @@ Forms are vertical stacks of FormGroups. Use `display: flex; flex-direction: col
 </form>
 ```
 
+The class the example uses, in plain CSS:
+
+```css
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+```
+
 ### When to use a two-column grid
 
 Switch to a two-column layout only when:
@@ -71,6 +81,14 @@ Switch to a two-column layout only when:
     <Input />
   </FormGroup>
 </div>
+```
+
+```css
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
 ```
 
 Otherwise stack single-column. A single-column form is faster to scan and works on every screen width.
@@ -135,6 +153,23 @@ For forms with >5 fields, render a summary block above the submit button that li
     </ul>
   </div>
 )}
+```
+
+The classes the summary uses, in plain CSS:
+
+```css
+.form-error-summary {
+  padding: var(--space-3);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+.form-error-list {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-4);
+}
 ```
 
 ## Submit button placement

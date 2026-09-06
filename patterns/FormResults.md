@@ -88,6 +88,7 @@ The form Card is pinned at the top (`flex-shrink: 0`) so it is always visible. R
 | `--color-accent`  | Search button background        |
 | `--border`              | Input, Card borders             |
 | `--bg`, `--card`        | Input and Card backgrounds      |
+| `--content-width-sm`    | Search field's minimum width    |
 
 ## State
 
@@ -145,7 +146,7 @@ function SearchPage() {
   );
 
   return (
-    <div className="h-full flex flex-col min-h-0">
+    <div className="form-results-shell">
       {/* Pinned form */}
       <div className="form-results-toolbar">
         <Card header="Code Search">
@@ -158,7 +159,7 @@ function SearchPage() {
               onSearch={handleSearch}
               placeholder="Search for code..."
               minChars={3}
-              className="flex-1 min-w-[200px]"
+              className="form-results-search"
             />
           </div>
         </Card>
@@ -168,7 +169,7 @@ function SearchPage() {
       <div className="form-results-scroll">
         {results !== null && (
           <div className="form-results-list">
-            <span className="[font-size:var(--font-size-body)] [color:var(--muted)]">
+            <span className="form-results-count">
               {results.length} result{results.length !== 1 ? "s" : ""}
             </span>
             {results.length === 0 ? (
@@ -181,7 +182,7 @@ function SearchPage() {
                   <div className="form-result-content">
                     <div className="form-result-heading">
                       <StatusBadge label={r.relevanceLabel} status={r.relevance} />
-                      <span className="[font-size:var(--font-size-caption)] [color:var(--muted)] font-mono">
+                      <span className="form-result-location">
                         <HighlightText text={`${r.file}:${r.line}`} query={query} />
                       </span>
                     </div>
@@ -202,6 +203,77 @@ function SearchPage() {
   );
 }
 ```
+
+The classes the example uses, in plain CSS:
+
+```css
+.form-results-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.form-results-toolbar {
+  flex-shrink: 0;
+}
+
+.form-results-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.form-results-search {
+  flex: 1;
+  min-width: var(--content-width-sm);
+}
+
+.form-results-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-top: var(--space-4);
+}
+
+.form-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.form-results-count {
+  font-size: var(--font-size-body);
+  color: var(--muted);
+}
+
+.form-results-empty {
+  padding: var(--space-4);
+  color: var(--muted);
+}
+
+.form-result-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-result-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.form-result-location {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-caption);
+  color: var(--muted);
+}
+```
+
+`min-height: 0` on the shell and the scroller is what makes the results scroll
+instead of pushing the toolbar off screen. A flex child defaults to
+`min-height: auto` and refuses to shrink below its content.
 
 ## Variants
 

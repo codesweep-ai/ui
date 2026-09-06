@@ -64,22 +64,28 @@ Card + Recharts PieChart (donut, token-styled)
 The filter sidebar and chart are visually separated by a `border-right` on the filter column. Only the filter sidebar gets `overflow-y: auto` — the chart column uses `overflow: hidden` since its content should fit within the card height.
 
 ```css
-/* Flex row — fixed height so the filter column can scroll */
-display: flex;
-gap: var(--space-4);
-height: 24rem;          /* h-96 — adjust to your content */
+/* Fixed height, so the filter column has something to scroll within. */
+.dashboard-chart-layout {
+  display: flex;
+  gap: var(--space-4);
+  height: 24rem;
+}
 
-/* Filter column — scrollable (checkbox list can exceed card height) */
-width: 11rem;           /* w-44 */
-flex-shrink: 0;
-border-right: 1px solid var(--border);
-padding-right: var(--space-4);
-overflow-y: auto;
+/* The checkbox list can exceed the card height, so this column scrolls. */
+.dashboard-filter {
+  width: 11rem;
+  flex-shrink: 0;
+  padding-right: var(--space-4);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
 
-/* Chart column — clips, does NOT scroll */
-flex: 1;
-min-width: 0;
-overflow: hidden;
+/* The chart clips instead of scrolling. See the scroll-owner rule below. */
+.dashboard-chart-column {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
 ```
 
 **Important:** Each Card should have exactly **one scroll owner** — the single element that scrolls when content overflows. In a CardGroup, the Card body is the default scroll owner. When a card has a sidebar + content layout, only the sidebar (filter column) should add `overflow-y: auto`, because its checkbox list can grow beyond the card height. The chart column should use `overflow: hidden` — adding a second `overflow-y: auto` creates competing scrollbars that confuse users.
@@ -169,10 +175,10 @@ function Dashboard({ stats, chartData }) {
             key={s.label}
             className="dashboard-stat"
           >
-            <div className="[font-size:var(--font-size-stat)] font-bold [color:var(--fg)]">
+            <div className="dashboard-stat-value">
               {s.value}
             </div>
-            <div className="text-label-upper mt-1">{s.label}</div>
+            <div className="text-label-upper dashboard-stat-label">{s.label}</div>
           </div>
         ))}
       </div>
@@ -190,13 +196,42 @@ function Dashboard({ stats, chartData }) {
               filterPlaceholder="Find type..."
             />
           </div>
-          <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="dashboard-chart-column">
             <YourChartComponent data={filtered} />
           </div>
         </div>
       </Card>
     </div>
   );
+}
+```
+
+The classes the example uses, in plain CSS. The stat value sets no colour,
+because `base.css` already gives body text `var(--fg)`:
+
+```css
+.dashboard-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dashboard-stats {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.dashboard-stat {
+  flex: 1;
+}
+
+.dashboard-stat-value {
+  font-size: var(--font-size-stat);
+  font-weight: var(--font-weight-bold);
+}
+
+.dashboard-stat-label {
+  margin-top: var(--space-1);
 }
 ```
 
@@ -255,16 +290,53 @@ function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div className="dashboard-tooltip">
-      <div className="[font-size:var(--font-size-xs)] font-semibold [color:var(--fg)]">{label}</div>
+      <div className="dashboard-tooltip-label">{label}</div>
       {payload.map((entry: any) => (
         <div key={entry.name} className="dashboard-tooltip-row">
           <span className="dashboard-swatch" style={{ backgroundColor: entry.color }} />
-          <span className="[color:var(--muted)]">{entry.name}:</span>
-          <span className="[color:var(--fg)] font-mono">{entry.value.toLocaleString()}</span>
+          <span className="dashboard-tooltip-name">{entry.name}:</span>
+          <span className="dashboard-tooltip-value">{entry.value.toLocaleString()}</span>
         </div>
       ))}
     </div>
   );
+}
+```
+
+```css
+.dashboard-tooltip {
+  max-width: var(--chart-tooltip-max-width);
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-tooltip-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dashboard-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dashboard-tooltip-name {
+  color: var(--muted);
+}
+
+.dashboard-tooltip-value {
+  font-family: var(--font-family-mono);
+}
+
+.dashboard-swatch {
+  display: inline-block;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  border-radius: var(--radius-xs);
 }
 ```
 
@@ -290,6 +362,27 @@ function ChartLegend({ payload }: any) {
 }
 ```
 
+```css
+.dashboard-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.dashboard-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dashboard-legend-swatch {
+  display: inline-block;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  border-radius: var(--radius-xs);
+}
+```
+
 Pass it to every `<Legend>` via `content={<ChartLegend />}`.
 
 ### Chart container and scrolling
@@ -310,9 +403,18 @@ There are two sizing strategies for chart containers:
 </Card>
 ```
 
-- `height: var(--card-content-height)` provides the base height; a shorter Card body scrolls.
-- `flex: 1` with `min-height: 0` grows when Card is maximized.
-- Negative `var(--space-4)` margins bleed the chart to the card edges.
+```css
+.dashboard-chart-fixed {
+  flex: 1;
+  min-height: 0;
+  height: var(--card-content-height);
+  margin: calc(var(--space-4) * -1);
+}
+```
+
+`--card-content-height` provides the base height, and a shorter Card body
+scrolls. `flex: 1` with `min-height: 0` lets it grow when the Card is maximized.
+The negative margin bleeds the chart to the card edges.
 
 **Fit-to-card (no scroll)** — use when multiple cards share a single CardGroup row and vertical space is limited. The chart shrinks to fit the card's available height in the default view and expands when the card is maximized.
 
@@ -326,9 +428,16 @@ There are two sizing strategies for chart containers:
 </Card>
 ```
 
-- `height: 100%` fills whatever height the Card body provides.
-- `min-h-0` — allows shrinking below content size in flex layouts
-- Negative `var(--space-4)` margins bleed to the card edges.
+```css
+.dashboard-chart-fill {
+  height: 100%;
+  min-height: 0;
+  margin: calc(var(--space-4) * -1);
+}
+```
+
+`height: 100%` fills whatever height the Card body provides, and `min-height: 0`
+allows it to shrink below its content in a flex layout.
 
 **When to use which:**
 - Fixed base height when there is one CardGroup row or cards have generous vertical space

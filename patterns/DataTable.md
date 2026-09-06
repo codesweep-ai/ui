@@ -173,7 +173,7 @@ function PackageRegistry({ packages }: { packages: Package[] }) {
       width: "13%",
       searchValue: (r) => r.name,
       cell: (r, filterQuery) => (
-        <span className="font-medium">
+        <span className="data-table-name">
           <HighlightText text={r.name} query={filterQuery} />
         </span>
       ),
@@ -184,7 +184,7 @@ function PackageRegistry({ packages }: { packages: Package[] }) {
       width: "8%",
       searchValue: (r) => r.version,
       cell: (r, filterQuery) => (
-        <span className="[color:var(--muted)] font-mono [font-size:var(--font-size-caption)]">
+        <span className="data-table-version">
           <HighlightText text={r.version} query={filterQuery} />
         </span>
       ),
@@ -217,7 +217,7 @@ function PackageRegistry({ packages }: { packages: Package[] }) {
       header: "Description",
       searchValue: (r) => r.description,
       cell: (r, filterQuery) => (
-        <span className="[color:var(--muted)]">
+        <span className="data-table-muted">
           <HighlightText text={r.description} query={filterQuery} />
         </span>
       ),
@@ -240,12 +240,12 @@ function PackageRegistry({ packages }: { packages: Package[] }) {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
+    <div className="data-table-page">
       <div>
         <h2 className="data-table-heading">
           Package Registry
         </h2>
-        <p className="[font-size:var(--font-size-body)] [color:var(--muted)] mt-1">
+        <p className="data-table-lede">
           {packages.length} packages. Search, sort, and browse.
         </p>
       </div>
@@ -262,6 +262,43 @@ function PackageRegistry({ packages }: { packages: Package[] }) {
       />
     </div>
   );
+}
+```
+
+The classes the example uses, in plain CSS:
+
+```css
+.data-table-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.data-table-heading {
+  margin: 0;
+  font-size: var(--font-size-section-title);
+}
+
+.data-table-lede {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-body);
+  color: var(--muted);
+}
+
+.data-table-name {
+  font-weight: var(--font-weight-medium);
+}
+
+.data-table-version {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-caption);
+  color: var(--muted);
+}
+
+.data-table-muted {
+  color: var(--muted);
 }
 ```
 

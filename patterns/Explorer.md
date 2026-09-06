@@ -173,7 +173,7 @@ function Explorer() {
 
   return (
     <SplitPane
-      className="h-full"
+      className="explorer-shell"
       panes={[
         {
           id: "sidebar",
@@ -197,12 +197,12 @@ function Explorer() {
             <div className="explorer-detail">
               {content ? (
                 <Card header={content.title}>
-                  <p className="[color:var(--fg)] [font-size:var(--font-size-body)]">
+                  <p className="explorer-detail-body">
                     {content.body}
                   </p>
                 </Card>
               ) : (
-                <div className="h-full flex items-center justify-center [color:var(--muted)]">
+                <div className="explorer-empty">
                   Select an item from the tree
                 </div>
               )}
@@ -215,11 +215,37 @@ function Explorer() {
 }
 ```
 
+The classes the example uses, in plain CSS. `explorer-detail-body` sets only the
+size, because `base.css` already gives body text `var(--fg)`:
+
+```css
+.explorer-shell {
+  height: 100%;
+}
+
+.explorer-detail {
+  height: 100%;
+  padding: var(--space-4);
+}
+
+.explorer-detail-body {
+  font-size: var(--font-size-body);
+}
+
+.explorer-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--muted);
+}
+```
+
 ### Flipped variant (tree on right)
 
 ```tsx
 <SplitPane
-  className="h-full"
+  className="explorer-shell"
   panes={[
     { id: "content", children: <ContentArea /> },
     {

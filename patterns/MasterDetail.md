@@ -121,7 +121,7 @@ function MasterDetail({ records }) {
 
   return (
     <SplitPane
-      className="h-full"
+      className="master-detail-shell"
       panes={[
         {
           id: "list",
@@ -135,7 +135,7 @@ function MasterDetail({ records }) {
                   { id: "name", header: "Name", sortable: true, cell: (r) => r.name },
                   {
                     id: "package", header: "Package", sortable: true,
-                    cell: (r) => <span className="[color:var(--muted)]">{r.package}</span>,
+                    cell: (r) => <span className="master-detail-muted">{r.package}</span>,
                   },
                   {
                     id: "methods", header: "Methods", sortable: true,
@@ -165,11 +165,11 @@ function MasterDetail({ records }) {
                   <div className="master-detail-stack">
                     <div className="master-detail-heading">
                       <StatusBadge label={selected.status} status={selected.status} />
-                      <span className="[font-size:var(--font-size-caption)] [color:var(--muted)]">
+                      <span className="master-detail-package">
                         {selected.package}
                       </span>
                     </div>
-                    <p className="[color:var(--fg)] [font-size:var(--font-size-body)] leading-relaxed m-0">
+                    <p className="master-detail-description">
                       {selected.description}
                     </p>
                     <CodeBlock
@@ -180,7 +180,7 @@ function MasterDetail({ records }) {
                   </div>
                 </Card>
               ) : (
-                <div className="h-full flex items-center justify-center [color:var(--muted)]">
+                <div className="master-detail-empty">
                   Select an item from the table
                 </div>
               )}
@@ -190,6 +190,56 @@ function MasterDetail({ records }) {
       ]}
     />
   );
+}
+```
+
+The classes the example uses, in plain CSS. `master-detail-description` sets no
+colour, because `base.css` already gives body text `var(--fg)`:
+
+```css
+.master-detail-shell {
+  height: 100%;
+}
+
+.master-detail-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--space-4);
+}
+
+.master-detail-muted {
+  color: var(--muted);
+}
+
+.master-detail-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.master-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.master-detail-package {
+  font-size: var(--font-size-caption);
+  color: var(--muted);
+}
+
+.master-detail-description {
+  margin: 0;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-relaxed);
+}
+
+.master-detail-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--muted);
 }
 ```
 
@@ -297,10 +347,27 @@ SplitPane
 </div>
 ```
 
+```css
+.master-detail-halves {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+}
+
+.master-detail-half {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+```
+
 **Rules:**
-- Use `gap: var(--space-4)` between the halves, not borders.
-- Both halves use `flex: 1` so they split 50/50.
-- Each half scrolls independently — the table can be long without hiding the detail
+- Separate the halves with a gap, not a border.
+- `min-height: 0` is what lets each half scroll. A flex child defaults to
+  `min-height: auto`, which refuses to shrink below its content and pushes the
+  overflow outside the pane instead of scrolling it.
+- Each half scrolls independently, so the table can be long without hiding the detail.
 
 ## Interactions
 

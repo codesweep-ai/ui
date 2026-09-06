@@ -89,6 +89,16 @@ import {
 </section>
 ```
 
+The class the example uses, in plain CSS:
+
+```css
+.agent-activity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+```
+
 ## Relation to existing components
 
 - [`EventLanes`](../components/EventLanes.md) is the dense horizontal variant of agent activity, with a shared index axis and optional named lanes. AgentTrace is the verbose, vertical, expandable counterpart.
