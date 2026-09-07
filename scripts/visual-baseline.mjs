@@ -384,7 +384,16 @@ async function captureTheme(page, theme, outputDir) {
   }
   await screenshot(tree, path.join(outputDir, theme, "interaction-tree-arrow-navigation.png"));
 
-  const splitPane = section(page, "SplitPane").locator('[data-component="SplitPane"]');
+  // On its own page, because this capture is otherwise a photograph of
+  // everything the run did before it. The same drag on the same tree rendered
+  // three different images depending on history: one on a fresh page, another
+  // after the modal round trip, a third after the tree interaction. Worse, the
+  // last of those was not stable, and it is the one this capture was taking.
+  // A page of its own gives it the fresh-page rendering every time.
+  const dragPage = await page.context().newPage();
+  await dragPage.goto(`${PREVIEW_URL}&theme=${theme}`, { waitUntil: "networkidle" });
+  await dragPage.locator('[data-component="AppShell"]').waitFor();
+  const splitPane = section(dragPage, "SplitPane").locator('[data-component="SplitPane"]');
   const separator = splitPane.getByRole("separator").first();
   const beforeWidth = Number(await separator.getAttribute("aria-valuenow"));
   const box = await separator.boundingBox();
@@ -398,7 +407,7 @@ async function captureTheme(page, theme, outputDir) {
     button: 0,
     buttons: 1,
   });
-  await page.evaluate(({ x, y }) => {
+  await dragPage.evaluate(({ x, y }) => {
     window.dispatchEvent(new PointerEvent("pointermove", {
       clientX: x + 60,
       clientY: y,
@@ -418,12 +427,13 @@ async function captureTheme(page, theme, outputDir) {
       bubbles: true,
     }));
   }, pointer);
-  await page.waitForTimeout(100);
+  await dragPage.waitForTimeout(100);
   const afterWidth = Number(await separator.getAttribute("aria-valuenow"));
   if (afterWidth <= beforeWidth) {
     throw new Error(`${theme}: SplitPane drag did not increase width (${beforeWidth} -> ${afterWidth})`);
   }
   await screenshot(splitPane, path.join(outputDir, theme, "interaction-split-pane-drag.png"));
+  await dragPage.close();
 
   const axe = await new AxeBuilder({ page }).analyze();
   await writeFile(

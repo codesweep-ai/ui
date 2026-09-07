@@ -5,13 +5,6 @@
     {
       "id": "color-contrast",
       "impact": "serious",
-      "error": {
-        "message": "Element midpoint exceeds the grid bounds Skipping color-contrast rule.",
-        "stack": "Error: Element midpoint exceeds the grid bounds\n    at assert (eval at evaluate (:311:30), <anonymous>:7417:15)\n    at Grid.getCellFromPoint (eval at evaluate (:311:30), <anonymous>:15657:11)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16014:27)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16026:17)\n    at eval (eval at evaluate (:311:30), <anonymous>:17829:16)\n    at Array.map (<anonymous>)\n    at getTextElementStack (eval at evaluate (:311:30), <anonymous>:17828:26)\n    at _getBackgroundStack (eval at evaluate (:311:30), <anonymous>:24805:20)\n    at _getBackgroundColor (eval at evaluate (:311:30), <anonymous>:25171:22)\n    at _getBackgroundColor2 (eval at evaluate (:311:30), <anonymous>:25161:21)",
-        "name": "Error",
-        "ruleId": "color-contrast",
-        "method": "color-contrast#evaluate"
-      },
       "tags": [
         "cat.color",
         "wcag2aa",
@@ -29,32 +22,39 @@
       "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=playwright",
       "nodes": [
         {
-          "any": [],
-          "all": [],
-          "none": [
+          "any": [
             {
-              "id": "error-occurred",
+              "id": "color-contrast",
               "data": {
-                "message": "Element midpoint exceeds the grid bounds Skipping color-contrast rule.",
-                "stack": "Error: Element midpoint exceeds the grid bounds\n    at assert (eval at evaluate (:311:30), <anonymous>:7417:15)\n    at Grid.getCellFromPoint (eval at evaluate (:311:30), <anonymous>:15657:11)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16014:27)\n    at getRectStack (eval at evaluate (:311:30), <anonymous>:16026:17)\n    at eval (eval at evaluate (:311:30), <anonymous>:17829:16)\n    at Array.map (<anonymous>)\n    at getTextElementStack (eval at evaluate (:311:30), <anonymous>:17828:26)\n    at _getBackgroundStack (eval at evaluate (:311:30), <anonymous>:24805:20)\n    at _getBackgroundColor (eval at evaluate (:311:30), <anonymous>:25171:22)\n    at _getBackgroundColor2 (eval at evaluate (:311:30), <anonymous>:25161:21)",
-                "name": "Error",
-                "ruleId": "color-contrast",
-                "method": "color-contrast#evaluate"
+                "contrastRatio": 0,
+                "fontSize": "10.5pt (14px)",
+                "fontWeight": "normal",
+                "messageKey": "elmPartiallyObscured",
+                "expectedContrastRatio": "4.5:1"
               },
-              "relatedNodes": [],
-              "message": "Axe encountered an error; test the page for this type of problem manually",
-              "impact": "serious"
+              "relatedNodes": [
+                {
+                  "html": "<div role=\"group\" aria-label=\"File Explorer\" data-component=\"Panel\" class=\"cs-component-panel-4 \" style=\"width: 280px; transition: width var(--transition-normal);\">",
+                  "target": [
+                    "div[aria-label=\"File Explorer\"]"
+                  ]
+                }
+              ],
+              "impact": "serious",
+              "message": "Element's background color could not be determined because it's partially obscured by another element"
             }
           ],
+          "all": [],
+          "none": [],
           "impact": "serious",
-          "html": "<span data-part=\"label\" class=\"cs-component-tree-34\">package.json</span>",
+          "html": "<span data-part=\"label\" class=\"cs-component-tree-34\">main.tsx</span>",
           "target": [
-            ".cs-component-tree-25[data-tree-node-id=\"pf-package\"][aria-level=\"1\"] > .cs-component-tree-34[data-part=\"label\"]"
+            "div[data-tree-node-id=\"main-tsx\"] > .cs-component-tree-34[data-part=\"label\"]"
           ],
-          "failureSummary": "Fix all of the following:\n  Axe encountered an error; test the page for this type of problem manually"
+          "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it's partially obscured by another element"
         }
       ]
     }
   ],
-  "passes": 52
+  "passes": 53
 }
