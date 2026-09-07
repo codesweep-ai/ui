@@ -5,6 +5,12 @@ import { MarkdownViewer } from "./MarkdownViewer";
 import { MarkdownViewer as RichMarkdownViewer } from "../markdown/rich";
 import { markdownConformanceCorpus } from "../test/markdownConformance";
 
+function paragraphHtml(container: HTMLElement) {
+  const paragraph = container.querySelector("[data-markdown-paragraph]");
+  expect(paragraph).not.toBeNull();
+  return (paragraph as HTMLElement).innerHTML;
+}
+
 function articleHtml(container: HTMLElement) {
   const article = container.querySelector("article");
   expect(article).not.toBeNull();
@@ -95,5 +101,41 @@ describe.each([
     const { container } = render(<Viewer content={"an *unclosed marker"} />);
     expect(container.querySelectorAll("em")).toHaveLength(0);
     expect(container.querySelector("article")).toHaveTextContent("an *unclosed marker");
+  });
+});
+
+// The conformance claim above is bounded, and this is where it stops. CommonMark
+// matches a run of four or more markers with a stack of openers and closers whose
+// lengths decide the pairing, which the lightweight parser does not implement.
+// Guessing at it would trade a known disagreement for an obscure one, so the
+// corpus stops at three markers on purpose and the boundary is pinned here.
+//
+// Fixing the run matching is what makes these assertions fail. That is the
+// signal to delete them, and the note in components/MarkdownViewer.md with them.
+describe("MarkdownViewer emphasis — where the lightweight subset stops", () => {
+  it("agrees with the rich parser at three markers", () => {
+    const lightweight = render(<MarkdownViewer content={"***three***"} />);
+    const rich = render(<RichMarkdownViewer content={"***three***"} />);
+
+    expect(paragraphHtml(lightweight.container)).toBe(paragraphHtml(rich.container));
+  });
+
+  it("disagrees at four markers", () => {
+    const lightweight = render(<MarkdownViewer content={"****four****"} />);
+    const rich = render(<RichMarkdownViewer content={"****four****"} />);
+
+    expect(paragraphHtml(lightweight.container)).toBe("*<strong>*four</strong>**");
+    expect(paragraphHtml(rich.container)).toBe("<strong><strong>four</strong></strong>");
+  });
+
+  it("lets the stray markers reach the rest of the line", () => {
+    const { container } = render(
+      <MarkdownViewer content={"****four**** and ***three***"} />,
+    );
+
+    // The three-marker run renders correctly on its own, and not after this one.
+    expect(paragraphHtml(container)).toBe(
+      "*<strong>*four</strong><strong> and </strong><em>three</em>**",
+    );
   });
 });

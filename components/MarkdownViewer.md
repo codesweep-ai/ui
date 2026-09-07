@@ -184,6 +184,7 @@ Without this import, markdown elements will render unstyled.
 - `@codesweep-ai/ui/markdown/rich` — full `react-markdown`, `remark-gfm`, and `rehype-slug` pipeline plus consumer-selected plugins.
 - Consumer-selected renderers remain optional for syntax highlighting, diagrams, and math.
 - A shared conformance corpus is rendered through both entries and compared structurally. It includes a nested-list continuation at a table-cell boundary, an unclosed fence, and an escaped pipe inside inline code in a table row, emphasis in both markers, three markers reading as emphasis wrapping strong, and an intraword underscore that has to stay literal.
+- The lightweight subset stops at three emphasis markers. `****four****` renders as `*<strong>*four</strong>**` there, and as nested `<strong>` through the rich entry. The stray markers also re-pair with the rest of the line, so a later `***three***` on it renders wrongly too. The corpus stops at three for that reason, and a document needing longer runs wants the rich entry.
 
 ## Edge Cases
 
