@@ -1,0 +1,24 @@
+{
+  "id": "CUI-062",
+  "title": "The visual gate photographs whatever the mouse was last left over",
+  "type": "defect",
+  "severity": "med",
+  "status": "closed",
+  "foundBy": "session agent, while adding a Page section to the components page",
+  "opened": "2026-09-07",
+  "resolved": "2026-09-07",
+  "stint": "page layout mode, 2026-09-07",
+  "evidence": {
+    "commits": [
+      "42ba5b4"
+    ],
+    "integrated": [],
+    "verified": "Measured against the baseline at aa08dac with one working tree: `interaction-tree-arrow-navigation.png` differed by 7485 pixels in the light theme and 7483 in the dark before the fix, and by 32 and 30 after it. Two `npm run visual:capture` runs with nothing changed between them produced byte-identical files, so the difference was the pointer rather than noise. `npm run ci` exits 0 at 645a59e."
+  },
+  "resolution": null,
+  "details": "`scripts/visual-baseline.mjs` clicks Open Modal to photograph the dialog, and Playwright leaves the real pointer where it clicked. Every capture taken after that point photographs whatever then sits under it.\n\nAdding one section to the components page moved a `Tree` row under that pointer. `interaction-tree-arrow-navigation.png` then differed by 7541 pixels, and none of it was a Tree change. The row had gained `--color-row-hover`, which is `rgba(0, 0, 0, 0.04)` in the light theme. That shifts a light row by 4 to 15 units per channel, which is the magnitude the diff measured.\n\nThe gate allows no difference at all, so a capture like that has to be re-recorded before a run passes. A reviewer reading the diff sees a Tree that moved. The cause is a pointer nobody moved away.\n\nParking the pointer at the top left corner before the tree interaction drops the same capture to 32 differing pixels, which is antialiasing from the section added above it.",
+  "notes": [],
+  "links": [
+    "CUI-055"
+  ]
+}

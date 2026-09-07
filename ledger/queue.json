@@ -1,5 +1,5 @@
 {
-  "recommendedBy": "session agent, after the owner chose to implement the page layout mode",
+  "recommendedBy": "session agent, after the page container landed",
   "updated": "2026-09-07",
   "items": [
     {
@@ -20,7 +20,7 @@
     },
     {
       "id": "CUI-055",
-      "why": "A zero-tolerance gate that fails once in ten runs teaches a reader to re-run it."
+      "why": "It now reproduces in one run of four on a second capture, so the cause is finally cheap to chase."
     },
     {
       "id": "CUI-060",
