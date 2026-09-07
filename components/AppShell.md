@@ -126,7 +126,7 @@ interface FooterProps {
 | Nav link      | Default | `color: var(--color-header-text-muted)`                    |
 | Nav link      | Hover   | `color: var(--color-text-inverse)`, `background: var(--color-nav-hover)` |
 | Nav link      | Active  | `color: var(--color-header-text)`, `background: color-mix(in srgb, var(--color-accent) 22%, transparent)` |
-| Nav link      | Focus   | No rule of its own, so the browser's default outline shows |
+| Nav link      | Focus   | `outline: .125rem solid var(--color-accent)`, `outline-offset: .125rem` |
 
 ### Responsive (max-width: 768px)
 - Header inner: `flex-direction: column`, `align-items: flex-start`, `gap: var(--space-2)`.

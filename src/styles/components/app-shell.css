@@ -188,6 +188,11 @@
     color: var(--color-text-inverse)
 }
 
+.cs-component-app-shell-16:focus-visible {
+    outline: .125rem solid var(--color-accent);
+    outline-offset: .125rem
+}
+
 .cs-component-app-shell-24 > main {
     flex: 1 1 0%;
     min-height: 0;

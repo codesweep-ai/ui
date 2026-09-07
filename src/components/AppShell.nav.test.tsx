@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { userEvent as browserUser } from "vitest/browser";
 import "../styles/tokens.css";
 import "../styles/base.css";
 import { Header } from "./AppShell";
@@ -73,5 +74,30 @@ describe("Header title", () => {
     document.body.appendChild(probe);
     expect(getComputedStyle(title).color).toBe(getComputedStyle(probe).color);
     probe.remove();
+  });
+});
+
+// Runs in the browser project, and the keyboard has to be the real one:
+// :focus-visible does not match focus a simulated event moved.
+describe("Header nav focus ring", () => {
+  it("rings a keyboard-focused nav link in the accent colour", async () => {
+    render(<Header title="App" navItems={[{ label: "Docs", href: "#d" }]} />);
+    const link = screen.getByRole("link", { name: "Docs" });
+
+    await browserUser.tab();
+
+    expect(document.activeElement).toBe(link);
+    expect(link.matches(":focus-visible")).toBe(true);
+
+    const probe = document.createElement("span");
+    probe.style.color = "var(--color-accent)";
+    document.body.appendChild(probe);
+    const accent = getComputedStyle(probe).color;
+    probe.remove();
+
+    const ring = getComputedStyle(link);
+    expect(ring.outlineStyle).toBe("solid");
+    expect(ring.outlineColor).toBe(accent);
+    expect(Number.parseFloat(ring.outlineWidth)).toBeGreaterThan(0);
   });
 });
