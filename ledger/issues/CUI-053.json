@@ -1,0 +1,27 @@
+{
+  "id": "CUI-053",
+  "title": "The render image is pinned by tag, and a tag can be rebuilt under it",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while verifying the repository owner's condition that CI pins the image the visual gate renders in",
+  "opened": "2026-09-07",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "The visual gate renders inside a container image, and picks it by reading the installed package rather than a constant. `scripts/visual-container.mjs` builds the tag as `mcr.microsoft.com/playwright:v${version}-noble` from `playwright/package.json`, and `package-lock.json` pins `playwright` to 1.62.1. So `npm ci` on any machine resolves the same version, and the tag follows it. There is no second place to keep in step, which is the good half of this design: bumping the package moves the image with it and the two cannot drift apart.\n\nThe half that is missing is that a tag is mutable. `v1.62.1-noble` names whatever Microsoft last published under it, not a fixed set of bytes. Rebuilding that tag on a newer base, which vendors do for security updates, can change the font packages inside it. The digest here at the time of writing is sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e, and nothing in the repository records or checks it.\n\nThe consequence is worth being concrete about. The baseline is a set of pixels drawn by the Chromium and the fonts inside that image, and the comparison now fails on any difference at all. If the tag is rebuilt, a run pulls a different image, the text rasterises differently, and every one of the 104 captures fails at once. Nothing in the repository would explain why, because the version, the lockfile and the tag would all be unchanged. The likely reading of that failure is that something in the branch broke everything, which is the wrong place to look.\n\nTwo ways out, and they trade against each other. Pinning by digest, `mcr.microsoft.com/playwright@sha256:...`, makes an upstream rebuild fail the pull rather than the pixels, at the cost of two things to update on a playwright bump instead of one. Recording the digest and comparing it before rendering keeps the single source of truth and turns the same event into a clear message rather than 104 failures.\n\nNeither is urgent. This is a latent trap rather than a defect, filed so that whoever meets a wholesale capture failure recognises it in minutes rather than hunting through their own diff.",
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "Filed at the owner's request while settling CUI-052, which dropped the comparison to zero tolerance. That change is what turns an image rebuild from a quiet drift into a loud one, so this became worth writing down at the same time. The loudness is the improvement; the missing part is a message that names the cause."
+    }
+  ],
+  "links": [
+    "CUI-052"
+  ]
+}

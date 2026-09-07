@@ -9,6 +9,10 @@
     {
       "id": "CUI-041",
       "why": "A responsive header the stylesheet has no media query for."
+    },
+    {
+      "id": "CUI-053",
+      "why": "A rebuilt image tag would fail all 104 captures with nothing in the repository explaining why."
     }
   ]
 }
