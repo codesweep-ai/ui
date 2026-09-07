@@ -20,6 +20,7 @@
 @import "./components/markdown-viewer.css";
 @import "./components/mermaid-diagram.css";
 @import "./components/modal.css";
+@import "./components/page.css";
 @import "./components/panel.css";
 @import "./components/pulse-badge.css";
 @import "./components/search-input.css";

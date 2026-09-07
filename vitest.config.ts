@@ -22,6 +22,7 @@ const browserSuites = [
   "src/components/Chip.test.tsx",
   "src/components/SegmentedControl.test.tsx",
   "src/components/EventLanes.test.tsx",
+  "src/components/Page.layout.test.tsx",
   "src/components/Panel.scroll.test.tsx",
   "src/components/Panel.collapse.test.tsx",
   "src/components/Tooltip.placement.test.tsx",

@@ -26,6 +26,8 @@ export { Input } from "./components/Input";
 export { Legend } from "./components/Legend";
 export type { LegendItem } from "./components/Legend";
 export { Modal } from "./components/Modal";
+export { Page } from "./components/Page";
+export type { PageProps } from "./components/Page";
 export { Panel } from "./components/Panel";
 export { PulseBadge } from "./components/PulseBadge";
 export { SearchInput } from "./components/SearchInput";

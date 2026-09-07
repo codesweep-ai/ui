@@ -1,7 +1,7 @@
 {
   "$generated": "Do not edit. Run `npm run catalog`. Source: spec frontmatter.",
   "counts": {
-    "components": 37,
+    "components": 38,
     "patterns": 11
   },
   "components": [
@@ -827,6 +827,50 @@
       "related": [
         "Button",
         "Panel"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "components/Page.md",
+      "name": "Page",
+      "summary": "Page-level content container that owns the inset from the window edge, the content width and the vertical scroll.",
+      "keywords": [
+        "page",
+        "page layout",
+        "content area",
+        "main",
+        "layout container",
+        "page padding",
+        "page inset",
+        "max width",
+        "readable width",
+        "centered content",
+        "content width",
+        "page scroll",
+        "single scrollbar",
+        "scrollbar gutter",
+        "layout mode",
+        "main landmark"
+      ],
+      "since": "0.3.0",
+      "status": "experimental",
+      "use_when": [
+        "Wrapping the content of a page, inside AppShell or on its own",
+        "A page should scroll once, rather than each box inside it scrolling separately",
+        "Long-form content that should stop widening on a large monitor"
+      ],
+      "avoid_when": [
+        "Grouping cards that share a viewport height → CardGroup",
+        "A bordered surface around one piece of content → Card or Panel",
+        "Two or three resizable regions side by side → SplitPane"
+      ],
+      "related": [
+        "AppShell",
+        "Card",
+        "CardGroup",
+        "Panel",
+        "SplitPane"
       ],
       "patterns": [],
       "note": null

@@ -111,7 +111,11 @@ Features may use different layout modes inside the shell:
 | `full`  | Edge-to-edge, flex fill (panels + content)  |
 | `split` | Two or three resizable panes                |
 
-The Header always fills the full viewport width. It is global chrome and does not change with layout mode. Each page's content area is responsible for applying its own width constraints (for example `max-width` + `margin: 0 auto` for `page` layout, or no constraint for `full`/`split`).
+The [Page](components/Page.md) component renders the first two of these. Passing `width="readable"` gives the `page` mode, and the default gives `full`. The `split` mode is a [SplitPane](components/SplitPane.md) inside a `Page`.
+
+`Page` owns the three properties a page layout is made of: the inset from the window edge, the widest the content may grow, and which element scrolls. A page that assigns none of them is flush against the window edge. It can also lose content to an ancestor that clips without scrolling, which a consumer meets as rows that are missing.
+
+The Header always fills the full viewport width. It is global chrome and does not change with layout mode.
 
 ### Feature Toolbar
 
@@ -454,6 +458,14 @@ The header and footer always use `--shadow-up`, since they sit on the always-dar
   background: var(--muted);
 }
 ```
+
+An element that owns a scroll also sets `scrollbar-gutter: stable`, which
+reserves the scrollbar's width whether or not one is showing. Without it,
+every element shifts sideways the moment a page grows past one screen. The
+shift happens only where scrollbars take layout space, so a developer on a
+platform with overlay scrollbars never sees what a user on Windows meets
+constantly. `Page` sets it when it owns the scroll, and `EventLanes` sets it
+on its horizontal scroller.
 
 
 ### 4.8 Color Scheme
@@ -826,6 +838,14 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --color-row-hover: rgba(0, 0, 0, 0.04);
 }
 ```
+
+---
+
+### 4.20 Page Width
+
+| Token              | Value   | Usage                                          |
+|--------------------|---------|------------------------------------------------|
+| `--page-max-width` | `72rem` | Widest a `Page` grows under `width="readable"`. Wide enough for a two-column form or a table, narrow enough that a line of text does not run the width of a large monitor. |
 
 ---
 

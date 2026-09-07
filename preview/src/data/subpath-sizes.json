@@ -2,41 +2,41 @@
   ".": {
     "raw": 150184,
     "gzip": 48843,
-    "eager": 165803
+    "eager": 165826
   },
   "chrome": {
     "raw": 154977,
     "gzip": 50357,
-    "eager": 175708
+    "eager": 175731
   },
   "./markdown": {
     "raw": 168914,
     "gzip": 54786,
-    "eager": 194904
+    "eager": 194927
   },
   "./markdown/rich": {
     "raw": 332148,
     "gzip": 104049,
-    "eager": 358138
+    "eager": 358161
   },
   "./mermaid": {
     "raw": 3261079,
-    "gzip": 923204,
-    "eager": 158926
+    "gzip": 923168,
+    "eager": 158949
   },
   "./code": {
     "raw": 166610,
     "gzip": 55106,
-    "eager": 180509
+    "eager": 180532
   },
   "./chart": {
     "raw": 147565,
     "gzip": 47796,
-    "eager": 163230
+    "eager": 163253
   },
   "./minimap": {
     "raw": 144491,
     "gzip": 46793,
-    "eager": 154772
+    "eager": 154795
   }
 }

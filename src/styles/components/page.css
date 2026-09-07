@@ -1,0 +1,50 @@
+/* page component styles. */
+.cs-component-page-1 {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%
+}
+
+.cs-component-page-2 {
+    padding: var(--space-4)
+}
+
+/* The root owns the scroll, so the scrollbar sits at the window edge rather
+   than at the edge of a centred column. scrollbar-gutter reserves its width
+   whether or not it is showing, so nothing shifts when content grows past one
+   screen. */
+.cs-component-page-3 {
+    flex: 1 1 0%;
+    overflow-y: auto;
+    scrollbar-gutter: stable
+}
+
+.cs-component-page-4 {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: var(--page-max-width)
+}
+
+/* A centred column needs the reservation on both edges. With it on the
+   scrolling edge alone the column sits half a scrollbar off centre, measured
+   at 8px in a 800px page. A full-width page has nothing to centre, so it
+   keeps the narrower reservation and the width that comes with it. */
+.cs-component-page-6 {
+    scrollbar-gutter: stable both-edges
+}
+
+/* Grows to fill a short page and past the root on a long one, so the root
+   scrolls rather than this box. */
+.cs-component-page-5 {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    width: 100%
+}
+
+/* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
+   consumer which stylesheet is missing when a component renders bare. */
+[data-component="Page"] {
+    --cs-styles-page: 1
+}

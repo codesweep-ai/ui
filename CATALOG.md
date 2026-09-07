@@ -232,6 +232,18 @@ Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, s
 - related: Button, Panel
 - spec: [components/Modal.md](components/Modal.md)
 
+### Page  ·  since 0.3.0  ·  experimental
+Page-level content container that owns the inset from the window edge, the content width and the vertical scroll.
+- intents: `page`, `page layout`, `content area`, `main`, `layout container`, `page padding`, `page inset`, `max width`, `readable width`, `centered content`, `content width`, `page scroll`, `single scrollbar`, `scrollbar gutter`, `layout mode`, `main landmark`
+- use when: Wrapping the content of a page, inside AppShell or on its own
+- use when: A page should scroll once, rather than each box inside it scrolling separately
+- use when: Long-form content that should stop widening on a large monitor
+- avoid when: Grouping cards that share a viewport height → CardGroup
+- avoid when: A bordered surface around one piece of content → Card or Panel
+- avoid when: Two or three resizable regions side by side → SplitPane
+- related: AppShell, Card, CardGroup, Panel, SplitPane
+- spec: [components/Page.md](components/Page.md)
+
 ### Panel  ·  since 1.0.0
 Collapsible side panel with a header and scrollable content area. Used for file trees, doc outlines, and filter panels inside flex layouts.
 - intents: `panel`, `sidebar`, `collapsible`, `side panel`, `pane`, `drawer`, `filter panel`, `file tree panel`, `outline`, `collapse`, `expand`, `header`, `layout`
