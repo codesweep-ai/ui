@@ -1,0 +1,7 @@
+#!/bin/sh
+# Holds a message to CONTRIBUTING's Commits section before the commit exists,
+# which is the only moment a wrap is cheap to fix. `npm run ci` checks the same
+# rules after the fact, for anyone who has not installed this.
+#
+# Install it with:  git config core.hooksPath scripts/hooks
+exec node "$(dirname "$0")/../check-commits.mjs" --file "$1"

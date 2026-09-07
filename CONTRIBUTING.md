@@ -214,6 +214,19 @@ Keep the `Co-Authored-By:` trailer when an agent wrote the change. Drop every
 other trailer an agent harness appends: a link to a session or a transcript is
 private to whoever ran it and dead to everyone else.
 
+`npm run ci` checks all of that, and so does `npm run lint:commits` on its own.
+To be told before the commit exists, which is the only moment the wrap is cheap
+to fix, install the hook:
+
+```sh
+git config core.hooksPath scripts/hooks
+```
+
+The check starts from a baseline commit rather than the root. Twenty-nine
+earlier bodies run a column or so over the wrap. The ledger cites sixty of those
+commits by sha, so rewriting them to clean the history would dangle seventy-one
+pieces of evidence for a character apiece.
+
 ## Trying the package before publishing it
 
 Installing a tarball by path skips the export map, the `files` list and the

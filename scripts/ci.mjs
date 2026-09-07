@@ -47,6 +47,14 @@ const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 say("the gate a contributor runs before pushing");
 run(npm, ["run", "check"]);
 
+// The rules in CONTRIBUTING's Commits section, which were written down and
+// never checked. Gated from a baseline rather than over the whole branch: 29
+// earlier bodies run a column or so over, and the ledger cites 60 of those
+// commits by sha, so rewriting them to make this clean would dangle 71 pieces
+// of evidence.
+say("commit messages");
+run(npm, ["run", "lint:commits"]);
+
 // An invalid workflow file fails the run with zero jobs and no annotation,
 // which is the least legible failure the forge produces. actionlint is not an
 // npm package, so a machine without it reports a skip rather than a failure.
