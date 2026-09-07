@@ -55,7 +55,13 @@ interface TreeProps<T extends TreeNode> {
   alignLabel?: "center" | "start";
   /** Scroll the selected row into view when selectedId changes. Default: true */
   scrollSelectedIntoView?: boolean;
-  /** Whether the tree owns a scrollbar, or sizes to its rows. Default: true */
+  /**
+   * Whether the tree owns a scrollbar, or sizes to its rows. Default: true.
+   *
+   * A bare tree in a scrolling column needs `scroll={false}`, and one inside a
+   * Panel sized to its content needs nothing. Section 7.11 of
+   * DESIGN_SYSTEM_SPEC.md has the three cases and what each measures.
+   */
   scroll?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content. Default: false */
   flipped?: boolean;

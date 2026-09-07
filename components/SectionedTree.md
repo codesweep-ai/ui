@@ -77,6 +77,13 @@ Same precedence rules as [Tree](./Tree.md#state-coverage-loading--empty--error) 
 
 Each expanded section's inner Tree seeds its own roving tab stop, so Tab can enter every section.
 
+## Sizing
+
+`SectionedTree` never hands a section a definite height, so it sizes to its
+content in a scrolling column and has no `scroll` prop to set. Section 7.11 of
+[DESIGN_SYSTEM_SPEC.md](../DESIGN_SYSTEM_SPEC.md) has this case beside the two
+it is confused with.
+
 ## Visual Spec
 
 ### Layout

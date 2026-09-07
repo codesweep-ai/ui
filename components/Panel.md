@@ -55,7 +55,9 @@ interface PanelProps {
   panel to its content and hands the scrolling to an ancestor, which is what a
   stack of titled sections in one scrolling sidebar needs. It resolves the
   body's and the content's percentage heights to auto with it, so a `Tree`
-  inside needs no `scroll` of its own.
+  inside needs no `scroll` of its own. Section 7.11 of
+  [DESIGN_SYSTEM_SPEC.md](../DESIGN_SYSTEM_SPEC.md) has that case beside the
+  two it is confused with.
 - Border-right: `1px solid var(--border)`.
 - Background: `var(--bg)`.
 

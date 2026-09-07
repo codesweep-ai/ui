@@ -1092,6 +1092,41 @@ If both columns genuinely need independent scrolling (rare, for example two long
 
 **Sticky headers require a scrollable ancestor:** `position: sticky` only works inside a scrollable container. If the container isn't scrolling (because it has no bounded height), sticky headers won't stick.
 
+#### Stopping a tree scrolling inside a bounded column
+
+A sidebar puts a tree in a column that scrolls once. Whether the tree needs
+telling depends on what sits between it and the scroller, and a reader cannot
+tell the three cases apart by looking at them. Measured in a 200px scrolling
+column holding two lists of twenty rows, by
+`src/components/Tree.sizing.test.tsx`:
+
+| What holds the tree | What it needs | Column's `scrollHeight` |
+|---|---|---|
+| A bare [Tree](components/Tree.md) | `scroll={false}` | 400px at the default, 1160px with it |
+| A [Panel](components/Panel.md) with `height="auto"` | nothing; `scroll` changes nothing | 1272px either way |
+| [SectionedTree](components/SectionedTree.md) | nothing; it has no `scroll` prop | 1250px |
+
+The reason is one CSS rule nobody meets until it bites them. A percentage
+height resolves to `auto` against a parent whose own height is indefinite. A
+panel sized to its content is indefinite, so the tree inside it never takes a
+fixed height and never needs releasing. A bare tree's parent is the bounded
+column itself, so it does take one, and its rows land in a box nothing
+scrolls.
+
+The failure is quiet, which is what makes it expensive. At the default a
+column 1160px of tree tall reports 400px of `scrollHeight`, and the missing
+rows are reachable by `scrollIntoView` and by nothing a user does.
+
+**A half-released override is worse than none.** Releasing `overflow` without
+also releasing the height leaves the rows clipped rather than scrolled, and it
+fails as quietly as the default does. A consumer overriding this by hand
+releases both or neither.
+
+**`scroll` is named after `window.scroll`.** Leaving it out of a destructure
+makes it a function rather than a boolean, so `if (scroll)` reads as
+permanently true. TypeScript caught this in `SectionedTree` and would not have
+caught it in `Tree`.
+
 ### 7.12 Component Traceability (`data-component`)
 
 Every design system component must render a `data-component` attribute on its root DOM element. This enables tracing rendered DOM elements back to their source component when inspecting in browser DevTools or reporting bugs.
