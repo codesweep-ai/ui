@@ -3,15 +3,17 @@
   "title": "AppShell's nav-link table contradicts the stylesheet and its own accessibility section",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "AppShell header pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "9f57f18"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npx vitest run --project browser src/components/AppShell.nav.test.tsx`: 6 tests pass, one of them tabbing to a nav link with the browser's own keyboard and reading `outline-style: solid` with an `outline-color` equal to a `var(--color-accent)` probe. Removing the rule fails that test with `expected 'auto' to be 'solid'`, which is the browser default the table used to promise. Against `--color-header-bg` the ring measures 10.73:1 in the dark theme and 3.28:1 in the light one, where `--color-accent` is the darker `#0f766e`, so both clear the 3:1 WCAG 2.2 asks of a focus indicator. `npm run ci` exits 0 with every gate run, and the rule reaches the published build at `dist/styles/components/app-shell.css:191`."
   },
   "resolution": null,
   "details": "`components/AppShell.md:127` gives a hovered nav link `color: var(--color-text-inverse)` over `background: var(--color-nav-hover)`, and `:128` gives an active one `color: var(--color-accent)` over the same background.\n\n`src/styles/components/app-shell.css:97` paints the active background with `color-mix(in srgb, var(--color-accent) 22%, transparent)`, and `:159` gives idle links `var(--color-header-text-muted)`. The tokens named in the States table have no effect on nav links.\n\nThe same document states the real values at `:149`, so it contradicts itself and a reader cannot tell which half is current. A brand layer re-theming the header from the States table changes tokens that do nothing, and misses the ones that do.\n\nThe table also promises a focus ring at `:129`. `app-shell.css` contains no `:focus` or `:focus-visible` rule at all, so a keyboard user gets the browser's default outline rather than the documented treatment.",
@@ -23,6 +25,10 @@
     {
       "date": "2026-09-06",
       "text": "The states table is corrected, in f4ea7c5. It now names `--color-header-text-muted` for an idle link and the accent `color-mix` for an active one, which is what `app-shell.css` paints and what the document's own accessibility section already said.\n\nThe focus half is left open. `app-shell.css` still has no `:focus` or `:focus-visible` rule, so the table now says a keyboard user gets the browser default. Whether the header should carry a focus ring of its own, and what it should look like, is a design decision rather than a correction."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Closed. Nav links now take the focus ring six other component sheets already use, `outline: .125rem solid var(--color-accent)` at `.125rem` offset, so the header stops being the one place a keyboard user gets the browser default.\n\nThe accent was chosen over `--color-header-text` because it is the house ring and the header already paints its title in the accent. The light theme is the tight case at 3.28:1, since the header background stays dark in both themes while the accent darkens."
     }
   ],
   "links": [
