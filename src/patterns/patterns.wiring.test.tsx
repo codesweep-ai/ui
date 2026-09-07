@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
+import { DashboardDemo } from "../../preview/src/pages/patterns/DashboardDemo";
 import { DataTableDemo } from "../../preview/src/pages/patterns/DataTableDemo";
 import { FormDemo } from "../../preview/src/pages/patterns/FormDemo";
 import { MasterDetailDemo } from "../../preview/src/pages/patterns/MasterDetailDemo";
@@ -92,5 +93,28 @@ describe("Data Table pattern", () => {
     await expect
       .poll(() => container.querySelectorAll("tbody tr").length, { timeout: 2000 })
       .toBeLessThan(rowsBefore);
+  });
+});
+
+describe("Dashboard pattern", () => {
+  it("reaches ChartFrame's empty block when the filter clears the chart", async () => {
+    render(<DashboardDemo />);
+
+    // Two filter cards, and the first is the flat one.
+    await userEvent.click(screen.getAllByRole("button", { name: "None" })[0]);
+
+    const empty = await screen.findAllByTestId("chartframe-empty");
+    expect(empty.length).toBe(1);
+    expect(empty[0]).toHaveTextContent("No file types selected");
+  });
+
+  it("labels its chart series with the kit's Legend rather than a local one", () => {
+    const { container } = render(<DashboardDemo />);
+
+    // Three charts, four series each, and every swatch carries the hook the
+    // specification promises. A hand-rolled legend carries none of them.
+    expect(container.querySelectorAll('[data-component="Legend"]')).toHaveLength(3);
+    expect(container.querySelectorAll("[data-legend-swatch]")).toHaveLength(12);
+    expect(container.querySelectorAll("[data-legend-label]")).toHaveLength(12);
   });
 });

@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardGroup,
   CheckboxGroup,
   type CheckboxOption,
+  Legend,
   useChartTheme,
   type ChartTheme,
   cn,
 } from "@codesweep-ai/ui";
-import { ChartTooltip } from "@codesweep-ai/ui/chart";
+import { ChartFrame, ChartTooltip } from "@codesweep-ai/ui/chart";
 import {
   dashboardStats,
   dashboardBars,
@@ -62,22 +63,43 @@ function InlineBarChart({ bars }: { bars: ChartBar[] }) {
   );
 }
 
-// ── Shared legend markup (token-colored swatches) ───────────
+// ── Chart scaling ───────────────────────────────
 
-function Legend({ items }: { items: { label: string; color: string }[] }) {
-  return (
-    <div className="cs-preview-pages-patterns-dashboard-demo-17 ">
-      {items.map((it) => (
-        <span key={it.label} className="cs-preview-pages-patterns-dashboard-demo-18 ">
-          <span className="cs-preview-pages-patterns-dashboard-demo-19 " style={{ backgroundColor: it.color }} />
-          {it.label}
-        </span>
-      ))}
-    </div>
-  );
+// Each chart lays out in a fixed coordinate space, which is what keeps its
+// geometry readable. A viewBox lets the SVG shrink with its card while the
+// coordinates stay in that space, and ChartTooltip takes container pixels, so
+// its position is scaled by however much the SVG shrank.
+function useChartScale(width: number) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setScale(entry.contentRect.width / width);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [width]);
+
+  return { ref, scale };
 }
 
-// Fixed-size SVGs so viewBox units == container px → ChartTooltip aligns.
+// The SVG never grows past its own coordinate space, so a wide card renders it
+// at 1:1 and only a narrow one scales.
+function plotBox(width: number, height: number) {
+  return { width: "100%", maxWidth: width, aspectRatio: `${width} / ${height}` };
+}
+
+// Legend swatches are custom-property names, never resolved colours. The SVG
+// marks need the resolved ones, and those come from the theme.
+const CAT_TOKENS = [
+  "--color-cat-1",
+  "--color-cat-2",
+  "--color-cat-3",
+  "--color-cat-4",
+] as const;
 
 const SERIES: { key: keyof typeof dailyUsageData[number]; label: string }[] = [
   { key: "input", label: "Input" },
@@ -99,10 +121,12 @@ function DailyLineChart({ theme }: { theme: ChartTheme }) {
   const y = (v: number) => PAD_T + plotH - (v / max) * plotH;
   const colors = [theme.categorical[0], theme.categorical[1], theme.categorical[2], theme.categorical[3]];
 
+  const { ref, scale } = useChartScale(W);
+
   return (
     <div className="cs-preview-pages-patterns-dashboard-demo-28 ">
-      <div className="cs-preview-pages-patterns-dashboard-demo-29" style={{ width: W, height: H }}>
-        <svg width={W} height={H}>
+      <div ref={ref} className="cs-preview-pages-patterns-dashboard-demo-29" style={plotBox(W, H)}>
+        <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
           {/* gridlines */}
           {[0, 0.5, 1].map((g) => (
             <line key={g} x1={PAD_L} y1={PAD_T + plotH * g} x2={W - PAD_R} y2={PAD_T + plotH * g} stroke={theme.gridLine} strokeWidth={1} />
@@ -134,7 +158,7 @@ function DailyLineChart({ theme }: { theme: ChartTheme }) {
           ))}
         </svg>
         {hover !== null && (
-          <ChartTooltip x={x(hover)} y={PAD_T} anchor={hover > n / 2 ? "left" : "right"}>
+          <ChartTooltip x={x(hover) * scale} y={PAD_T * scale} anchor={hover > n / 2 ? "left" : "right"}>
             <div className="cs-preview-pages-patterns-dashboard-demo-39 ">{dailyUsageData[hover].date}</div>
             {SERIES.map((s, si) => (
               <div key={s.key} className="cs-preview-pages-patterns-dashboard-demo-40 ">
@@ -146,7 +170,14 @@ function DailyLineChart({ theme }: { theme: ChartTheme }) {
           </ChartTooltip>
         )}
       </div>
-      <Legend items={SERIES.map((s, si) => ({ label: s.label, color: colors[si] }))} />
+      <Legend
+        items={SERIES.map((s, si) => ({
+          id: s.key as string,
+          label: s.label,
+          color: CAT_TOKENS[si],
+          shape: "square" as const,
+        }))}
+      />
     </div>
   );
 }
@@ -167,10 +198,12 @@ function CostStackedBar({ theme }: { theme: ChartTheme }) {
   const plotW = W - PAD_L - PAD_R;
   const H = PAD_T + costBreakdownData.length * (ROW_H + GAP);
 
+  const { ref, scale } = useChartScale(W);
+
   return (
     <div className="cs-preview-pages-patterns-dashboard-demo-28 ">
-      <div className="cs-preview-pages-patterns-dashboard-demo-29" style={{ width: W, height: H }}>
-        <svg width={W} height={H}>
+      <div ref={ref} className="cs-preview-pages-patterns-dashboard-demo-29" style={plotBox(W, H)}>
+        <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
           {costBreakdownData.map((d, ri) => {
             const yTop = PAD_T + ri * (ROW_H + GAP);
             let cursor = PAD_L;
@@ -203,13 +236,20 @@ function CostStackedBar({ theme }: { theme: ChartTheme }) {
           })}
         </svg>
         {hover && (
-          <ChartTooltip x={hover.x} y={hover.y}>
+          <ChartTooltip x={hover.x * scale} y={hover.y * scale}>
             <div className="cs-preview-pages-patterns-dashboard-demo-58">{hover.label}</div>
             <div className="cs-preview-pages-patterns-dashboard-demo-59">${hover.value.toFixed(2)}</div>
           </ChartTooltip>
         )}
       </div>
-      <Legend items={COST_SERIES.map((c, ci) => ({ label: c.label, color: colors[ci] }))} />
+      <Legend
+        items={COST_SERIES.map((c, ci) => ({
+          id: c.key as string,
+          label: c.label,
+          color: CAT_TOKENS[ci],
+          shape: "square" as const,
+        }))}
+      />
     </div>
   );
 }
@@ -247,10 +287,12 @@ function TokenDonut({ theme }: { theme: ChartTheme }) {
     return { ...d, start, end: angle, color: colors[i], i };
   });
 
+  const { ref, scale } = useChartScale(S);
+
   return (
     <div className="cs-preview-pages-patterns-dashboard-demo-28 ">
-      <div className="cs-preview-pages-patterns-dashboard-demo-29" style={{ width: S, height: S }}>
-        <svg width={S} height={S}>
+      <div ref={ref} className="cs-preview-pages-patterns-dashboard-demo-29" style={plotBox(S, S)}>
+        <svg viewBox={`0 0 ${S} ${S}`} width="100%" height="100%">
           {segs.map((seg) => (
             <path
               key={seg.name}
@@ -270,13 +312,20 @@ function TokenDonut({ theme }: { theme: ChartTheme }) {
           </text>
         </svg>
         {hover !== null && (
-          <ChartTooltip x={cx} y={cy - rOuter} anchor="top">
+          <ChartTooltip x={cx * scale} y={(cy - rOuter) * scale} anchor="top">
             <div className="cs-preview-pages-patterns-dashboard-demo-58">{segs[hover].name}</div>
             <div className="cs-preview-pages-patterns-dashboard-demo-59">{segs[hover].value.toLocaleString()} ({((segs[hover].value / total) * 100).toFixed(0)}%)</div>
           </ChartTooltip>
         )}
       </div>
-      <Legend items={segs.map((s) => ({ label: s.name, color: s.color }))} />
+      <Legend
+        items={segs.map((seg, i) => ({
+          id: seg.name,
+          label: seg.name,
+          color: CAT_TOKENS[i],
+          shape: "square" as const,
+        }))}
+      />
     </div>
   );
 }
@@ -311,11 +360,13 @@ export function DashboardDemo() {
               <CheckboxGroup options={flatOptions} selected={flatVisible} onChange={setFlatVisible} label="Filter" filterable filterPlaceholder="Find type..." />
             </div>
             <div className="cs-preview-pages-patterns-dashboard-demo-95 ">
-              {flatBars.length > 0 ? (
+              <ChartFrame
+                height={flatBars.length > 0 ? "auto" : "8rem"}
+                empty={flatBars.length === 0}
+                emptyMessage="No file types selected"
+              >
                 <InlineBarChart bars={flatBars} />
-              ) : (
-                <div className="cs-preview-pages-patterns-dashboard-demo-96 ">No file types selected</div>
-              )}
+              </ChartFrame>
             </div>
           </div>
         </Card>
@@ -327,11 +378,13 @@ export function DashboardDemo() {
               <CheckboxGroup options={groupedOptions} selected={groupedVisible} onChange={setGroupedVisible} label="Filter" filterable filterPlaceholder="Find type..." />
             </div>
             <div className="cs-preview-pages-patterns-dashboard-demo-95 ">
-              {groupedBars.length > 0 ? (
+              <ChartFrame
+                height={groupedBars.length > 0 ? "auto" : "8rem"}
+                empty={groupedBars.length === 0}
+                emptyMessage="No file types selected"
+              >
                 <InlineBarChart bars={groupedBars} />
-              ) : (
-                <div className="cs-preview-pages-patterns-dashboard-demo-96 ">No file types selected</div>
-              )}
+              </ChartFrame>
             </div>
           </div>
         </Card>
@@ -339,21 +392,27 @@ export function DashboardDemo() {
         {/* SVG line chart (useChartTheme + ChartTooltip) */}
         <Card id="line-chart" header="Daily Token Usage" maximizable>
           <div className={cn("cs-preview-pages-patterns-dashboard-demo-104 ", maximizedId === "line-chart" ? "cs-preview-pages-patterns-dashboard-demo-106" : "cs-preview-pages-patterns-dashboard-demo-107")}>
-            <DailyLineChart theme={theme} />
+            <ChartFrame height="auto" className="cs-preview-pages-patterns-dashboard-demo-108">
+              <DailyLineChart theme={theme} />
+            </ChartFrame>
           </div>
         </Card>
 
         {/* SVG stacked bar */}
         <Card id="bar-chart" header="Cost Breakdown by Model" maximizable>
           <div className={cn("cs-preview-pages-patterns-dashboard-demo-104 ", maximizedId === "bar-chart" ? "cs-preview-pages-patterns-dashboard-demo-106" : "cs-preview-pages-patterns-dashboard-demo-107")}>
-            <CostStackedBar theme={theme} />
+            <ChartFrame height="auto" className="cs-preview-pages-patterns-dashboard-demo-108">
+              <CostStackedBar theme={theme} />
+            </ChartFrame>
           </div>
         </Card>
 
         {/* SVG donut */}
         <Card id="pie-chart" header="Token Volume Breakdown" maximizable>
           <div className={cn("cs-preview-pages-patterns-dashboard-demo-104 ", maximizedId === "pie-chart" ? "cs-preview-pages-patterns-dashboard-demo-106" : "cs-preview-pages-patterns-dashboard-demo-107")}>
-            <TokenDonut theme={theme} />
+            <ChartFrame height="auto" className="cs-preview-pages-patterns-dashboard-demo-108">
+              <TokenDonut theme={theme} />
+            </ChartFrame>
           </div>
         </Card>
       </CardGroup>
