@@ -382,6 +382,31 @@
     opacity: 0.6
 }
 
+/* ── Sizing to content ─────────────────────────────────────────────────────
+   A tree fills its container and scrolls inside itself, which is right for one
+   tree in a bounded panel and wrong for several titled sections stacked in one
+   sidebar. Those want each section as tall as its own rows, with a single
+   scrollbar on the ancestor.
+   Both declarations matter. Releasing the height without releasing the overflow
+   leaves the rows inside a box nothing scrolls: an ancestor clips them, they
+   never count toward its scrollHeight, and they stay reachable by
+   scrollIntoView and not by the mouse. */
+[data-component="Tree"][data-scroll="none"] {
+    height: auto;
+    min-height: auto
+}
+
+[data-component="Tree"][data-scroll="none"] [data-part="scroller"] {
+    flex: none;
+    overflow: visible
+}
+
+/* `overflow` reads back as `hidden auto` here rather than `visible`, because
+   the truncate rule below sets `overflow-x: hidden` and CSS promotes the other
+   axis to `auto` when only one is visible. Nothing scrolls either way: the box
+   is as tall as its rows, so it has nothing to scroll. Measure the geometry
+   rather than the declaration. */
+
 /* ── Label overflow and alignment ──────────────────────────────────────────
    Driven from data attributes on the root rather than a class per combination,
    so a consumer can read the mode from the DOM and the row markup stays the

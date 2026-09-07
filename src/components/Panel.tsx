@@ -6,6 +6,13 @@ interface PanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title">
   /** Heading, and the accessible name of the group. */
   title: string;
   width?: number | string;
+  /**
+   * Height in px, or any CSS length. Omitted, the panel fills its container and
+   * its body scrolls. `"auto"` sizes the panel to its content and leaves the
+   * scrolling to an ancestor, which is what a stack of titled sections in one
+   * scrolling sidebar needs.
+   */
+  height?: number | string;
   collapsed?: boolean;
   onCollapse?: () => void;
   /**
@@ -23,6 +30,7 @@ interface PanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title">
 function PanelImpl({
   title,
   width,
+  height,
   collapsed,
   onCollapse,
   collapseTo = "edge",
@@ -57,6 +65,7 @@ function PanelImpl({
       )}
       style={{
         width: foldsAway ? 0 : typeof width === "number" ? `${width}px` : width,
+        height: typeof height === "number" ? `${height}px` : height,
         flexShrink: foldsAway ? 0 : width ? 0 : undefined,
         flex: foldsAway ? undefined : width ? undefined : 1,
         minWidth: foldsAway ? 0 : width ? undefined : 0,

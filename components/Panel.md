@@ -28,6 +28,8 @@ interface PanelProps {
   title: string;
   /** Width in px or any CSS length. If omitted, panel fills available flex space. */
   width?: number | string;
+  /** Height in px or any CSS length. `"auto"` sizes the panel to its content. */
+  height?: number | string;
   /** Whether the panel is collapsed */
   collapsed?: boolean;
   /** Called when the user clicks the collapse button */
@@ -49,6 +51,11 @@ interface PanelProps {
 - Root: `display: flex`, `flex-direction: column`, `height: 100%`.
 - If `width` is a number it is interpreted as pixels; string values accept any CSS length. A set width also applies `flex-shrink: 0`.
 - If `width` is omitted: `flex: 1`, `min-width: 0`.
+- Height is `100%` unless `height` says otherwise. `height="auto"` sizes the
+  panel to its content and hands the scrolling to an ancestor, which is what a
+  stack of titled sections in one scrolling sidebar needs. It resolves the
+  body's and the content's percentage heights to auto with it, so a `Tree`
+  inside needs no `scroll` of its own.
 - Border-right: `1px solid var(--border)`.
 - Background: `var(--bg)`.
 

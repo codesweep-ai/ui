@@ -55,6 +55,8 @@ interface TreeProps<T extends TreeNode> {
   alignLabel?: "center" | "start";
   /** Scroll the selected row into view when selectedId changes. Default: true */
   scrollSelectedIntoView?: boolean;
+  /** Whether the tree owns a scrollbar, or sizes to its rows. Default: true */
+  scroll?: boolean;
   /** Mirror the tree: indent right-to-left, right-align content. Default: false */
   flipped?: boolean;
 }
@@ -279,10 +281,30 @@ Tree expand/collapse state is not persisted by the Tree component itself. Parent
 - **Search query matches a branch name**: Branch names are not match candidates; only matching leaves and their ancestors are shown.
 - **Filter cleared**: Original `expandedIds` restored without mutation.
 
+### Sizing
+
+`scroll` decides whether the tree owns a scrollbar. The default fills its
+container and scrolls inside itself, which is right for one tree in a bounded
+panel and is what the Explorer pattern shows.
+
+`scroll={false}` sizes the tree to its own rows and leaves the scrolling to an
+ancestor. Several trees stacked in one scrolling sidebar need it: on the
+default each is pinned to the sidebar's height while its rows carry on past the
+bottom, and a sidebar 1160px of tree tall reports 400px of `scrollHeight`. The
+rows below that are reachable by `scrollIntoView` and by nothing a user does.
+
+Releasing the overflow without releasing the height is the same failure in a
+quieter form, at 780px against 1160px, which is why both are one prop rather
+than a recipe a consumer assembles.
+
+A tree inside a `Panel` with `height="auto"` needs none of this. The panel is
+already sized to its content, so the tree's percentage height resolves to auto
+with it.
+
 ## Traceability
 
-`data-component="Tree"` on the root `<div>`, which also carries `data-label-overflow` and
-`data-align-label` naming the modes in force. Structural parts: `data-part="scroller"` on the
+`data-component="Tree"` on the root `<div>`, which also carries `data-label-overflow`,
+`data-align-label` and `data-scroll` naming the modes in force. Structural parts: `data-part="scroller"` on the
 scrolling region, and `data-part="row"`, `data-part="icon"` and `data-part="label"` on each row.
 Prefer these to the generated class names, which change on every build.
 

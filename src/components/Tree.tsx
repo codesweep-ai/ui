@@ -64,6 +64,18 @@ interface TreeProps<T extends TreeNode> {
    */
   labelOverflow?: "truncate" | "scroll" | "wrap";
   /**
+   * Whether the tree owns a scrollbar. `true`, the default, fills the
+   * container and scrolls inside itself, which is right for one tree in a
+   * bounded panel. `false` sizes the tree to its own rows and leaves the
+   * scrolling to an ancestor, which is what several titled sections stacked in
+   * one sidebar need.
+   *
+   * New in 0.3.0. Doing this from outside meant releasing `height`,
+   * `max-height`, `min-height` and `overflow` together down the whole chain,
+   * and getting it half right clipped rows into a box nothing scrolled.
+   */
+  scroll?: boolean;
+  /**
    * How a row lines up its icon against its label. Default: "center".
    *
    * Pass "start" when `renderLabel` returns more than one line, so the icon sits on the first
@@ -510,6 +522,7 @@ function TreeImpl<T extends TreeNode>({
   labelOverflow = "truncate",
   alignLabel = "center",
   scrollSelectedIntoView = true,
+  scroll = true,
   flipped = false,
   reorderable = false,
   onReorder,
@@ -931,6 +944,7 @@ function TreeImpl<T extends TreeNode>({
       data-component="Tree"
       data-label-overflow={labelOverflow}
       data-align-label={alignLabel}
+      data-scroll={scroll ? "auto" : "none"}
       className={cn("cs-component-tree-91 ", className)}
     >
       {/* Filter toolbar */}
