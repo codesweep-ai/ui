@@ -1,10 +1,10 @@
 {
-  "recommendedBy": "session agent, after the page container landed",
+  "recommendedBy": "session agent, after the preview took its layout from Page",
   "updated": "2026-09-07",
   "items": [
     {
-      "id": "CUI-061",
-      "why": "One container answers the inset, the width and the scroll for every page, rather than each page guessing."
+      "id": "CUI-055",
+      "why": "The gate fails about every second run now, so it blocks any change that re-records a capture."
     },
     {
       "id": "CUI-057",
@@ -13,14 +13,6 @@
     {
       "id": "CUI-059",
       "why": "A consumer loses content to a clipping ancestor with no message at all; the check already exists here."
-    },
-    {
-      "id": "CUI-058",
-      "why": "The instance that found the missing page container, and the check that it now reads as cards."
-    },
-    {
-      "id": "CUI-055",
-      "why": "It now reproduces in one run of four on a second capture, so the cause is finally cheap to chase."
     },
     {
       "id": "CUI-060",

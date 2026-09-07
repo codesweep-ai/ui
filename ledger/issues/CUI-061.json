@@ -3,19 +3,27 @@
   "title": "The page layout mode is specified with padding, and nothing implements it",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, laying out the options for CUI-058 at the owner's request",
   "opened": "2026-09-07",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "page layout mode, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "aa08dac",
+      "31cefa3"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`Page` exports from `src/index.ts` and `components/Page.md` specifies it, so section 2's table names something the package ships. 17 tests cover the inset, the width and the scroll, and each rule was verified by reverting it: five reverts produced five failures, and the restore was byte-identical. The preview's four pages take all three from it in 31cefa3, after which `npm run visual:compare` reported 105 of 110 captures byte-identical. The four that moved are the `Page` demo and the two `modal` captures that photograph it; the fifth is CUI-055. `npm run ci` exits 0 at 397f03f."
   },
   "resolution": null,
   "details": "Section 2 of `DESIGN_SYSTEM_SPEC.md` lists three layout modes a feature may use inside the shell. The row for `page` reads \"Centered max-width container with padding\". Nothing in the package provides one. There is no component, no class and no token for a page container.\n\nThe sentence below that table hands the job to the consumer, and it covers width alone: \"Each page's content area is responsible for applying its own width constraints\". The padding the table promises is never assigned to anyone.\n\nThe preview shows what follows. Sixteen selectors in `preview/src/preview.css` set a `--space-4` padding on a pattern demo's root. Several demos carry it at two depths at once, `explorer-demo-11` alongside `explorer-demo-19`, and `master-detail-demo-17` alongside `master-detail-demo-190`. A comment in that file explains to the next reader that this padding is what makes the pages read as cards.\n\nThree properties belong to a page container, and none of them has an owner. The inset from the window edge, the maximum width, and which element scrolls. The third is the expensive one: when no ancestor owns the scroll, content is clipped and unreachable, which is the failure the hidden Explorer tree recorded in CUI-011.\n\nOne more measurement bears on the fix. `scrollbar-gutter: stable` reserves the scrollbar's space so nothing shifts when it appears. It is used once in the repository, at line 62 of `src/styles/components/event-lanes.css`, and is named in no specification. A container that owns the scroll should carry it, and the design system should say so.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "One approach was tried and removed, because a later reader would otherwise try it again. The cap was first a centred box inside the page, which is the obvious way to keep the scrollbar at the window edge. With that box in place the visual gate lost six captures: `pattern-chart-scrolled`, `pattern-dashboard-scrolled` and `pattern-markdown-viewer-scrolled` in both themes.\n\nThe box gave the pages inside it a height to resolve against that no longer bounded them, so a page laid out with `height: 100%` grew to its content and the demo area inside it stopped scrolling. That is the class of failure CUI-057 records. The cap is side padding that grows instead, which leaves the children as the page's own children.\n\nThe gate caught this through its manifest check rather than through any pixel comparison. A unit test written for it afterwards could not fail, because reinstating a wrapper in isolation still resolved the height."
+    }
+  ],
   "links": [
     "CUI-058",
     "CUI-057",

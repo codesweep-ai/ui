@@ -19,6 +19,10 @@
     {
       "date": "2026-09-07",
       "text": "The same failure reproduces on `dark/interaction-split-pane-drag.png`, and far more often than the eleven runs this record started from. It is bistable rather than random. Two renderings alternate, and `npm run visual:compare` returned one or the other with the working tree unchanged.\n\nThe eight differing pixels sit at x=972 and x=973, on the top right and the bottom right corner, at one or two units per channel. That is the signature this record already describes for `card-group`, at the same x.\n\nRe-recording is the hazard worth naming. A `visual:capture` run recorded the minority rendering, after which the gate failed two runs in three. Restoring that one file from the previous commit put the majority rendering back, and it failed one run in four. A baseline refresh can land on the wrong side of the pair, and turn a rare flake into a near permanent failure."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Better numbers, and they are worse than this record assumed. `dark/interaction-split-pane-drag.png` failed 8 of 14 comparison runs, with its baseline byte-identical to the committed one and the working tree unchanged between runs.\n\nThe rate does not depend on the pointer position added in CUI-062. Removing that line gave 4 failures in 6 runs, against 4 in 8 with it, so the pointer is not what decides it.\n\nThe eight pixels are the class this record already describes. They sit at x=972 and x=973, on the top right and the bottom right corner, at one or two units per channel.\n\nA capture that fails half its runs is not a rare flake. `npm run ci` on this branch passes on roughly every second attempt, which is the habit this record warns about arriving in full."
     }
   ],
   "links": [
