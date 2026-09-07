@@ -108,18 +108,27 @@ the debounce and the rest are specified once, in
 [components/MarkdownViewer.md](../components/MarkdownViewer.md), and restating
 them here would give a reader two places to check and one to update.
 
-### Initial collapse state
+### Pane collapse
 
-`outlineCollapsed` and `minimapCollapsed` say how the panes start. They are read
-once, when the viewer mounts.
+Each pane is controlled or not on its own. Own the value when the surrounding
+app has a reason to, and pass the callback either way:
 
 ```typescript
-<MarkdownViewer content={doc.content} outline minimap outlineCollapsed />
+<MarkdownViewer
+  content={doc.content}
+  outline
+  minimap
+  outlineCollapsed={isOutlineCollapsed}
+  onOutlineCollapsedChange={setOutlineCollapsed}
+/>
 ```
 
-Changing either afterwards does nothing, and the viewer does not report a pane
-the user collapsed. A viewer keyed per document therefore remounts on every
-navigation and both panes reopen.
+A doc browser usually wants neither. Give it a `storageKey` and the viewer keeps
+its own arrangement across the remount that every document switch causes:
+
+```typescript
+<MarkdownViewer content={doc.content} outline minimap storageKey="docs-viewer-panes" />
+```
 
 ## Example — the document browser
 

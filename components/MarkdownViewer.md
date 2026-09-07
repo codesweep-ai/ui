@@ -33,8 +33,13 @@ Markdown renderer with heading outline navigation and canvas minimap. `@codeswee
 | `content` | `string` | *required* | Raw markdown string to render |
 | `outline` | `boolean` | `false` | Show heading outline panel |
 | `minimap` | `boolean` | `false` | Show canvas minimap panel |
-| `outlineCollapsed` | `boolean` | `false` | Initial collapsed state of outline |
-| `minimapCollapsed` | `boolean` | `false` | Initial collapsed state of minimap |
+| `outlineCollapsed` | `boolean` | — | Collapsed state of the outline. Supplying it makes the pane controlled |
+| `onOutlineCollapsedChange` | `(collapsed: boolean) => void` | — | Fires when the user collapses or expands the outline, controlled or not |
+| `defaultOutlineCollapsed` | `boolean` | `false` | Where the outline starts when it is not controlled |
+| `minimapCollapsed` | `boolean` | — | Collapsed state of the minimap. Supplying it makes the pane controlled |
+| `onMinimapCollapsedChange` | `(collapsed: boolean) => void` | — | Fires when the user collapses or expands the minimap, controlled or not |
+| `defaultMinimapCollapsed` | `boolean` | `false` | Where the minimap starts when it is not controlled |
+| `storageKey` | `string` | — | localStorage key the uncontrolled pane arrangement persists under |
 | `onLinkClick` | `(href: string) => void` | — | Handler for internal (non-http, non-anchor) link clicks |
 | `codeRenderers` | `Record<string, ComponentType<{ code: string }>>` | — | Custom renderers for specific code block languages |
 | `onImageSrc` | `(src: string) => Promise<string \| undefined> \| string \| undefined` | — | Resolve an image `src` before it renders, synchronously or asynchronously |
@@ -167,6 +172,25 @@ Install `mermaid` when opting into `MermaidDiagram`. If its optional peer is una
 ### Alert Detection
 - Blockquotes starting with `[!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]` render as styled alerts
 - Each type has a specific icon and color scheme
+
+### Pane collapse
+
+Each pane is controlled or not on its own, following
+[Convention 7.2](../DESIGN_SYSTEM_SPEC.md#72-controlled-vs-uncontrolled).
+Supplying `outlineCollapsed` makes that pane controlled: the value is what
+renders, and the viewer asks for a different one through
+`onOutlineCollapsedChange` rather than moving on its own. Leave it out and the
+viewer keeps its own value, seeded by `defaultOutlineCollapsed`.
+
+The callback fires either way, because a consumer wants to know what the user
+did whether or not it owns the value.
+
+`storageKey` persists the uncontrolled panes under
+[Convention 7.3](../DESIGN_SYSTEM_SPEC.md#73-persistence-via-storagekey). Both
+flags travel together as one JSON object, so a viewer keyed per document keeps
+its arrangement across the remount every navigation causes. A controlled pane is
+left alone, because a parent that owns a value does not want its own state
+written over on the next mount.
 
 ## Required Styles
 

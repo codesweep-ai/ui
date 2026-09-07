@@ -924,6 +924,12 @@ Components are **controlled by default**. The parent owns the state and passes i
 
 An **uncontrolled** convenience wrapper may be provided as a separate export (for example `UncontrolledTree`) that manages its own state internally. The uncontrolled version accepts `defaultExpandedIds` instead of `expandedIds`.
 
+A separate export earns its place where the state is a collection, as a tree's
+expansion is. A single boolean does not: `MarkdownViewer` takes
+`outlineCollapsed` for the controlled case and `defaultOutlineCollapsed` for the
+other, in one component. The rule either way is that supplying the value prop
+makes it controlled, and that the change callback fires in both cases.
+
 ### 7.3 Persistence via `storageKey`
 
 Components that support localStorage persistence accept an optional `storageKey` prop (`ThemeToggle` defaults to `cs-theme`; see its spec):

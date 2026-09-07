@@ -35,6 +35,42 @@ import { LightweightMarkdown } from "./LightweightMarkdown";
 
 export type MarkdownComponents = Record<string, React.ElementType>;
 
+/**
+ * Which panes the user folded away. One key holds both, because a consumer
+ * naming one `storageKey` for the viewer's arrangement should not have to name
+ * two, and the pair is read and written together.
+ */
+interface PaneState {
+  outline: boolean;
+  minimap: boolean;
+}
+
+function readPanes(storageKey: string | undefined, fallback: PaneState): PaneState {
+  if (!storageKey) return fallback;
+  try {
+    const stored = localStorage.getItem(storageKey);
+    if (!stored) return fallback;
+    const parsed = JSON.parse(stored) as Partial<PaneState>;
+    return {
+      outline: typeof parsed.outline === "boolean" ? parsed.outline : fallback.outline,
+      minimap: typeof parsed.minimap === "boolean" ? parsed.minimap : fallback.minimap,
+    };
+  } catch {
+    // Convention 7.3: a storage failure keeps the in-memory value and reports
+    // nothing. Malformed JSON lands here too, and the fallback is the answer.
+    return fallback;
+  }
+}
+
+function writePanes(storageKey: string | undefined, panes: PaneState): void {
+  if (!storageKey) return;
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(panes));
+  } catch {
+    /* Convention 7.3: not remembered for this session, and that is all. */
+  }
+}
+
 export interface MarkdownRendererProps {
   content: string;
   components: MarkdownComponents;
@@ -44,8 +80,28 @@ export interface MarkdownViewerBaseProps {
   content: string;
   outline?: boolean;
   minimap?: boolean;
+  /**
+   * Collapsed state of the outline pane. Supplying it makes the pane
+   * controlled, per Convention 7.2: the value is what renders, and
+   * `onOutlineCollapsedChange` is how the viewer asks for a different one.
+   */
   outlineCollapsed?: boolean;
+  /** Fires when the user collapses or expands the outline pane. */
+  onOutlineCollapsedChange?: (collapsed: boolean) => void;
+  /** Where the outline pane starts when it is not controlled. */
+  defaultOutlineCollapsed?: boolean;
+  /** Collapsed state of the minimap pane. Supplying it makes it controlled. */
   minimapCollapsed?: boolean;
+  /** Fires when the user collapses or expands the minimap pane. */
+  onMinimapCollapsedChange?: (collapsed: boolean) => void;
+  /** Where the minimap pane starts when it is not controlled. */
+  defaultMinimapCollapsed?: boolean;
+  /**
+   * localStorage key the pane arrangement persists under, per Convention 7.3.
+   * It seeds and saves the uncontrolled panes only: a parent that owns a value
+   * does not want its own state written over on the next mount.
+   */
+  storageKey?: string;
   /** When true, render as an inline embed — no internal scroll, no
    *  outline/minimap panels, flows with the parent's natural layout.
    *  Use for embedding rendered markdown inside a scrollable page where
@@ -186,7 +242,12 @@ function MarkdownViewerImpl<Extra extends object>({
     outline: outlineProp = false,
     minimap: minimapProp = false,
     outlineCollapsed: outlineCollapsedProp,
+    onOutlineCollapsedChange,
+    defaultOutlineCollapsed,
     minimapCollapsed: minimapCollapsedProp,
+    onMinimapCollapsedChange,
+    defaultMinimapCollapsed,
+    storageKey,
     onLinkClick,
     onImageSrc,
     codeRenderers,
@@ -288,11 +349,44 @@ function MarkdownViewerImpl<Extra extends object>({
     contentRef.current = node;
     setContentElement(node);
   }, []);
-  const [outlineCollapsed, setOutlineCollapsed] = useState(
-    outlineCollapsedProp ?? false
+  const [panes, setPanes] = useState<PaneState>(() =>
+    readPanes(storageKey, {
+      outline: defaultOutlineCollapsed ?? false,
+      minimap: defaultMinimapCollapsed ?? false,
+    }),
   );
-  const [minimapCollapsed, setMinimapCollapsed] = useState(
-    minimapCollapsedProp ?? false
+
+  // A supplied prop is the value; otherwise the viewer keeps its own.
+  const outlineCollapsed = outlineCollapsedProp ?? panes.outline;
+  const minimapCollapsed = minimapCollapsedProp ?? panes.minimap;
+
+  // The callback fires either way, because a consumer wants to know what the
+  // user did whether or not it owns the value. Internal state moves only for
+  // the pane the consumer left alone.
+  const commitPane = useCallback(
+    (pane: keyof PaneState, next: boolean, controlled: boolean) => {
+      if (controlled || panes[pane] === next) return;
+      const updated = { ...panes, [pane]: next };
+      setPanes(updated);
+      writePanes(storageKey, updated);
+    },
+    [panes, storageKey],
+  );
+
+  const setOutlineCollapsed = useCallback(
+    (next: boolean) => {
+      onOutlineCollapsedChange?.(next);
+      commitPane("outline", next, outlineCollapsedProp !== undefined);
+    },
+    [commitPane, onOutlineCollapsedChange, outlineCollapsedProp],
+  );
+
+  const setMinimapCollapsed = useCallback(
+    (next: boolean) => {
+      onMinimapCollapsedChange?.(next);
+      commitPane("minimap", next, minimapCollapsedProp !== undefined);
+    },
+    [commitPane, onMinimapCollapsedChange, minimapCollapsedProp],
   );
   const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
