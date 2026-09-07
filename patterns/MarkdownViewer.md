@@ -34,6 +34,23 @@ related: [MarkdownViewer, MarkdownMinimap, SplitPane, Panel, Tree, Card, CardGro
 
 ## Composition
 
+The decision this pattern is about is which markdown entry to import. It is
+made at import time, it decides what the bundle costs, and no runtime prop
+changes it afterwards.
+
+`preview/src/pages/patterns/MarkdownViewerDemo.tsx` is the worked example, and
+it is a ladder rather than a layout. One document renders through six flavours,
+one at a time, and each rung names its import line, what it adds, when to reach
+for it, and what it costs in bytes. `?flavor=<slug>` selects a rung. Below the
+ladder the same viewer takes a long document and an outline panel.
+
+The point the ladder makes is that diagrams and per-language highlighting come
+from `codeRenderers`, which both entries share. Only the remark and rehype
+plugin seam needs the rich entry, along with footnotes and bare autolinks.
+
+The three-pane document browser is the other composition, and it is the **Docs**
+tab rather than this one, where it browses this package's own specifications:
+
 ```
 ┌─ SplitPane ──────────────────────────────────────────────┐
 │ ┌─ Panel ──────┐  ┌─ MarkdownViewer ──────────────────┐ │
@@ -85,31 +102,11 @@ const doc = selectedDocId ? documents[selectedDocId] : null;
 
 ### Internal state (managed by MarkdownViewer)
 
-The component manages these internally — you don't need to set them, but understanding them helps when debugging or extending:
-
-```typescript
-// Heading extraction: parsed from markdown content via regex on mount/content change
-// Produces an array of { level, text, slug } used by outline and minimap
-const headings = useMemo<Heading[]>(() => {
-  // Regex scans content for lines matching /^(#{1,6})\s+(.+)$/
-  // Strips inline formatting (*_`~) and slugifies for anchor IDs
-}, [content]);
-
-// Active heading tracking: scroll listener on content container
-// Debounced (50ms), finds the last heading whose top is above a detection offset (100px)
-const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
-
-// Outline panel: resizable width with drag handle, collapsible
-const [outlineWidth, setOutlineWidth] = useState(200); // range: 120–400px
-const [outlineCollapsed, setOutlineCollapsed] = useState(false);
-
-// Minimap panel: fixed width (120px), collapsible
-const [minimapCollapsed, setMinimapCollapsed] = useState(false);
-
-// Copy feedback: tracks which code block was just copied
-const [copiedId, setCopiedId] = useState<string | null>(null);
-// Resets to null after 2000ms
-```
+Everything else is the component's own: heading extraction, the active heading
+the outline tracks, the outline width and the two collapse flags. The widths,
+the debounce and the rest are specified once, in
+[components/MarkdownViewer.md](../components/MarkdownViewer.md), and restating
+them here would give a reader two places to check and one to update.
 
 ### Controlled collapse (optional)
 
@@ -125,7 +122,10 @@ You can control outline/minimap collapse state via props:
 />
 ```
 
-## Example
+## Example — the document browser
+
+This is the Docs tab's composition, not this tab's. It is the shape to copy
+when a consumer wants a tree beside a viewer.
 
 ```tsx
 import { useState } from "react";
