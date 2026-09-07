@@ -1,11 +1,7 @@
 {
   "recommendedBy": "session agent, after the documentation passes",
-  "updated": "2026-09-06",
+  "updated": "2026-09-07",
   "items": [
-    {
-      "id": "CUI-044",
-      "why": "Two Table bullets left: add the documented affordances, or delete them. Both repaint or remove something."
-    },
     {
       "id": "CUI-048",
       "why": "The header has no focus rule at all, and what ring it should carry is a design decision."
