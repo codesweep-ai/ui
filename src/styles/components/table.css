@@ -58,6 +58,11 @@
     user-select: none
 }
 
+/* A sortable header takes a pointer cursor, so it answers to one. */
+.cs-component-table-38:hover {
+    color: var(--color-accent)
+}
+
 .cs-component-table-62 {
     flex-direction: column
 }
@@ -93,6 +98,12 @@
 
 .cs-component-table-27 {
     overflow-x: auto
+}
+
+/* The wrapper already draws a border and a radius, so it is a surface. Without
+   a background of its own it showed the page through its own outline. */
+.cs-component-table-27 {
+    background-color: var(--card)
 }
 
 .cs-component-table-83 {

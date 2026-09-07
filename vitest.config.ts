@@ -14,6 +14,7 @@ const browserSuites = [
   "src/components/Card.position.test.tsx",
   "src/components/stylesheetWarning.test.tsx",
   "src/components/MarkdownMinimap.lateContent.test.tsx",
+  "src/components/Table.surface.test.tsx",
   "src/components/MarkdownViewer.scroll.test.tsx",
   "src/components/MarkdownViewer.mermaid.test.tsx",
   "src/components/Legend.test.tsx",
