@@ -3,15 +3,17 @@
   "title": "MarkdownViewer outline and minimap collapse state cannot be observed",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an agent building a documentation browser against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "Panel and viewer pane pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "ea836f3"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npx vitest run --project jsdom src/components/MarkdownViewer.panes.test.tsx`: 5 tests pass, and four targeted reverts each fail the test that covers them. Ignoring the controlled prop fails the controlled test, dropping the two callbacks fails both callback tests, dropping `writePanes` fails the persistence test, and ignoring `defaultOutlineCollapsed` fails the seed test. Collapsing the minimap under a `storageKey` writes `{\"outline\":false,\"minimap\":true}`, and a remount reads it back collapsed. With `getItem` and `setItem` both throwing `QuotaExceededError` the toggles still work. `dist/components/MarkdownViewer.d.ts` carries the new props, and `npm run ci` exits 0."
   },
   "resolution": null,
   "details": "`outlineCollapsed` and `minimapCollapsed` seed internal state and are never read again. There is no change callback, so a consumer cannot learn that the user collapsed a pane.\n\nThe cost is larger than it sounds. A viewer is typically keyed per document, so it remounts on every document switch and both panes reset. The user's choice is lost on each navigation, not merely on reload.\n\nWith no callback the only route open to the consumer was a capture-phase click listener matching the component's own aria-labels, against the pattern `/^(Collapse|Expand) (outline|minimap)$/`. That reaches into the component's accessible names, which are not an API, and it breaks the moment a label is reworded.\n\nThe proposal is `onOutlineCollapsedChange` and `onMinimapCollapsedChange`, or an internal `storageKey` that persists the state.\n\nWorked around in the consuming app with exactly that aria-label listener.",
@@ -27,6 +29,10 @@
     {
       "date": "2026-09-07",
       "text": "CUI-012 is settled, which narrows this. Convention 7.3 now says user-arrangement state belongs behind a `storageKey`, and a collapsed pane is arrangement, so `storageKey` is the convention-consistent answer rather than one of two options.\n\nThat does not close this record. A consumer keying the viewer per document still wants to know when a pane collapsed, and a `storageKey` alone does not tell it. Whether the callbacks ship alongside is the part still to decide."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Closed with both halves the record proposed rather than a choice between them. `onOutlineCollapsedChange` and `onMinimapCollapsedChange` report what the user did, and `storageKey` persists the arrangement for the common case where the consumer only wants it remembered. The capture-phase listener matching the component's aria-labels can go.\n\n**This is a breaking change.** `outlineCollapsed` and `minimapCollapsed` seeded state and now control it, so a consumer passing one as an initial value finds that pane fixed. The migration is to rename it to `defaultOutlineCollapsed`. It is deliberate: the old names claimed a contract the component did not honour, which is why `patterns/MarkdownViewer.md` had been documenting a controlled prop that did nothing.\n\nConvention 7.2 gained a paragraph in the same commit. It had said an uncontrolled variant belongs in a separate export, which is right for a collection like a tree's expansion and absurd for one boolean. It now says so."
     }
   ],
   "links": [

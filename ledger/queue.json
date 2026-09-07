@@ -1,5 +1,5 @@
 {
-  "recommendedBy": "session agent, after the pattern scope pass",
+  "recommendedBy": "session agent, after the Panel and viewer pane pass",
   "updated": "2026-09-07",
   "items": [
     {
@@ -9,6 +9,10 @@
     {
       "id": "CUI-054",
       "why": "A documented commit rule that no gate checks, which is this branch's own recurring class."
+    },
+    {
+      "id": "CUI-014",
+      "why": "The last API question that has to be answered before CUI-011, and the only one left of the six."
     }
   ]
 }
