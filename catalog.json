@@ -238,7 +238,8 @@
         "You only have a single card with no siblings to maximize against → use Card directly"
       ],
       "related": [
-        "Card"
+        "Card",
+        "Page"
       ],
       "patterns": [
         "Dashboard"

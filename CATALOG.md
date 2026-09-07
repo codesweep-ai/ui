@@ -69,7 +69,7 @@ Layout container that manages maximize/minimize state for a group of Cards; supp
 - use when: Providing maximize/minimize affordance across sibling Cards
 - use when: Stacking Cards in a scrolling page without nested scrollbars (fill=false)
 - avoid when: You only have a single card with no siblings to maximize against → use Card directly
-- related: Card · patterns: Dashboard
+- related: Card, Page · patterns: Dashboard
 - spec: [components/CardGroup.md](components/CardGroup.md)
 
 ### ChartFrame  ·  since 1.5.0

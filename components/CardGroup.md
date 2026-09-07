@@ -12,7 +12,7 @@ use_when:
   - Stacking Cards in a scrolling page without nested scrollbars (fill=false)
 avoid_when:
   - You only have a single card with no siblings to maximize against → use Card directly
-related: [Card]
+related: [Card, Page]
 patterns: [Dashboard]
 ---
 
@@ -49,6 +49,19 @@ interface CardGroupProps {
 - When **`fill` (default)** — or whenever a card is maximized — the root also gets `height: 100%`, `min-height: 0`, and each child Card flexes (`flex: 1; min-height: 0`) to share that height, scrolling its body internally. This is the fixed-viewport dashboard layout.
 - When **`fill={false}`** and nothing is maximized — the root is natural height and each Card sizes to its content; the cards stack and the **page** scrolls instead of each card. Use this when a CardGroup lives inside a scrolling page (e.g. a long stack of cards) to avoid nested scrollbars.
 - The CardGroup itself is a transparent layout container — it has no background, border, or shadow.
+- It supplies no inset from the window edge either. That belongs to the page container, which is [Page](Page.md).
+
+### Who supplies the inset
+
+A CardGroup dropped straight into a page with no inset runs from one window
+edge to the other, and its cards stop reading as cards. The inset is a
+property of the page rather than of this component, because a page built from
+a table or a form needs the same one, and because two nested CardGroups would
+otherwise inset twice.
+
+`Page` owns it, along with the width the content may grow to and which element
+scrolls. Wrap the group in one, or supply the inset from whatever page
+container the application already has.
 
 ### States
 
@@ -123,6 +136,16 @@ None by default. Consumers can use controlled mode to persist `maximizedId` to U
 
 <!-- docs-compile -->
 ```tsx
-import { Card, CardGroup } from "@codesweep-ai/ui";
-export function Example() { return <CardGroup><Card>First result</Card><Card>Second result</Card></CardGroup>; }
+import { Card, CardGroup, Page } from "@codesweep-ai/ui";
+
+export function Example() {
+  return (
+    <Page>
+      <CardGroup>
+        <Card>First result</Card>
+        <Card>Second result</Card>
+      </CardGroup>
+    </Page>
+  );
+}
 ```
