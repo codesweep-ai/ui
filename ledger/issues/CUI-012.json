@@ -8,12 +8,24 @@
   "opened": "2026-09-06",
   "resolved": null,
   "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
   "resolution": null,
-  "details": "`SplitPane` takes a `storageKey` and persists its width. `useTheme` and `ThemeToggle` take one too. `Panel`, `Tree` and `MarkdownViewer` have no equivalent, so every consumer that wants panel open state, tree expansion or viewer panes to survive a reload writes its own localStorage code, each with its own try and catch for private mode and quota errors.\n\nThe proposal is to adopt `storageKey` as a kit-wide convention for user-arrangement state, with storage failures degrading to in-memory rather than throwing.\n\nThis is filed low because each component can adopt it independently and nothing is broken today. It is worth deciding once so the components that adopt it agree on the name and the failure behaviour."
-  ,
+  "details": "`SplitPane` takes a `storageKey` and persists its width. `useTheme` and `ThemeToggle` take one too. `Panel`, `Tree` and `MarkdownViewer` have no equivalent, so every consumer that wants panel open state, tree expansion or viewer panes to survive a reload writes its own localStorage code, each with its own try and catch for private mode and quota errors.\n\nThe proposal is to adopt `storageKey` as a kit-wide convention for user-arrangement state, with storage failures degrading to in-memory rather than throwing.\n\nThis is filed low because each component can adopt it independently and nothing is broken today. It is worth deciding once so the components that adopt it agree on the name and the failure behaviour.",
   "notes": [
-    { "date": "2026-09-06", "text": "Confirmed: storageKey appears on src/lib/useTheme.ts, src/components/ThemeToggle.tsx and src/components/SplitPane.tsx, and on no other component." }
+    {
+      "date": "2026-09-06",
+      "text": "Confirmed: storageKey appears on src/lib/useTheme.ts, src/components/ThemeToggle.tsx and src/components/SplitPane.tsx, and on no other component."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "The repository owner adopted the stopping rule this branch had proposed and never had confirmed: fix the defects a consumer would hit, record everything else, and decide the rest at 0.3.0. This record is one of the six that wait, because each adds or changes a public prop, and `CONTRIBUTING.md` asks that the design be settled before the code is written.\n\nThey are one conversation rather than six, and this is the order they unlock in: CUI-014 first, because whether navigation is a supported use decides CUI-011; then CUI-012, because the `storageKey` convention decides CUI-010; then CUI-009 and CUI-011 together, which are both about sizing to content; and CUI-013 last, which stands alone. The Tooltip and MarkdownMinimap changes that already landed belong in the same conversation.\n\nThis is the one to answer first of the pair with CUI-010, because the name and the storage-failure behaviour bind every component that adopts them afterwards."
+    }
   ],
-  "links": ["CUI-010"]
+  "links": [
+    "CUI-010"
+  ]
 }
