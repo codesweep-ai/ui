@@ -1,0 +1,29 @@
+{
+  "id": "CUI-056",
+  "title": "A tooltip near the right edge of the window is squeezed to one character per line",
+  "type": "defect",
+  "severity": "med",
+  "status": "closed",
+  "foundBy": "repository owner (host), reading the preview: the tooltip to expand a panel is very narrow and wrapped",
+  "opened": "2026-09-07",
+  "resolved": "2026-09-07",
+  "stint": "nav sidebar pass, 2026-09-07",
+  "evidence": {
+    "commits": [
+      "3a8b97e"
+    ],
+    "integrated": [],
+    "verified": "`npx vitest run --project browser src/components/Tooltip.placement.test.tsx`: 4 tests pass. Measured before the fix, a Card's maximize control at x=1401 in a 1440px viewport gave a bubble 30px wide and 496px tall against 268x28 for the same string in the middle of the page. Three targeted reverts each fail the test that covers them: dropping `width: max-content` fails at `expected 30 to be 268`, dropping the horizontal correction fails at `expected -111.484375 to be greater than or equal to 7`, and dropping the flip leaves `data-side` at `top` against `bottom`. `npm run ci` exits 0 with the visual gate unchanged at 0 differing pixels."
+  },
+  "resolution": null,
+  "details": "A tooltip is `position: fixed` and was positioned with `left` alone. A fixed box laid out from `left` gets only the space between that point and the right edge of the viewport, so its shrink-to-fit width is capped by whatever is left. A Card's maximize control sits 39px from the right edge on every page, and its 44 character tooltip measured 30px wide and 496px tall: one character per line, and mostly above the top of the screen.\n\n`components/Tooltip.md` said so, in the sense that it carried a paragraph headed \"No collision detection\" and told a consumer to choose `side` for the space available. What it did not say is that a trigger near an edge does not merely clip, it reshapes the bubble into a column of single letters. Nothing in the kit chooses `side` per position, and the components that place a control at the right of a header cannot.\n\nThe same bubble in the middle of the page measured 268x28, so the defect only appears where a control actually lives.",
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "Fixed rather than documented, because there is no `side` a consumer could have chosen: the bubble was reshaped by its position, not just moved. `width: max-content` takes the size out of the position, and the component measures itself once open, shifting to keep 8px clear horizontally and flipping to the other side of the trigger vertically.\n\nOne thing the first attempt got wrong is worth recording. The correction ran unguarded, and every rect is zero in an environment without layout, so a zero box read as off the left edge and the effect corrected it forever. Three Card tests failed with `Maximum update depth exceeded`. A measurement pass has to refuse to act on a measurement it did not get."
+    }
+  ],
+  "links": [
+    "CUI-016"
+  ]
+}

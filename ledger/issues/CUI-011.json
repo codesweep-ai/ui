@@ -3,15 +3,18 @@
   "title": "No content-height mode on Tree or Panel, so stacked nav sections need internal overrides",
   "type": "feature-idea",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "agents building navigation sidebars against 0.2.0, relayed by the repository owner",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "nav sidebar pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "a59ca59",
+      "96131e9"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npx vitest run --project browser src/components/Tree.contentHeight.test.tsx`: 5 tests pass. Two bare trees with `scroll={false}` in a 200px scrolling column each measure 580px tall with nothing scrolling inside them, and the column's `scrollHeight` covers both. Removing the rule fails it at `expected 580 to be 200`. Removing only the `height: auto` half, which is the quiet way to get this wrong, fails at `expected 780 to be greater than or equal to 1160`: 380px of rows outside anything that scrolls. `Panel height=\"auto\"` is covered separately, and removing it fails at `expected 200 to be greater than 200`. `npm run ci` exits 0 at 108/108."
   },
   "resolution": null,
   "details": "A sidebar of several titled nav sections stacked in one scrolling column has no supported route. Each section should be as tall as its own rows, with one scrollbar owned by the sidebar. It is the standard documentation sidebar, and Panel plus Tree is what a consumer reaches for.\n\nBoth components are built to do the opposite. Panel exposes `width` and no height, documented as filling the available flex space. Tree has no height or scroll prop and brings its own `overflow: auto`. Each is designed to fill a container and scroll inside itself.\n\nSo the pattern is only reachable by overriding internals from outside, releasing `height`, `max-height`, `min-height` and `overflow` together down the whole chain. That depends on the internal box structure and breaks silently on a version bump.\n\nGetting the override partly right fails in a way that is very hard to see. Releasing `overflow` without releasing `height` leaves the inner component at its inherited height while its content spills out. An ancestor with `overflow: hidden` clips the overflow, and those rows never count toward the outer scroller's `scrollHeight`. The reporter measured 1344px of scrollHeight for 2562px of nav, with roughly half of a 72 item list unreachable by mouse while still reachable by `scrollIntoView`. It was reported as the last row being slightly clipped.\n\nA partial override producing silent, input-method-dependent content loss is the argument for a first-class mode rather than a documented recipe.\n\nThe proposal is something explicit on both, such as `height=\"auto\"` on Panel and a matching `scroll={false}` on Tree, meaning size to content and let an ancestor own the scrolling. A third report asked for the same thing as `scroll` taking `section` or `container` on SectionedTree.\n\nWorked around in the consuming apps with the override chain described above, plus making the scrolling parent a plain block rather than a flex column, since a flex column shrinks each section to an equal share of its own height.",
@@ -31,6 +34,10 @@
     {
       "date": "2026-09-07",
       "text": "The repository owner adopted the stopping rule this branch had proposed and never had confirmed: fix the defects a consumer would hit, record everything else, and decide the rest at 0.3.0. This record is one of the six that wait, because each adds or changes a public prop, and `CONTRIBUTING.md` asks that the design be settled before the code is written.\n\nThey are one conversation rather than six, and this is the order they unlock in: CUI-014 first, because whether navigation is a supported use decides CUI-011; then CUI-012, because the `storageKey` convention decides CUI-010; then CUI-009 and CUI-011 together, which are both about sizing to content; and CUI-013 last, which stands alone. The Tooltip and MarkdownMinimap changes that already landed belong in the same conversation.\n\nThe override chain in the consuming apps stays until then. It is the one workaround here that fails silently, so it is the strongest argument for taking this early."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Closed once CUI-014 was answered, which is what it was waiting on. Two thirds of the first attempt was cut after measuring it. A `[data-height=\"auto\"]` rule on Panel's body and a `scroll` prop forwarded through SectionedTree both measured identical with and without them: a percentage height against an indefinite parent already resolves to auto, so Panel's inline height is the whole fix and SectionedTree never gave its sections a definite height to begin with.\n\nWhat is left is two props that each earn their place. `Panel height=\"auto\"` covers a sidebar of titled panels, and resolves its child tree's height with it. `Tree scroll={false}` covers bare trees stacked with no panel between them, which is where the default clips: two of them in a 200px column reported 400px of scrollHeight for 1160px of tree."
     }
   ],
   "links": [
