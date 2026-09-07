@@ -15,6 +15,13 @@
   },
   "resolution": null,
   "details": "The first version of the nav sidebar page ran from the left edge of the window to the right, with no inset and no rounded corners, so its cards did not read as cards. Every other pattern page insets by `var(--space-4)`.\n\nThe reason is that the padding comes from the demo's own root element. `preview/src/pages/patterns/ExplorerDemo.tsx` puts it there, and so does the dashboard's. Neither `Card` nor `CardGroup` supplies it, and neither specification mentions it.\n\nSo the composition a consumer copies out of `components/CardGroup.md` produces a page that looks wrong, and the fix is a property on an element that is not part of the kit. The repository owner spotted it immediately and could not say what the difference was, which is the point: nothing names it.\n\nEither `CardGroup` should own the inset, or the specification should say the consumer does and show it. The first is a visual change to every existing page, so this is a decision rather than a correction.",
-  "notes": [],
-  "links": []
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "The decision went to neither option this record offers. The inset belongs to a page container rather than to `CardGroup`, because five of the eleven pattern demos use `CardGroup` and a page built from a table or a form bleeds the same way. Section 2 of `DESIGN_SYSTEM_SPEC.md` already names that container as the `page` layout mode and ships nothing for it, which is filed as CUI-061. This record is one instance of that gap. It closes when the container lands and `components/CardGroup.md` says who supplies the inset."
+    }
+  ],
+  "links": [
+    "CUI-061"
+  ]
 }
