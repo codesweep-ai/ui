@@ -45,8 +45,6 @@
     margin-left: var(--space-2);
     margin-right: var(--space-2)
 }
-.cs-preview-pages-components-page-297,
-.cs-preview-pages-tokens-page-182,
 .cs-preview-pages-patterns-agent-activity-demo-23,
 .cs-preview-pages-patterns-chart-demo-104,
 .cs-preview-pages-patterns-data-table-demo-51,
@@ -282,7 +280,6 @@
 .cs-preview-pages-components-page-398 {
     max-height: 16rem
 }
-.cs-preview-app-37,
 .cs-preview-pages-patterns-page-37,
 .cs-preview-pages-patterns-page-45,
 .cs-preview-pages-patterns-dashboard-demo-91,
@@ -349,10 +346,6 @@
 .cs-preview-pages-patterns-chart-demo-104 {
     max-width: 56rem
 }
-.cs-preview-pages-components-page-297,
-.cs-preview-pages-tokens-page-182 {
-    max-width: 64rem
-}
 .cs-preview-pages-patterns-data-table-demo-51 {
     max-width: 72rem
 }
@@ -373,7 +366,6 @@
 .cs-preview-pages-patterns-form-demo-14 {
     max-width: 36rem
 }
-.cs-preview-app-37,
 .cs-preview-pages-components-page-175,
 .cs-preview-pages-components-page-426,
 .cs-preview-pages-patterns-page-45,
@@ -667,7 +659,6 @@
 .cs-preview-pages-tokens-page-270 {
     overflow-x: auto
 }
-.cs-preview-app-37,
 .cs-preview-pages-components-page-175,
 .cs-preview-pages-components-page-398,
 .cs-preview-pages-components-page-454,
@@ -872,8 +863,6 @@
 .cs-preview-pages-patterns-master-detail-demo-190 {
     padding: var(--space-4)
 }
-.cs-preview-pages-components-page-297,
-.cs-preview-pages-tokens-page-182,
 .cs-preview-pages-patterns-agent-activity-demo-22,
 .cs-preview-pages-patterns-chart-demo-103,
 .cs-preview-pages-patterns-form-demo-13 {
@@ -1513,11 +1502,7 @@ html, body { height: 100%; overflow: hidden; }
 .cs-preview-docs-page {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    height: 100%;
-    min-height: 0;
-    overflow-y: auto
+    gap: var(--space-3)
 }
 
 .cs-preview-docs-title {

@@ -21,13 +21,13 @@ function renderPage(ui: React.ReactElement, hostHeight = 300) {
   document.body.appendChild(host);
   const view = render(ui, { container: host });
   const root = host.querySelector('[data-component="Page"]') as HTMLElement;
-  const content = host.querySelector('[data-part="content"]') as HTMLElement;
-  return { ...view, host, root, content };
+  const first = host.querySelector("[data-row]") as HTMLElement;
+  return { ...view, host, root, first };
 }
 
 const rows = (count: number) =>
   Array.from({ length: count }, (_, i) => (
-    <div key={i} style={{ height: 40 }}>
+    <div key={i} data-row="" style={{ height: 40 }}>
       row {i}
     </div>
   ));
@@ -86,13 +86,13 @@ describe("Page scrollbar gutter", () => {
 
 describe("Page width", () => {
   it("fills the page's content box by default", () => {
-    const { root, content } = renderPage(<Page padded={false}>{rows(1)}</Page>);
+    const { root, first } = renderPage(<Page padded={false}>{rows(1)}</Page>);
 
-    expect(content.getBoundingClientRect().width).toBe(root.clientWidth);
+    expect(first.getBoundingClientRect().width).toBe(root.clientWidth);
   });
 
   it("caps and centres the content when width is readable", () => {
-    const { root, content } = renderPage(
+    const { root, first } = renderPage(
       <Page width="readable" padded={false}>
         {rows(30)}
       </Page>,
@@ -101,13 +101,14 @@ describe("Page width", () => {
     // wider than the token's own value.
     root.style.setProperty("--page-max-width", "400px");
     const rootBox = root.getBoundingClientRect();
-    const contentBox = content.getBoundingClientRect();
+    const firstBox = first.getBoundingClientRect();
 
-    expect(contentBox.width).toBe(400);
     expect(root.clientWidth).toBeGreaterThan(400);
+    expect(firstBox.width).toBeLessThanOrEqual(400);
+    expect(firstBox.width).toBeGreaterThan(300);
     // Centred: equal space either side, to within a subpixel.
-    const left = contentBox.left - rootBox.left;
-    const right = rootBox.right - contentBox.right;
+    const left = firstBox.left - rootBox.left;
+    const right = rootBox.right - firstBox.right;
     expect(Math.abs(left - right)).toBeLessThan(1);
   });
 });

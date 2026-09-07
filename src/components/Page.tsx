@@ -52,17 +52,13 @@ function PageImpl(
         "cs-component-page-1 ",
         padded && "cs-component-page-2",
         scroll && "cs-component-page-3",
+        width === "readable" && "cs-component-page-4",
         scroll && width === "readable" && "cs-component-page-6",
         className,
       )}
       {...rest}
     >
-      <div
-        data-part="content"
-        className={cn("cs-component-page-5 ", width === "readable" && "cs-component-page-4")}
-      >
-        {children}
-      </div>
+      {children}
     </Component>
   );
 }

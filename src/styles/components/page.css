@@ -1,5 +1,6 @@
 /* page component styles. */
 .cs-component-page-1 {
+    --cs-page-inset: 0rem;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -7,6 +8,7 @@
 }
 
 .cs-component-page-2 {
+    --cs-page-inset: var(--space-4);
     padding: var(--space-4)
 }
 
@@ -20,10 +22,17 @@
     scrollbar-gutter: stable
 }
 
+/* The cap is side padding that grows, rather than a centred box inside this
+   one. An inner box was tried first and removed: with one in place, six
+   scrolled pattern captures stopped scrolling, because a page laid out with
+   `height: 100%` inside it no longer bounded what it held. That is the class
+   of failure CUI-057 records.
+   The inset sits inside the cap, which is where `max-width` on a padded box
+   puts it. Capping the content instead of the box widened every page by
+   32px. */
 .cs-component-page-4 {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: var(--page-max-width)
+    padding-left: max(var(--cs-page-inset), calc((100% - var(--page-max-width)) / 2 + var(--cs-page-inset)));
+    padding-right: max(var(--cs-page-inset), calc((100% - var(--page-max-width)) / 2 + var(--cs-page-inset)))
 }
 
 /* A centred column needs the reservation on both edges. With it on the
@@ -32,15 +41,6 @@
    keeps the narrower reservation and the width that comes with it. */
 .cs-component-page-6 {
     scrollbar-gutter: stable both-edges
-}
-
-/* Grows to fill a short page and past the root on a long one, so the root
-   scrolls rather than this box. */
-.cs-component-page-5 {
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    width: 100%
 }
 
 /* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a

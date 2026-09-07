@@ -336,7 +336,7 @@ async function captureTheme(page, theme, outputDir) {
   );
   for (const component of COMPONENTS) {
     if (alreadyCaptured.has(component)) continue;
-    const componentRoot = ["Button", "Card"].includes(component)
+    const componentRoot = ["Button", "Card", "Page"].includes(component)
       ? section(page, component)
       : page;
     const locator = componentRoot.locator(`[data-component="${component}"]`).first();

@@ -1,6 +1,6 @@
 import pkg from "../../package.json";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { AppShell, Header, Footer, ThemeToggle } from "@codesweep-ai/ui";
+import { AppShell, Footer, Header, Page, ThemeToggle } from "@codesweep-ai/ui";
 import { TokensPage } from "./pages/TokensPage";
 import { ComponentsPage } from "./pages/ComponentsPage";
 import { PatternsPage } from "./pages/PatternsPage";
@@ -67,7 +67,15 @@ export default function App() {
         navItems={navItems}
         actions={<ThemeToggle />}
       />
-      <main ref={mainRef} tabIndex={0} className="cs-preview-app-37 ">
+      <Page
+        ref={mainRef}
+        // Section 2 of the design system spec: each feature picks its
+        // layout mode. Patterns is `full`, because its tab bar spans the
+        // width and its demo area is bounded. The rest are `page`.
+        padded={page !== "patterns"}
+        scroll={page !== "patterns"}
+        width={page === "components" || page === "tokens" ? "readable" : "full"}
+      >
         {page === "tokens" ? (
           <TokensPage />
         ) : page === "patterns" ? (
@@ -77,7 +85,7 @@ export default function App() {
         ) : (
           <ComponentsPage />
         )}
-      </main>
+      </Page>
       <Footer>@codesweep-ai/ui v{pkg.version} · preview</Footer>
       <PaletteLab /> {/* preview-only brand/palette tool — not in the published package */}
     </AppShell>

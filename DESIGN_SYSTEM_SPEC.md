@@ -845,7 +845,7 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
 
 | Token              | Value   | Usage                                          |
 |--------------------|---------|------------------------------------------------|
-| `--page-max-width` | `72rem` | Widest a `Page` grows under `width="readable"`. Wide enough for a two-column form or a table, narrow enough that a line of text does not run the width of a large monitor. |
+| `--page-max-width` | `64rem` | Widest a `Page` grows under `width="readable"`. Wide enough for a two-column form or a table, narrow enough that a line of text does not run the width of a large monitor. |
 
 ---
 

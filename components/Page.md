@@ -64,8 +64,9 @@ interface PageProps extends React.HTMLAttributes<HTMLElement> {
 - Root: `display: flex`, `flex-direction: column`, `min-height: 0`, `width: 100%`.
 - **`padded` (default)** adds `padding: var(--space-4)`, which is the inset that makes a page read as content rather than as a window fill.
 - **`scroll` (default)** adds `flex: 1 1 0%`, `overflow-y: auto` and `scrollbar-gutter: stable`. The root scrolls, so the scrollbar sits at the window edge rather than at the edge of a centred column.
-- The content element is always present and carries `display: flex`, `flex-direction: column`, `flex: 1 0 auto` and `width: 100%`. It grows to fill a short page, and past the root on a long one, so the root is what scrolls.
-- **`width="readable"`** adds `max-width: var(--page-max-width)` and automatic left and right margins to the content element, which centres it. It also widens the scrollbar reservation to both edges when the page scrolls.
+- **`width="readable"`** grows the left and right padding to half the space left over past `var(--page-max-width)`, plus the inset. That centres the content and caps it. It also widens the scrollbar reservation to both edges when the page scrolls.
+- The cap bounds the box rather than the content, which is where `max-width` on a padded element puts the inset.
+- The children are the root's own children. There is no wrapper, because an element between this one and its children stopped a page laid out with `height: 100%` from bounding what it held.
 
 ### Scrollbar reservation
 
@@ -112,8 +113,7 @@ A `Page` inside another scroller produces a scrollbar inside a scrollbar. Pass
 
 ## Traceability
 
-`data-component="Page"` on the root element, and `data-part="content"` on the
-element that holds the children.
+`data-component="Page"` on the root element.
 
 ## Compiling usage example
 

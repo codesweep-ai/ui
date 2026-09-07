@@ -992,7 +992,7 @@ export function ComponentsPage() {
           The container a page&apos;s content sits in. It owns the inset from the window edge, the
           width the content may grow to, and which element scrolls, so one scrollbar serves the
           whole page. Framed here at a fixed height to show the scroll it owns, with the width cap
-          lowered from its 72rem default so the centring is visible at this size.
+          lowered from its 64rem default so the centring is visible at this size.
         </p>
         <div className="cs-preview-pages-components-page-506">
           <Page as="div" width="readable">

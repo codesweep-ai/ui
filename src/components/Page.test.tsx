@@ -18,12 +18,11 @@ describe("Page", () => {
     expect(document.querySelector('[data-component="Page"]')?.tagName).toBe("SECTION");
   });
 
-  it("puts the children in the content element rather than on the root", () => {
-    render(<Page>content</Page>);
-    const content = document.querySelector('[data-part="content"]');
+  it("renders its children on the root, with no wrapper between", () => {
+    render(<Page><span data-child="">content</span></Page>);
+    const child = document.querySelector("[data-child]");
 
-    expect(content).not.toBeNull();
-    expect(content).toHaveTextContent("content");
+    expect(child?.parentElement).toBe(screen.getByRole("main"));
   });
 
   it("forwards its ref to the root", () => {
