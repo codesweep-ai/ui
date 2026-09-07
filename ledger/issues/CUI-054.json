@@ -10,10 +10,11 @@
   "stint": "commit rules pass, 2026-09-07",
   "evidence": {
     "commits": [
-      "f9c7a85"
+      "f9c7a85",
+      "d95d6ed"
     ],
     "integrated": [],
-    "verified": "`npm run test:commits`: 8 tests pass over the rules themselves. Run across the whole branch the checker agrees with the audit that produced this record, independently written: 117 commits, 29 flagged, every one of them for the body wrap and nothing else. Landing a real commit with a 106 column body makes `npm run lint:commits` exit 1 naming the sha and the column count, and the `commit-msg` hook refuses the same message before the commit exists. `npm run ci` exits 0 and reports `commits: 0 commits since 58668d6, all within the rules`."
+    "verified": "`npm run test:commits`: 6 tests pass over the wrap measurement. Across the whole branch the checker finds 29 of 119 commits over 72 columns and nothing else, which is what the audit that produced this record found independently. Landing a real commit with a 106 column body makes `npm run lint:commits` exit 1 naming the sha and the column count, and the `commit-msg` hook refuses the same message before the commit exists. `npm run ci` exits 0 reporting `commits: 2 commits since 58668d6, all wrapped at 72`, and `actionlint` passes on the workflow step that runs it."
   },
   "resolution": null,
   "details": "`CONTRIBUTING.md` says to wrap a commit body at 72 columns. Twenty-nine of this branch's 93 commits have a body line over it: 22 at 73 columns, four at 74, one at 76 and two at 77. Measured with `git log main..HEAD --format=%b`, ignoring the `Co-Authored-By:` trailer.\n\n`cs-lint oss` passes on every one of them. So the rule is documented and ungated, which is the class this branch was opened to find, in the commit messages rather than in the code.\n\nThe history is not worth rewriting for it. Nothing is pushed, so a rebase could reach all 29, but that rewrites most of a branch to move a line by one character. The useful fix reaches the next commit instead, either as an `oss` rule or as a check in `npm run ci`.\n\nOne caution for whoever writes it. The subject rule, the trailer rule and the body word and paragraph limits all pass today, so a checker that reports those as violations has a bug in it rather than a finding.",
@@ -21,6 +22,10 @@
     {
       "date": "2026-09-07",
       "text": "Closed with a gate rather than a rewrite, and the reason is stronger than the one this record gave. It argued the history was not worth rewriting for a character. The real obstacle is that the ledger cites sixty of those commits by sha, seventy-one citations across fifty-four records, and a closed record has to cite a sha that exists. A rebase would dangle all of them.\n\nSo the rule is checked from a baseline commit forward. The whole Commits section is covered rather than the wrap alone, because the other rules were equally ungated and held only by care: subject length, capitalisation, trailing stop, category prefix, the kept trailer, and the body's paragraph and word limits.\n\nThe audit that produced this record reported two false positives, on prose lines beginning `context:` and `scrollbar:`. A trailer block is the last thing in a message and its keys are capitalised, and a test holds the checker to that."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Two corrections to the first attempt, both from the owner asking how the gate was built.\n\nIt re-implemented rules that already run. `cs-lint oss` carries the subject rules in OSS-702, the session-link rule in OSS-701 and the body length rule in OSS-711, and it runs both inside `npm run check` and as its own CI job. Only the 72 column wrap is missing from it. The checker is now that one rule, 47 lines shorter, and the rest is left where it already was.\n\nIt also ran nowhere but a contributor's machine. `.github/workflows/ci.yml` never invokes `npm run ci`: it runs `npm run check` and one job per linter. A gate added to `ci.mjs` alone is invisible to the forge, and it quietly broke that file's own claim to mirror the workflow. The step now runs in the readiness job, beside the other history rules.\n\nThe durable home is an OSS rule in cs-lint, where every project in the family would get it. That binary lives in another repository, so this stays a local stand-in."
     }
   ],
   "links": []
