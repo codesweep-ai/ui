@@ -27,6 +27,10 @@
     {
       "date": "2026-09-07",
       "text": "The cause of the split pane instance is that the capture depended on what the run had done before it. A probe rendering the same element in the same image, hashing each result, produced three different images for one drag. A fresh page gave one, the modal round trip gave a second, and the tree interaction gave a third. Only the third varied between runs, and it was the one this capture was taking.\n\nThe geometry was never fractional, which was the first hypothesis. The element measured 974 by 190 at x=233 with a device pixel ratio of 1 on every trial.\n\nThe drag now runs on a page of its own, in 84ffb5c. That capture failed 8 comparison runs of 14 before the change and none of 10 after it. The same change let axe evaluate colour contrast on the components page, which the drag had been making it skip with a grid bounds error, so the rule count rises by one.\n\nWhat this does not settle is the `dark/card-group.png` instance the record opened with. That capture is taken in the component loop rather than after an interaction, and 30 plain element screenshots destabilised nothing across 8 trials. It has not reproduced in roughly 30 runs today, so the record stays open on an instance nobody can currently make happen."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Two things would close this record, and choosing between them is a judgement rather than a measurement.\n\nThe first is reproducing `dark/card-group.png` and finding its cause. The second is deciding that an instance absent from about 30 runs is stale, and closing it as `wont-fix` with that reason.\n\nToday's evidence leans to the second. Across 8 clean runs, 880 capture comparisons produced no difference anywhere but the split pane. That is a reason to suspect the same history dependence rather than a separate cause. Suspicion is not a finding, so the record waits on someone's call rather than closing on mine."
     }
   ],
   "links": [
