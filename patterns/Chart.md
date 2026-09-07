@@ -54,9 +54,42 @@ const theme = useChartTheme();
 // theme.bg, theme.fg, theme.muted, theme.accent, theme.success, …
 // theme.categorical[i]      → base 10-color palette
 // theme.categoricalLight[i] / .categoricalMid[i] / .categoricalDark[i]
+// theme.fontFamily          → resolved mono stack
+// theme.fontSizeAxis        → resolved axis size, in pixels
+// theme.measureText(label)  → rendered width in pixels
 ```
 
 The hook resolves the *current theme's* values into concrete strings (so d3 gets `#1ee0ca`, not `var(--color-accent)`), and re-resolves on light/dark toggle.
+
+### Type, and measuring it
+
+The reason colour needs a bridge applies to type. `ctx.font` will not accept a
+`var()` string, and nothing can be laid out around a label whose width is
+unknown, so a chart drawing a legend chip, a labelled box or a truncated tick
+has to measure before it draws.
+
+`measureText` is backed by one cached canvas context and measures in
+`fontSizeAxis` and `fontFamily` unless a second argument names another font, in
+the shorthand `ctx.font` takes:
+
+```typescript
+const width = theme.measureText("Cache Write");            // axis font
+const title = theme.measureText("Tokens", `16px ${theme.fontFamily}`);
+```
+
+Measure rather than estimate. A per-character constant is a design token copied
+into a magic number, it is one line and it looks right on the strings it was
+tested against, and it rots silently the moment the type scale moves. One
+consumer shipped 7.4px per character and drew labels wider than the boxes
+around them.
+
+Where a web font is loaded, the hook re-reads once `document.fonts.ready`
+resolves, because a font that arrives after the first paint measures
+differently from the fallback it replaced. It skips that when the fonts already
+settled, which is every page using the system stacks this kit ships.
+
+`measureText` returns 0 where there is no canvas to measure with, which is
+server-side rendering and nowhere a chart draws.
 
 ## Helpers
 
@@ -115,6 +148,7 @@ The `@codesweep-ai/no-hardcoded-chart-colors` rule (warn, in the recommended con
 - ❌ `const palette = ["#60a5fa", "#2dd4bf", …]` — use `theme.categorical`.
 - ❌ A chart that doesn't restyle on theme toggle — depend your draw effect on the `theme` object.
 - ❌ A bespoke loading spinner inside the chart — use `ChartFrame`'s `loading`.
+- ❌ `const CHAR_WIDTH = 7.4` — use `theme.measureText`.
 
 ## Compiling usage example
 

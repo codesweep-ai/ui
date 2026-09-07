@@ -30,6 +30,14 @@ describe("useChartTheme", () => {
   beforeEach(setVars);
   afterEach(clearVars);
 
+  it("degrades to zero where there is no canvas to measure with", () => {
+    // jsdom's canvas shim has no measureText. A chart never draws here, and a
+    // throw from a getter every chart calls would be worse than a zero.
+    const { result } = renderHook(() => useChartTheme());
+    expect(result.current.measureText("Cache Write")).toBe(0);
+    expect(typeof result.current.fontFamily).toBe("string");
+  });
+
   it("reads core tokens into the theme object", () => {
     const { result } = renderHook(() => useChartTheme());
     expect(result.current.bg).toBe("#0a0a0a");
