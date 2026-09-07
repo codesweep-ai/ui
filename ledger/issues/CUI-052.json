@@ -3,15 +3,18 @@
   "title": "Re-recording the baseline rewrites captures whose pixels did not change",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while re-recording the baseline for CUI-040",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "visual gate pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "348e80e",
+      "054f957"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Removing the Table's card background, which the gate previously reported as 0 differing pixels, now fails it: `table.png` at 352273 pixels or 94.73%, `pattern-data-table.png` at 658876 or 57.34%, in both themes. The same run also fails on 7 and 10 pixel differences in the master-detail captures, which the old 250 pixel floor discarded. The tightened gate passes the current tree unchanged at 104/104 with 0 differing pixels, and `npm run ci` exits 0 with every gate run."
   },
   "resolution": null,
   "details": "`npm run visual:capture` rewrote 17 of the 94 captures for a change that affected two components. Measured against the committed versions, `code-block` changed 1.82% and 1.79% of its pixels and `mermaid-diagram` 0.53% and 0.64%. The other 13 differed by 0 pixels at the threshold the gate itself uses.\n\nRestoring those 13 leaves `visual:compare` at 94 of 94 with 0 differing pixels, so they carry nothing the gate can see. Running `visual:capture` again rewrites all 17 once more, so this is reproducible rather than one bad run.\n\nThe cost is review. CONTRIBUTING asks that an intentional visual change be reviewed in both themes, and 13 files of noise around 4 real ones makes that harder than it needs to be. Writing a capture only when it differs from the committed one would fix it.\n\nWhat has not been established is why the bytes differ when the pixels do not. It could be encoder nondeterminism or a colour delta below the comparison threshold, and the two want different fixes.",
@@ -27,6 +30,14 @@
     {
       "date": "2026-09-07",
       "text": "This also cost something. Twice in this session the zero-diff files from a re-record were restored on the reasoning that they carried no change, which discarded real renderings and left the committed baseline disagreeing with the code. Twenty captures were stale by the time it was measured, and are re-recorded in 348e80e. Reading a tolerant comparison as proof of equality is what caused it, and it is the same mistake in both directions: it hid the drift and it hid the Table background's effect."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Closed by making the comparison exact rather than by chasing the churn it was filed about. The threshold's blind spot was measured on synthetic surfaces: at pixelmatch 0.1 a uniform shift is ignored up to 26 in 255 on mid grey, and across the whole remaining range on a near-white surface, regardless of how many pixels carry it. The same case at threshold 0 counts 100% of them.\n\nThe ratio and the 250 pixel floor went too. Both existed to absorb noise, and the image produces none: 104 captures byte identical across two runs, and a third against the committed baseline."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "One risk is not settled by anything measured here. Determinism was established in this container on this machine, and CI runs the same image on a different one. If its renderer differs at all, every capture fails on the first run there. Nothing has been pushed, so it has not been tested. The fallback if that happens is a small pixel floor rather than a return to the perceptual threshold, which is the part that hid colour."
     }
   ],
   "links": [

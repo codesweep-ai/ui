@@ -9,10 +9,6 @@
     {
       "id": "CUI-041",
       "why": "A responsive header the stylesheet has no media query for."
-    },
-    {
-      "id": "CUI-052",
-      "why": "Re-recording a baseline should produce a diff a reviewer can read."
     }
   ]
 }
