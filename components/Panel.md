@@ -28,10 +28,12 @@ interface PanelProps {
   title: string;
   /** Width in px or any CSS length. If omitted, panel fills available flex space. */
   width?: number | string;
-  /** Whether the panel is collapsed to zero width */
+  /** Whether the panel is collapsed */
   collapsed?: boolean;
   /** Called when the user clicks the collapse button */
   onCollapse?: () => void;
+  /** What is left on screen when collapsed. Default: "edge" */
+  collapseTo?: "edge" | "header";
   /** Content */
   children: React.ReactNode;
   /** Additional className merged onto the root */
@@ -56,7 +58,7 @@ interface PanelProps {
 - Padding: `0 var(--space-4)`.
 - Title: the `text-label-upper` utility, which is `font-size: var(--font-size-label)` resolving to `var(--font-size-xs)` at `0.75rem`, `text-transform: uppercase`, `letter-spacing: var(--letter-spacing-wide)`, `font-weight: var(--font-weight-semibold)`, `color: var(--muted)`.
 - Actions slot: rendered on the right side of the header.
-- Collapse button: uses `PanelLeftClose` icon (16px) from lucide-react.
+- Collapse button: `PanelLeftClose` (16px) from lucide-react when `collapseTo` is `"edge"`, and `ChevronDown` or `ChevronRight` when it is `"header"`. A panel folding sideways says so with a sideways icon; one collapsing to its own header is a disclosure, and a chevron is what a reader expects.
 
 ### Content Area
 - `flex: 1`, `overflow-y: auto`, `min-height: 0`. Content taller than the panel scrolls. Until 0.3.0 the stylesheet said `overflow: hidden` here, against this specification, so such content was clipped with no scrollbar and reachable only by `scrollIntoView` or the keyboard.
@@ -71,7 +73,8 @@ interface PanelProps {
 | State       | CSS                                                        |
 |-------------|------------------------------------------------------------|
 | Default     | Full width, content visible                                |
-| Collapsed   | `width: 0`, `overflow: hidden`, `border: none`, no content rendered |
+| Collapsed, `collapseTo: "edge"` | `width: 0`, `overflow: hidden`, `border: none`, no content rendered |
+| Collapsed, `collapseTo: "header"` | Width unchanged, header and toggle still shown, no content rendered |
 | Hover (collapse btn) | `color: var(--fg)`, `background: var(--color-bg-muted-hover)`, `border-radius: var(--radius-sm)` |
 
 ### Responsive
@@ -81,7 +84,12 @@ interface PanelProps {
 
 ### Interactions
 - Clicking the collapse button calls `onCollapse()`.
-- When `collapsed` is `true`, the panel renders as zero-width with no visible content.
+- When `collapsed` is `true`, the body is not rendered in either mode.
+- `collapseTo` decides what is left. `"edge"`, the default, folds the panel to
+  zero width and gives its space back, which is what a side panel should do.
+- `"header"` leaves the title bar and its toggle in place. In a vertical stack
+  the edge mode takes the header with the body, so nothing remains on screen to
+  restore the panel and every consumer rebuilds that toggle by hand.
 
 ### Keyboard
 | Key     | Action                           |
@@ -92,7 +100,10 @@ interface PanelProps {
 
 ### Accessibility
 - Collapse button: `aria-label="Collapse {title} panel"` / `"Expand {title} panel"` based on state.
-- The collapse button carries `aria-expanded={!collapsed}`.
+- The collapse button carries `aria-expanded={!collapsed}`, which is what the
+  disclosure pattern requires. It carries no `aria-controls`: the body is not
+  rendered while collapsed, and pointing at an element that does not exist is
+  worse than pointing at nothing.
 - The root has `role="group"` and `aria-label="{title}"`. It groups what the
   panel holds rather than landmarking it, so a page of panels adds no landmarks.
 

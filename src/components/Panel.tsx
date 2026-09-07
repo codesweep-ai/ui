@@ -1,5 +1,5 @@
 import { forwardRefToRoot } from "../lib/forwardRefToRoot";
-import { PanelLeftClose } from "lucide-react";
+import { ChevronDown, ChevronRight, PanelLeftClose } from "lucide-react";
 import { cn } from "../lib/cn";
 
 interface PanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -8,6 +8,13 @@ interface PanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title">
   width?: number | string;
   collapsed?: boolean;
   onCollapse?: () => void;
+  /**
+   * What is left on screen when `collapsed`. `"edge"` folds the whole panel
+   * away, which is right for a side panel giving its width back. `"header"`
+   * keeps the title bar and its toggle, which in a vertical stack is the only
+   * thing left to click to bring the panel back.
+   */
+  collapseTo?: "edge" | "header";
   children: React.ReactNode;
   className?: string;
   actions?: React.ReactNode;
@@ -18,11 +25,25 @@ function PanelImpl({
   width,
   collapsed,
   onCollapse,
+  collapseTo = "edge",
   children,
   className,
   actions,
   ...props
 }: PanelProps) {
+  // Only the edge mode folds the panel itself away. Zeroing the width is what
+  // takes the header with it, so the other mode leaves the box alone and lets
+  // the body do the disappearing.
+  const foldsAway = collapsed && collapseTo === "edge";
+  // A panel folding sideways says so with a sideways icon. One collapsing to
+  // its own header is a disclosure, and a chevron is what a reader expects.
+  const ToggleIcon =
+    collapseTo === "header"
+      ? collapsed
+        ? ChevronRight
+        : ChevronDown
+      : PanelLeftClose;
+
   return (
     <div
       role="group"
@@ -31,15 +52,15 @@ function PanelImpl({
       data-component="Panel"
       className={cn(
         "cs-component-panel-4 ",
-        collapsed && "cs-component-panel-5 ",
+        foldsAway && "cs-component-panel-5 ",
         className
       )}
       style={{
-        width: collapsed ? 0 : typeof width === "number" ? `${width}px` : width,
-        flexShrink: collapsed ? 0 : width ? 0 : undefined,
-        flex: collapsed ? undefined : width ? undefined : 1,
-        minWidth: collapsed ? 0 : width ? undefined : 0,
-        overflow: collapsed ? "hidden" : undefined,
+        width: foldsAway ? 0 : typeof width === "number" ? `${width}px` : width,
+        flexShrink: foldsAway ? 0 : width ? 0 : undefined,
+        flex: foldsAway ? undefined : width ? undefined : 1,
+        minWidth: foldsAway ? 0 : width ? undefined : 0,
+        overflow: foldsAway ? "hidden" : undefined,
         transition: "width var(--transition-normal)",
       }}
     >
@@ -56,7 +77,7 @@ function PanelImpl({
               aria-label={collapsed ? `Expand ${title} panel` : `Collapse ${title} panel`}
               aria-expanded={!collapsed}
             >
-              <PanelLeftClose className="cs-component-panel-19 " />
+              <ToggleIcon className="cs-component-panel-19 " />
             </button>
           )}
         </div>

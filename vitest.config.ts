@@ -23,6 +23,7 @@ const browserSuites = [
   "src/components/SegmentedControl.test.tsx",
   "src/components/EventLanes.test.tsx",
   "src/components/Panel.scroll.test.tsx",
+  "src/components/Panel.collapse.test.tsx",
   "src/patterns/patterns.responsive.test.tsx",
   "src/lib/chartTheme.text.test.tsx",
 ];
