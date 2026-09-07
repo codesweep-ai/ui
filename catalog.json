@@ -668,8 +668,7 @@
         "StatusBadge"
       ],
       "patterns": [
-        "AgentActivity",
-        "Chart"
+        "Dashboard"
       ],
       "note": "Swatch colors are CSS custom-property names, never resolved colors or hex values."
     },

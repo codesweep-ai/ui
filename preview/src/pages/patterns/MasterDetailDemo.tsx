@@ -90,6 +90,7 @@ function FlatMasterDetail() {
                     header: "Status",
                     sortable: false,
                     width: "100px",
+                    wrap: true,
                     cell: (row) => (
                       <StatusBadge
                         label={row.status}
@@ -414,6 +415,7 @@ function NestedMasterDetail() {
                             header: "Status",
                             sortable: false,
                             width: "100px",
+                            wrap: true,
                             cell: (row) => (
                               <StatusBadge
                                 label={row.status}
@@ -616,6 +618,7 @@ function LongListMasterDetail() {
                       header: "Status",
                       sortable: false,
                       width: "100px",
+                      wrap: true,
                       cell: (row) => (
                         <StatusBadge
                           label={row.status}

@@ -11,7 +11,7 @@ avoid_when:
   - Choosing exactly one mode → SegmentedControl
   - Showing status text without category filtering → StatusBadge
 related: [EventLanes, Chip, SegmentedControl, StatusBadge]
-patterns: [AgentActivity, Chart]
+patterns: [Dashboard]
 note: Swatch colors are CSS custom-property names, never resolved colors or hex values.
 ---
 

@@ -228,7 +228,7 @@ Pointer hover and keyboard activity identify an event through the same index loo
 While the strip holds **keyboard** focus, the tooltip stays on the active event with the pointer
 away, so a keyboard user has a readout of where they are. It is keyboard focus specifically: a click
 also focuses the scroller, and treating that as keyboard left the highlighted event's tooltip pinned
-on screen for the rest of the page's life (OPEN.md §7.19). Pressing **Escape** dismisses it; carrying
+on screen for the rest of the page's life. Pressing **Escape** dismisses it; carrying
 on with the arrows brings it back.
 
 `EventLanes` always owns the shell: the returned body is rendered in `ChartTooltip`, positioned relative to the visible viewport and clamped to that viewport. Consumers do not position or restyle the tooltip. Returning `null` suppresses the visual tooltip for that event. The tooltip has `role="tooltip"`, and the active virtual option references it with `aria-describedby` while it is open.

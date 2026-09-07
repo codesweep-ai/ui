@@ -979,8 +979,7 @@
     text-decoration-line: none
 }
 .cs-preview-pages-patterns-chart-demo-83 {
-    --tw-shadow-color: var(--shadow-md);
-    --tw-shadow: var(--tw-shadow-colored)
+    box-shadow: var(--shadow-md)
 }
 .cs-preview-pages-patterns-dashboard-demo-13 {
     transition-property: all;

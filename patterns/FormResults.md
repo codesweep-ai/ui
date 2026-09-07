@@ -281,7 +281,7 @@ instead of pushing the toolbar off screen. A flex child defaults to
 - **Manual search**: SearchInput with `minChars` — user presses Enter to trigger
 - **Auto search**: SearchInput with `autoSearch` — debounced, triggers on type
 - **Empty state**: No results yet — show nothing below the form
-- **Loading**: Button disabled + spinner while results load
+- **Loading**: Button disabled, and skeleton result Cards in the shape the results will take. [ComponentStates](ComponentStates.md) has the reasoning
 - **Inline form**: Dropdowns and input on one row (wide screens) or stacked (narrow)
 
 ## Interactions

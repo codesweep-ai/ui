@@ -184,7 +184,7 @@ Compact token-colour legend that can be static or toggle a selected item set.
 - avoid when: Choosing exactly one mode → SegmentedControl
 - avoid when: Showing status text without category filtering → StatusBadge
 - ⚠ Swatch colors are CSS custom-property names, never resolved colors or hex values.
-- related: EventLanes, Chip, SegmentedControl, StatusBadge · patterns: AgentActivity, Chart
+- related: EventLanes, Chip, SegmentedControl, StatusBadge · patterns: Dashboard
 - spec: [components/Legend.md](components/Legend.md)
 
 ### MarkdownMinimap  ·  since 1.0.0
