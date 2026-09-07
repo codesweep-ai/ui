@@ -3,18 +3,25 @@
   "title": "CONTRIBUTING asks for a 72 column commit body, and no gate checks it",
   "type": "improvement",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "repository owner (host), asking whether the branch's commit messages match CONTRIBUTING",
   "opened": "2026-09-07",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "commit rules pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "f9c7a85"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run test:commits`: 8 tests pass over the rules themselves. Run across the whole branch the checker agrees with the audit that produced this record, independently written: 117 commits, 29 flagged, every one of them for the body wrap and nothing else. Landing a real commit with a 106 column body makes `npm run lint:commits` exit 1 naming the sha and the column count, and the `commit-msg` hook refuses the same message before the commit exists. `npm run ci` exits 0 and reports `commits: 0 commits since 58668d6, all within the rules`."
   },
   "resolution": null,
   "details": "`CONTRIBUTING.md` says to wrap a commit body at 72 columns. Twenty-nine of this branch's 93 commits have a body line over it: 22 at 73 columns, four at 74, one at 76 and two at 77. Measured with `git log main..HEAD --format=%b`, ignoring the `Co-Authored-By:` trailer.\n\n`cs-lint oss` passes on every one of them. So the rule is documented and ungated, which is the class this branch was opened to find, in the commit messages rather than in the code.\n\nThe history is not worth rewriting for it. Nothing is pushed, so a rebase could reach all 29, but that rewrites most of a branch to move a line by one character. The useful fix reaches the next commit instead, either as an `oss` rule or as a check in `npm run ci`.\n\nOne caution for whoever writes it. The subject rule, the trailer rule and the body word and paragraph limits all pass today, so a checker that reports those as violations has a bug in it rather than a finding.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "Closed with a gate rather than a rewrite, and the reason is stronger than the one this record gave. It argued the history was not worth rewriting for a character. The real obstacle is that the ledger cites sixty of those commits by sha, seventy-one citations across fifty-four records, and a closed record has to cite a sha that exists. A rebase would dangle all of them.\n\nSo the rule is checked from a baseline commit forward. The whole Commits section is covered rather than the wrap alone, because the other rules were equally ungated and held only by care: subject length, capitalisation, trailing stop, category prefix, the kept trailer, and the body's paragraph and word limits.\n\nThe audit that produced this record reported two false positives, on prose lines beginning `context:` and `scrollbar:`. A trailer block is the last thing in a message and its keys are capitalised, and a test holds the checker to that."
+    }
+  ],
   "links": []
 }

@@ -21,10 +21,6 @@
     {
       "id": "CUI-060",
       "why": "Two controls with one label, and a prop that reaches one of them."
-    },
-    {
-      "id": "CUI-054",
-      "why": "A documented commit rule that no gate checks, which is this branch's own recurring class."
     }
   ]
 }
