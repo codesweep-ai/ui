@@ -234,7 +234,11 @@ function CheckboxGroupImpl({
     return options.filter((o) => o.label.toLowerCase().includes(lower));
   }, [options, filter]);
 
-  const allFilteredSelected = filteredOptions.length > 0 && filteredOptions.every((o) => selected.has(o.value));
+  // `every` on an empty list is true, which is what disables both buttons when
+  // the filter matches nothing: there is nothing left to select or clear. The
+  // length guard that used to sit here left All enabled in that state, so
+  // clicking it did nothing at all.
+  const allFilteredSelected = filteredOptions.every((o) => selected.has(o.value));
   const noneFilteredSelected = filteredOptions.every((o) => !selected.has(o.value));
 
   const handleSelectAll = () => {

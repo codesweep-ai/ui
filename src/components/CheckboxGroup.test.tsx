@@ -112,6 +112,21 @@ describe("CheckboxGroup — filterable", () => {
     expect(screen.queryByText("Gamma")).not.toBeInTheDocument();
   });
 
+  it("All and None are both disabled when the filter matches nothing", async () => {
+    render(
+      <CheckboxGroup
+        options={flat}
+        selected={new Set()}
+        onChange={() => {}}
+        filterable
+      />,
+    );
+    await userEvent.type(screen.getByPlaceholderText("Filter..."), "zzz");
+
+    expect(screen.getByRole("button", { name: "All" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "None" })).toBeDisabled();
+  });
+
   it("filter with no matches renders 'No matches' fallback", async () => {
     render(
       <CheckboxGroup
