@@ -99,6 +99,13 @@ Bumping the Playwright image fails every capture, because the browser that drew
 the baseline is gone. That is the moment to re-record, and the reason the
 comparison would rather say so than average the difference away.
 
+The tag naming that image is mutable, so a vendor can rebuild it under the same
+name and change the fonts inside. `visual:capture` records the digests it drew
+in, in `visual-baseline/render-image.json`, and `visual:compare` checks them
+before it renders. A rebuild then stops the run with a sentence naming the
+cause, rather than failing all 104 captures with nothing in the diff to explain
+it.
+
 ## Design rules
 
 - **Every value comes from a design token.** `lint:styles` fails on a hex colour

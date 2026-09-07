@@ -8,11 +8,15 @@
 //
 // The tag follows the installed playwright version rather than a constant, so
 // bumping the package moves the image with it and the two cannot drift apart.
+// A tag is still mutable, so the digests behind it are recorded beside the
+// baseline and checked here. scripts/render-image.mjs has the reasoning.
 
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import path from "node:path";
 import process from "node:process";
+
+import { digestsOf, readRecord, verdictFor, writeRecord, RECORD } from "./render-image.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const { version } = createRequire(import.meta.url)("playwright/package.json");
@@ -40,6 +44,34 @@ if (!engine) {
   console.error("and a host run measures different pixels, so there is nothing useful to fall");
   console.error("back to. Start Docker or podman, or set VISUAL_CONTAINER_RUNTIME.");
   process.exit(2);
+}
+
+// The image has to be local before its digest can be read, and the run would
+// pull it anyway. Pulling here just moves that to where the message belongs.
+function present(image) {
+  return spawnSync(engine, ["image", "inspect", image], { stdio: "ignore" }).status === 0;
+}
+
+if (!present(IMAGE)) {
+  console.log(`visual: pulling ${IMAGE}`);
+  if (spawnSync(engine, ["pull", IMAGE], { stdio: "inherit" }).status !== 0) {
+    console.error(`visual: cannot obtain ${IMAGE}, which is where this gate renders.`);
+    process.exit(2);
+  }
+}
+
+const digests = digestsOf(engine, IMAGE);
+
+// capture records the image it drew in, so only compare has something to hold a
+// run against. A digest it cannot read is said out loud rather than passed over.
+if (command === "compare") {
+  const verdict = verdictFor(readRecord(ROOT), IMAGE, digests);
+  if (verdict.state === "unknown") {
+    console.warn(verdict.message);
+  } else if (verdict.state !== "ok") {
+    console.error(verdict.message);
+    process.exit(2);
+  }
 }
 
 // CHROME_BIN is resolved inside the image by the same playwright that will
@@ -79,4 +111,14 @@ if (result.error) {
   console.error(`visual: cannot run ${engine}: ${result.error.message}`);
   process.exit(2);
 }
-process.exit(result.status ?? 1);
+
+const status = result.status ?? 1;
+if (command === "capture" && status === 0 && digests.length > 0) {
+  writeRecord(ROOT, {
+    image: IMAGE,
+    digests,
+    recorded: new Date().toISOString().slice(0, 10),
+  });
+  console.log(`visual: recorded the image these captures were drawn in, in ${RECORD}`);
+}
+process.exit(status);
