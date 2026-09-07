@@ -3,19 +3,26 @@
   "title": "The Dashboard pattern teaches a charting bridge the kit replaced, and does not describe its own demo",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "pattern scope pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "fd8e400"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`grep -rn useChartTokens` over the markdown, TypeScript and TSX in the tree returns nothing outside this ledger, so the hook the document invented is gone rather than moved. `patterns/Dashboard.md` is 367 lines, down from 547. Its Composition block now lists the five cards the demo builds, each naming `ChartFrame`, `ChartTooltip` and `Legend`. `npm run ci` exits 0 with every gate run."
   },
   "resolution": null,
   "details": "`patterns/Dashboard.md` devotes roughly 200 lines to a hand-rolled `useChartTokens()` hook that reads computed CSS variables, plus Recharts-specific tooltip and legend recipes. `useChartTokens` exists nowhere but that document. The shipped answer is `useChartTheme()`, which `patterns/Chart.md` makes its first rule, and Dashboard.md never mentions `useChartTheme`, `ChartFrame` or `ChartTooltip` in its prose even though its own frontmatter lists the latter two as related.\n\nThe hook it teaches is also wrong in the way Chart.md warns about: it re-reads on render without subscribing to the theme flip, so a chart drawn with it does not follow a light and dark toggle.\n\nSeparately, its Composition section describes Card plus Recharts line, bar and pie charts. The demo uses no Recharts at all: it hand-draws SVG with `useChartTheme` and `ChartTooltip`. The `ResponsiveContainer` sizing guidance describes something the demo does not do.\n\nA reader following this document builds a second, divergent theming bridge and never meets ChartFrame's loading, error and empty states.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "Closed by cutting the Recharts section rather than correcting it. `patterns/Chart.md` is the authority on the bridge, and a second account of it in this document is the thing that went stale. What is left is what the Dashboard adds: the four rules its demo follows, what the demo draws, and the three chart shapes.\n\nThe `ResponsiveContainer` sizing guidance went with it. It described a library the demo does not use, and the sizing question is now answered by the `viewBox` the charts actually carry."
+    }
+  ],
   "links": [
     "CUI-013",
     "CUI-024"

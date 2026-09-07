@@ -1,22 +1,10 @@
 {
-  "recommendedBy": "session agent, after the owner settled the four open groups",
+  "recommendedBy": "session agent, after the pattern scope pass",
   "updated": "2026-09-07",
   "items": [
     {
-      "id": "CUI-023",
-      "why": "The Dashboard pattern teaches a theming bridge the kit replaced, so a reader builds a second one."
-    },
-    {
-      "id": "CUI-024",
-      "why": "Its demo hand-rolls a Legend the kit exports, and cuts 31px of chart off at a narrow viewport."
-    },
-    {
-      "id": "CUI-026",
-      "why": "The MarkdownViewer pattern and its demo are two unrelated documents under one name."
-    },
-    {
-      "id": "CUI-027",
-      "why": "Five small pattern drifts, grouped, cheap to clear once the three above are done."
+      "id": "CUI-055",
+      "why": "A zero-tolerance gate that fails once in ten runs teaches a reader to re-run it."
     },
     {
       "id": "CUI-054",

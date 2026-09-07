@@ -3,19 +3,26 @@
   "title": "The MarkdownViewer pattern specifies a composition its demo no longer shows",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "pattern scope pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "532234f"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run ci` exits 0. `patterns/MarkdownViewer.md` now opens on the flavour ladder the tab renders, names `?flavor=<slug>` and the six rungs, and labels the three-pane example as the Docs page's composition. The internals it restated, the outline width range and the 50ms scroll debounce among them, are a link to `components/MarkdownViewer.md` instead."
   },
   "resolution": null,
   "details": "`patterns/MarkdownViewer.md` specifies a three-pane composition of SplitPane, Panel, Tree and a viewer with outline and minimap. The demo shows a six-flavour bundle-cost ladder instead, and says so in its own comment: the three-pane composition moved to the Docs page.\n\nSo the tab and the specification are two unrelated documents about the same name. A reader who opens one and then reads the other finds nothing in common.\n\nThe flavour ladder is the more useful thing to document, because choosing a parser flavour is the real decision a consumer faces. The three-pane example is worth keeping, labelled as the Docs page composition.\n\nSecondary: the spec duplicates internals that already live in `components/MarkdownViewer.md`, including the outline widths and the scroll debounce. They agree today, so this is duplication rather than contradiction, against CONTRIBUTING's rule that every fact lives in one place.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "Closed at the smaller of the two scopes the record set out. The flavour ladder is documented and the three-pane example is kept and labelled, rather than the demo being rebuilt to match the old specification. The owner confirmed that scope."
+    }
+  ],
   "links": [
     "CUI-010"
   ]

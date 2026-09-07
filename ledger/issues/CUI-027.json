@@ -3,19 +3,26 @@
   "title": "Smaller pattern drift, grouped",
   "type": "improvement",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, asked to assess whether the patterns had drifted from the design system",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "pattern scope pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "57f6f42"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "All five, each checked. `wrap: true` is on the three StatusBadge columns, which moved 20 and 25 pixels in the two dark master-detail captures, one unit per channel at the badge column's left edge, with the light captures unchanged; both were re-recorded. The chart demo's tooltip rule is `box-shadow: var(--shadow-md)` rather than two undefined Tailwind variables, and `check-integrity` now reports 0 notes where it reported the `--tw-shadow-colored` one. `grep -rn 'OPEN\\.md'` over the markdown returns nothing. `Legend.md` reads `patterns: [Dashboard]`. `FormResults.md` prescribes skeletons and links the reasoning. `npm run ci` exits 0."
   },
   "resolution": null,
   "details": "Five small ones, none worth a record alone.\n\n`MasterDetailDemo` omits `wrap: true` on its three StatusBadge columns while its own spec has it. `components/Table.md` says a column holding structured elements must set it, because a non-wrapping cell is clipped and offered through a tooltip whose content is the same badge again. Nothing clips at the widths tested, since the tables do not set `fixed`, so the symptom is latent rather than visible.\n\nThe Chart demo's hand-rolled Recharts tooltip loses its shadow: the rule it points at sets two undefined Tailwind variables and no `box-shadow`. Side by side with a real ChartTooltip on the same page, one has a shadow and one does not.\n\n`patterns/FormResults.md` prescribes a spinner while results load, which `patterns/ComponentStates.md` lists as an anti-pattern in favour of skeletons.\n\nTwo documents cite `OPEN.md`, which does not exist: that content became the ledger.\n\n`components/Legend.md` claims patterns that do not mention it, and omits Dashboard, which is the one that needs a legend.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "One correction to the record. It said two documents cite `OPEN.md`, and only `components/EventLanes.md` still did. No ledger record covers the pinned-tooltip finding the citation pointed at, so the citation was dropped rather than moved. The sentence around it already states the finding."
+    }
+  ],
   "links": [
     "CUI-024"
   ]

@@ -1,0 +1,22 @@
+{
+  "id": "CUI-055",
+  "title": "The visual gate flakes on three pixels of corner antialiasing",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, while re-recording the dashboard captures for CUI-024",
+  "opened": "2026-09-07",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`visual:compare` reported `dark/card-group.png` at 3 differing pixels on one run and at 0 on the next, with the working tree byte for byte the same. The three sit at (973, 378), (973, 379) and (972, 380), the bottom right corner of the last card, and each is one unit on one or two channels: `16,21,26` against `17,22,27`.\n\nIt is rare. Eleven runs of the same container on the same machine produced it once. It did not reproduce in five clean-tree runs, and appeared once in six runs with an unrelated change to the dashboard demo applied.\n\nThis matters because the comparison allows no difference at all, which CUI-052 justified on the ground that runs in this image are deterministic to the pixel. That was measured as 104 byte-identical captures across two runs, and eleven runs are enough to see that it is not quite true. A gate that fails once in ten runs for no reason teaches a reader to re-run it, which is the habit that lets a real failure through.\n\nWhat is not established is the cause. A one-unit shift at a rounded corner is where a rasteriser rounds, and whether that turns on compositing timing or on something in the page is unmeasured. The fallback CUI-052 already names is a small pixel floor rather than a return to the perceptual threshold, and a floor of a handful of pixels would absorb this while still failing on the 20 pixel change that the `wrap: true` fix in CUI-027 produced. Whether to spend that headroom is the open question.",
+  "notes": [],
+  "links": [
+    "CUI-052"
+  ]
+}
