@@ -4,6 +4,7 @@ import {
   Card,
   CardGroup,
   Chip,
+  Page,
   Panel,
   Tree,
   type TreeNode,
@@ -76,7 +77,7 @@ const sectionTitles = [
   "EventLanes", "Table", "Panel + Tree", "SectionedTree", "SectionedTree (flipped)",
   "SegmentedControl", "SplitPane", "Master-Detail (contained SplitPane)",
   "CodeBlock", "MarkdownMinimap", "MarkdownViewer", "MermaidDiagram", "Modal",
-  "PulseBadge", "AgentStatus", "StreamingText", "AgentTrace",
+  "Page", "PulseBadge", "AgentStatus", "StreamingText", "AgentTrace",
   "ChartFrame", "ChartTooltip", "Toast", "ToastContainer", "Tooltip",
 ];
 
@@ -986,6 +987,38 @@ export function ComponentsPage() {
       </Section>
 
       {/* Panel + Tree (with filterable) */}
+      <Section title="Page">
+        <p className="cs-preview-pages-components-page-169 ">
+          The container a page&apos;s content sits in. It owns the inset from the window edge, the
+          width the content may grow to, and which element scrolls, so one scrollbar serves the
+          whole page. Framed here at a fixed height to show the scroll it owns, with the width cap
+          lowered from its 72rem default so the centring is visible at this size.
+        </p>
+        <div className="cs-preview-pages-components-page-506">
+          <Page as="div" width="readable">
+            <Card header="Readable width">
+              <p>
+                The content stops widening at --page-max-width and stays centred, which is what
+                keeps a line of text readable. A full-width page is the default, for a dashboard
+                or a wide table.
+              </p>
+            </Card>
+            <Card header="One scrollbar">
+              <p>
+                Everything inside sizes to its content, and the page is what scrolls. Nothing
+                below is lost to an ancestor that clips without a scrollbar.
+              </p>
+            </Card>
+            <Card header="Reserved gutter">
+              <p>
+                The scrollbar&apos;s width is reserved whether or not one is showing, so content
+                does not shift sideways when the page grows past one screen.
+              </p>
+            </Card>
+          </Page>
+        </div>
+      </Section>
+
       <Section title="Panel + Tree">
         <p className="cs-preview-pages-components-page-169 ">
           Tree with search/filter, display mode toggle, match navigation, and expand all.

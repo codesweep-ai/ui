@@ -52,7 +52,7 @@ const COMPONENTS = [
   "CheckboxGroup", "CodeBlock", "Dropdown", "Footer", "FormGroup",
   "Header", "HighlightText", "Input", "MarkdownMinimap",
   "MarkdownViewer", "MermaidDiagram", "Modal", "Panel", "PulseBadge",
-  "SearchInput", "SectionedTree", "Skeleton", "SplitPane", "StatusBadge",
+  "Page", "SearchInput", "SectionedTree", "Skeleton", "SplitPane", "StatusBadge",
   "StreamingText", "Table", "ThemeToggle", "Toast",
   "ToastContainer", "Tree",
 ];

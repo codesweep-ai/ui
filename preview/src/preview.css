@@ -215,6 +215,15 @@
 .cs-preview-pages-components-page-442 {
     height: 12rem
 }
+
+.cs-preview-pages-components-page-506 {
+    --page-max-width: 28rem;
+    border-color: var(--border);
+    border-radius: var(--radius-md);
+    border-width: .0625rem;
+    display: flex;
+    height: 16rem
+}
 .cs-preview-pages-tokens-page-247,
 .cs-preview-pages-tokens-page-279,
 .cs-preview-pages-patterns-dashboard-demo-12 {
