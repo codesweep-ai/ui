@@ -128,9 +128,11 @@ interface FooterProps {
 | Nav link      | Active  | `color: var(--color-header-text)`, `background: color-mix(in srgb, var(--color-accent) 22%, transparent)` |
 | Nav link      | Focus   | `outline: .125rem solid var(--color-accent)`, `outline-offset: .125rem` |
 
-### Responsive (max-width: 768px)
+### Responsive (max-width: 48rem)
 - Header inner: `flex-direction: column`, `align-items: flex-start`, `gap: var(--space-2)`.
 - Nav links: `flex-wrap: wrap`.
+- The breakpoint is 768px at the browser's default root size. It is written in
+  `rem` so it follows a reader who enlarges that size.
 
 ## Behavior
 

@@ -199,6 +199,18 @@
     overflow-y: auto
 }
 
+@media (max-width: 48rem) {
+    .cs-component-app-shell-4 {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2)
+    }
+
+    .cs-component-app-shell-11 {
+        flex-wrap: wrap
+    }
+}
+
 /* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a
    consumer which stylesheet is missing when a component renders bare. */
 [data-component="AppShell"] {
