@@ -1,88 +1,52 @@
 #!/usr/bin/env node
-// CONTRIBUTING's Commits section, checked.
+// The one commit rule nothing else checks: a body wrapped at 72 columns.
 //
-// Every rule below was already written down and none was enforced, which is the
-// class this branch exists to close. An audit found the subject, trailer and
-// length rules holding on all 117 commits and the body wrap broken on 29, at
-// one to five columns over. They pass by care rather than by gate, and care is
-// what runs out at the end of a long session.
+// `cs-lint oss` already owns the rest of CONTRIBUTING's Commits section and
+// already runs, both inside `npm run check` and as its own CI job. OSS-702
+// holds the subject to its length, its capital, its missing full stop and its
+// missing category prefix. OSS-701 rejects a session link. OSS-709, OSS-710 and
+// OSS-711 hold the body to its bullets, its subject matter and its length.
 //
-// The history is not rewritten to make this clean. 54 of the ledger's records
-// cite a sha on this branch, 71 citations across 60 commits, and the ledger's
-// own rule is that a closed record cites a sha that exists. Rewrapping by
-// rebase would dangle every one of them, which is a far worse trade than 29
-// bodies a column over. So the rule is gated from BASELINE forward.
+// The wrap is the gap. An audit of 117 commits found every other rule holding
+// and 29 bodies one to five columns over, so this checks that and nothing else.
+// Duplicating a rule that already runs would give a contributor two checkers to
+// satisfy and two places for them to disagree.
+//
+// The durable home for this is an OSS rule in cs-lint, where every project in
+// the family would get it. That binary lives in another repository, so this is
+// the local stand-in until it does.
+//
+// The history is not rewritten to make it clean. 54 of the ledger's records
+// cite a sha on this branch, 71 citations across 60 commits, and a closed
+// record has to cite a sha that exists. So the rule is gated from BASELINE on.
 
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
-// The last commit written before this check existed. Everything after it is
-// held to the rules; everything at or before it predates them.
+/** The last commit written before this check existed. */
 export const BASELINE = "58668d6";
 
-const SUBJECT_MAX = 60;
-const BODY_COLUMNS = 72;
-const BODY_WORDS = 120;
-const BODY_PARAGRAPHS = 2;
-const KEPT_TRAILER = "Co-Authored-By:";
+export const COLUMNS = 72;
 
-// `feat:`, `fix(ui):`, `[docs]` — the category is already in the diff.
-const CATEGORY_PREFIX = /^(\[[^\]]+\]|[a-z][\w-]*(\([^)]*\))?!?:)\s/;
 const TRAILER = /^[A-Z][A-Za-z-]*:\s/;
 
 /**
- * Problems with one commit message, as sentences a reader can act on.
- * The message arrives already split, because git gives it that way and a
- * `commit-msg` file does not.
+ * The columns of the widest body line, ignoring the trailer block. Returns 0
+ * for a body that is only trailers, or none at all.
+ *
+ * Trailers are exempt because an address is as long as it is: a
+ * `Co-Authored-By` line cannot be wrapped and is not prose.
  */
-export function checkMessage(subject, body) {
-  const problems = [];
-
-  if (!subject.trim()) problems.push("the subject is empty");
-  if (subject.length >= SUBJECT_MAX) {
-    problems.push(`the subject is ${subject.length} characters, and the limit is ${SUBJECT_MAX}`);
-  }
-  if (subject[0] && subject[0] !== subject[0].toUpperCase()) {
-    problems.push("the subject does not start with a capital");
-  }
-  if (subject.endsWith(".")) problems.push("the subject ends with a full stop");
-  if (CATEGORY_PREFIX.test(subject)) {
-    problems.push("the subject carries a category prefix, and the category is already in the diff");
-  }
-
-  // Trailers are the last block, and only Co-Authored-By survives.
+export function widestBodyLine(body) {
   const lines = body.split("\n");
-  const trailerStart = lines.findIndex(
+  // The trailer block is the last run of lines, and its keys are capitalised. A
+  // wrapped prose line beginning "context:" is prose, and an audit that missed
+  // that reported two false positives.
+  const start = lines.findIndex(
     (line, i) => TRAILER.test(line) && lines.slice(i).every((rest) => !rest.trim() || TRAILER.test(rest)),
   );
-  const prose = (trailerStart === -1 ? lines : lines.slice(0, trailerStart)).join("\n").trim();
-  const trailers = trailerStart === -1 ? [] : lines.slice(trailerStart).filter((line) => line.trim());
-
-  for (const trailer of trailers) {
-    if (!trailer.startsWith(KEPT_TRAILER)) {
-      const name = trailer.split(":")[0];
-      problems.push(`the ${name} trailer is not kept; only ${KEPT_TRAILER} is`);
-    }
-  }
-
-  if (prose) {
-    for (const line of prose.split("\n")) {
-      if (line.length > BODY_COLUMNS) {
-        problems.push(`a body line is ${line.length} columns, and the wrap is ${BODY_COLUMNS}`);
-        break;
-      }
-    }
-    const paragraphs = prose.split(/\n\s*\n/).filter((p) => p.trim());
-    if (paragraphs.length > BODY_PARAGRAPHS) {
-      problems.push(`the body has ${paragraphs.length} paragraphs, and the limit is ${BODY_PARAGRAPHS}`);
-    }
-    const words = prose.split(/\s+/).filter(Boolean).length;
-    if (words > BODY_WORDS) {
-      problems.push(`the body is ${words} words, and the limit is ${BODY_WORDS}`);
-    }
-  }
-
-  return problems;
+  const prose = start === -1 ? lines : lines.slice(0, start);
+  return prose.reduce((widest, line) => Math.max(widest, line.length), 0);
 }
 
 function git(...args) {
@@ -106,18 +70,18 @@ export function commitsIn(range) {
 function main() {
   const fileArg = process.argv.indexOf("--file");
   if (fileArg !== -1) {
-    // The commit-msg hook's path: one message, before the commit exists.
+    // The commit-msg hook's path: one message, before the commit exists, which
+    // is the only moment a wrap is cheap to fix.
     const raw = readFileSync(process.argv[fileArg + 1], "utf8");
-    const withoutComments = raw
+    const body = raw
       .split("\n")
       .filter((line) => !line.startsWith("#"))
+      .slice(1)
       .join("\n");
-    const [subject, ...rest] = withoutComments.split("\n");
-    const problems = checkMessage(subject ?? "", rest.join("\n"));
-    if (problems.length) {
-      console.error("commit message:");
-      for (const problem of problems) console.error(`  - ${problem}`);
-      console.error("\nCONTRIBUTING.md, under Commits, has the rules and the reasoning.");
+    const widest = widestBodyLine(body);
+    if (widest > COLUMNS) {
+      console.error(`commit message: a body line is ${widest} columns, and the wrap is ${COLUMNS}.`);
+      console.error("CONTRIBUTING.md, under Commits, has the rule and the reasoning.");
       process.exitCode = 1;
     }
     return;
@@ -125,27 +89,27 @@ function main() {
 
   const commits = commitsIn(`${BASELINE}..HEAD`);
   if (commits === null) {
-    // A shallow clone has no range to read, and reporting that is better than
+    // A shallow clone has no range to read, and saying so is better than
     // failing a gate over a checkout depth.
-    console.log(`skipped: ${BASELINE}..HEAD is not resolvable here, so no commit message was checked.`);
+    console.log(`skipped: ${BASELINE}..HEAD is not resolvable here, so no commit body was checked.`);
     return;
   }
 
   let bad = 0;
   for (const { sha, subject, body } of commits) {
-    const problems = checkMessage(subject, body);
-    if (!problems.length) continue;
+    const widest = widestBodyLine(body);
+    if (widest <= COLUMNS) continue;
     bad += 1;
     console.error(`${sha}  ${subject}`);
-    for (const problem of problems) console.error(`          ${problem}`);
+    console.error(`          a body line is ${widest} columns, and the wrap is ${COLUMNS}`);
   }
 
   const counted = `${commits.length} commit${commits.length === 1 ? "" : "s"} since ${BASELINE}`;
   if (bad) {
-    console.error(`\ncommits: ${bad} of ${counted} break a rule in CONTRIBUTING.md`);
+    console.error(`\ncommits: ${bad} of ${counted} run past the ${COLUMNS} column wrap`);
     process.exitCode = 1;
   } else {
-    console.log(`commits: ${counted}, all within the rules`);
+    console.log(`commits: ${counted}, all wrapped at ${COLUMNS}`);
   }
 }
 

@@ -47,12 +47,10 @@ const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 say("the gate a contributor runs before pushing");
 run(npm, ["run", "check"]);
 
-// The rules in CONTRIBUTING's Commits section, which were written down and
-// never checked. Gated from a baseline rather than over the whole branch: 29
-// earlier bodies run a column or so over, and the ledger cites 60 of those
-// commits by sha, so rewriting them to make this clean would dangle 71 pieces
-// of evidence.
-say("commit messages");
+// The commit body wrap, which is the one rule in CONTRIBUTING's Commits
+// section that `cs-lint oss` does not carry. It runs in the readiness job
+// beside the other history rules, so this mirrors it rather than adding to it.
+say("commit bodies");
 run(npm, ["run", "lint:commits"]);
 
 // An invalid workflow file fails the run with zero jobs and no annotation,

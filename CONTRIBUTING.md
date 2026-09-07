@@ -214,7 +214,11 @@ Keep the `Co-Authored-By:` trailer when an agent wrote the change. Drop every
 other trailer an agent harness appends: a link to a session or a transcript is
 private to whoever ran it and dead to everyone else.
 
-`npm run ci` checks all of that, and so does `npm run lint:commits` on its own.
+`cs-lint oss` checks the subject, the trailers and the body's length and
+subject matter, and it runs in `npm run check` and in its own CI job. The wrap
+is the one rule it does not carry, so `npm run lint:commits` checks that alone.
+Both run in `npm run ci`.
+
 To be told before the commit exists, which is the only moment the wrap is cheap
 to fix, install the hook:
 

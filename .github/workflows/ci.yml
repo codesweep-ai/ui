@@ -150,3 +150,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx cs-lint oss
+      # The one commit rule cs-lint does not carry. See scripts/check-commits.mjs.
+      - run: npm run lint:commits
