@@ -3,15 +3,17 @@
   "title": "CheckboxGroup leaves All enabled when the filter matches nothing",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "an independent reviewer agent, one of three asked whether each component specification still describes the component that exists",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "CheckboxGroup pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "da73e73"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Reverting the fix fails the new test, `All and None are both disabled when the filter matches nothing`, and it passes with the fix, 16 tests. `npm run ci` exits 0 with every gate run, visual:compare 104/104 at 0 differing pixels, axe 0."
   },
   "resolution": null,
   "details": "`components/CheckboxGroup.md:214` says both the All and None buttons are disabled when the filter matches nothing.\n\n`src/components/CheckboxGroup.tsx:237` computes `allFilteredSelected` with a leading `filteredOptions.length > 0`, which is false for an empty result. That value reaches the button's `disabled` expression at `:106`, so All stays enabled.\n\nNone behaves as documented, because `:238` calls `every()` on an empty array and gets true.\n\nClicking the live All button does nothing. A reader is told both go inert, and one of them does not.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-06",
       "text": "Session agent confirmed every citation in this record against the tree at a374f2c before filing it."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Fixed by removing the length guard rather than by adding one on the other side. `every` on an empty list is true, which is already what disables None when the filter matches nothing, so dropping the guard makes the pair behave the same way for the same reason."
     }
   ],
   "links": []
