@@ -1,0 +1,20 @@
+{
+  "id": "CUI-058",
+  "title": "Nothing says who supplies the padding around a CardGroup, so a page bleeds to the window edge",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, building patterns/NavSidebar.md, at the owner's request to record what was hard",
+  "opened": "2026-09-07",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "The first version of the nav sidebar page ran from the left edge of the window to the right, with no inset and no rounded corners, so its cards did not read as cards. Every other pattern page insets by `var(--space-4)`.\n\nThe reason is that the padding comes from the demo's own root element. `preview/src/pages/patterns/ExplorerDemo.tsx` puts it there, and so does the dashboard's. Neither `Card` nor `CardGroup` supplies it, and neither specification mentions it.\n\nSo the composition a consumer copies out of `components/CardGroup.md` produces a page that looks wrong, and the fix is a property on an element that is not part of the kit. The repository owner spotted it immediately and could not say what the difference was, which is the point: nothing names it.\n\nEither `CardGroup` should own the inset, or the specification should say the consumer does and show it. The first is a visual change to every existing page, so this is a decision rather than a correction.",
+  "notes": [],
+  "links": []
+}

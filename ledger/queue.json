@@ -1,10 +1,26 @@
 {
-  "recommendedBy": "session agent, after the nav sidebar pass",
+  "recommendedBy": "session agent, after the nav sidebar retrospective",
   "updated": "2026-09-07",
   "items": [
     {
+      "id": "CUI-057",
+      "why": "One question with three answers is the thing that cost most time building the pattern."
+    },
+    {
+      "id": "CUI-059",
+      "why": "A consumer loses content to a clipping ancestor with no message at all; the check already exists here."
+    },
+    {
       "id": "CUI-055",
       "why": "A zero-tolerance gate that fails once in ten runs teaches a reader to re-run it."
+    },
+    {
+      "id": "CUI-058",
+      "why": "Every page a consumer composes from CardGroup bleeds to the window edge until they guess the fix."
+    },
+    {
+      "id": "CUI-060",
+      "why": "Two controls with one label, and a prop that reaches one of them."
     },
     {
       "id": "CUI-054",

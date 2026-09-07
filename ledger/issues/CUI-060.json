@@ -1,0 +1,22 @@
+{
+  "id": "CUI-060",
+  "title": "SectionedTree renders two expand-all controls with the same label and configures only one",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, building patterns/NavSidebar.md, at the owner's request to record what was hard",
+  "opened": "2026-09-07",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`SectionedTree` renders a control above the sections reading `Collapse all`, and gives each section's `Tree` another that reads `Collapse all` too. `expandAllControl` turns off the second kind and not the first, and neither the prop's name nor `components/SectionedTree.md` says so.\n\nTwo consequences, both met while building the nav sidebar pattern. A reader looking at the rendered page cannot tell which control `expandAllControl` governs. And a test asserting `queryAllByRole(\"button\", { name: /expand all/i })` is empty passes whether the prop works or not, because the surviving control reads `Collapse all` while the sections are open. That assertion was written in this session and had to be replaced with a count.\n\nThe sections control also has no prop of its own, so a sidebar that does not want it cannot remove it.\n\nThe smallest honest fix is to name them differently in the DOM, through distinct accessible names or a `data-part`, and to say in the specification which one `expandAllControl` reaches. Giving the sections control its own prop is the larger version.",
+  "notes": [],
+  "links": [
+    "CUI-004"
+  ]
+}

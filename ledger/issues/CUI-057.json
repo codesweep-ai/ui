@@ -1,0 +1,23 @@
+{
+  "id": "CUI-057",
+  "title": "Sizing a sidebar to its content has three answers, and nothing says which one applies",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent, building patterns/NavSidebar.md, at the owner's request to record what was hard",
+  "opened": "2026-09-07",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Building a nav sidebar meant asking one question: how do I stop this column scrolling inside itself so the page can scroll once? It has three different answers, and which one is right depends on what sits between the tree and the scroller.\n\nMeasured across six compositions in a 200px scrolling column, each holding two lists of 20 rows:\n\n- `Panel height=\"auto\"` wrapping a `Tree`: works, and `Tree scroll` changes nothing. Both settings gave 1272px of scrollHeight.\n- A bare `Tree`: needs `scroll={false}`. The default gave 400px of scrollHeight for 1160px of tree, with each tree clamped to 200px and its rows spilling out of a box nothing scrolls.\n- `SectionedTree`: needs neither. It gave 1368px either way, because it never hands a section a definite height.\n\nA consumer cannot tell these apart by reading. The reason is a CSS rule nobody has to know until it bites them: a percentage height resolves to auto against a parent whose height is indefinite, so a Panel sized to its content silently fixes the tree inside it.\n\nTwo smaller traps came with it. `Tree scroll` is named after `window.scroll`, so leaving it out of the destructuring made it a function rather than a boolean: TypeScript caught that in `SectionedTree` and would have let `if (scroll)` pass as always true in `Tree`. And the half-right version of the override fails quietly, at 780px of scrollHeight for 1160px of tree, with the missing rows reachable by `scrollIntoView` and by nothing a user does.\n\nThe fix is probably a decision table in one place rather than more API. `components/Tree.md` now says a tree inside a panel needs no `scroll` of its own, which is one third of it.",
+  "notes": [],
+  "links": [
+    "CUI-011",
+    "CUI-014"
+  ]
+}
