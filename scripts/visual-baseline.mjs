@@ -360,6 +360,13 @@ async function captureTheme(page, theme, outputDir) {
   );
   await page.keyboard.press("Escape");
 
+  // Park the pointer away from the content. Clicking Open Modal left it where
+  // that button was, and every capture after this one photographed whatever
+  // then sat under it. Adding one section to the components page moved a tree
+  // row there, and the tree capture silently gained a `--color-row-hover`
+  // wash: 7541 pixels, none of them a Tree change.
+  await page.mouse.move(0, 0);
+
   const treeSection = section(page, "Panel + Tree");
   const tree = treeSection.locator('[data-component="Tree"]');
   const firstTreeItem = tree.getByRole("treeitem").first();
