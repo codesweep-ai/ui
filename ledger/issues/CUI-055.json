@@ -23,6 +23,10 @@
     {
       "date": "2026-09-07",
       "text": "Better numbers, and they are worse than this record assumed. `dark/interaction-split-pane-drag.png` failed 8 of 14 comparison runs, with its baseline byte-identical to the committed one and the working tree unchanged between runs.\n\nThe rate does not depend on the pointer position added in CUI-062. Removing that line gave 4 failures in 6 runs, against 4 in 8 with it, so the pointer is not what decides it.\n\nThe eight pixels are the class this record already describes. They sit at x=972 and x=973, on the top right and the bottom right corner, at one or two units per channel.\n\nA capture that fails half its runs is not a rare flake. `npm run ci` on this branch passes on roughly every second attempt, which is the habit this record warns about arriving in full."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "The cause of the split pane instance is that the capture depended on what the run had done before it. A probe rendering the same element in the same image, hashing each result, produced three different images for one drag. A fresh page gave one, the modal round trip gave a second, and the tree interaction gave a third. Only the third varied between runs, and it was the one this capture was taking.\n\nThe geometry was never fractional, which was the first hypothesis. The element measured 974 by 190 at x=233 with a device pixel ratio of 1 on every trial.\n\nThe drag now runs on a page of its own, in 84ffb5c. That capture failed 8 comparison runs of 14 before the change and none of 10 after it. The same change let axe evaluate colour contrast on the components page, which the drag had been making it skip with a grid bounds error, so the rule count rises by one.\n\nWhat this does not settle is the `dark/card-group.png` instance the record opened with. That capture is taken in the component loop rather than after an interaction, and 30 plain element screenshots destabilised nothing across 8 trials. It has not reproduced in roughly 30 runs today, so the record stays open on an instance nobody can currently make happen."
     }
   ],
   "links": [

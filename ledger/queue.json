@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, after the preview took its layout from Page",
+  "recommendedBy": "session agent, after the gate stopped failing every second run",
   "updated": "2026-09-07",
   "items": [
-    {
-      "id": "CUI-055",
-      "why": "The gate fails about every second run now, so it blocks any change that re-records a capture."
-    },
     {
       "id": "CUI-057",
       "why": "One question with three answers is the thing that cost most time building the pattern."
@@ -17,6 +13,10 @@
     {
       "id": "CUI-060",
       "why": "Two controls with one label, and a prop that reaches one of them."
+    },
+    {
+      "id": "CUI-055",
+      "why": "What blocked is fixed; what is left is one capture nobody has reproduced since, so it waits."
     }
   ]
 }
