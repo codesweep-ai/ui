@@ -439,7 +439,7 @@ Stats bar, filterable chart, and optional sidebar for summarizing and exploring 
 - use when: Letting users filter a dataset and see the chart update in real time
 - avoid when: Single metric display → Card with a large number
 - avoid when: Drill-down or hierarchical detail → Explorer or MasterDetail
-- related: Card, CardGroup, CheckboxGroup, ChartFrame, ChartTooltip
+- related: Card, CardGroup, CheckboxGroup, ChartFrame, ChartTooltip, Legend
 - spec: [patterns/Dashboard.md](patterns/Dashboard.md)
 
 ### DataTable  ·  since 1.0.0

@@ -10,7 +10,7 @@ use_when:
 avoid_when:
   - Single metric display → Card with a large number
   - Drill-down or hierarchical detail → Explorer or MasterDetail
-related: [Card, CardGroup, CheckboxGroup, ChartFrame, ChartTooltip]
+related: [Card, CardGroup, CheckboxGroup, ChartFrame, ChartTooltip, Legend]
 ---
 
 # Dashboard Pattern
@@ -32,9 +32,9 @@ related: [Card, CardGroup, CheckboxGroup, ChartFrame, ChartTooltip]
 ```
 StatsBar (inline helper — row of stat Cards)
 Card + CheckboxGroup + BarChart (inline helper — filterable horizontal bars)
-Card + Recharts LineChart (dual Y-axis, token-styled)
-Card + Recharts BarChart (stacked horizontal, token-styled)
-Card + Recharts PieChart (donut, token-styled)
+Card + ChartFrame + SVG line chart + ChartTooltip + Legend
+Card + ChartFrame + SVG stacked bar + ChartTooltip + Legend
+Card + ChartFrame + SVG donut + ChartTooltip + Legend
 ```
 
 ```
@@ -112,7 +112,7 @@ The filter sidebar and chart are visually separated by a `border-right` on the f
 | `--color-success`, etc.     | Alternate bar colors                      |
 | `--color-bg-muted`          | Stat card background, bar track           |
 | `--border`                   | Card, stat card, filter/chart separator   |
-| `--color-cat-1`..`--color-cat-5` | Recharts data series colors          |
+| `--color-cat-1`..`--color-cat-5` | Chart series colours, read through `useChartTheme()` |
 | `--font-size-xs`            | Axis tick labels, tooltip text            |
 | `--shadow-md`               | Chart tooltip drop shadow                 |
 | `--card`                     | Chart tooltip background                  |
@@ -253,240 +253,62 @@ For sub-category breakdowns within a single hue, use `-light`, `-mid`, `-dark` s
 - **No filters**: Omit CheckboxGroup; chart fills Card width
 - **Compact**: Use Card `variant="tight"` and smaller stat cards
 
-## Charts with Recharts
+## Charts
 
-For richer chart types (line charts, stacked bars, donut/pie), use [Recharts](https://recharts.org/) — a declarative, SVG-based React charting library. Recharts accepts standard React props, making it straightforward to style with design system tokens.
+The kit ships no chart component. It ships a theming bridge, and
+[Chart.md](Chart.md) is the authority on it. Read that first. This section
+covers only what the Dashboard adds.
 
-### Reading design tokens for Recharts
+Four of its rules carry, and the demo on this page follows all four:
 
-Recharts props like `stroke`, `fill`, and `tick.fill` require resolved color values (hex/rgb), not CSS `var()` references. Use `getComputedStyle` to resolve tokens:
+- Colours come from `useChartTheme()`, never from a `getComputedStyle` call in
+  the page and never from a hex literal. `theme.categorical[i]` is the series
+  palette.
+- Every chart sits inside [ChartFrame](../components/ChartFrame.md), which owns
+  the loading, error and empty states.
+- Hover on a hand-drawn chart uses
+  [ChartTooltip](../components/ChartTooltip.md), positioned in the container's
+  pixels.
+- The key beside a chart is [Legend](../components/Legend.md). Its swatch
+  colours are custom-property names such as `--color-cat-1`, never a resolved
+  colour.
 
-```typescript
-function useChartTokens() {
-  const style = getComputedStyle(document.documentElement);
-  const get = (name: string) => style.getPropertyValue(name).trim();
-  return {
-    cat1: get("--color-cat-1"),
-    cat2: get("--color-cat-2"),
-    cat3: get("--color-cat-3"),
-    cat4: get("--color-cat-4"),
-    cat5: get("--color-cat-5"),
-    fg: get("--fg"),
-    muted: get("--muted"),
-    border: get("--border"),
-    card: get("--card"),
-  };
-}
-```
+### What the demo draws
 
-The hook re-reads tokens on every render, so theme switches are handled automatically (re-render triggers re-read).
+`preview/src/pages/patterns/DashboardDemo.tsx` is the worked example. It holds
+five cards: two file-type breakdowns behind a flat and a grouped filter, a
+four-series line chart, a stacked horizontal bar chart, and a donut. Every one
+is hand-drawn SVG, and no charting library is involved.
 
-### Custom tooltip
-
-Use a custom tooltip component styled with design system tokens instead of the Recharts default:
-
-```tsx
-function ChartTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="dashboard-tooltip">
-      <div className="dashboard-tooltip-label">{label}</div>
-      {payload.map((entry: any) => (
-        <div key={entry.name} className="dashboard-tooltip-row">
-          <span className="dashboard-swatch" style={{ backgroundColor: entry.color }} />
-          <span className="dashboard-tooltip-name">{entry.name}:</span>
-          <span className="dashboard-tooltip-value">{entry.value.toLocaleString()}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-```
-
-```css
-.dashboard-tooltip {
-  max-width: var(--chart-tooltip-max-width);
-  padding: var(--space-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--card);
-  box-shadow: var(--shadow-md);
-}
-
-.dashboard-tooltip-label {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.dashboard-tooltip-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.dashboard-tooltip-name {
-  color: var(--muted);
-}
-
-.dashboard-tooltip-value {
-  font-family: var(--font-family-mono);
-}
-
-.dashboard-swatch {
-  display: inline-block;
-  width: var(--icon-size-xs);
-  height: var(--icon-size-xs);
-  border-radius: var(--radius-xs);
-}
-```
-
-The tooltip `div` uses CSS `var()` directly (works because it's rendered as HTML, not SVG). Disable the default fly-in animation with `isAnimationActive={false}` on `<Tooltip>`.
-
-### Custom legend
-
-Use a custom legend with square swatches for visual consistency across all chart types. Recharts' default legend uses mixed shapes (circles for line charts, rectangles for bars, sectors for pies). The custom legend normalizes to square swatches with `--radius-xs` rounding:
+The three drawn charts share one arrangement. Each lays out in a fixed
+coordinate space, which is what keeps its geometry readable. Each declares that
+space as a `viewBox` at `width="100%"`, so the drawing shrinks with its card.
+`ChartTooltip` takes container pixels rather than viewBox units, so the demo
+measures the rendered width and scales the tooltip position to match.
 
 ```tsx
-function ChartLegend({ payload }: any) {
-  if (!payload?.length) return null;
-  return (
-    <div className="dashboard-legend">
-      {payload.map((entry: any) => (
-        <div key={entry.value} className="dashboard-legend-item">
-          <span className="dashboard-legend-swatch" style={{ backgroundColor: entry.color }} />
-          {entry.value}
-        </div>
-      ))}
-    </div>
-  );
-}
+<div ref={ref} style={{ width: "100%", maxWidth: W, aspectRatio: `${W} / ${H}` }}>
+  <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">{/* marks */}</svg>
+  {hover && <ChartTooltip x={hover.x * scale} y={hover.y * scale}>…</ChartTooltip>}
+</div>
 ```
 
-```css
-.dashboard-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
+A fixed pixel width with no `viewBox` is what this replaced. It left 46px of
+the widest chart outside its card at a 430px viewport, on a page that does not
+scroll sideways to reach it.
 
-.dashboard-legend-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
+### Chart shapes
 
-.dashboard-legend-swatch {
-  display: inline-block;
-  width: var(--icon-size-xs);
-  height: var(--icon-size-xs);
-  border-radius: var(--radius-xs);
-}
-```
+- **Line, several series**: one polyline per series against a shared y scale,
+  and an invisible hit column at each x position so the whole column answers a
+  hover.
+- **Stacked horizontal bar**: one row per category, segments laid left to right
+  from a running cursor, each segment its own hover target.
+- **Donut**: one path per slice between an inner and an outer radius, with the
+  total drawn in the middle.
 
-Pass it to every `<Legend>` via `content={<ChartLegend />}`.
-
-### Chart container and scrolling
-
-When Cards are inside a CardGroup, the Card component automatically adds `overflow-y: auto` to its body wrapper. Chart content therefore scrolls naturally when it exceeds the available height; do not add another chart-wrapper scroller.
-
-There are two sizing strategies for chart containers:
-
-**Fixed base height (scrollable)** — use when each card has plenty of vertical space (e.g. one CardGroup row, or large viewports). The chart has a guaranteed minimum size; the Card body scrolls if the card is shorter.
-
-```tsx
-<Card id="my-chart" header="Chart Title" maximizable>
-  <div className="dashboard-chart-fixed">
-    <ResponsiveContainer width="100%" height="100%">
-      {/* chart */}
-    </ResponsiveContainer>
-  </div>
-</Card>
-```
-
-```css
-.dashboard-chart-fixed {
-  flex: 1;
-  min-height: 0;
-  height: var(--card-content-height);
-  margin: calc(var(--space-4) * -1);
-}
-```
-
-`--card-content-height` provides the base height, and a shorter Card body
-scrolls. `flex: 1` with `min-height: 0` lets it grow when the Card is maximized.
-The negative margin bleeds the chart to the card edges.
-
-**Fit-to-card (no scroll)** — use when multiple cards share a single CardGroup row and vertical space is limited. The chart shrinks to fit the card's available height in the default view and expands when the card is maximized.
-
-```tsx
-<Card id="my-chart" header="Chart Title" maximizable>
-  <div className="dashboard-chart-fill">
-    <ResponsiveContainer width="100%" height="100%">
-      {/* chart */}
-    </ResponsiveContainer>
-  </div>
-</Card>
-```
-
-```css
-.dashboard-chart-fill {
-  height: 100%;
-  min-height: 0;
-  margin: calc(var(--space-4) * -1);
-}
-```
-
-`height: 100%` fills whatever height the Card body provides, and `min-height: 0`
-allows it to shrink below its content in a flex layout.
-
-**When to use which:**
-- Fixed base height when there is one CardGroup row or cards have generous vertical space
-- Fit-to-card when 3+ cards share a row, or the tab has compact vertical space and scrolling inside cards would be disorienting
-
-### Animation
-
-Disable all Recharts animations for instant rendering — no draw-in on mount or re-draw on resize:
-
-- `isAnimationActive={false}` on `<Tooltip>` — tooltip appears instantly on hover
-- `isAnimationActive={false}` on `<Line>`, `<Bar>`, `<Pie>` — chart elements render immediately
-
-### Chart types
-
-**Dual Y-axis line chart** — for time-series with mixed units (e.g. tokens + cost):
-
-- `<LineChart>` with two `<YAxis>` components (`yAxisId="left"` / `"right"`)
-- Each `<Line>` specifies its `yAxisId`, `type="monotone"`, `dot={false}`
-- Use `strokeDasharray="5 3"` for the secondary-axis series to visually distinguish units
-
-**Stacked horizontal bar chart** — for comparing totals with sub-categories:
-
-- `<BarChart layout="vertical">` with `<XAxis type="number">` and `<YAxis type="category">`
-- All `<Bar>` components share the same `stackId` to stack
-- Apply `radius` to the first and last bars for rounded ends
-
-**Donut chart** — for proportional breakdowns:
-
-- `<PieChart>` with a single `<Pie>` using `innerRadius="55%"` and `outerRadius="80%"`
-- `<Cell>` components for per-slice colors
-- `paddingAngle={2}` for visual separation between slices
-
-### Color mapping
-
-Map `--color-cat-N` tokens to data series in order:
-
-| Token | Typical usage |
-|-------|---------------|
-| `--color-cat-1` | First data series (e.g. input tokens) |
-| `--color-cat-2` | Second data series (e.g. output tokens) |
-| `--color-cat-3` | Third data series (e.g. cache read) |
-| `--color-cat-4` | Fourth data series (e.g. cache write) |
-| `--color-cat-5` | Fifth data series (e.g. cost overlay) |
-
-### Grid and axis styling
-
-- `CartesianGrid`: `stroke={border}`, `strokeDasharray="3 3"`
-- Axis ticks: `tick={{ fill: muted, fontSize: 11 }}`
-- Category axis labels: `tick={{ fill: fg, fontSize: 12 }}`
+Colour the series from `theme.categorical` in order. Keep a line chart to five
+or six series, beyond which it stops being readable.
 
 ## Interactions
 
@@ -513,15 +335,13 @@ Map `--color-cat-N` tokens to data series in order:
 - **Do** use `CheckboxGroup` with `filterable` when the option list is long (10+ items).
 - **Do** add `group` to CheckboxGroup options when filters have natural categories — the grouped layout with collapsible sticky sections scales better than a flat list.
 - **Don't** let the filter column grow; give it a fixed width and `flex-shrink: 0`.
-- **Do** use `useChartTokens()` to resolve CSS vars for Recharts SVG props — `var()` doesn't work in SVG attributes.
-- **Do** use `ResponsiveContainer` with `width="100%"` inside a height-bounded container. Use `height: var(--card-content-height)` for a fixed base height, or `height: 100%` for fit-to-card sizing.
-- **Do** use custom `ChartTooltip` and `ChartLegend` with design system tokens instead of Recharts defaults.
-- **Do** use square swatches with `border-radius: var(--radius-xs)` in both tooltips and legends.
-- **Do** set `isAnimationActive={false}` on all chart elements (`Line`, `Bar`, `Pie`) and `Tooltip` — animations are distracting in data-dense dashboards.
-- **Don't** hardcode hex colors in chart props — always read from tokens via `useChartTokens()`.
+- **Do** read every chart colour from `useChartTheme()`. A `var()` string does not work in an SVG attribute, and resolving one in the page is a second theming bridge beside the kit's.
+- **Do** give a drawn chart a `viewBox` at `width="100%"`, so it shrinks with its card instead of hanging out of it.
+- **Do** wrap every chart in `ChartFrame`, so its loading, error and empty states are the ones every other chart shows.
+- **Do** use `Legend` for the key beside a chart, with `shape: "square"` where the marks are rectangles.
+- **Don't** pass a resolved colour to a `Legend` swatch. It takes a custom-property name, such as `--color-cat-1`.
 - **Do** use `--color-cat-N` categorical tokens for data series, not semantic tokens like `--color-success`.
 - **Don't** use more than 5-6 series on a single line chart — it becomes unreadable.
-- **Don't** use Recharts' default legend — it uses mixed shapes (circles, rectangles, sectors) across chart types. Use the custom `ChartLegend` for uniform square swatches.
 
 ## Compiling usage example
 

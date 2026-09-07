@@ -1592,7 +1592,8 @@
         "CardGroup",
         "CheckboxGroup",
         "ChartFrame",
-        "ChartTooltip"
+        "ChartTooltip",
+        "Legend"
       ],
       "patterns": [],
       "note": null
