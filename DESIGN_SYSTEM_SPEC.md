@@ -943,6 +943,23 @@ When `storageKey` is provided:
 - Reads and writes are wrapped in try/catch to handle storage unavailability.
 - The key format is always `"<project>-<component>-<dimension>"` (for example `"spec-viewer-file-tree-width"`).
 
+**What belongs behind it.** User-arrangement state, and nothing else: a width, a
+collapse, an expansion, a chosen theme. It is what a user set by moving the
+interface around, and what they expect to find where they left it. Application
+data stays with the consumer, and a `storageKey` does not move it.
+
+**What a storage failure means.** The component keeps its in-memory value and
+carries on. Private browsing and a full quota both throw from `getItem` and from
+`setItem`, and a page must not go down over a remembered pane width. Nothing is
+reported to the consumer, because there is nothing useful it could do. The
+arrangement is not remembered for that session, and that is all.
+
+`SplitPane`, `ThemeToggle` and `useTheme` take a `storageKey` today, and
+`src/components/storageKey.test.tsx` holds all three to that behaviour against
+storage that throws. `Panel`, `Tree` and `MarkdownViewer` hold arrangement state
+and take no `storageKey` yet. That is a gap rather than a decision, and a
+component adopting one uses this name and this failure behaviour.
+
 ### 7.4 Extension Slots
 
 Components expose extension points via render props rather than deep prop drilling:
