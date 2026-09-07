@@ -25,15 +25,26 @@ if (!CHROME_BIN) {
   );
 }
 
-const PIXEL_THRESHOLD = 0.1;
-const MAX_DIFF_RATIO = 0.001;
-// A ratio alone lets a real change hide in a large capture. The pattern pages
-// are whole-page shots of a few million pixels, so 0.1% of one is thousands: the
-// Tree label regression that started this moved 2084 pixels in the Explorer and
-// passed. Runs in the pinned image are deterministic to the pixel, twice
-// measured at zero, so anything above a small floor is a change rather than
-// noise and is worth a person looking at it.
-const MAX_DIFF_PIXELS = 250;
+// Any difference at all is a difference. Runs in the pinned image are
+// deterministic to the pixel: 104 captures compared byte for byte across two
+// runs of the same commit, and a third against the committed baseline, all at
+// zero. There is no noise here to absorb, so absorbing any is a decision to
+// look away.
+//
+// pixelmatch weighs a perceptual distance, and at its old threshold of 0.1 it
+// ignored a shift of up to 26 in 255 however many pixels carried it. That is
+// not a rounding allowance, it is most of the way to a different colour: a
+// table repainting from the page grey to its own card background moved 358109
+// of 371856 pixels and was reported as zero. Geometry survived the threshold
+// because moving an element puts dark text where light background was, and
+// colour did not, which is a poor trade for a design system.
+//
+// The cost is that a Playwright image bump fails every capture rather than
+// quietly changing them. That is the correct moment to re-record, and the
+// wrong one to be told nothing.
+const PIXEL_THRESHOLD = 0;
+const MAX_DIFF_RATIO = 0;
+const MAX_DIFF_PIXELS = 0;
 const THEMES = ["light", "dark"];
 const COMPONENTS = [
   "AgentStatus", "AgentTrace", "AppShell",
@@ -572,7 +583,7 @@ async function compare() {
       differingPixels += count;
       if (ratio > MAX_DIFF_RATIO || count > MAX_DIFF_PIXELS) {
         failed += 1;
-        const why = ratio > MAX_DIFF_RATIO ? "" : ` — over the ${MAX_DIFF_PIXELS} pixel floor`;
+        const why = MAX_DIFF_PIXELS === 0 && MAX_DIFF_RATIO === 0 ? "" : ` — over the ${MAX_DIFF_PIXELS} pixel floor`;
         console.error(`FAIL ${relative}: ${count} pixels (${(ratio * 100).toFixed(4)}%)${why}`);
         await writeFailure(relative, expected, actual);
       }

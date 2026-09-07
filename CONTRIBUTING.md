@@ -80,8 +80,10 @@ asks before running those, so `npx puppeteer browsers install chrome` is worth
 having run once.
 
 `visual:compare` renders in the Playwright image the installed `playwright`
-version names, so it needs Docker or podman, and allows no more than a 0.1%
-changed-pixel ratio. Fonts and Chromium both come from that image: the same
+version names, so it needs Docker or podman, and allows no difference at all.
+Runs in that image are deterministic to the pixel, so a capture that moved is a
+change somebody made rather than noise to absorb. Fonts and Chromium both come
+from that image: the same
 commit measures differently on two hosts, so a baseline is only comparable to a
 run that rendered where it did. `visual:compare:host` skips the image and needs
 you to name a browser in `CHROME_BIN`; its pixels answer no question the gate is
@@ -93,6 +95,10 @@ than the baseline fails the run, whether it sits under `violations` or under
 
 When a visual change is intended and reviewed, `npm run visual:capture` records a
 new baseline. Never run it to make a failing comparison pass.
+
+Bumping the Playwright image fails every capture, because the browser that drew
+the baseline is gone. That is the moment to re-record, and the reason the
+comparison would rather say so than average the difference away.
 
 ## Design rules
 
