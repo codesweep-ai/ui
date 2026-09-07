@@ -44,6 +44,10 @@
     {
       "date": "2026-09-07",
       "text": "The Table bullets closed on measurement that corrected the advice given with them. The background was presented as repainting three tables from the page grey to the card colour. It repaints nothing: toggling the rule on the rendered table changes 0 of its 976 by 381 pixels, because the header row paints `--color-bg-muted` and the body rows cover the rest, so the wrapper's own background is never exposed. The earlier figure came from measuring what sits behind the table rather than what is visible through it.\n\nThe owner kept it on the narrow argument: the wrapper already draws a border and a radius, so it is a surface, and one relying on its children to stay opaque is fragile where consumers restyle rows. The hover is not inert. A sortable header turns `var(--color-accent)` under a pointer, which no capture can photograph, so the test asserts the rule's reach instead."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Correction to the note above: the card background is not inert. It repaints the table body from the page grey to `var(--card)`, measured at the pixel level as 243,244,246 becoming 255,255,255 across 358109 of `table.png`'s 371856 pixels. The earlier claim of 0 differing pixels came from running pixelmatch at the gate's own threshold, which tolerates a shift of that size, and reading its answer as equality. The reasoning for keeping the rule stands; the description of what it does was wrong."
     }
   ],
   "links": []
