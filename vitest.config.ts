@@ -24,6 +24,7 @@ const browserSuites = [
   "src/components/EventLanes.test.tsx",
   "src/components/Panel.scroll.test.tsx",
   "src/components/Panel.collapse.test.tsx",
+  "src/components/Tooltip.placement.test.tsx",
   "src/components/Tree.contentHeight.test.tsx",
   "src/patterns/patterns.responsive.test.tsx",
   "src/lib/chartTheme.text.test.tsx",

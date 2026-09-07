@@ -9,6 +9,11 @@
     position: fixed;
     z-index: var(--z-tooltip);
     max-width: var(--tooltip-max-width);
+    /* Laid out from `left` alone, a fixed box gets only the space to its right,
+       so a trigger near the right edge squeezed this to one character per line.
+       max-content sizes it from the text and lets the component put it back on
+       screen. */
+    width: max-content;
     border-radius: var(--radius-sm);
     border-width: .0625rem;
     border-style: solid;

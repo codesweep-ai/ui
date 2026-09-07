@@ -70,7 +70,17 @@ Chrome matches [ChartTooltip](ChartTooltip.md) exactly, so the two tooltips in t
 
 The component measures the trigger at open time and sets the anchor point. The offset lives in the stylesheet, keyed off `data-side`, so the gap stays a token rather than arithmetic in TypeScript.
 
-**No collision detection.** The bubble does not flip or shift to stay on screen. A trigger near a viewport edge, or inside a narrow scrolling sidebar, can clip. Choose `side` for the space available.
+**The bubble stays on screen.** It measures itself once it is open and corrects
+in two ways. Horizontally it shifts, keeping 8px clear of either edge.
+Vertically it flips to the other side of the trigger, because shifting would
+slide it over the thing it describes. `side` is therefore a preference rather
+than an instruction, and `data-side` on the bubble names the side actually used.
+
+Width is `max-content`, capped by `--tooltip-max-width`. It has to be: a
+`position: fixed` box laid out from `left` alone gets only the space to the
+right of that point, so a trigger 39px from the right edge left a 44 character
+label 30px wide and 496px tall, one character per line. That is what a Card's
+maximize control looked like on every page.
 
 ## Behavior
 

@@ -7,6 +7,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type FocusEvent,
@@ -66,6 +67,24 @@ type TriggerProps = {
 // The ref goes to the trigger, not to the bubble. A tooltip renders no root element of its own,
 // and forwardRefToRoot clones whatever a component returns to inject a ref, so a Tooltip used as
 // a component's root has to pass that ref through to the element underneath it.
+const OPPOSITE = {
+  top: "bottom",
+  bottom: "top",
+  left: "right",
+  right: "left",
+} as const;
+
+type Side = keyof typeof OPPOSITE;
+
+function anchorFor(rect: DOMRect, side: Side) {
+  return {
+    top: { x: rect.left + rect.width / 2, y: rect.top },
+    bottom: { x: rect.left + rect.width / 2, y: rect.bottom },
+    left: { x: rect.left, y: rect.top + rect.height / 2 },
+    right: { x: rect.right, y: rect.top + rect.height / 2 },
+  }[side];
+}
+
 export const Tooltip = forwardRef<HTMLElement, TooltipProps>(function TooltipImpl({
   content,
   children,
@@ -77,8 +96,15 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(function TooltipImp
   className,
 }: TooltipProps, forwardedRef) {
   const [open, setOpen] = useState(false);
-  const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
+  // The trigger's box rather than a resolved point, because a bubble that has
+  // to flip needs the other edge of the same box.
+  const [rect, setRect] = useState<DOMRect | null>(null);
+  // Corrections that keep the bubble on screen, held apart from the anchor so
+  // the anchor stays the anchor.
+  const [shift, setShift] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const triggerRef = useRef<HTMLElement | null>(null);
+  const bubbleRef = useRef<HTMLDivElement | null>(null);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const id = useId();
@@ -95,15 +121,52 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(function TooltipImp
   const place = useCallback(() => {
     const element = triggerRef.current;
     if (!element) return;
-    const rect = element.getBoundingClientRect();
-    const anchor = {
-      top: { x: rect.left + rect.width / 2, y: rect.top },
-      bottom: { x: rect.left + rect.width / 2, y: rect.bottom },
-      left: { x: rect.left, y: rect.top + rect.height / 2 },
-      right: { x: rect.right, y: rect.top + rect.height / 2 },
-    }[side];
-    setPoint(anchor);
-  }, [side]);
+    setRect(element.getBoundingClientRect());
+    setShift(0);
+    setFlipped(false);
+  }, []);
+
+  const effectiveSide: Side = flipped ? OPPOSITE[side] : side;
+  const point = rect ? anchorFor(rect, effectiveSide) : null;
+
+  // A bubble anchored near an edge lands outside the viewport, and a `position:
+  // fixed` box laid out from `left` alone gets only the space to the right of
+  // it. With 39px of that, a 44 character tooltip measured 30px wide and 496px
+  // tall: one character per line, and mostly above the top of the screen. The
+  // stylesheet gives it `width: max-content` so its size stops depending on
+  // where it sits, and this puts it back inside the viewport.
+  //
+  // It converges in one pass. Correcting moves the bubble into range, so the
+  // pass that follows measures no correction and stops.
+  useLayoutEffect(() => {
+    const bubble = bubbleRef.current;
+    if (!open || !bubble) return;
+
+    const box = bubble.getBoundingClientRect();
+    // Nothing to correct when there is nothing to measure. Every rect is zero
+    // in an environment without layout, and a zero box always reads as off the
+    // left edge, so correcting one moves it by the margin forever.
+    if (box.width === 0 || box.height === 0) return;
+
+    const margin = 8;
+    const correction =
+      box.left < margin
+        ? margin - box.left
+        : box.right > window.innerWidth - margin
+          ? window.innerWidth - margin - box.right
+          : 0;
+    // Half a pixel is rounding rather than a correction, and stopping there is
+    // what makes this converge: the pass after a real correction measures the
+    // moved box, finds it in range, and asks for nothing.
+    if (Math.abs(correction) >= 0.5) setShift((current) => current + correction);
+
+    // Shifting a bubble that runs off the top or the bottom would slide it over
+    // the trigger, so the vertical sides flip to the other edge instead.
+    if (effectiveSide === "top" && box.top < margin) setFlipped(true);
+    else if (effectiveSide === "bottom" && box.bottom > window.innerHeight - margin) {
+      setFlipped(true);
+    }
+  }, [open, rect, effectiveSide, shift]);
 
   const clipped = useCallback(() => {
     const element = triggerRef.current;
@@ -200,12 +263,13 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(function TooltipImp
             role="tooltip"
             data-component="Tooltip"
             data-part="bubble"
-            data-side={side}
+            ref={bubbleRef}
+            data-side={effectiveSide}
             // The full string is already on the element this describes, so announcing the
             // bubble as well would say it twice.
             aria-hidden={describedBy ? undefined : true}
             className={cn("cs-tooltip", className)}
-            style={{ left: point.x, top: point.y }}
+            style={{ left: point.x + shift, top: point.y }}
             onMouseEnter={clearTimers}
             onMouseLeave={() => hide(GRACE_MS)}
           >
