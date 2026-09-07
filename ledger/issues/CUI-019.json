@@ -3,15 +3,17 @@
   "title": "The two parsers still disagree on four or more emphasis markers",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while fixing the three-marker case in CUI-015",
   "opened": "2026-09-06",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "markdown conformance pass, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "50e9161"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npx vitest run --project jsdom src/components/MarkdownViewer.conformance.test.tsx`: 21 tests pass, three of them new. They hold `****four****` to `*<strong>*four</strong>**` through the lightweight parser and `<strong><strong>four</strong></strong>` through the rich one, and hold the two to the same DOM at three markers. Disabling the three-marker branch in `LightweightMarkdown.tsx` fails that last one with `expected '<strong>*three</strong>*' to be '<em><strong>three</strong></em>'`, so the pin bites. `npm run check` exits 0."
   },
   "resolution": null,
   "details": "`****four****` renders as `*<strong>*four</strong>**` through the lightweight parser and as `<strong><strong>four</strong></strong>` through the rich one.\n\nCUI-015 fixed the three-marker case and stopped there on purpose. Runs of four or more are where CommonMark's delimiter matching stops being a scan and becomes a stack of openers and closers with rules about their lengths. Implementing a guess would trade a known disagreement for a less obvious one.\n\nFiled because MarkdownViewer.conformance.test.tsx asserts the two parsers produce the same DOM, and for this input that is still untrue. The corpus does not contain such a run, so the assertion passes. Either implement the run matching properly, or write down that the lightweight subset stops at three and say so where the conformance claim is made.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-06",
       "text": "Measured while verifying CUI-015: three markers match in both parsers, four do not."
+    },
+    {
+      "date": "2026-09-07",
+      "text": "Closed by the second of the two options this record named, writing the limit down rather than implementing CommonMark's run matching. The owner confirmed that an emphasis fix belongs in the 0.3.0 conversation, and a guess at the pairing would trade a known disagreement for an obscure one.\n\nOne thing the record did not say turned out to matter more than the run itself. The stray markers re-pair with the rest of the line, so `****four**** and ***three***` renders the three-marker run wrongly too. A reader meeting that would look at the wrong run, so the specification says it."
     }
   ],
   "links": [

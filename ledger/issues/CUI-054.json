@@ -1,0 +1,20 @@
+{
+  "id": "CUI-054",
+  "title": "CONTRIBUTING asks for a 72 column commit body, and no gate checks it",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "repository owner (host), asking whether the branch's commit messages match CONTRIBUTING",
+  "opened": "2026-09-07",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`CONTRIBUTING.md` says to wrap a commit body at 72 columns. Twenty-nine of this branch's 93 commits have a body line over it: 22 at 73 columns, four at 74, one at 76 and two at 77. Measured with `git log main..HEAD --format=%b`, ignoring the `Co-Authored-By:` trailer.\n\n`cs-lint oss` passes on every one of them. So the rule is documented and ungated, which is the class this branch was opened to find, in the commit messages rather than in the code.\n\nThe history is not worth rewriting for it. Nothing is pushed, so a rebase could reach all 29, but that rewrites most of a branch to move a line by one character. The useful fix reaches the next commit instead, either as an `oss` rule or as a check in `npm run ci`.\n\nOne caution for whoever writes it. The subject rule, the trailer rule and the body word and paragraph limits all pass today, so a checker that reports those as violations has a bug in it rather than a finding.",
+  "notes": [],
+  "links": []
+}

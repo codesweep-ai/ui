@@ -3,10 +3,6 @@
   "updated": "2026-09-07",
   "items": [
     {
-      "id": "CUI-019",
-      "why": "A conformance test asserts the two parsers agree, and for four emphasis markers they do not."
-    },
-    {
       "id": "CUI-023",
       "why": "The Dashboard pattern teaches a theming bridge the kit replaced, so a reader builds a second one."
     },
@@ -21,6 +17,10 @@
     {
       "id": "CUI-027",
       "why": "Five small pattern drifts, grouped, cheap to clear once the three above are done."
+    },
+    {
+      "id": "CUI-054",
+      "why": "A documented commit rule that no gate checks, which is this branch's own recurring class."
     }
   ]
 }
