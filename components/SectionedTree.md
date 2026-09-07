@@ -13,7 +13,7 @@ avoid_when:
   - Single flat tree without grouping → Tree
   - Static program structure without grouping → Tree
 related: [Tree, SearchInput, HighlightText, SplitPane]
-patterns: [Explorer, MasterDetail]
+patterns: [Explorer, MasterDetail, NavSidebar]
 ---
 
 # SectionedTree

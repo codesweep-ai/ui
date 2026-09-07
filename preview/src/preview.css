@@ -1575,3 +1575,85 @@ html, body { height: 100%; overflow: hidden; }
         position: static
     }
 }
+
+/* Nav sidebar pattern. The page's demo wrapper is bounded and clips, so a demo
+   taller than it owns the scroller, the same way the dashboard demo does. The
+   padding is what insets the cards from the window, which is what makes them
+   read as cards: the explorer demo's root carries the same. */
+.cs-preview-pages-patterns-nav-sidebar-demo-1 {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    height: 100%;
+    overflow-y: auto;
+    padding: var(--space-4)
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-2 {
+    color: var(--muted);
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-3);
+    max-width: 44rem
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-3 {
+    height: 100%;
+    overflow-y: auto;
+    padding: var(--space-4)
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-4 {
+    color: var(--muted);
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-2)
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-5 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-3)
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-6 {
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-3);
+    max-width: 44rem
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-7 {
+    background-color: var(--card);
+    border: .0625rem solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    margin-bottom: var(--space-3);
+    overflow-x: auto;
+    padding: var(--space-3)
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-8 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-2);
+    margin-top: var(--space-4)
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-9 {
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    list-style: none
+}
+
+/* The sidebar column: bounded by the pane around it, and the one scroller. */
+.cs-preview-pages-patterns-nav-sidebar-demo-10 {
+    height: 100%;
+    overflow-y: auto
+}
+
+.cs-preview-pages-patterns-nav-sidebar-demo-11 {
+    height: 28.75rem;
+    margin: calc(var(--space-4) * -1);
+    margin-top: 0
+}

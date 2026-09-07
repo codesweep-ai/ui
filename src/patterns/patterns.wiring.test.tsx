@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { DashboardDemo } from "../../preview/src/pages/patterns/DashboardDemo";
+import { NavSidebarDemo } from "../../preview/src/pages/patterns/NavSidebarDemo";
 import { DataTableDemo } from "../../preview/src/pages/patterns/DataTableDemo";
 import { FormDemo } from "../../preview/src/pages/patterns/FormDemo";
 import { MasterDetailDemo } from "../../preview/src/pages/patterns/MasterDetailDemo";
@@ -116,5 +117,41 @@ describe("Dashboard pattern", () => {
     expect(container.querySelectorAll('[data-component="Legend"]')).toHaveLength(3);
     expect(container.querySelectorAll("[data-legend-swatch]")).toHaveLength(12);
     expect(container.querySelectorAll("[data-legend-label]")).toHaveLength(12);
+  });
+});
+
+describe("Nav sidebar pattern", () => {
+  it("turns off the per-section chrome a file tree wants and a nav does not", () => {
+    render(<NavSidebarDemo />);
+
+    // Seven sections. On the file-tree defaults that is seven filter boxes and
+    // seven expand-all controls, most of them over lists of four to nine.
+    expect(screen.queryAllByPlaceholderText("Filter...")).toHaveLength(0);
+
+    // SectionedTree keeps one control for the sections themselves, which reads
+    // "Collapse all" while they are open. Counting rather than matching a name
+    // is what separates it from the seven inside it.
+    expect(
+      screen.queryAllByRole("button", { name: /^(Expand|Collapse) all$/ }),
+    ).toHaveLength(1);
+  });
+
+  it("folds a section to its own title bar and back", async () => {
+    render(<NavSidebarDemo />);
+
+    // Scoped to the panel, because the grouped card above renders the same
+    // sections and the same rows.
+    const section = screen.getByRole("group", { name: "Troubleshooting" });
+    expect(within(section).getByText("Troubleshooting")).toBeInTheDocument();
+    expect(within(section).queryByText("Out of memory")).toBeNull();
+
+    await userEvent.click(
+      within(section).getByRole("button", { name: "Expand Troubleshooting panel" }),
+    );
+
+    expect(within(section).getByText("Out of memory")).toBeInTheDocument();
+    expect(
+      within(section).getByRole("button", { name: "Collapse Troubleshooting panel" }),
+    ).toBeInTheDocument();
   });
 });

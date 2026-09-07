@@ -8,6 +8,7 @@ import { MarkdownViewerDemo } from "./patterns/MarkdownViewerDemo";
 import { FormDemo } from "./patterns/FormDemo";
 import { AgentActivityDemo } from "./patterns/AgentActivityDemo";
 import { ChartDemo } from "./patterns/ChartDemo";
+import { NavSidebarDemo } from "./patterns/NavSidebarDemo";
 
 const tabs = [
   { id: "explorer", label: "Explorer" },
@@ -19,6 +20,7 @@ const tabs = [
   { id: "form-results", label: "Form + Results" },
   { id: "data-table", label: "Data Table" },
   { id: "markdown-viewer", label: "Markdown Viewer" },
+  { id: "nav-sidebar", label: "Nav Sidebar" },
 ] as const;
 
 type PatternTab = (typeof tabs)[number]["id"];
@@ -76,6 +78,7 @@ export function PatternsPage() {
         {active === "form-results" && <FormResultsDemo />}
         {active === "data-table" && <DataTableDemo />}
         {active === "markdown-viewer" && <MarkdownViewerDemo />}
+        {active === "nav-sidebar" && <NavSidebarDemo />}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ avoid_when:
   - Full-screen overlay → Modal
   - Simple card container without collapse → Card
 related: [SplitPane, Tree, SectionedTree, Card]
-patterns: [Explorer, MasterDetail, Dashboard]
+patterns: [Explorer, MasterDetail, Dashboard, NavSidebar]
 ---
 
 # Panel

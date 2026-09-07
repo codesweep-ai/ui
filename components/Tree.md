@@ -12,7 +12,7 @@ use_when:
 avoid_when:
   - Multiple grouped tree sections → SectionedTree
 related: [SectionedTree, HighlightText, SearchInput, SplitPane]
-patterns: [Explorer, MasterDetail]
+patterns: [Explorer, MasterDetail, NavSidebar]
 ---
 
 # Tree

@@ -240,7 +240,7 @@ Collapsible side panel with a header and scrollable content area. Used for file 
 - use when: Building a two- or three-column layout with SplitPane
 - avoid when: Full-screen overlay → Modal
 - avoid when: Simple card container without collapse → Card
-- related: SplitPane, Tree, SectionedTree, Card · patterns: Explorer, MasterDetail, Dashboard
+- related: SplitPane, Tree, SectionedTree, Card · patterns: Explorer, MasterDetail, Dashboard, NavSidebar
 - spec: [components/Panel.md](components/Panel.md)
 
 ### PulseBadge  ·  since 1.4.0
@@ -283,7 +283,7 @@ Self-managing component that renders multiple independent tree sections with col
 - use when: Shared single-selection across multiple tree groups
 - avoid when: Single flat tree without grouping → Tree
 - avoid when: Static program structure without grouping → Tree
-- related: Tree, SearchInput, HighlightText, SplitPane · patterns: Explorer, MasterDetail
+- related: Tree, SearchInput, HighlightText, SplitPane · patterns: Explorer, MasterDetail, NavSidebar
 - spec: [components/SectionedTree.md](components/SectionedTree.md)
 
 ### SegmentedControl  ·  since 0.2.0  ·  experimental
@@ -393,7 +393,7 @@ Hierarchical tree view with expand/collapse, selection, search/filter, and optio
 - use when: Navigating nested nodes with expand/collapse and selection
 - use when: Searchable/filterable tree within a panel or sidebar
 - avoid when: Multiple grouped tree sections → SectionedTree
-- related: SectionedTree, HighlightText, SearchInput, SplitPane · patterns: Explorer, MasterDetail
+- related: SectionedTree, HighlightText, SearchInput, SplitPane · patterns: Explorer, MasterDetail, NavSidebar
 - spec: [components/Tree.md](components/Tree.md)
 
 ## Patterns
@@ -507,3 +507,14 @@ Sortable list or table on one side with a detail pane on the other for inspectin
 - avoid when: Nested drill-down more than 3 levels → Explorer
 - related: SplitPane, Table, Card, StatusBadge, CodeBlock, HighlightText
 - spec: [patterns/MasterDetail.md](patterns/MasterDetail.md)
+
+### NavSidebar  ·  since 0.3.0
+Grouped navigation sidebar built from Tree and Panel, sized to its sections with one scrollbar on the column.
+- intents: `nav sidebar`, `navigation sidebar`, `docs sidebar`, `grouped navigation`, `side nav`, `section nav`, `documentation navigation`, `collapsible sections`, `sidebar sections`
+- use when: Navigating a documentation site or an app's sections from a persistent left column
+- use when: Several titled groups of links in one sidebar, each as tall as its own list
+- use when: Selection is driven from the page as well as from the sidebar
+- avoid when: Browsing a file hierarchy with a detail pane → Explorer
+- avoid when: One flat list of under ten links → a plain list
+- related: Tree, SectionedTree, Panel, Card, CardGroup
+- spec: [patterns/NavSidebar.md](patterns/NavSidebar.md)

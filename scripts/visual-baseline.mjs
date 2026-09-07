@@ -64,7 +64,7 @@ const COMPONENTS = [
 // broke every label in the flipped Explorer.
 const PATTERNS = [
   "explorer", "dashboard", "master-detail", "form", "agent-activity",
-  "chart", "form-results", "data-table", "markdown-viewer",
+  "chart", "form-results", "data-table", "markdown-viewer", "nav-sidebar",
 ];
 
 // Components the catalog lists that this gate deliberately does not capture.

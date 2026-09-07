@@ -2,7 +2,7 @@
   "$generated": "Do not edit. Run `npm run catalog`. Source: spec frontmatter.",
   "counts": {
     "components": 37,
-    "patterns": 10
+    "patterns": 11
   },
   "components": [
     {
@@ -870,7 +870,8 @@
       "patterns": [
         "Explorer",
         "MasterDetail",
-        "Dashboard"
+        "Dashboard",
+        "NavSidebar"
       ],
       "note": null
     },
@@ -1024,7 +1025,8 @@
       ],
       "patterns": [
         "Explorer",
-        "MasterDetail"
+        "MasterDetail",
+        "NavSidebar"
       ],
       "note": null
     },
@@ -1440,7 +1442,8 @@
       ],
       "patterns": [
         "Explorer",
-        "MasterDetail"
+        "MasterDetail",
+        "NavSidebar"
       ],
       "note": null
     }
@@ -1822,6 +1825,42 @@
         "StatusBadge",
         "CodeBlock",
         "HighlightText"
+      ],
+      "patterns": [],
+      "note": null
+    },
+    {
+      "spec": "patterns/NavSidebar.md",
+      "name": "NavSidebar",
+      "summary": "Grouped navigation sidebar built from Tree and Panel, sized to its sections with one scrollbar on the column.",
+      "keywords": [
+        "nav sidebar",
+        "navigation sidebar",
+        "docs sidebar",
+        "grouped navigation",
+        "side nav",
+        "section nav",
+        "documentation navigation",
+        "collapsible sections",
+        "sidebar sections"
+      ],
+      "since": "0.3.0",
+      "status": "stable",
+      "use_when": [
+        "Navigating a documentation site or an app's sections from a persistent left column",
+        "Several titled groups of links in one sidebar, each as tall as its own list",
+        "Selection is driven from the page as well as from the sidebar"
+      ],
+      "avoid_when": [
+        "Browsing a file hierarchy with a detail pane → Explorer",
+        "One flat list of under ten links → a plain list"
+      ],
+      "related": [
+        "Tree",
+        "SectionedTree",
+        "Panel",
+        "Card",
+        "CardGroup"
       ],
       "patterns": [],
       "note": null
