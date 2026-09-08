@@ -1,3 +1,4 @@
+import { warnWhenClipped } from "./clippedContentWarning";
 import type { Ref } from "react";
 
 const warned = new Set<string>();
@@ -54,5 +55,6 @@ export function checkedRootRef<T extends HTMLElement>(ref?: Ref<T>) {
     if (typeof ref === "function") ref(node);
     else if (ref) (ref as { current: T | null }).current = node;
     warnWhenUnstyled(node);
+    warnWhenClipped(node);
   };
 }

@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { warnWhenUnstyled } from "./stylesheetWarning";
+import { warnWhenClipped } from "./clippedContentWarning";
 
 type RefElement<T> = ReactElement<{ ref?: ForwardedRef<T> }>;
 
@@ -41,6 +42,7 @@ export function forwardRefToRoot<T, P>(render: (props: P) => ReactNode) {
         setRef(existingRef, value);
         setRef(ref, value);
         warnWhenUnstyled(value);
+        warnWhenClipped(value);
       },
     });
   });

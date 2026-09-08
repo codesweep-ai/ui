@@ -1127,6 +1127,20 @@ makes it a function rather than a boolean, so `if (scroll)` reads as
 permanently true. TypeScript caught this in `SectionedTree` and would not have
 caught it in `Tree`.
 
+#### The library says when a box is clipping
+
+A component whose content is clipped by a bounded ancestor logs one warning in
+a development build, naming the box and how much it hides. The check runs on
+every component root, because a consumer who does not know about this failure
+will never go looking for it.
+
+It measures on a frame after mount rather than during commit, since every box
+reads zero before the browser has laid the page out. It warns once per
+component, and it is guarded on `process.env.NODE_ENV` so a consumer's own
+bundler strips it from their production build. `src/lib/clippedContentWarning.ts`
+holds it, and it applies the predicate `scripts/visual-baseline.mjs` already
+asserts across the whole document.
+
 ### 7.12 Component Traceability (`data-component`)
 
 Every design system component must render a `data-component` attribute on its root DOM element. This enables tracing rendered DOM elements back to their source component when inspecting in browser DevTools or reporting bugs.
