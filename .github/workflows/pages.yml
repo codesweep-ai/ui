@@ -73,6 +73,10 @@ jobs:
   deploy:
     name: deploy to Pages
     needs: build
+    # Only main is the live site. This workflow can be dispatched on a branch to
+    # see the build, and without this guard that dispatch would publish the
+    # branch to the documentation URL everyone reads.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # The environment carries the deployment's URL and whatever protection rules

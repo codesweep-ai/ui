@@ -83,6 +83,26 @@ if (visual.status === 2) {
   process.exit(visual.status ?? 1);
 }
 
+// The site the pages workflow builds. That workflow runs on a push to main and
+// nowhere else, so without this the first build of the site happens after the
+// merge and reports to whoever merged. The wrapper exits 2 when there is no
+// container runtime, which is a machine this gate cannot run on rather than a
+// gate that failed.
+say("the site the pages workflow builds");
+const pages = spawnSync(npm, ["run", "pages:build"], { stdio: "inherit", shell: false });
+if (pages.error) {
+  console.error(`\nci: cannot run ${npm}: ${pages.error.message}`);
+  process.exit(2);
+}
+if (pages.status === 2) {
+  console.log("skipped: no container runtime, so the site was not built.");
+  console.log("         Start Docker or podman to close this gap.");
+  skipped.push("the site build, for want of a container runtime");
+} else if (pages.status !== 0) {
+  console.error("\nci: npm run pages:build failed");
+  process.exit(pages.status ?? 1);
+}
+
 // What the release workflow would send to the registry. `files` and `exports`
 // decide that, and both are easy to break without any other gate noticing.
 // The rich Markdown rungs, which need a browser but not a pinned one: it reads

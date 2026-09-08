@@ -1,0 +1,22 @@
+{
+  "id": "CUI-076",
+  "title": "A dispatch of the pages workflow on a branch would publish it to the live site",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent, while adding the site build gate for CUI-074",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`pages.yml` can be started by hand with `workflow_dispatch`, which is the only way to see the site build on a branch. Its `deploy` job carries no condition on the ref. A dispatch from a branch therefore builds that branch and publishes it to the live documentation URL.\n\nNothing in the workflow says so. The warning has been carried in the handoff notes for this repository instead, as a rule to remember. That is the wrong place for it, because a rule a person has to remember is a rule the next person does not know.\n\nThe build job is safe anywhere and worth running on a branch. Only the deploy is not, and a condition on the ref is what separates them.\n\nThis was found while adding the site build gate that CUI-074 asked for, which makes dispatching `pages.yml` on a branch unnecessary. The guard still belongs there, because the dispatch button remains and the next person will not know what it does.",
+  "notes": [],
+  "links": [
+    "CUI-074"
+  ]
+}

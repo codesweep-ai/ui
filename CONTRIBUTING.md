@@ -60,11 +60,26 @@ workflow takes them, so a green run here is a green run there. `npm run check`
 is the faster subset to keep beside you while you work, and `npm run ci` is the
 one that has to pass.
 
-Nothing needs installing beyond `npm install`. One gate is the exception:
-`npm run ci` checks the workflow files when `actionlint` is on the PATH, and
-reports a skip when it is not. It compares the visual baseline when there is a
-container runtime to render in, and reports a skip when there is not. Either way
-the closing line names what did not run.
+Nothing needs installing beyond `npm install`. Three gates are the exception,
+and each reports a skip rather than a failure when its prerequisite is absent.
+`npm run ci` checks the workflow files when `actionlint` is on the PATH. It
+compares the visual baseline, and builds the site, when there is a container
+runtime to run them in. Either way the closing line names what did not run.
+
+The site build is the gate that runs where the failure would otherwise land.
+`pages.yml` publishes on a push to `main` and runs nowhere else. Before this
+gate existed, the first build of a change happened after the merge, and it
+reported to whoever merged. That is how eleven Liquid braces once reached
+`main`. The gate is one command:
+
+```sh
+npm run pages:build        # the site, in the image the pages workflow uses
+```
+
+It runs `actions/jekyll-build-pages`' own image, so the gem, the plugin set and
+the Jekyll version are the ones that will build the real site. Like the visual
+gate it wants a container runtime and nothing else: no Ruby on your machine, and
+no `Gemfile` in the tree.
 
 Two browser checks run inside the gate, each with a job of its own in the
 workflow:
