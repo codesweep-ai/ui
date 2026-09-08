@@ -537,6 +537,80 @@ function checkStylesheetComposition() {
 }
 
 // ===========================================================================
+// 9. Liquid syntax in a document Jekyll renders (FAIL)
+//    `pages.yml` builds this repository as a Jekyll site, and Liquid reads
+//    `{{` and `{%` as its own syntax before Markdown ever sees them. A JSX
+//    example carrying an inline style object is either an unterminated
+//    variable, which stops the build, or a terminated one, which renders as
+//    nothing and leaves the reader a sentence with a hole in it.
+//
+//    `pages` runs on `main` alone, so no branch exercises it. Run 34190402253
+//    is what that costs: eleven `{{` across nine documents reached `main`, and
+//    the build reported them to whoever merged. This is that gate moved to
+//    where the document is written.
+//
+//    The fix is a `{% raw %}` … `{% endraw %}` pair around the fence, outside
+//    it so `docs:compile` still reads the example byte-for-byte. Disabling
+//    Liquid per document wants Jekyll 4, and GitHub Pages serves 3.10.
+//
+//    Scope is what Jekyll turns into a page: Markdown, less the paths
+//    `_config.yml` excludes and the dot- and underscore-prefixed names Jekyll
+//    passes over. That list is read rather than restated, so dropping
+//    `node_modules` from it fails here rather than on `main`.
+//
+//    HTML is out of scope. A file with no YAML header is a static file,
+//    copied without Liquid, and the plugin that promotes a headerless document
+//    to a page takes Markdown only. That is why the `{{` inside
+//    `ledger/ledger.html`'s embedded JSON is not a failure here.
+// ===========================================================================
+
+const LIQUID_TOKEN = /\{\{|\{%-?\s*(raw|endraw)\s*-?%\}|\{%/g;
+
+/** The Markdown files a Jekyll build of this tree would render as pages. */
+function jekyllPages() {
+  const config = yaml.load(read(join(ROOT, "_config.yml"))) ?? {};
+  const excluded = new Set((config.exclude ?? []).map((e) => String(e).replace(/\/+$/, "")));
+  const pages = [];
+  const descend = (dir, prefix) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith(".") || entry.name.startsWith("_")) continue;
+      const path = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (excluded.has(path)) continue;
+      if (entry.isDirectory()) descend(join(dir, entry.name), path);
+      else if (entry.name.endsWith(".md")) pages.push(path);
+    }
+  };
+  descend(ROOT, "");
+  return pages.sort();
+}
+
+function checkLiquidSyntax() {
+  for (const page of jekyllPages()) {
+    const source = read(join(ROOT, page));
+    let openedAt = 0;
+    LIQUID_TOKEN.lastIndex = 0;
+    for (let m = LIQUID_TOKEN.exec(source); m; m = LIQUID_TOKEN.exec(source)) {
+      const line = lineOf(source, m.index);
+      if (m[1] === "raw") {
+        if (openedAt) fail("liquid", `${page}:${line}`, `a raw block is already open at line ${openedAt}`);
+        else openedAt = line;
+      } else if (m[1] === "endraw") {
+        if (!openedAt) fail("liquid", `${page}:${line}`, "this closes a raw block that was never opened");
+        openedAt = 0;
+      } else if (!openedAt) {
+        fail(
+          "liquid",
+          `${page}:${line}`,
+          `${m[0]} opens Liquid syntax, and Jekyll renders this document —` +
+            " wrap it in a raw block, opened and closed outside any fence",
+        );
+      }
+    }
+    if (openedAt) fail("liquid", `${page}:${openedAt}`, "this raw block is never closed");
+  }
+}
+
+// ===========================================================================
 // main
 // ===========================================================================
 
@@ -551,6 +625,7 @@ checkExampleImports(specs);
 checkDocumentedClasses();
 checkFamilyTokenProperties();
 checkStylesheetComposition();
+checkLiquidSyntax();
 
 const failures = findings.filter((f) => f.level === "FAIL");
 const warnings = findings.filter((f) => f.level === "WARN");
