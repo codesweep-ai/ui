@@ -1,0 +1,20 @@
+{
+  "id": "CUI-064",
+  "title": "The specification says the class names are generated and change on every build, and neither is true",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "repository owner (host), asking: \"did we hard-code numbers? cs-component-tree-92?\"",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`components/Tree.md` tells a consumer to prefer the documented `data-part` hooks over \"the generated class names, which change on every build\". They are not generated, and they do not change.\n\n`cs-component-tree-92` is a literal string in `src/components/Tree.tsx` at line 952, with nine rules under that selector in `src/styles/components/tree.css`. It reaches the published build verbatim, and two consecutive `npm run build` runs produced a byte-identical `dist/components/Tree.js`.\n\nNothing in this repository generates these names. The only scripts that name `cs-component-` are `check-integrity.mjs` and `check-consumer-dom-contract.mjs`, and both only read them. The numbering is a fossil of a one-time conversion away from utility classes, which `--tw-space-y-reverse` in `preview/src/preview.css` still shows.\n\nThe advice is right and its reason is false, which is the pairing that costs a reader later. Someone who checks the claim finds the names stable and starts depending on one. Nothing renumbers it for them, and nothing warns when a hand edit does.\n\n`scripts/check-integrity.mjs` carries the same claim in the comment above its class hygiene check, where it is also the stated reason that check only warns rather than failing.",
+  "notes": [],
+  "links": []
+}

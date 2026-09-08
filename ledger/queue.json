@@ -7,6 +7,10 @@
       "why": "A prop named for a filter box decides whether an unrelated control renders, and no specification says so."
     },
     {
+      "id": "CUI-064",
+      "why": "A published specification states a reason a reader can check and find false, about the DOM contract."
+    },
+    {
       "id": "CUI-055",
       "why": "What blocked is fixed; what is left is one capture nobody has reproduced since, so it waits."
     }
