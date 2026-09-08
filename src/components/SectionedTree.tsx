@@ -38,8 +38,17 @@ interface SectionedTreeProps<T extends TreeNode = TreeNode> {
    * filter while short ones lose the chrome. Plain `Tree` offers the same choice.
    */
   filterable?: boolean;
-  /** Give each section an expand-all control. Default: true. */
-  expandAllControl?: boolean;
+  /**
+   * Which expand-all controls to render. Default: `true`, which is both.
+   *
+   * This component renders two of them, and they do different jobs under
+   * labels that used to read the same. The one above the sections expands and
+   * collapses whole sections. The one inside each section expands and
+   * collapses that section's nodes. `"sections"` and `"trees"` keep one kind,
+   * and `false` removes both. Before 0.3.0 this prop reached the second kind
+   * alone, and the first could not be removed at all.
+   */
+  expandAllControl?: boolean | "sections" | "trees";
   /** Passed to every section's Tree. Default: "truncate". */
   labelOverflow?: "truncate" | "scroll" | "wrap";
   /** Passed to every section's Tree. Default: "center". */
@@ -121,9 +130,6 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
   const allSectionsCollapsed =
     sections.length > 0 &&
     sections.every((s) => collapsedSections.has(s.id));
-  const noneSectionsCollapsed = sections.every(
-    (s) => !collapsedSections.has(s.id)
-  );
 
   const toggleSection = (sectionId: string) => {
     setCollapsedSections((prev) => {
@@ -268,10 +274,14 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
     );
   }
 
+  const sectionsControl = expandAllControl === true || expandAllControl === "sections";
+  const treeControl = expandAllControl === true || expandAllControl === "trees";
+
   return (
     <div data-component="SectionedTree" className={cn("cs-component-sectioned-tree-37 ", className)}>
-      {/* Section-level collapse/expand toggle */}
+      {sectionsControl && (
       <button
+        data-part="sections-expand-all"
         type="button"
         onClick={toggleAllSections}
         className={cn(
@@ -282,12 +292,9 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
           flipped ? "cs-component-sectioned-tree-43" : "cs-component-sectioned-tree-44"
         )}
       >
-        {allSectionsCollapsed
-          ? "Expand all"
-          : noneSectionsCollapsed
-            ? "Collapse all"
-            : "Collapse all"}
+        {allSectionsCollapsed ? "Expand all sections" : "Collapse all sections"}
       </button>
+      )}
 
       {sections.map((section) => {
         const isCollapsed = collapsedSections.has(section.id);
@@ -333,7 +340,7 @@ function SectionedTreeImpl<T extends TreeNode = TreeNode>({
                   renderLabel={renderLabel}
                   filterable={section.filterable ?? filterable}
                   onToggleExpandAll={
-                    expandAllControl
+                    treeControl
                       ? () => handleToggleExpandAll(section.id, section.nodes)
                       : undefined
                   }

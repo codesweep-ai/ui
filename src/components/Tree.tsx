@@ -1050,6 +1050,7 @@ function TreeImpl<T extends TreeNode>({
           {/* Expand all / collapse all */}
           {onToggleExpandAll && (
             <button
+              data-part="expand-all"
               type="button"
               onClick={onToggleExpandAll}
               className={cn(

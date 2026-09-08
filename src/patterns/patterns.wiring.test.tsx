@@ -128,12 +128,12 @@ describe("Nav sidebar pattern", () => {
     // seven expand-all controls, most of them over lists of four to nine.
     expect(screen.queryAllByPlaceholderText("Filter...")).toHaveLength(0);
 
-    // SectionedTree keeps one control for the sections themselves, which reads
-    // "Collapse all" while they are open. Counting rather than matching a name
-    // is what separates it from the seven inside it.
-    expect(
-      screen.queryAllByRole("button", { name: /^(Expand|Collapse) all$/ }),
-    ).toHaveLength(1);
+    // Until 0.3.0 SectionedTree kept one control for the sections themselves
+    // that no prop could remove, and this test asserted the count that left
+    // behind. `expandAllControl` reaches both kinds now, so a nav sidebar
+    // asking for neither gets neither.
+    expect(document.querySelectorAll('[data-part="sections-expand-all"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-part="expand-all"]')).toHaveLength(0);
   });
 
   it("folds a section to its own title bar and back", async () => {

@@ -311,7 +311,8 @@ with it.
 
 `data-component="Tree"` on the root `<div>`, which also carries `data-label-overflow`,
 `data-align-label` and `data-scroll` naming the modes in force. Structural parts: `data-part="scroller"` on the
-scrolling region, and `data-part="row"`, `data-part="icon"` and `data-part="label"` on each row.
+scrolling region, `data-part="expand-all"` on the expand-all control, and `data-part="row"`,
+`data-part="icon"` and `data-part="label"` on each row.
 Prefer these to the generated class names, which change on every build.
 
 ## Compiling usage example
@@ -319,5 +320,16 @@ Prefer these to the generated class names, which change on every build.
 <!-- docs-compile -->
 ```tsx
 import { Tree } from "@codesweep-ai/ui";
-export function Example() { return <Tree nodes={[{ id: "readme", name: "README.md", type: "leaf" }]} expandedIds={new Set()} />; }
+
+export function Example() {
+  return (
+    <Tree
+      nodes={[{ id: "src", name: "src", type: "branch", children: [{ id: "readme", name: "README.md", type: "leaf" }] }]}
+      expandedIds={new Set()}
+      allExpanded={false}
+      onToggleExpandAll={() => {}}
+      filterable
+    />
+  );
+}
 ```

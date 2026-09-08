@@ -28,15 +28,19 @@ describe("SectionedTree chrome", () => {
     expect(screen.getAllByPlaceholderText("Filter...")).toHaveLength(1);
   });
 
-  it("drops the expand-all control when asked", () => {
+  it("drops both kinds of expand-all control when asked", () => {
     const { rerender } = render(<SectionedTree sections={sections} />);
-    const before = screen.getAllByRole("button", { name: /expand all|collapse all/i }).length;
+
+    expect(document.querySelectorAll('[data-part="sections-expand-all"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-part="expand-all"]')).toHaveLength(2);
 
     rerender(<SectionedTree sections={sections} expandAllControl={false} />);
-    const after = screen.getAllByRole("button", { name: /expand all|collapse all/i }).length;
 
-    // The component's own top-level control stays; the per-section ones go.
-    expect(after).toBeLessThan(before);
+    // Until 0.3.0 the component's own top-level control stayed whatever this
+    // prop said, and this test asserted only that the count fell. Counting
+    // each kind is what tells the two apart.
+    expect(document.querySelectorAll('[data-part="sections-expand-all"]')).toHaveLength(0);
+    expect(document.querySelectorAll('[data-part="expand-all"]')).toHaveLength(0);
   });
 
   it("carries part hooks a consumer can style without a generated class name", () => {

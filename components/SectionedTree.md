@@ -44,8 +44,11 @@ interface SectionedTreeProps<T extends TreeNode = TreeNode> {
   renderLabel?: (node: T) => React.ReactNode;
   /** Give each section a filter box. Default: true */
   filterable?: boolean;
-  /** Give each section an expand-all control. Default: true */
-  expandAllControl?: boolean;
+  /**
+   * Which expand-all controls to render. Default: `true`, which is both.
+   * `"sections"` and `"trees"` keep one kind, and `false` removes both.
+   */
+  expandAllControl?: boolean | "sections" | "trees";
   /** Passed to every section's Tree. Default: "truncate" */
   labelOverflow?: "truncate" | "scroll" | "wrap";
   /** Passed to every section's Tree. Default: "center" */
@@ -166,11 +169,28 @@ When `flipped` is true, the prop is passed through to each `<Tree>`. Section hea
 - **All sections collapsed**: Top button shows "Expand all".
 - **Selection in collapsed section**: Selected state preserved but not visible until section is expanded.
 
+## Two expand-all controls
+
+This component renders two kinds of expand-all control, and they do different
+jobs. The one above the sections expands and collapses whole sections, and
+reads "Expand all sections". The one inside each section expands and collapses
+that section's nodes, and reads "Expand all". They read the same until 0.3.0,
+so a reader looking at the page could not tell which one `expandAllControl`
+governed, and it governed only the second.
+
+`expandAllControl` reaches both now. Pass `"sections"` or `"trees"` to keep one
+kind, and `false` to remove both. A navigation sidebar usually wants `false`.
+
+The per-section control sits in the same toolbar as the filter box, so
+`filterable={false}` takes it away as well. That coupling is CUI-063 in this
+repository's ledger.
+
 ## Traceability
 
 `data-component="SectionedTree"` on the root `<div>`. Structural parts: `data-part="section"` on
 each section wrapper, which also carries `data-section-id`, with `data-part="header"` on its
-toggle and `data-part="body"` on its content. Each section's Tree carries its own parts.
+toggle and `data-part="body"` on its content, and `data-part="sections-expand-all"` on the control
+above the sections. Each section's Tree carries its own parts.
 
 ## Compiling usage example
 

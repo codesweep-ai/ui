@@ -39,6 +39,7 @@ its own bug report until they are set together:
 |---|---|---|
 | A long path scrolls sideways | The label is cut off | `labelOverflow="truncate"` |
 | A search box over every group | No search box on a list of four | `filterable={false}` |
+| Controls to expand every branch | No expand-all chrome at all | `expandAllControl={false}` |
 | Each tree scrolls inside itself | The column scrolls once | `Panel height="auto"`, or `Tree scroll={false}` |
 | The icon centred on the row | The icon on the label's first line | `alignLabel="start"` |
 | Selection moves the view | Selection from the page moves it too | `scrollSelectedIntoView` (on by default) |
@@ -119,6 +120,9 @@ around them.
   `scrollIntoView` and by nothing a user does.
 - **Do** turn `filterable` off, and back on for a single section long enough to
   need it, through `TreeSection.filterable`.
+- **Do** turn `expandAllControl` off. It reaches both kinds of control from
+  0.3.0, so a sidebar gets neither the per-section ones nor the one above the
+  sections. Before that the second stayed whatever you passed.
 - **Do** keep `scrollSelectedIntoView`, so a link elsewhere on the page brings
   the sidebar to the right row.
 - **Don't** reach for `labelOverflow="scroll"` here. It is the file-tree
