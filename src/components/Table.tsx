@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect, useRef, type ReactElement, type RefAttributes } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef, isValidElement, type ReactElement, type RefAttributes } from "react";
 import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 import {
   ChevronUp,
@@ -34,6 +34,51 @@ export interface TableColumn<T> {
   searchValue?: (row: T) => string;
   /** Allow text to wrap in this column. Default: false (single-line with ellipsis). */
   wrap?: boolean;
+  /**
+   * Text for the truncation tooltip on a non-wrapping column. Falls back to
+   * `searchValue`, and then to the plain text inside the cell.
+   *
+   * A tooltip carries text, never the cell's own nodes. Until 0.3.0 it was
+   * given `cell()` again, so a cell rendering a link, a button or anything
+   * with an `id` was duplicated into a portal. Tooltip's own specification
+   * lists interactive content under avoid_when for that reason. A cell whose
+   * text cannot be reached this way gets no tooltip rather than a second copy
+   * of itself. Added v0.3.0.
+   */
+  tooltip?: (row: T) => string;
+}
+
+/** The plain text inside a rendered cell. A tooltip carries text, so this
+ *  walks the node for strings rather than handing the node over twice. */
+function textOf(node: React.ReactNode): string {
+  if (node === null || node === undefined || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (isValidElement(node)) {
+    return textOf((node.props as { children?: React.ReactNode }).children);
+  }
+  return "";
+}
+
+function truncationText<T>(column: TableColumn<T>, row: T, query?: string): string {
+  return (
+    column.tooltip?.(row) ?? column.searchValue?.(row) ?? textOf(column.cell(row, query))
+  ).trim();
+}
+
+/** A single-line cell, with a tooltip only when there is text to put in one. */
+function TruncatingCell({ text, children }: { text: string; children: React.ReactNode }) {
+  const cell = (
+    <div data-part="cell" className="cs-component-table-83 ">
+      {children}
+    </div>
+  );
+  if (!text) return cell;
+  return (
+    <Tooltip content={text} describedBy={false} overflowOnly>
+      {cell}
+    </Tooltip>
+  );
 }
 
 interface TableProps<T> {
@@ -449,15 +494,9 @@ function TableImpl<T>({
                       {col.wrap ? (
                         col.cell(row, activeFilterQuery)
                       ) : (
-                        <Tooltip
-                          content={col.cell(row, activeFilterQuery)}
-                          describedBy={false}
-                          overflowOnly
-                        >
-                          <div data-part="cell" className="cs-component-table-83 ">
-                            {col.cell(row, activeFilterQuery)}
-                          </div>
-                        </Tooltip>
+                        <TruncatingCell text={truncationText(col, row, activeFilterQuery)}>
+                          {col.cell(row, activeFilterQuery)}
+                        </TruncatingCell>
                       )}
                     </td>
                   ))}

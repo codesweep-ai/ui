@@ -86,6 +86,11 @@ interface TableColumn<T> {
   searchValue?: (row: T) => string;
   /** Allow text to wrap in this column. Default: false (single-line with ellipsis + tooltip). */
   wrap?: boolean;
+  /**
+   * Text for the truncation tooltip on a non-wrapping column. Falls back to
+   * `searchValue`, and then to the plain text inside the cell. Added v0.3.0.
+   */
+  tooltip?: (row: T) => string;
 }
 ```
 
@@ -122,6 +127,7 @@ interface TableColumn<T> {
 - This produces single-line rows with consistent height across all pages.
 - When text is truncated (i.e. `scrollWidth > clientWidth`), [Tooltip](Tooltip.md) shows the full text on hover **and on keyboard focus**. It uses `overflowOnly`, so it measures at open time and appears only when content actually overflows, and `describedBy={false}`, because the cell already carries the full text for a screen reader. Before 0.3.0 this was a native `title`, which never reached a keyboard user.
 - For truncation to take effect, the column must have a constrained width. Use the `width` prop on the column (e.g. `"30%"`, `"200px"`) combined with `fixed` table layout.
+- The bubble carries text, never the cell's own nodes. It takes `column.tooltip` first, then `searchValue`, then the plain text inside the cell, and shows nothing when none of those yields any. Before 0.3.0 it was given `cell()` a second time, so a cell rendering a link or a badge was duplicated into a portal, against Tooltip's own `avoid_when`.
 - Set `wrap: true` on a column to allow multi-line content (no truncation, no tooltip).
 - **Columns containing structured UI elements** (e.g. `StatusBadge`, buttons, icons) should use `wrap: true` — truncating a badge or button produces broken visuals, not a meaningful ellipsis.
 
