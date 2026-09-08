@@ -3,19 +3,26 @@
   "title": "Nothing builds the site before a merge, so only a Liquid brace is caught in time",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while closing CUI-073",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "pages build, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "1244860"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run pages:build` exits 0 on this tree in 1.7 seconds. Reverted against the documents as they stood at c2711c1~1, in a throwaway worktree, it exits 1 and names the cause: `Liquid syntax error (line 275): Variable '{{ width: \"100%\"...' was not properly terminated`. So the gate can fail, which is the thing a new gate has to prove. `npm run ci` exits 0 at 1244860 reporting `every gate ran`, and with both container runtimes forced absent it still exits 0 while reporting `2 gate(s) did not run` and naming the site build among them. `actionlint` exits 0 on the changed workflows."
   },
   "resolution": null,
   "details": "`pages.yml` runs on a push to `main` and nowhere else, so the site is first built after the merge. CUI-073 is what that cost once: eleven Liquid braces reached `main`, and the build reported them to whoever merged.\n\nSection 9 of `check-integrity.mjs` now catches that one failure mode before the commit exists. It does not build the site. A change to `_config.yml`, a document that gains a YAML header, or anything else Jekyll refuses still reaches `main` before anyone hears about it.\n\nBuilding on a branch is cheap. The `github-pages` gem, version 232, builds this tree in a container in about a second with `PAGES_REPO_NWO` set. It fails on the documents as they stood at c2711c1~1 and passes on them as they stand now. A build job in `ci.yml` using `actions/jekyll-build-pages@v1`, with no deploy job after it, would cover every push.\n\nThe cost is the mirror. CONTRIBUTING says `npm run ci` is every gate the workflow has, in the order the workflow takes them, so a job with no local counterpart weakens that sentence. A local counterpart needs Ruby, which nothing else here needs, and a gate that skips where Ruby is missing is the shape of hole this record is about.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "The cost this record weighed turned out not to be real, which is why it closes with a local mirror rather than without one.\n\nThe objection recorded above was that a local counterpart needs Ruby, and that a gate skipping where Ruby is missing is the shape of hole this record describes. It needs no Ruby. The gate runs `actions/jekyll-build-pages`' own image, so its only prerequisite is a container runtime, which is what the visual gate already asks for. `npm run ci` names the skip on the way out, as it already does for that gate and for `actionlint`.\n\nThe gem is version 232 and the build takes under two seconds, so nothing about the run is expensive enough to argue about."
+    }
+  ],
   "links": [
     "CUI-073"
   ]

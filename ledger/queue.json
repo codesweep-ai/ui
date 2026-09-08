@@ -1,14 +1,10 @@
 {
-  "recommendedBy": "session agent, after closing the pointer defect",
+  "recommendedBy": "session agent, after closing the site build and the pages ref guard",
   "updated": "2026-09-08",
   "items": [
     {
       "id": "CUI-055",
       "why": "Its likely cause is fixed, so what is left is deciding whether that is enough to close it."
-    },
-    {
-      "id": "CUI-074",
-      "why": "The brace check holds one failure mode; every other way the site can break still lands on main first."
     }
   ]
 }
