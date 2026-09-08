@@ -12,6 +12,9 @@ answer from the code. When nothing covers it, say so instead of guessing.
   under `components/` and `patterns/` instead.
 - [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) · what the behaviour and the
   tokens must be. A change starts here.
+- [CHANGELOG.md](CHANGELOG.md) · what an upgrade between versions asks of a
+  consumer. A change that asks something of one is named here as well as
+  where it belongs.
 - [CONTRIBUTING.md](CONTRIBUTING.md) · conventions, and the gates a change has
   to pass. Read it before your first change.
 - [ledger/AGENTS.md](ledger/AGENTS.md) · this repository keeps a ledger of open

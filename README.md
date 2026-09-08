@@ -107,6 +107,7 @@ enforces.
 - [MANUAL.md](MANUAL.md) · what the package exports, the entry points, theming and the DOM contract
 - [CATALOG.md](CATALOG.md) · every component and pattern, indexed by intent
 - [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) · the tokens, the architecture and the conventions
+- [CHANGELOG.md](CHANGELOG.md) · what an upgrade between versions asks of you
 - [CONTRIBUTING.md](CONTRIBUTING.md) · working on the package
 - [AGENTS.md](AGENTS.md) · where an agent looks first
 

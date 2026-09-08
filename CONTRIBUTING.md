@@ -268,6 +268,10 @@ workflow as a trusted publisher.
 A user-visible change lands in exactly one document. Every fact lives in one
 place, and the others link to it.
 
+The changelog is the exception, and a deliberate one. A change that asks
+something of a consumer is described where it belongs, and named again there.
+A reader upgrading has no way to know which of forty documents moved.
+
 | The change | Where it goes |
 |---|---|
 | A component's props, states or DOM hooks | `components/<Name>.md` |
@@ -276,6 +280,7 @@ place, and the others link to it.
 | An export, an entry point, or how a consumer restyles | [MANUAL.md](MANUAL.md) |
 | A prerequisite, or a step in getting the package | [INSTALL.md](INSTALL.md) |
 | What the package is for | [README.md](README.md) |
+| Anything a consumer upgrading has to act on | [CHANGELOG.md](CHANGELOG.md) |
 | A convention a contributor follows | this file |
 
 ## Writing

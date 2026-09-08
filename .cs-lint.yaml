@@ -12,6 +12,7 @@ docs:
   # system spec is its specification.
   documents:
     - README.md
+    - CHANGELOG.md
     - INSTALL.md
     - MANUAL.md
     - CONTRIBUTING.md
