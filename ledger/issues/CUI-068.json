@@ -3,18 +3,25 @@
   "title": "Table hands a truncation tooltip the cell's rendered node, which Tooltip's own entry forbids",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "consumer report, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "7cf1a08"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`TableColumn` gains an optional `tooltip`, and the bubble now takes `column.tooltip`, then `searchValue`, then the plain text inside the cell, and renders no tooltip when none of those yields any. `src/components/Table.truncation.test.tsx` covers all four in browser mode, including that a cell rendering an element appears once rather than twice while the bubble is open. Handing the tooltip `children` again fails three of the four, and the restore is byte-identical. `npm run ci` exits 0 at 7cf1a08."
   },
   "resolution": null,
   "details": "`src/components/Table.tsx` passes `content={col.cell(row, activeFilterQuery)}` to the `Tooltip` around a non-wrapping cell, and renders the same call again inside the trigger. A rich cell is therefore rendered twice, once in the table and once in a portal.\n\n`catalog.json` lists this under Tooltip's own `avoid_when`: \"The content is interactive (links, buttons) — a tooltip is not a popover\". A cell returning a link, a button or any element with an `id` produces a duplicated id and a control in a portal, which is an accessibility defect rather than a cosmetic one. A cell returning a `StatusBadge` duplicates a `data-component` root.\n\nThe predecessor did not have this shape. It set `title` from `textContent`, which is text by construction.\n\nThe component and its own catalogue entry disagree, and the entry is right.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "One trap in writing the test is worth recording. The first version passed its negative case while the tooltip never opened at all, because the cell did not overflow and the tooltip is deliberately overflow-only. A label with spaces wraps rather than overflowing, and a label with hyphens breaks at them, so the fixture needed an unbreakable run. `StatusBadge` was also the wrong trigger: it clips internally, so the cell around it never overflows either."
+    }
+  ],
   "links": []
 }

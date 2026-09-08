@@ -1,30 +1,10 @@
 {
-  "recommendedBy": "session agent, after a consumer report on three applications",
+  "recommendedBy": "session agent, after the consumer report defects were fixed",
   "updated": "2026-09-08",
   "items": [
     {
-      "id": "CUI-065",
-      "why": "The only item here that breaks a consumer who is doing everything right today."
-    },
-    {
-      "id": "CUI-066",
-      "why": "The reason nobody caught the missing sheet, so it decides whether the next one is silent too."
-    },
-    {
-      "id": "CUI-067",
-      "why": "A warning that fires on a correct import set teaches a reader to ignore the next one."
-    },
-    {
-      "id": "CUI-068",
-      "why": "Duplicated ids and a control in a portal, against the component's own catalogue entry."
-    },
-    {
-      "id": "CUI-069",
-      "why": "The one component the tightened gate cannot see is the one most recently added."
-    },
-    {
       "id": "CUI-070",
-      "why": "Three applications cannot move until the upgrade is written down and the version is real."
+      "why": "Three applications cannot move until the upgrade is packaged and the version is real; a draft exists outside the repository."
     },
     {
       "id": "CUI-055",

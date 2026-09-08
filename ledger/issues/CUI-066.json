@@ -3,15 +3,17 @@
   "title": "Tooltip renders through a portal, so the missing stylesheet check never sees it",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "consumer report, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "5d73668"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The bubble's ref now calls `warnWhenUnstyled` alongside its own assignment, so the one node carrying `data-component=\"Tooltip\"` reaches the check. A test in `src/components/stylesheetWarning.test.tsx` deletes the marker rule, opens a tooltip by focusing a trigger, and asserts the message names Tooltip and its sheet. Putting the plain ref back fails that test, and the restore is byte-identical. `npm run ci` exits 0 at 5d73668."
   },
   "resolution": null,
   "details": "`warnWhenUnstyled` reaches a component either through `forwardRefToRoot` or through `checkedRootRef`. `Tooltip` uses neither. It calls `forwardRef` directly at `src/components/Tooltip.tsx:88`, spends that ref on the trigger rather than the bubble for reasons the file explains and which are sound, and renders its own root through `createPortal`.\n\nSo no node carrying `data-component=\"Tooltip\"` is ever handed to the check, and a missing `tooltip.css` is the one missing sheet in the package that says nothing at all.\n\nThat would be a small gap on its own. It is not small here, because `Tooltip` is composed into five components a consumer already had working, and the failure mode moves the page rather than merely looking wrong. The check exists so that this class of mistake is never silent, and this is the one case where it is.",

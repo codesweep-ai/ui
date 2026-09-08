@@ -3,19 +3,27 @@
   "title": "Five sheets compose Tooltip and none of them imports its stylesheet",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "consumer report, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "e025a0f",
+      "f11b338"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Six sheets now import what their component renders: `card.css`, `table.css`, `tree.css`, `theme-toggle.css` and `event-lanes.css` take `tooltip.css`, and `event-lanes.css` also takes `chart-tooltip.css`. The sixth was found by the check written for this, not by the report. Removing the import from `card.css` fails `check-integrity` with `Card renders Tooltip but this sheet does not @import \"./tooltip.css\"`, and the restore is byte-identical. `npm run ci` exits 0 at f11b338."
   },
   "resolution": null,
   "details": "A component sheet in this package imports the sheets of what it renders. `table.css` imports `button.css`, `dropdown.css`, `search-input.css` and `skeleton.css`; `tree.css` imports three; `sectioned-tree.css` imports three; `card.css` imports `skeleton.css`.\n\nNone of the five sheets whose component renders a `Tooltip` imports `tooltip.css`. Those are `card.css`, `table.css`, `tree.css`, `theme-toggle.css` and `event-lanes.css`, and the last two import nothing at all.\n\nA consumer loading per-component sheets therefore has a working page until a tooltip opens. Without the sheet the bubble has no `position: fixed`, so it lays out in flow at the end of the body and moves the page under the pointer. `ThemeToggle` wraps its control in a `Tooltip` unconditionally, so one click on the theme toggle is enough.\n\nThree applications reported this. All three load per-component sheets, none imports `tooltip.css`, and none renders a `Tooltip` directly. The convention is already right everywhere else, which is why nobody noticed the one place it was not applied.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "A check now holds the import graph against the component sources, so this cannot drift again. It is in `check-integrity.mjs` as `sheet-imports`, and it earned its place before it was committed: it reported that `EventLanes` renders a `ChartTooltip` while `event-lanes.css` imported no `chart-tooltip.css`. All three reporting applications render `EventLanes`, so that instance was live for them and nobody had found it.\n\nThe consumer's own suggestion, a `requires` field in the spec frontmatter, was not needed. The `@import` graph is already that declaration and is machine readable, so what was missing was something holding it to the source rather than a second copy of it to keep in step."
+    }
+  ],
   "links": [
     "CUI-066"
   ]

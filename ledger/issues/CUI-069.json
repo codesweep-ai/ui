@@ -3,19 +3,26 @@
   "title": "Tooltip has no visual capture, and the reason the gate gives for that no longer holds",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "consumer report, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "187d41f"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`Tooltip` moves from `UNCAPTURED` into `COMPONENTS` and is captured open, in both themes, on a page of its own. The capture is 163x28 and reads \"Theme: dark. Click to cycle.\", taken by focusing the theme toggle, whose tooltip is unconditional and opens at no delay. `npm run visual:capture` added only `light/tooltip.png` and `dark/tooltip.png`; no existing capture moved. Three comparison runs afterwards passed. `npm run ci` exits 0 at 187d41f."
   },
   "resolution": null,
   "details": "`scripts/visual-baseline.mjs` excuses `Tooltip` from capture with \"renders only while open, so it has no resting state to photograph\".\n\nThat reason does not survive the gate's own behaviour. It already captures three states that exist only after an interaction: `interaction-modal-focus-trap`, `interaction-tree-arrow-navigation` and `interaction-split-pane-drag`. Having no resting state is a thing this gate does three times, not an obstacle.\n\nSo the one component added in this release, now composed into five existing ones, whose failure mode moves the page, and which has since needed viewport collision handling, is the one thing the zero-tolerance gate cannot see.\n\nAnything added here should be built the way CUI-055 ended up: a capture taken after an interaction photographs everything the run did before it unless it gets a page of its own.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "The excuse was retired rather than rewritten. It read \"renders only while open, so it has no resting state to photograph\", and this gate already takes three states that exist only after an interaction, so that was never the obstacle it sounded like.\n\nThe capture takes a page of its own for the reason CUI-055 ended on: a capture taken after an interaction otherwise photographs whatever the run did before it."
+    }
+  ],
   "links": [
     "CUI-055"
   ]
