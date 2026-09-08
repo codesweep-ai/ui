@@ -1,10 +1,14 @@
 {
-  "recommendedBy": "session agent, after closing the pages build failure",
+  "recommendedBy": "session agent, after finding the hover in the component captures",
   "updated": "2026-09-08",
   "items": [
     {
+      "id": "CUI-075",
+      "why": "One line moves 17 captures off a hover state the gate never meant to watch."
+    },
+    {
       "id": "CUI-055",
-      "why": "It reproduced today after thirty clean runs, so the stale option is gone and only the cause is left."
+      "why": "The cause is interaction residue, so what is left is deciding whether to re-record the baseline without it."
     },
     {
       "id": "CUI-074",

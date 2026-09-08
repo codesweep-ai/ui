@@ -318,6 +318,13 @@ async function preparePage(page, theme, outputDir) {
     path.join(outputDir, theme, "modal.png"),
   );
   await page.keyboard.press("Escape");
+  // Opening the modal above left the pointer on that button, and the component
+  // loop runs next. Without this, every element that scrolls under that point
+  // is photographed hovered: button.png held a hovered button at 91% of its
+  // pixels, and Tree carried the same --color-row-hover wash CUI-062 found.
+  // The park after the focus trap below is the same measure, taken too late to
+  // reach the loop.
+  await page.mouse.move(0, 0);
 }
 
 async function captureTheme(page, theme, outputDir) {
