@@ -3,19 +3,31 @@
   "title": "Jekyll reads the JSX braces in the docs as its own syntax, so the pages build fails on main",
   "type": "defect",
   "severity": "high",
-  "status": "open",
+  "status": "closed",
   "foundBy": "the pages workflow, on the first push to main after this branch landed",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "cs-sandbox/ui-v1, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "c2711c1",
+      "b484f12"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`node scripts/check-integrity.mjs` reports 0 failures with the raw blocks in place. With the nine documents reverted to their committed state it reports 11 failures, one line per `{{`, at the eleven lines this record names. Restoring them matched `md5sum -c` on all nine. `npm run ci` passed before each of the two commits.\n\nJekyll itself is not verified. The sandbox this ran in has no network to install it with, and `pages` has no ref guard on its deploy job, so dispatching it from a branch would publish that branch to the live URL. Whether the build is green is known when this reaches `main` and `pages` runs on its own."
   },
-  "resolution": null,
+  "resolution": "The eleven `{{` are wrapped in `{% raw %}` blocks. Around a fence the tags sit outside it, so `docs:compile` reads every example byte for byte; the two in prose wrap the code span. Section 9 of `check-integrity.mjs` then fails `npm run check` on a `{{` or a `{%` outside a raw block, in any Markdown file a Jekyll build of the tree would render. It reads the scope from `_config.yml`'s exclude list rather than restating it.",
   "details": "`pages.yml` builds the repository as a Jekyll site on every push to `main`, and it failed on the first such push after this branch landed. Run 34190402253, at 6194052.\n\nJekyll reads `{{` as the opening of a template variable. The pattern and component documents carry JSX examples with inline style objects, and those braces are what it chokes on:\n\n    Liquid Exception: Liquid syntax error (line 275): Variable\n    '{{ width: \"100%\", maxWidth: W, aspectRatio: `${W}' was not properly\n    terminated with regexp: /\\}\\}/ in patterns/Dashboard.md\n\nNine markdown files carry `{{`, eleven occurrences between them: `patterns/ComponentStates.md`, `patterns/Dashboard.md`, `patterns/NavSidebar.md`, `patterns/MarkdownViewer.md`, `components/Skeleton.md`, `components/Toast.md`, `components/CodeBlock.md`, `components/EventLanes.md` and `DESIGN_SYSTEM_SPEC.md`.\n\nThis branch introduced it. `patterns/Dashboard.md` and `patterns/ComponentStates.md` gained those examples in fd8e400, 7108192 and 87dec12, and `pages` last passed on 2026-09-01 against 3160175, where the lines did not exist.\n\nTwo things make it worth more than its size. `_config.yml` already documents this exact failure from the other direction, where `@dnd-kit` shipped a CHANGELOG with an unterminated `{{` and the fix was to exclude `node_modules`. The same bug then walked in through the repository's own documents.\n\nAnd `pages` runs on `main` alone, so 158 commits of branch work never exercised it. That is the shape of the catalog coverage gap CUI-069 records and of the `ci.mjs` mirror the handoff warns about: a gate that only runs where nobody is looking is a gate that reports the failure to whoever merges.\n\nExcluding the documents is against `_config.yml`'s stated intent, which is that every page keeps the URL it already has. `render_with_liquid: false` needs Jekyll 4 and GitHub Pages runs 3.10, so the remaining fix is `{% raw %}` around the fences. Something also has to stop it recurring, because `pages` will not run on a branch.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "`ledger/ledger.html` carries a `{{` inside its embedded JSON and is left alone. Jekyll copies an HTML file with no YAML header as a static file, and the plugin that promotes a headerless document to a page takes Markdown only, so Liquid never reads it. The check is scoped to Markdown for that reason."
+    },
+    {
+      "date": "2026-09-08",
+      "text": "The raw tags show as literal text when GitHub renders these documents, because GitHub applies no Liquid. Excluding the documents is what `_config.yml` rules out, and turning Liquid off per document needs Jekyll 4 against the 3.10 GitHub Pages serves, so the visible tags are what the fix costs."
+    }
+  ],
   "links": [
     "CUI-069"
   ]
