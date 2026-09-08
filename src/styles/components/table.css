@@ -2,6 +2,7 @@
 @import "./dropdown.css";
 @import "./search-input.css";
 @import "./skeleton.css";
+@import "./tooltip.css";
 
 /* table component styles. */
 .cs-component-table-28,

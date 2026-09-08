@@ -1,6 +1,7 @@
 @import "./button.css";
 @import "./highlight-text.css";
 @import "./skeleton.css";
+@import "./tooltip.css";
 
 /* tree component styles. */
 .cs-component-tree-104 {

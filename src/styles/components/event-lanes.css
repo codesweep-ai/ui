@@ -1,3 +1,5 @@
+@import "./tooltip.css";
+@import "./chart-tooltip.css";
 /* EventLanes component styles. */
 .cs-component-event-lanes-root {
     --event-lanes-gutter: 8rem;
