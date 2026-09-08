@@ -3,19 +3,26 @@
   "title": "A tree's expand-all control renders only when `filterable` is on, and nothing says so",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while giving the two expand-all controls names that differ in CUI-060",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "page layout mode, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "85b28e5"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`src/components/Tree.expandAll.test.tsx` renders each half of the toolbar without the other: `onToggleExpandAll` with `filterable` left at its default gives one `[data-part=\"expand-all\"]` and no filter box, `filterable` alone gives the reverse, and neither gives neither. Restoring the single `filterable` gate fails the first of those, and the restore was byte-identical. The visual gate moved two captures, `pattern-explorer-scrolled` in both themes, because the Explorer's Dependencies section sets `filterable: false` and now shows the expand-all control its `expandAllControl` always asked for. Three comparison runs after the re-record passed. `npm run ci` exits 0 at 85b28e5."
   },
   "resolution": null,
   "details": "`Tree` renders its expand-all control inside the toolbar that `filterable` gates, and `filterable` defaults to `false`. So passing `onToggleExpandAll` to a `Tree` renders nothing, and nothing says why.\n\n`docs-compile` found it. `components/Tree.md` documents `data-part=\"expand-all\"`, and that gate holds every documented hook against the specification's own compiling example. The example passed `onToggleExpandAll` and rendered no control, which is the same silence a consumer meets.\n\n`SectionedTree` hides the coupling rather than fixing it. Its `filterable` defaults to `true`, so the controls appear until a consumer turns the filter off, and then the per-section expand-all controls go with it. A navigation sidebar turning off a filter box it does not want loses a control it never asked to lose.\n\nNeither specification mentions the dependency. A prop named for a filter box should not decide whether an unrelated control renders, so the fix is to give the control its own condition rather than to document the coupling.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "Fixed rather than documented. A prop named for a filter box should not decide whether an unrelated control renders, and writing the coupling down would have asked every consumer to memorise an accident.\n\nNo new prop was needed. `onToggleExpandAll` was already the switch, since passing nothing renders no control, so this makes an existing prop do what its type implies.\n\nOne consequence is worth naming. The `components/SectionedTree.md` paragraph describing this coupling, written earlier the same day, was deleted in the same commit that made it false. A record's fix can strand the documentation the record produced."
+    }
+  ],
   "links": [
     "CUI-060"
   ]

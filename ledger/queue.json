@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, after the expand-all controls were separated",
+  "recommendedBy": "session agent, after the toolbar coupling was cut",
   "updated": "2026-09-08",
   "items": [
-    {
-      "id": "CUI-063",
-      "why": "A prop named for a filter box decides whether an unrelated control renders, and no specification says so."
-    },
     {
       "id": "CUI-064",
       "why": "A published specification states a reason a reader can check and find false, about the DOM contract."
