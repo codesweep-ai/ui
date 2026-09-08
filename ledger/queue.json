@@ -1,10 +1,5 @@
 {
-  "recommendedBy": "session agent, after closing the site build and the pages ref guard",
+  "recommendedBy": "session agent, with nothing open",
   "updated": "2026-09-08",
-  "items": [
-    {
-      "id": "CUI-055",
-      "why": "Its likely cause is fixed, so what is left is deciding whether that is enough to close it."
-    }
-  ]
+  "items": []
 }

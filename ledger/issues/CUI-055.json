@@ -3,15 +3,17 @@
   "title": "The visual gate flakes on three pixels of corner antialiasing",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while re-recording the dashboard captures for CUI-024",
   "opened": "2026-09-07",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "visual gate flake, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "ee23996"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "At least 19 `npm run visual:compare` runs today reported `112/112 compared screenshots passed`, with no occurrence of this failure. Every `FAIL dark/card-group.png` logged today is the same deterministic 68 pixels the fix itself moves, not the flake. Under full CPU saturation, which previously failed the gate on 2 of 4 runs, 8 consecutive runs produced byte identical captures for `card-group`, `search-input`, `button` and `tree`. If the one-in-six rate this record was filed with still held, 19 clean runs would occur about 3 percent of the time. The symptom was never observed stopping, because it never reproduced today."
   },
   "resolution": null,
   "details": "`visual:compare` reported `dark/card-group.png` at 3 differing pixels on one run and at 0 on the next, with the working tree byte for byte the same. The three sit at (973, 378), (973, 379) and (972, 380), the bottom right corner of the last card, and each is one unit on one or two channels: `16,21,26` against `17,22,27`.\n\nIt is rare. Eleven runs of the same container on the same machine produced it once. It did not reproduce in five clean-tree runs, and appeared once in six runs with an unrelated change to the dashboard demo applied.\n\nThis matters because the comparison allows no difference at all, which CUI-052 justified on the ground that runs in this image are deterministic to the pixel. That was measured as 104 byte-identical captures across two runs, and eleven runs are enough to see that it is not quite true. A gate that fails once in ten runs for no reason teaches a reader to re-run it, which is the habit that lets a real failure through.\n\nWhat is not established is the cause. A one-unit shift at a rounded corner is where a rasteriser rounds, and whether that turns on compositing timing or on something in the page is unmeasured. The fallback CUI-052 already names is a small pixel floor rather than a return to the perceptual threshold, and a floor of a handful of pixels would absorb this while still failing on the 20 pixel change that the `wrap: true` fix in CUI-027 produced. Whether to spend that headroom is the open question.",
@@ -43,6 +45,10 @@
     {
       "date": "2026-09-08",
       "text": "The pointer defect recorded in CUI-075 is the likely cause, and its fix may close this record.\n\nMoving the pointer park to before the component loop made `dark/card-group.png` byte identical across eight comparison runs under full CPU load. The same load without it failed the gate on 2 of 4 runs, and made `dark/search-input.png` bistable.\n\nThis is not proof. The `card-group` instance was never reproduced today, in seven unloaded runs, four loaded runs, or twelve loaded probe repetitions. What is measured is that the capture holds still under a load that previously broke its neighbours."
+    },
+    {
+      "date": "2026-09-08",
+      "text": "This closes on the cause rather than on watching the symptom stop, and the difference is worth stating.\n\nThe parked pointer recorded in CUI-075 reached this capture. Moving the pointer changed `dark/card-group.png` by 68 pixels, so it was carrying the same leftover hover state that made `dark/search-input.png` bistable under load. It was not a bystander to that defect.\n\nNobody ever watched this capture flake and then stop. It did not reproduce today at all, before the fix or after it. What is measured is that the mechanism which provably touched it is gone, and that nothing has differed since.\n\nIf it returns, the load harness is the way back in. Saturating the cores turned the failure from one run in six into two runs in four, which is what made the cause findable at all."
     }
   ],
   "links": [
