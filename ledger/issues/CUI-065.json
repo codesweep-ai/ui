@@ -1,0 +1,22 @@
+{
+  "id": "CUI-065",
+  "title": "Five sheets compose Tooltip and none of them imports its stylesheet",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "A component sheet in this package imports the sheets of what it renders. `table.css` imports `button.css`, `dropdown.css`, `search-input.css` and `skeleton.css`; `tree.css` imports three; `sectioned-tree.css` imports three; `card.css` imports `skeleton.css`.\n\nNone of the five sheets whose component renders a `Tooltip` imports `tooltip.css`. Those are `card.css`, `table.css`, `tree.css`, `theme-toggle.css` and `event-lanes.css`, and the last two import nothing at all.\n\nA consumer loading per-component sheets therefore has a working page until a tooltip opens. Without the sheet the bubble has no `position: fixed`, so it lays out in flow at the end of the body and moves the page under the pointer. `ThemeToggle` wraps its control in a `Tooltip` unconditionally, so one click on the theme toggle is enough.\n\nThree applications reported this. All three load per-component sheets, none imports `tooltip.css`, and none renders a `Tooltip` directly. The convention is already right everywhere else, which is why nobody noticed the one place it was not applied.",
+  "notes": [],
+  "links": [
+    "CUI-066"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "CUI-070",
+  "title": "The upgrade guidance for consumers exists only inside closed ledger records",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "There is no `CHANGELOG.md` and no migration document, and `package.json` still reads `0.2.0` while `Page.tsx`, `Tooltip.md`, `Tree.md`, `Panel.md` and `catalog.json` all document props as `since: 0.3.0`.\n\nThe range carries at least one changed signature, `MarkdownMinimap` moving from `contentRef` to `content: HTMLElement | null`; two deliberate default flips, `Tree.labelOverflow` to `\"truncate\"` and `Tree.scrollSelectedIntoView` to `true`; one prop whose meaning changed in place on `MarkdownViewer`; four parser changes that alter rendered markdown; a new stylesheet requirement; a new `Page` export; and `SectionedTree.expandAllControl` widening to a union where `false` now removes a control it used to leave standing.\n\nThe guidance for most of this is already written, in the `notes` of closed records including CUI-005, CUI-007 and CUI-008. A consumer cannot find it there. Collecting it is the difference between an upgrade that takes an hour and one that takes a day, and the prose mostly exists already.",
+  "notes": [],
+  "links": []
+}

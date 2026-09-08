@@ -1,0 +1,20 @@
+{
+  "id": "CUI-067",
+  "title": "The missing stylesheet warning fires on a MarkdownViewer that needs no stylesheet",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`MarkdownViewer` in `inline` mode gives its root `data-component=\"MarkdownViewer\"` and no `cs-component-` class, at `src/components/MarkdownViewer.tsx:783`. The presence marker is keyed on the attribute rather than on any class, so the check runs on that root and reports a missing sheet the root does not use.\n\nA consumer rendering `<MarkdownViewer content={...} inline />` with `markdown-content.css` and `syntax.css` loaded, and `markdown-viewer.css` deliberately not, gets a warning naming a sheet they were right to leave out.\n\nA warning that fires on a correct configuration is worse than no warning, because it teaches a reader to ignore the next one. That undoes what the check was built for.\n\nOne thing to settle when fixing it. The outline and minimap chrome is gated on the `outline` prop rather than on `inline`, so a consumer passing both does render elements that need the sheet. Whether the skip belongs on `inline` alone needs measuring rather than assuming.",
+  "notes": [],
+  "links": []
+}

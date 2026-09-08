@@ -1,0 +1,22 @@
+{
+  "id": "CUI-066",
+  "title": "Tooltip renders through a portal, so the missing stylesheet check never sees it",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`warnWhenUnstyled` reaches a component either through `forwardRefToRoot` or through `checkedRootRef`. `Tooltip` uses neither. It calls `forwardRef` directly at `src/components/Tooltip.tsx:88`, spends that ref on the trigger rather than the bubble for reasons the file explains and which are sound, and renders its own root through `createPortal`.\n\nSo no node carrying `data-component=\"Tooltip\"` is ever handed to the check, and a missing `tooltip.css` is the one missing sheet in the package that says nothing at all.\n\nThat would be a small gap on its own. It is not small here, because `Tooltip` is composed into five components a consumer already had working, and the failure mode moves the page rather than merely looking wrong. The check exists so that this class of mistake is never silent, and this is the one case where it is.",
+  "notes": [],
+  "links": [
+    "CUI-065"
+  ]
+}

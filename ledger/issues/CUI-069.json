@@ -1,0 +1,22 @@
+{
+  "id": "CUI-069",
+  "title": "Tooltip has no visual capture, and the reason the gate gives for that no longer holds",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`scripts/visual-baseline.mjs` excuses `Tooltip` from capture with \"renders only while open, so it has no resting state to photograph\".\n\nThat reason does not survive the gate's own behaviour. It already captures three states that exist only after an interaction: `interaction-modal-focus-trap`, `interaction-tree-arrow-navigation` and `interaction-split-pane-drag`. Having no resting state is a thing this gate does three times, not an obstacle.\n\nSo the one component added in this release, now composed into five existing ones, whose failure mode moves the page, and which has since needed viewport collision handling, is the one thing the zero-tolerance gate cannot see.\n\nAnything added here should be built the way CUI-055 ended up: a capture taken after an interaction photographs everything the run did before it unless it gets a page of its own.",
+  "notes": [],
+  "links": [
+    "CUI-055"
+  ]
+}
