@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, after the gate stopped failing every second run",
+  "recommendedBy": "session agent, after the sizing table landed",
   "updated": "2026-09-07",
   "items": [
-    {
-      "id": "CUI-057",
-      "why": "One question with three answers is the thing that cost most time building the pattern."
-    },
     {
       "id": "CUI-059",
       "why": "A consumer loses content to a clipping ancestor with no message at all; the check already exists here."

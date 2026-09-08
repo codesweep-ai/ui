@@ -3,19 +3,26 @@
   "title": "Sizing a sidebar to its content has three answers, and nothing says which one applies",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, building patterns/NavSidebar.md, at the owner's request to record what was hard",
   "opened": "2026-09-07",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-07",
+  "stint": "page layout mode, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "2de8103"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Section 7.11 of `DESIGN_SYSTEM_SPEC.md` carries the three cases in one table, and `Tree.md`, `Panel.md` and `SectionedTree.md` link to it rather than each restating a third. The numbers come from `src/components/Tree.sizing.test.tsx`, which measures a 200px scrolling column holding two lists of twenty rows: a bare tree reports 400px of scrollHeight at the default against 1160px with `scroll={false}`, a panel with `height=\"auto\"` reports 1272px either way, and SectionedTree reports 1250px. Those match the figures this record opened with. Flipping Tree's `scroll` default to false fails the first test, and the restore is byte-identical. `npm run ci` exits 0 at 2de8103."
   },
   "resolution": null,
   "details": "Building a nav sidebar meant asking one question: how do I stop this column scrolling inside itself so the page can scroll once? It has three different answers, and which one is right depends on what sits between the tree and the scroller.\n\nMeasured across six compositions in a 200px scrolling column, each holding two lists of 20 rows:\n\n- `Panel height=\"auto\"` wrapping a `Tree`: works, and `Tree scroll` changes nothing. Both settings gave 1272px of scrollHeight.\n- A bare `Tree`: needs `scroll={false}`. The default gave 400px of scrollHeight for 1160px of tree, with each tree clamped to 200px and its rows spilling out of a box nothing scrolls.\n- `SectionedTree`: needs neither. It gave 1368px either way, because it never hands a section a definite height.\n\nA consumer cannot tell these apart by reading. The reason is a CSS rule nobody has to know until it bites them: a percentage height resolves to auto against a parent whose height is indefinite, so a Panel sized to its content silently fixes the tree inside it.\n\nTwo smaller traps came with it. `Tree scroll` is named after `window.scroll`, so leaving it out of the destructuring made it a function rather than a boolean: TypeScript caught that in `SectionedTree` and would have let `if (scroll)` pass as always true in `Tree`. And the half-right version of the override fails quietly, at 780px of scrollHeight for 1160px of tree, with the missing rows reachable by `scrollIntoView` and by nothing a user does.\n\nThe fix is probably a decision table in one place rather than more API. `components/Tree.md` now says a tree inside a panel needs no `scroll` of its own, which is one third of it.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-07",
+      "text": "One measurement in this record was not reproduced. The half-released override that reported 780px for 1160px of tree comes from overriding `max-height` and `overflow` by hand, rather than from any combination of props, so a test cannot reach it through the component. Section 7.11 states the hazard without the number instead of quoting a figure nothing checks.\n\nThe fix stayed documentation, at the owner's decision. Renaming `scroll` would fix the trap it shares with `window.scroll` and break every consumer, so the table records the trap and the prop keeps its name."
+    }
+  ],
   "links": [
     "CUI-011",
     "CUI-014"
