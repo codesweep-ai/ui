@@ -494,6 +494,49 @@ function checkFamilyTokenProperties() {
 }
 
 // ===========================================================================
+// 8. Stylesheet composition (FAIL)
+//    A component sheet imports the sheets of the components it renders, so a
+//    consumer loading per-component sheets gets a whole subtree styled. That
+//    import graph is the declaration, and nothing held it against the sources.
+//    Five sheets composed Tooltip and none imported tooltip.css: three
+//    applications had a working page until someone clicked a theme toggle.
+// ===========================================================================
+
+const sheetName = (component) => component.replace(/(?<!^)(?=[A-Z])/g, "-").toLowerCase();
+
+function checkStylesheetComposition() {
+  const dir = join(ROOT, "src", "components");
+  const sheetOf = (component) => join(ROOT, "src", "styles", "components", `${sheetName(component)}.css`);
+  const hasSheet = (component) => existsSync(sheetOf(component));
+
+  for (const file of walk(dir, (f) => /\.tsx$/.test(f) && !/\.test\.tsx$/.test(f)).sort()) {
+    const owner = basename(file, ".tsx");
+    if (!hasSheet(owner)) continue;
+    const source = read(file);
+    const sheet = stripCssComments(read(sheetOf(owner)));
+
+    const rendered = new Set();
+    for (const line of source.split("\n")) {
+      // A type-only import renders nothing, so it needs no stylesheet.
+      if (/^\s*import\s+type\b/.test(line)) continue;
+      const m = line.match(/from\s+"\.\/([A-Z][A-Za-z0-9]*)"/);
+      if (m && m[1] !== owner && hasSheet(m[1])) rendered.add(m[1]);
+    }
+
+    for (const dependency of [...rendered].sort()) {
+      const wanted = `@import "./${sheetName(dependency)}.css"`;
+      if (sheet.includes(wanted)) continue;
+      fail(
+        "sheet-imports",
+        rel(sheetOf(owner)),
+        `${owner} renders ${dependency} but this sheet does not ${wanted};` +
+          " a consumer loading per-component sheets gets it unstyled",
+      );
+    }
+  }
+}
+
+// ===========================================================================
 // main
 // ===========================================================================
 
@@ -507,6 +550,7 @@ checkClassHygiene();
 checkExampleImports(specs);
 checkDocumentedClasses();
 checkFamilyTokenProperties();
+checkStylesheetComposition();
 
 const failures = findings.filter((f) => f.level === "FAIL");
 const warnings = findings.filter((f) => f.level === "WARN");
