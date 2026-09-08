@@ -1,0 +1,22 @@
+{
+  "id": "CUI-073",
+  "title": "Jekyll reads the JSX braces in the docs as its own syntax, so the pages build fails on main",
+  "type": "defect",
+  "severity": "high",
+  "status": "open",
+  "foundBy": "the pages workflow, on the first push to main after this branch landed",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`pages.yml` builds the repository as a Jekyll site on every push to `main`, and it failed on the first such push after this branch landed. Run 34190402253, at 6194052.\n\nJekyll reads `{{` as the opening of a template variable. The pattern and component documents carry JSX examples with inline style objects, and those braces are what it chokes on:\n\n    Liquid Exception: Liquid syntax error (line 275): Variable\n    '{{ width: \"100%\", maxWidth: W, aspectRatio: `${W}' was not properly\n    terminated with regexp: /\\}\\}/ in patterns/Dashboard.md\n\nNine markdown files carry `{{`, eleven occurrences between them: `patterns/ComponentStates.md`, `patterns/Dashboard.md`, `patterns/NavSidebar.md`, `patterns/MarkdownViewer.md`, `components/Skeleton.md`, `components/Toast.md`, `components/CodeBlock.md`, `components/EventLanes.md` and `DESIGN_SYSTEM_SPEC.md`.\n\nThis branch introduced it. `patterns/Dashboard.md` and `patterns/ComponentStates.md` gained those examples in fd8e400, 7108192 and 87dec12, and `pages` last passed on 2026-09-01 against 3160175, where the lines did not exist.\n\nTwo things make it worth more than its size. `_config.yml` already documents this exact failure from the other direction, where `@dnd-kit` shipped a CHANGELOG with an unterminated `{{` and the fix was to exclude `node_modules`. The same bug then walked in through the repository's own documents.\n\nAnd `pages` runs on `main` alone, so 158 commits of branch work never exercised it. That is the shape of the catalog coverage gap CUI-069 records and of the `ci.mjs` mirror the handoff warns about: a gate that only runs where nobody is looking is a gate that reports the failure to whoever merges.\n\nExcluding the documents is against `_config.yml`'s stated intent, which is that every page keeps the URL it already has. `render_with_liquid: false` needs Jekyll 4 and GitHub Pages runs 3.10, so the remaining fix is `{% raw %}` around the fences. Something also has to stop it recurring, because `pages` will not run on a branch.",
+  "notes": [],
+  "links": [
+    "CUI-069"
+  ]
+}

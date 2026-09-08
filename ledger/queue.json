@@ -1,7 +1,11 @@
 {
-  "recommendedBy": "session agent, with the branch ready for CI",
+  "recommendedBy": "session agent, after the first push to main",
   "updated": "2026-09-08",
   "items": [
+    {
+      "id": "CUI-073",
+      "why": "main is red on the docs site, and the gate that says so cannot run on a branch."
+    },
     {
       "id": "CUI-055",
       "why": "It reproduced today after thirty clean runs, so the stale option is gone and only the cause is left."
