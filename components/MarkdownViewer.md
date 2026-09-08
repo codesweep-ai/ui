@@ -72,6 +72,8 @@ Test IDs: `markdownviewer-loading`, `markdownviewer-error`, `markdownviewer-empt
 
 Suppresses the outer full-height flex wrapper, the content area's flex/overflow behavior, and the article's `var(--space-5)` padding. Outline and minimap panels are forced off because they require fixed-height layouts. The component flows as a plain block within its parent's scroll surface.
 
+Inline mode still needs `styles/components/markdown-viewer.css`. The root drops its own class, so the sheet looks unnecessary, but the scroller keeps one rule: `min-width: 0`, which is what lets the content shrink when a consumer embeds it in a flex row. Leave the sheet out and the component warns, correctly.
+
 ### Layout (default — 3-column flex)
 
 ```
