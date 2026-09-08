@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, after the sizing table landed",
-  "updated": "2026-09-07",
+  "recommendedBy": "session agent, after the clipping warning landed",
+  "updated": "2026-09-08",
   "items": [
-    {
-      "id": "CUI-059",
-      "why": "A consumer loses content to a clipping ancestor with no message at all; the check already exists here."
-    },
     {
       "id": "CUI-060",
       "why": "Two controls with one label, and a prop that reaches one of them."

@@ -3,19 +3,26 @@
   "title": "A bounded ancestor loses content silently, and only this repository can see it",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, building patterns/NavSidebar.md, at the owner's request to record what was hard",
   "opened": "2026-09-07",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "page layout mode, 2026-09-07",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "03730f5"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`src/lib/clippedContentWarning.ts` runs on every component root through `forwardRefToRoot` and `checkedRootRef`, and `src/components/clippedContentWarning.test.tsx` covers both directions in browser mode. Three reverts each fail the test that covers them: dropping the call from `forwardRefToRoot` fails the positive test, treating a clipping box as scrollable fails it too, and reporting scrolling ancestors fails the negative one. Every restore was byte-identical. The guard was measured in the published build rather than the source, which is the trap CUI-006 met: after `npm run build` the check is in `dist/lib/clippedContentWarning.js` with `process.env.NODE_ENV === \"production\"` intact, so a consumer's bundler keeps it in development and strips it from production. `npm run ci` exits 0 at 03730f5."
   },
   "resolution": null,
-  "details": "The nav sidebar page failed `visual:capture` with `the nav-sidebar pattern hides content a pointer cannot reach \u2014 div hides 403px`. The element was the preview's own wrapper, which is `overflow: hidden` and bounded, and the fix was for the demo to own a scroller. Finding out which element it was took instrumenting the gate to print the class name, because the message names a `div`.\n\nA consumer gets no message at all. They embed a component in their own bounded layout, the content overflows an ancestor that clips without scrolling, and the rows below the fold are reachable by `scrollIntoView` and by nothing a user does. That is the same failure CUI-011 describes and the same one that hid 1701px of a tree in this repository's own Explorer.\n\n`scripts/visual-baseline.mjs` has the check and it is nine lines: walk the tree, find boxes whose `scrollHeight` exceeds their `clientHeight` while `overflow-y` is neither visible nor scrollable, and report them. `src/lib/stylesheetWarning.ts` already shows there is a place to put a development-only warning that ships.\n\nTwo things to settle before writing it. It has to measure after layout rather than at render, and it must not run in production, which is the trap the stylesheet warning met in CUI-006, where a guard on `import.meta.env.DEV` compiled to an empty function in the published build while every test passed.",
-  "notes": [],
+  "details": "The nav sidebar page failed `visual:capture` with `the nav-sidebar pattern hides content a pointer cannot reach — div hides 403px`. The element was the preview's own wrapper, which is `overflow: hidden` and bounded, and the fix was for the demo to own a scroller. Finding out which element it was took instrumenting the gate to print the class name, because the message names a `div`.\n\nA consumer gets no message at all. They embed a component in their own bounded layout, the content overflows an ancestor that clips without scrolling, and the rows below the fold are reachable by `scrollIntoView` and by nothing a user does. That is the same failure CUI-011 describes and the same one that hid 1701px of a tree in this repository's own Explorer.\n\n`scripts/visual-baseline.mjs` has the check and it is nine lines: walk the tree, find boxes whose `scrollHeight` exceeds their `clientHeight` while `overflow-y` is neither visible nor scrollable, and report them. `src/lib/stylesheetWarning.ts` already shows there is a place to put a development-only warning that ships.\n\nTwo things to settle before writing it. It has to measure after layout rather than at render, and it must not run in production, which is the trap the stylesheet warning met in CUI-006, where a guard on `import.meta.env.DEV` compiled to an empty function in the published build while every test passed.",
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "The check runs automatically on every component root rather than being opt-in, at the owner's decision. A consumer who does not know about this failure will never opt in, and a warning that defaults to off is a warning nobody receives.\n\nBoth things this record asked to settle are settled. It measures on a frame after mount rather than during commit, because a ref runs before the browser has laid the page out and every box reads zero there. It is guarded on `process.env.NODE_ENV`, and that guard was checked in the built artifact rather than the source."
+    }
+  ],
   "links": [
     "CUI-006",
     "CUI-011"
