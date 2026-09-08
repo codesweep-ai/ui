@@ -328,10 +328,14 @@ function checkDocumentedHooks(specs) {
 }
 
 // ===========================================================================
-// 4. CSS class hygiene (WARN)
-//    cs-component-* classes are machine-generated numbers, so a stale one is
-//    invisible to review. Dynamically composed names would be false positives,
-//    which is why this never fails the build.
+// 4. CSS class hygiene (FAIL)
+//    cs-component-* names are hand-maintained literals carrying no meaning, so
+//    a stale one is invisible to review. This warned rather than failed on two
+//    grounds, and neither holds: that the names were machine generated, and
+//    that dynamically composed ones would be false positives. Nothing in this
+//    repository generates them, and every occurrence under src/ and
+//    preview/src/ is a complete literal, with interpolation only ever appended
+//    after a finished name. So a mismatch is an error.
 // ===========================================================================
 
 function checkClassHygiene() {
@@ -359,12 +363,12 @@ function checkClassHygiene() {
 
   for (const [name, where] of [...defined].sort()) {
     if (!referenced.has(name)) {
-      warn("css-classes", where, `.${name} is defined but referenced by no component source`);
+      fail("css-classes", where, `.${name} is defined but referenced by no component source`);
     }
   }
   for (const [name, where] of [...referenced].sort()) {
     if (!defined.has(name)) {
-      warn("css-classes", where, `${name} is referenced but defined in no src/styles/components/*.css`);
+      fail("css-classes", where, `${name} is referenced but defined in no src/styles/components/*.css`);
     }
   }
 }

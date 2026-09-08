@@ -313,7 +313,8 @@ with it.
 `data-align-label` and `data-scroll` naming the modes in force. Structural parts: `data-part="scroller"` on the
 scrolling region, `data-part="expand-all"` on the expand-all control, and `data-part="row"`,
 `data-part="icon"` and `data-part="label"` on each row.
-Prefer these to the generated class names, which change on every build.
+Prefer these to the `cs-component-` class names beside them. Those are internal rather than
+generated, and a hand edit can renumber one without warning.
 
 ## Compiling usage example
 
