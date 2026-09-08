@@ -17,6 +17,8 @@ import {
   type Ref,
 } from "react";
 import { createPortal } from "react-dom";
+
+import { warnWhenUnstyled } from "../lib/stylesheetWarning";
 import { cn } from "../lib/cn";
 
 export interface TooltipProps {
@@ -263,7 +265,10 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(function TooltipImp
             role="tooltip"
             data-component="Tooltip"
             data-part="bubble"
-            ref={bubbleRef}
+            ref={(node) => {
+              bubbleRef.current = node;
+              warnWhenUnstyled(node);
+            }}
             data-side={effectiveSide}
             // The full string is already on the element this describes, so announcing the
             // bubble as well would say it twice.
