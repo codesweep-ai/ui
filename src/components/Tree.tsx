@@ -948,103 +948,108 @@ function TreeImpl<T extends TreeNode>({
       className={cn("cs-component-tree-91 ", className)}
     >
       {/* Filter toolbar */}
-      {filterable && (
+      {(filterable || onToggleExpandAll) && (
         <div className="cs-component-tree-92 ">
-          {/* Search row */}
-          <div className="cs-component-tree-93 ">
-            <div className="cs-component-tree-94 ">
-              <input
-                type="text"
-                aria-label="Filter tree"
-                value={filterText}
-                onChange={(e) => handleFilterChange(e.target.value)}
-                placeholder={filterPlaceholder}
-                className={cn(
-                  "cs-component-tree-96 ",
-                  "cs-component-tree-97 ",
-                  "cs-component-tree-98 ",
-                  "cs-component-tree-99",
-                  "cs-component-tree-100",
-                  "cs-component-tree-101 ",
-                  "cs-component-tree-102"
+          {filterable && (
+            <>
+            {/* Search row */}
+            <div className="cs-component-tree-93 ">
+              <div className="cs-component-tree-94 ">
+                <input
+                  type="text"
+                  aria-label="Filter tree"
+                  value={filterText}
+                  onChange={(e) => handleFilterChange(e.target.value)}
+                  placeholder={filterPlaceholder}
+                  className={cn(
+                    "cs-component-tree-96 ",
+                    "cs-component-tree-97 ",
+                    "cs-component-tree-98 ",
+                    "cs-component-tree-99",
+                    "cs-component-tree-100",
+                    "cs-component-tree-101 ",
+                    "cs-component-tree-102"
+                  )}
+                />
+                {filterText.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearFilter}
+                    className="cs-component-tree-104 "
+                    aria-label="Clear filter"
+                  >
+                    <X className="cs-component-tree-106 " />
+                  </button>
                 )}
-              />
-              {filterText.length > 0 && (
+              </div>
+              <Tooltip
+                content={displayMode === "tree" ? "Flat list view" : "Tree view"}
+                describedBy={false}
+              >
                 <button
                   type="button"
-                  onClick={clearFilter}
-                  className="cs-component-tree-104 "
-                  aria-label="Clear filter"
+                  onClick={() =>
+                    setDisplayMode((m) => (m === "tree" ? "flat" : "tree"))
+                  }
+                  className={cn(
+                    "cs-component-tree-111 ",
+                    "cs-component-tree-112 ",
+                    "cs-component-tree-113 "
+                  )}
+                  aria-label={
+                    displayMode === "tree"
+                      ? "Switch to flat list"
+                      : "Switch to tree view"
+                  }
                 >
-                  <X className="cs-component-tree-106 " />
+                  {displayMode === "tree" ? (
+                    <List className="cs-component-tree-31 " />
+                  ) : (
+                    <ListTree className="cs-component-tree-31 " />
+                  )}
                 </button>
-              )}
+              </Tooltip>
             </div>
-            <Tooltip
-              content={displayMode === "tree" ? "Flat list view" : "Tree view"}
-              describedBy={false}
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  setDisplayMode((m) => (m === "tree" ? "flat" : "tree"))
-                }
-                className={cn(
-                  "cs-component-tree-111 ",
-                  "cs-component-tree-112 ",
-                  "cs-component-tree-113 "
-                )}
-                aria-label={
-                  displayMode === "tree"
-                    ? "Switch to flat list"
-                    : "Switch to tree view"
-                }
-              >
-                {displayMode === "tree" ? (
-                  <List className="cs-component-tree-31 " />
-                ) : (
-                  <ListTree className="cs-component-tree-31 " />
-                )}
-              </button>
-            </Tooltip>
-          </div>
 
-          {/* Match counter + navigation */}
-          {isBelowThreshold && (
-            <div className="cs-component-tree-121 ">
-              <span role="status" aria-live="polite" className="cs-component-tree-89 ">
-                Type {FILTER_MIN_CHARS - filterText.length} more to search
-              </span>
-            </div>
-          )}
-          {isSearchActive && (
-            <div className="cs-component-tree-122 ">
-              <span role="status" aria-live="polite" className="cs-component-tree-123 ">
-                {hasMatches
-                  ? `${currentMatchIndex + 1} / ${matchEntries.length} matches`
-                  : "No matches"}
-              </span>
-              {hasMatches && (
-                <div className="cs-component-tree-128 ">
-                  <button
-                    type="button"
-                    onClick={goPrevMatch}
-                    className="cs-component-tree-130 "
-                    aria-label="Previous match"
-                  >
-                    <ChevronUp className="cs-component-tree-31 " />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={goNextMatch}
-                    className="cs-component-tree-130 "
-                    aria-label="Next match"
-                  >
-                    <ChevronDown className="cs-component-tree-31 " />
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Match counter + navigation */}
+            {isBelowThreshold && (
+              <div className="cs-component-tree-121 ">
+                <span role="status" aria-live="polite" className="cs-component-tree-89 ">
+                  Type {FILTER_MIN_CHARS - filterText.length} more to search
+                </span>
+              </div>
+            )}
+            {isSearchActive && (
+              <div className="cs-component-tree-122 ">
+                <span role="status" aria-live="polite" className="cs-component-tree-123 ">
+                  {hasMatches
+                    ? `${currentMatchIndex + 1} / ${matchEntries.length} matches`
+                    : "No matches"}
+                </span>
+                {hasMatches && (
+                  <div className="cs-component-tree-128 ">
+                    <button
+                      type="button"
+                      onClick={goPrevMatch}
+                      className="cs-component-tree-130 "
+                      aria-label="Previous match"
+                    >
+                      <ChevronUp className="cs-component-tree-31 " />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goNextMatch}
+                      className="cs-component-tree-130 "
+                      aria-label="Next match"
+                    >
+                      <ChevronDown className="cs-component-tree-31 " />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            </>
           )}
 
           {/* Expand all / collapse all */}

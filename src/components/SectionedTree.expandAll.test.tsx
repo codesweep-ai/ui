@@ -7,10 +7,6 @@ import { SectionedTree } from "./SectionedTree";
 // jobs. One above the sections expands and collapses whole sections; one
 // inside each section expands and collapses that section's nodes.
 //
-// These leave `filterable` at its default, because the per-section control
-// sits inside the same toolbar the filter box does and `filterable={false}`
-// takes it away too. That coupling is CUI-063.
-//
 // They read
 // the same until 0.3.0, and a test matching /expand all/i against them passed
 // whether the prop worked or not. These assert counts against the DOM hooks.

@@ -181,10 +181,6 @@ governed, and it governed only the second.
 `expandAllControl` reaches both now. Pass `"sections"` or `"trees"` to keep one
 kind, and `false` to remove both. A navigation sidebar usually wants `false`.
 
-The per-section control sits in the same toolbar as the filter box, so
-`filterable={false}` takes it away as well. That coupling is CUI-063 in this
-repository's ledger.
-
 ## Traceability
 
 `data-component="SectionedTree"` on the root `<div>`. Structural parts: `data-part="section"` on
