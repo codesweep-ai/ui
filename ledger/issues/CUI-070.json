@@ -3,18 +3,29 @@
   "title": "The upgrade guidance for consumers exists only inside closed ledger records",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report on three applications pinned to 0.2.1-dev, verified against 0c015ef",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "consumer report, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "69d16b2"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`CHANGELOG.md` carries a 0.3.0 section covering the changed `MarkdownMinimap` signature, the widened `SectionedTree.expandAllControl`, the `Table` tooltip change, both `Tree` default flips, the four parser changes, the new stylesheet imports, `Page`, `Tooltip`, `TableColumn.tooltip`, the clipping warning and the shipped `catalog.json`. It is registered in `.cs-lint.yaml`, so `cs-lint prose` and `cs-lint refs` both read it. `README.md` links to it, `AGENTS.md` routes to it, and `CONTRIBUTING.md` routes future changes to it. Removing the `AGENTS.md` entry fails `docs:refs`, `npm run check` and `npm run ci` alike, each reporting REF-302. `npm run ci` exits 0 at 69d16b2."
   },
   "resolution": null,
   "details": "There is no `CHANGELOG.md` and no migration document, and `package.json` still reads `0.2.0` while `Page.tsx`, `Tooltip.md`, `Tree.md`, `Panel.md` and `catalog.json` all document props as `since: 0.3.0`.\n\nThe range carries at least one changed signature, `MarkdownMinimap` moving from `contentRef` to `content: HTMLElement | null`; two deliberate default flips, `Tree.labelOverflow` to `\"truncate\"` and `Tree.scrollSelectedIntoView` to `true`; one prop whose meaning changed in place on `MarkdownViewer`; four parser changes that alter rendered markdown; a new stylesheet requirement; a new `Page` export; and `SectionedTree.expandAllControl` widening to a union where `false` now removes a control it used to leave standing.\n\nThe guidance for most of this is already written, in the `notes` of closed records including CUI-005, CUI-007 and CUI-008. A consumer cannot find it there. Collecting it is the difference between an upgrade that takes an hour and one that takes a day, and the prose mostly exists already.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-08",
+      "text": "`CONTRIBUTING.md` now routes a consumer-facing change to the changelog as well as to the document that owns it, and says why that exception to the one-fact-one-place rule is deliberate. Without that row the file would go stale, which is how the guidance ended up in closed records in the first place.\n\nThe version is still `0.2.0`. Bumping it and cutting a tag are release decisions and stay with the owner, so the section says plainly that it is unpublished rather than implying otherwise."
+    },
+    {
+      "date": "2026-09-08",
+      "text": "This record's evidence was wrong when it was first written, and the correction is worth more than the fix.\n\nIt cited a commit that registered `CHANGELOG.md` with the linters while `AGENTS.md` did not name it, and claimed `npm run ci` exited 0 there. It did not: `cs-lint refs` rejects that state as REF-302, which was measured afterwards by removing the entry again and watching all three commands fail. The claim came from misreading an exit code, which is the one thing an evidence line exists to prevent.\n\nThe commit was rebuilt with the routing folded into it, so the range is bisectable and this record cites a commit that passes. Rewriting it moved the sha, which is why the citation above is not the one this record was filed with."
+    }
+  ],
   "links": []
 }

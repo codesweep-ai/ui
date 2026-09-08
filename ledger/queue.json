@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, with the documentation route settled",
+  "recommendedBy": "session agent, with the branch ready for CI",
   "updated": "2026-09-08",
   "items": [
-    {
-      "id": "CUI-070",
-      "why": "The last thing between this branch and a dev build three applications can test against."
-    },
     {
       "id": "CUI-055",
       "why": "What blocked is fixed; what is left is one capture nobody has reproduced since, so it waits."
