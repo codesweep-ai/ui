@@ -371,8 +371,10 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 
 ## Compiling usage example
 
+{% raw %}
 <!-- docs-compile -->
 ```tsx
 import { EventLanes } from "@codesweep-ai/ui";
 export function Example() { return <EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00" }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview />; }
 ```
+{% endraw %}

@@ -87,6 +87,7 @@ None.
 
 ## Composition example
 
+{% raw %}
 ```tsx
 import { Skeleton } from "@codesweep-ai/ui";
 
@@ -101,6 +102,7 @@ import { Skeleton } from "@codesweep-ai/ui";
   <Skeleton variant="rect" />
 </div>
 ```
+{% endraw %}
 
 ## Compiling usage example
 

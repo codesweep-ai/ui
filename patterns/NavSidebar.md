@@ -70,6 +70,7 @@ entries in seven sections.
 The shorter answer. `SectionedTree` already sizes each section to its rows, so
 only the file-tree chrome has to go:
 
+{% raw %}
 ```tsx
 <div style={{ width: 260, height: 420, overflowY: "auto" }}>
   <SectionedTree
@@ -82,6 +83,7 @@ only the file-tree chrome has to go:
   />
 </div>
 ```
+{% endraw %}
 
 ### Collapsible, with `Panel` per section
 
@@ -89,6 +91,7 @@ When a reader should be able to fold a section away. `height="auto"` sizes the
 panel to its content, and `collapseTo="header"` leaves the title bar behind so
 there is something to click to bring it back:
 
+{% raw %}
 ```tsx
 <div style={{ width: 260, height: 420, overflowY: "auto" }}>
   {sections.map((section) => (
@@ -105,6 +108,7 @@ there is something to click to bring it back:
   ))}
 </div>
 ```
+{% endraw %}
 
 A `Tree` inside a panel that is sized to its content needs no `scroll` of its
 own. `scroll={false}` is for bare trees stacked in a column with no panel
@@ -132,6 +136,7 @@ around them.
 
 ## Compiling usage example
 
+{% raw %}
 <!-- docs-compile -->
 ```tsx
 import { SectionedTree } from "@codesweep-ai/ui";
@@ -149,3 +154,4 @@ export function Example() {
   );
 }
 ```
+{% endraw %}

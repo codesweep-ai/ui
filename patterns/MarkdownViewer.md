@@ -211,7 +211,7 @@ This example uses the lightweight `@codesweep-ai/ui/markdown` entry. If the docu
 - **Both** (`outline minimap`): Full document browser experience
 - **Neither** (no props): Embedded markdown rendering
 - **With math** (`@codesweep-ai/ui/markdown/rich` + `remarkPlugins` + `rehypePlugins`): Technical/scientific documentation with consumer-supplied LaTeX plugins
-- **Custom renderers** (`codeRenderers={{ sql: SqlPreview }}`): Domain-specific code visualization
+- **Custom renderers** ({% raw %}`codeRenderers={{ sql: SqlPreview }}`{% endraw %}): Domain-specific code visualization
 
 ## Interactions
 

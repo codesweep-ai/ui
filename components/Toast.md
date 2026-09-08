@@ -64,8 +64,10 @@ Root notification: `data-component="Toast"`.
 
 ## Compiling usage example
 
+{% raw %}
 <!-- docs-compile -->
 ```tsx
 import { Toast } from "@codesweep-ai/ui";
 export function Example() { return <Toast item={{ id: "saved", variant: "success", message: "Saved", duration: null, important: false }} onDismiss={() => {}} />; }
 ```
+{% endraw %}

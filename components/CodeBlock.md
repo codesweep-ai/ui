@@ -105,11 +105,14 @@ interface CodeBlockProps {
 - Powered by `highlight.js` via `hljs.highlight(code, { language })`.
 - Grammars are opt-in. Pass the active grammar through `languages` or call `registerCodeLanguage()`; `language` still labels unregistered plaintext without growing the bundle.
 
+{% raw %}
 ```tsx
 import json from "highlight.js/lib/languages/json";
 
 <CodeBlock code={payload} language="json" languages={{ json }} />
 ```
+{% endraw %}
+
 - Highlighted HTML is split per-line with balanced `<span>` tags for line-level rendering.
 - Token colors use CSS custom properties for theming:
 

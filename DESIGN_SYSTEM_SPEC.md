@@ -1464,7 +1464,7 @@ Rules under consideration for future implementation:
 
 | Rule | Category | Description | Complexity |
 |------|----------|-------------|------------|
-| `no-static-inline-style` | Convention | Flag `style={{}}` when the value is static (not a JS variable). Requires distinguishing static strings from dynamic expressions in JSX. | High — needs AST analysis of JSX attribute values |
+| `no-static-inline-style` | Convention | Flag {% raw %}`style={{}}`{% endraw %} when the value is static (not a JS variable). Requires distinguishing static strings from dynamic expressions in JSX. | High — needs AST analysis of JSX attribute values |
 | `require-data-component` | Convention | Require every exported React component to render `data-component` on its root element. | High — needs AST traversal of component return JSX |
 
 ---

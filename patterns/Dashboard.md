@@ -286,12 +286,14 @@ space as a `viewBox` at `width="100%"`, so the drawing shrinks with its card.
 `ChartTooltip` takes container pixels rather than viewBox units, so the demo
 measures the rendered width and scales the tooltip position to match.
 
+{% raw %}
 ```tsx
 <div ref={ref} style={{ width: "100%", maxWidth: W, aspectRatio: `${W} / ${H}` }}>
   <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">{/* marks */}</svg>
   {hover && <ChartTooltip x={hover.x * scale} y={hover.y * scale}>…</ChartTooltip>}
 </div>
 ```
+{% endraw %}
 
 A fixed pixel width with no `viewBox` is what this replaced. It left 46px of
 the widest chart outside its card at a 430px viewport, on a page that does not

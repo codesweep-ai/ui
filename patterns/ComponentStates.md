@@ -104,6 +104,7 @@ Narrower variants — the affordance itself communicates the state without a sep
 
 ## Cross-component example
 
+{% raw %}
 ```tsx
 function ProjectsPage() {
   const { data, isLoading, error, refetch } = useQuery(["projects"], fetchProjects);
@@ -123,6 +124,7 @@ function ProjectsPage() {
   );
 }
 ```
+{% endraw %}
 
 The same shape works for `Tree`, `SectionedTree`, and `MarkdownViewer`. Internal state branching, animations, and accessible roles all follow this pattern — consumers don't have to think about it.
 
