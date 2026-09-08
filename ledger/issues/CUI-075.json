@@ -3,15 +3,17 @@
   "title": "The component loop still photographs the hover the parked pointer leaves",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, while measuring the fresh-page restructure for CUI-055",
   "opened": "2026-09-08",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-08",
+  "stint": "visual gate flake, 2026-09-08",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "ee23996"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run ci` exits 0 at ee23996, reporting 112 of 112 compared screenshots passed, 0 differing pixels and 0 axe rules matching more nodes than the baseline. Eight `npm run visual:compare` runs under full CPU saturation failed none, against 2 of 4 runs failing before the change. Three unloaded runs also failed none. The owner reviewed the 18 moved captures in both themes and confirmed the hovered button on the old baseline."
   },
   "resolution": null,
   "details": "`preparePage` clicks Open Modal and leaves the pointer on that button. The component loop then runs with the pointer parked there. Every element that scrolls under that point is photographed in its hover state.\n\nCUI-062 found this and fixed it. The line it added, `page.mouse.move(0, 0)`, sits in `captureTheme` after the component loop rather than before it. It protects the tree navigation capture and the ones after it, and leaves the component captures exposed.\n\nMoving that one line to the end of `preparePage` changes 17 of the 112 captures. `dark/button.png` moves by 2368 pixels, which is 91 percent of that image, because the committed baseline holds a hovered button rather than a resting one. `dark/table.png` moves by 43289 pixels. `dark/tree.png` moves by 7397, which is the `--color-row-hover` wash the comment above the existing line already describes at 7541 pixels.\n\nThe captures affected are button, card-group, checkbox-group, dropdown, panel, search-input, table and tree in both themes, plus chart-frame in dark. A run that instead moves the component loop to a freshly loaded page produces identical pixel counts. The parked pointer therefore accounts for the whole set.\n\nThis matters because the gate is meant to watch resting states. A reader opening `button.png` sees a hover. A change to the resting style of any of these components would not fail the run.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-08",
       "text": "The fix stabilises the affected captures under load, which is what the flake in CUI-055 needed.\n\nWith the one line moved, eight `npm run visual:compare` runs under full CPU load produced byte identical captures for `dark/card-group.png`, `dark/search-input.png`, `dark/button.png` and `dark/tree.png`. That is 32 observations with no variation.\n\nWithout the line moved, the same load made `dark/search-input.png` bistable across twelve probe repetitions. It also failed the gate on 2 of 4 runs.\n\nThe `search-input` capture this fix produces is byte identical to the one a freshly loaded page produces. Parking the pointer reaches the same rendering as the fresh page restructure, for one line rather than a restructure.\n\nThe fix is not applied. It moves 17 captures, so it needs a reviewed baseline re-record."
+    },
+    {
+      "date": "2026-09-08",
+      "text": "One measurement in this work is unreconciled, and it is recorded rather than explained.\n\nThree comparison runs with the fix applied put `dark/chart-frame.png` at 10 pixels from the old baseline. The re-record, running the same code, put it at 1053. The counting method was cross checked against `button` and `card-group`, which agreed within a few percent, so the gap is not a counting artefact.\n\nThe changed pixels there are thin and spread across a 646 by 139 region, at roughly 20 per row. That is unlike `button`, which changed across its whole surface, and unlike `tree`, whose change is a solid band of 263 pixels on five rows. Those two are hover states. The chart-frame residual looks instead like the antialiasing class CUI-055 describes.\n\nIt has been byte identical across all 11 verification runs, 8 of them under load. The committed baseline is therefore on a rendering that reproduces."
     }
   ],
   "links": [
