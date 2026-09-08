@@ -1,0 +1,22 @@
+{
+  "id": "CUI-072",
+  "title": "catalog.json is the index an agent needs and it does not ship",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "repository owner (host), asking: \"what did we decide about how a consumer of the npm package would learn about it w/o the repo?\"",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`package.json` ships `dist`, `LICENSE`, `NOTICE` and `README.md`. `CATALOG.md` and `catalog.json` are not among them, and nothing in `scripts/build.mjs` copies them into `dist`.\n\nShipping only a README is the norm for an npm package, so this is conventional rather than broken. What is unusual is the dependence. This repository's own designated entry points for finding anything are `CATALOG.md`, described in its own text as the look-here-first index, and `AGENTS.md`, described as where an agent looks first. Neither ships. The package's stated audience is agent and LLM interfaces, and an agent working from an install has no path to either.\n\n`catalog.json` is the one worth shipping. It is generated, machine-readable, small, and it carries one record per component with its intents, when to use it, and the path to its specification. It is what an agent would read rather than the rendered markdown.\n\nThe argument for it is not its size. A shipped artifact cannot disagree with the install it shipped in, which is the failure CUI-071 records for anything reached by a link.\n\nShipping `components/` and `patterns/` was considered and is not proposed. That is 48 further files against a package currently 101 kB packed, and the pinned links in CUI-071 plus this index cover the need. Revisit if a consumer says otherwise.",
+  "notes": [],
+  "links": [
+    "CUI-071"
+  ]
+}

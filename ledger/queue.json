@@ -1,7 +1,15 @@
 {
-  "recommendedBy": "session agent, after the consumer report defects were fixed",
+  "recommendedBy": "session agent, before the branch reaches main",
   "updated": "2026-09-08",
   "items": [
+    {
+      "id": "CUI-071",
+      "why": "Merging is what publishes, and it is also the moment three pinned installs start reading the wrong documentation."
+    },
+    {
+      "id": "CUI-072",
+      "why": "The index this package tells an agent to read first is the one file an install cannot reach."
+    },
     {
       "id": "CUI-070",
       "why": "Three applications cannot move until the upgrade is packaged and the version is real; a draft exists outside the repository."

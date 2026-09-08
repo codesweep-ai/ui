@@ -1,0 +1,20 @@
+{
+  "id": "CUI-071",
+  "title": "The published README links to main, so an install reads documentation for code it does not have",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "repository owner (host), asking: \"what did we decide about how a consumer of the npm package would learn about it w/o the repo?\"",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`scripts/stage-package.mjs` builds a separate publish root and rewrites every relative README link into an absolute URL, because the documents it points at are not in the tarball. That part works, and it means the dead-link problem a reader might expect does not exist in the published package.\n\nLine 56 hardcodes the ref: `${REPO}/blob/main/...` and `${REPO}/tree/main/...`. So the link points at whatever `main` holds when the reader follows it, not at what they installed.\n\nThree applications are pinned to `0.2.1-dev.20260901200135.3160175`, built from `3160175`. The moment this branch merges, `main` carries 152 further commits including a new `Page` export, a widened `SectionedTree.expandAllControl` and props marked `since: 0.3.0`. Those three would then be reading documentation for a package none of them has, with nothing saying so.\n\nThe fix is small and the scaffolding is already there. `scripts/build.mjs` stamps `dist/BUILD.json` with the commit sha, so the staged links can pin to that instead of to `main`. A sha is available for a dev build and a release alike, and a sha-pinned blob URL cannot move afterwards, which a tag can.\n\nThat also answers the question this record came from, which was how documentation is supposed to work across dev builds and releases. Pinned to the commit, every install points at the documentation for exactly itself, and there is no docs version to keep in step with anything.",
+  "notes": [],
+  "links": []
+}
