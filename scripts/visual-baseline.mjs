@@ -53,6 +53,7 @@ const COMPONENTS = [
   "Header", "HighlightText", "Input", "MarkdownMinimap",
   "MarkdownViewer", "MermaidDiagram", "Modal", "Panel", "PulseBadge",
   "Page", "SearchInput", "SectionedTree", "Skeleton", "SplitPane", "StatusBadge",
+  "Tooltip",
   "StreamingText", "Table", "ThemeToggle", "Toast",
   "ToastContainer", "Tree",
 ];
@@ -71,7 +72,6 @@ const PATTERNS = [
 // The coverage check below reads this, so a new component either gets captured
 // or gets a reason written here. Neither happens by forgetting.
 const UNCAPTURED = {
-  Tooltip: "renders only while open, so it has no resting state to photograph",
   EventLanes: "captured through its two fixtures above, which pin the geometry",
   Chip: "no section of its own; it renders inside other sections",
   Legend: "same",
@@ -324,7 +324,7 @@ async function captureTheme(page, theme, outputDir) {
   await mkdir(path.join(outputDir, theme), { recursive: true });
   await preparePage(page, theme, outputDir);
 
-  const alreadyCaptured = new Set(["ChartTooltip", "Modal"]);
+  const alreadyCaptured = new Set(["ChartTooltip", "Modal", "Tooltip"]);
   const eventLanesSection = section(page, "EventLanes");
   await screenshot(
     eventLanesSection.locator('[data-event-lanes-fixture="dense-1366"]'),
@@ -434,6 +434,22 @@ async function captureTheme(page, theme, outputDir) {
   }
   await screenshot(splitPane, path.join(outputDir, theme, "interaction-split-pane-drag.png"));
   await dragPage.close();
+
+  // Tooltip was excused from capture because it "has no resting state to
+  // photograph". This gate takes three states that exist only after an
+  // interaction, so that was never the obstacle it read as, and the one
+  // component composed into five others went unwatched. On its own page for
+  // the reason the drag above is: a capture taken after an interaction
+  // otherwise photographs everything the run did before it. ThemeToggle's
+  // tooltip is unconditional and opens on focus at no delay.
+  const tooltipPage = await page.context().newPage();
+  await tooltipPage.goto(`${PREVIEW_URL}&theme=${theme}`, { waitUntil: "networkidle" });
+  await tooltipPage.locator('[data-component="AppShell"]').waitFor();
+  await tooltipPage.getByRole("button", { name: /Toggle theme/ }).first().focus();
+  const bubble = tooltipPage.locator('[data-component="Tooltip"]').first();
+  await bubble.waitFor();
+  await screenshot(bubble, path.join(outputDir, theme, "tooltip.png"));
+  await tooltipPage.close();
 
   const axe = await new AxeBuilder({ page }).analyze();
   await writeFile(

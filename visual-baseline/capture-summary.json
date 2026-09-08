@@ -1,7 +1,7 @@
 [
   {
     "theme": "light",
-    "components": 36,
+    "components": 37,
     "patterns": 10,
     "interactionStates": 3,
     "axeViolations": 0,
@@ -10,7 +10,7 @@
   },
   {
     "theme": "dark",
-    "components": 36,
+    "components": 37,
     "patterns": 10,
     "interactionStates": 3,
     "axeViolations": 0,
