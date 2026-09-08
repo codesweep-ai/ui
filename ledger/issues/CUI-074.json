@@ -1,0 +1,22 @@
+{
+  "id": "CUI-074",
+  "title": "Nothing builds the site before a merge, so only a Liquid brace is caught in time",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent, while closing CUI-073",
+  "opened": "2026-09-08",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`pages.yml` runs on a push to `main` and nowhere else, so the site is first built after the merge. CUI-073 is what that cost once: eleven Liquid braces reached `main`, and the build reported them to whoever merged.\n\nSection 9 of `check-integrity.mjs` now catches that one failure mode before the commit exists. It does not build the site. A change to `_config.yml`, a document that gains a YAML header, or anything else Jekyll refuses still reaches `main` before anyone hears about it.\n\nBuilding on a branch is cheap. The `github-pages` gem, version 232, builds this tree in a container in about a second with `PAGES_REPO_NWO` set. It fails on the documents as they stood at c2711c1~1 and passes on them as they stand now. A build job in `ci.yml` using `actions/jekyll-build-pages@v1`, with no deploy job after it, would cover every push.\n\nThe cost is the mirror. CONTRIBUTING says `npm run ci` is every gate the workflow has, in the order the workflow takes them, so a job with no local counterpart weakens that sentence. A local counterpart needs Ruby, which nothing else here needs, and a gate that skips where Ruby is missing is the shape of hole this record is about.",
+  "notes": [],
+  "links": [
+    "CUI-073"
+  ]
+}

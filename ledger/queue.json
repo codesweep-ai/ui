@@ -5,6 +5,10 @@
     {
       "id": "CUI-055",
       "why": "It reproduced today after thirty clean runs, so the stale option is gone and only the cause is left."
+    },
+    {
+      "id": "CUI-074",
+      "why": "The brace check holds one failure mode; every other way the site can break still lands on main first."
     }
   ]
 }
