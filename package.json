@@ -98,6 +98,7 @@
     "dist",
     "LICENSE",
     "NOTICE",
+    "catalog.json",
     "README.md"
   ],
   "scripts": {
@@ -108,11 +109,12 @@
     "docs:refs": "cs-lint refs",
     "oss": "cs-lint oss",
     "ledger": "cs-ledger check",
-    "test": "npm run test:consumer-dom-checker && npm run test:dev-version && npm run test:render-image && npm run test:commits && vitest run",
+    "test": "npm run test:consumer-dom-checker && npm run test:dev-version && npm run test:render-image && npm run test:commits && npm run test:stage-package && vitest run",
     "test:consumer-dom-checker": "node --test scripts/check-consumer-dom-contract.test.mjs",
     "test:dev-version": "node --test scripts/dev-version.test.mjs",
     "test:render-image": "node --test scripts/render-image.test.mjs",
     "test:commits": "node --test scripts/check-commits.test.mjs",
+    "test:stage-package": "node --test scripts/stage-package.test.mjs",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "build": "node scripts/build.mjs",
