@@ -4,7 +4,7 @@
   "items": [
     {
       "id": "CUI-055",
-      "why": "What blocked is fixed; what is left is one capture nobody has reproduced since, so it waits."
+      "why": "It reproduced today after thirty clean runs, so the stale option is gone and only the cause is left."
     }
   ]
 }
