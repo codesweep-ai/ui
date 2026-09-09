@@ -1,0 +1,22 @@
+{
+  "id": "CUI-077",
+  "title": "The mermaid boundary test fails about half its runs on the forge and none locally",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent, while dispatching ci on a branch before merging it",
+  "opened": "2026-09-09",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`src/components/MarkdownViewer.mermaid.test.tsx` fails intermittently on the forge and has never been seen failing locally. The test is `renders a diagram without interpreting markdown-authored HTML labels`. It fails with `AssertionError: expected null not to be null`, and the DOM it prints carries `data-mermaid-rendered=\"false\"`. The diagram has not finished rendering when the assertion runs.\n\nSix observations on 2026-09-09, all on the same unchanged tree at f9a9f65. Run 34297095690, a dispatch on the branch, failed the node 22.13 leg and passed node 24. Run 34299539699, the push to `main`, failed both legs. Re-running the failed jobs in each turned every leg green. That is three failures and three passes of one test on identical code.\n\nIt is not a node version quirk, because it failed on both legs at once. It is not this branch, because the five commits it landed with touch nothing under `src/` and no test or config file. `npm run check` and `npm run ci` ran green many times locally across 2026-09-08.\n\nTwo things make this worse than a slow test. The `npm` workflow runs its own `npm run check` and does not wait for `ci`, so on that push the same commit failed the test in one workflow and passed it in the other, and the publishing one won. A version reached the dev channel while `ci` was red.\n\nThe second is that re-running rewrites the record. `gh run list` now reports both of those runs as `success`, because a re-run replaces the conclusion. The failures are visible only in this record and in job logs that age out.",
+  "notes": [],
+  "links": [
+    "CUI-055"
+  ]
+}
