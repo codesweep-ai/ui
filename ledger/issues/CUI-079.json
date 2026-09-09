@@ -1,0 +1,27 @@
+{
+  "id": "CUI-079",
+  "title": "The release workflow had never run, and its first run could not publish",
+  "type": "defect",
+  "severity": "med",
+  "status": "closed",
+  "foundBy": "session agent, on pushing the first v* tag this repository has had",
+  "opened": "2026-09-09",
+  "resolved": "2026-09-09",
+  "stint": "release 0.3.0, 2026-09-09",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": "Run 34380809743 reports `completed success` after the trusted publisher was added, having failed on its first attempt with `npm error 404`. `@codesweep-ai/ui@0.3.0` is on the registry carrying an SLSA provenance attestation, which only a GitHub Actions run can mint, and the GitHub release `v0.3.0` exists. Nothing in this repository changed to fix it."
+  },
+  "resolution": "Fixed outside the repository, by adding release.yml as a trusted publisher for the package on npmjs.com. No commit resolves it, which is why evidence.commits is empty.",
+  "details": "`release.yml` had never executed. No `v*` tag had ever been pushed, so the entire publish path to the `latest` channel was unexercised code. `cs-lint oss` was reporting this as OSS-413, warning that the releases page INSTALL.md points at was empty, and it read as cosmetic.\n\nPushing `v0.3.0` ran it for the first time and it failed: `npm error 404 Not Found - PUT https://registry.npmjs.org/@codesweep-ai%2fui`. npm answers an unauthorised publish with 404 rather than 403, so this was a permissions failure.\n\nThe two publishing workflows are equivalent where it matters. Both declare `id-token: write` and both run `npm publish --provenance --access public`, differing only in `--tag dev`. `npm.yml` had published successfully minutes earlier. What differed was outside the repository: the package's trusted publisher on npmjs.com named one workflow, and `release.yml` was not it.\n\nCONTRIBUTING says each package names its workflow as a trusted publisher, in the singular. Two workflows publish, so two need authorising, and the sentence hides that.",
+  "notes": [
+    {
+      "date": "2026-09-09",
+      "text": "The shape is the one CUI-074 was about: a check that cannot run where you work reports its failure to whoever merges. Here it was worse, because the path could not run anywhere until a tag existed, and a tag is not something you push twice.\n\nOSS-413 had been naming it for days. A warning that reads as cosmetic was in fact reporting that a whole publishing path was untested."
+    }
+  ],
+  "links": [
+    "CUI-078"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "CUI-078",
+  "title": "A bare npm install resolved to a ten day old dev build",
+  "type": "defect",
+  "severity": "high",
+  "status": "closed",
+  "foundBy": "a consuming agent, relayed by the repository owner: \"latest: 0.2.1-dev.20260830023458.856ea8f — 30 Aug, stale pointer\"",
+  "opened": "2026-09-09",
+  "resolved": "2026-09-09",
+  "stint": "release 0.3.0, 2026-09-09",
+  "evidence": {
+    "commits": [
+      "1638d27"
+    ],
+    "integrated": [],
+    "verified": "`npm view @codesweep-ai/ui dist-tags` now reports `latest: 0.3.0` and `dev: 0.3.1-dev.20260909170256.1638d27`. Before the release it reported `latest: 0.2.1-dev.20260830023458.856ea8f`, a build from 2026-08-30. The 0.3.0 artefact carries shasum 064adf42f62515bada9b49b49f5cd96d27b2609f and an SLSA provenance attestation, so it came from the workflow rather than from a person."
+  },
+  "resolution": null,
+  "details": "`npm install @codesweep-ai/ui`, which is the command README.md and INSTALL.md both give, resolved to `0.2.1-dev.20260830023458.856ea8f`. That build was ten days old and carried none of the work since.\n\n`npm.yml` publishes with `--tag dev` and has done since its first commit, so nobody ever aimed `latest` at a development build. npm did. A package must carry a `latest`, so the registry populated it from the first publish regardless of the tag that publish named.\n\nThe workflow comment said `--tag dev` keeps `latest` where the last release left it. No release had ever been cut, so it stayed where the first publish put it. CONTRIBUTING said a dev build reaches only someone who asks for it, and every consumer who did not ask was getting one.\n\nEvery published version was a prerelease, so no semver range resolved either. A consumer writing `^0.2.0` matched nothing at all.",
+  "notes": [
+    {
+      "date": "2026-09-09",
+      "text": "Cutting 0.3.0 was the fix, and it makes the CONTRIBUTING sentence true rather than requiring it to be rewritten.\n\nThe release changes nothing a consumer runs. The published 0.3.0 and the `0.3.1-dev.20260909170256.1638d27` build on the dev channel were compared file by file: 230 files each, and only `package.json` differs, in its `version` field. Both record the same commit in `dist/BUILD.json`. Anyone pinned to the dev build was already running 0.3.0's code."
+    },
+    {
+      "date": "2026-09-09",
+      "text": "`cs-ledger check` warns that the shasum quoted above is not a commit in this repository. That warning is correct to ignore and will not go away.\n\nThe string is npm's tarball checksum, not a git sha. The checker reads any long run of hex as a commit citation, which is LGR-013 in the ledger tool's own records. The shasum stays because it is what identifies the published artefact, and identifying it is the point of the evidence."
+    }
+  ],
+  "links": [
+    "CUI-070"
+  ]
+}
