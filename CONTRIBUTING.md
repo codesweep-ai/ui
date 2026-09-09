@@ -139,9 +139,10 @@ the reasoning behind them.
 
 ## Tests
 
-Ship a test with your change. Component tests live beside the component under
-`src/components/`, and they assert what a user can observe: what renders, what a
-callback receives, and what the keyboard reaches.
+Ship a test with your change. Where a behaviour genuinely cannot be observed in
+a test, say so in the pull request. Component tests live beside the component
+under `src/components/`, and they assert what a user can observe: what renders,
+what a callback receives, and what the keyboard reaches.
 
 Test what happens when it fails, not only when it works. A component's loading,
 empty and error states are behaviour rather than decoration.
@@ -207,12 +208,20 @@ Keep it short. One idea per commit, and a message a reader takes in at a glance.
 If a change will not fit one idea, split it.
 
 **Subject**, always. Under 60 characters, capitalised, imperative, no trailing
-period, completing *"If applied, this commit will …"*. Use no category prefix:
-not `feat:`, not `fix(ui):`, not `[docs]`. The category is already in the diff.
+period, completing *"If applied, this commit will …"*. Say what the change does
+in plain English. The test: would this subject make sense to someone who has not
+read the diff and does not know this codebase? Use no category prefix: not
+`feat:`, not `fix(ui):`, not `[docs]`. The category is already in the diff.
 
 **Body**, rarely. Most commits need none. Add one only when the subject leaves a
 question a reader would otherwise open the diff to answer, and then answer that
 question. A sentence or two does it. Wrap it at 72 columns.
+
+Leave out how the work was scheduled, how you tested it, and what led you to it,
+and stop once the question is answered. A second paragraph usually means the
+message has turned into a report of the session. The reason a convention exists
+belongs beside it in [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md), and the
+investigation that found it belongs in the pull request.
 
 ```
 Give meta its own neutral step
