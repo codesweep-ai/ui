@@ -159,7 +159,7 @@ jobs:
           go-version: "1.27"
       - name: install the pinned cs-ledger and check the ledger
         run: |
-          go install github.com/codesweep-ai/ledger/cmd/cs-ledger@v0.0.0-20260826154712-f3d4cf8989eb
+          go install github.com/codesweep-ai/ledger/cmd/cs-ledger@v0.0.0-20260909183215-bda511aea589
           "$(go env GOPATH)/bin/cs-ledger" check
 
   oss:
