@@ -10,8 +10,8 @@ holds today.
 
 ## 0.3.0
 
-Not published yet. The props below are marked `since: 0.3.0` in their
-specifications, and `package.json` still reads `0.2.0` until a release is cut.
+This release went out on 2026-09-09. It is the first tagged release, so a bare
+`npm install` resolves here rather than to a development build.
 
 ### Breaking changes
 
