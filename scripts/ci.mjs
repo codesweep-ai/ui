@@ -99,6 +99,12 @@ say("the package the release workflow would publish");
 run("node", ["scripts/stage-package.mjs"]);
 run(npm, ["pack", "--dry-run", ".package"]);
 
+// The ledger's freshness gate, which `check` leaves to this run the way the
+// sibling projects do. ledger.html is generated: a record edited without a
+// re-render is a page that disagrees with its own JSON.
+say("ledger");
+run(npm, ["run", "ledger"]);
+
 const ran = skipped.length === 0 ? "ci: every gate ran." : `ci: ${skipped.length} gate(s) did not run.`;
 const note = tty ? `\n\x1b[1m${ran}\x1b[0m` : `\n${ran}`;
 console.log(`${note} Not reproduced here: the Node 22.13 leg of the`);

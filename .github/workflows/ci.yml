@@ -161,9 +161,9 @@ jobs:
   # it: ledger.html is generated, so a record edited without a re-render reaches
   # main as a page that disagrees with its own JSON.
   #
-  # `npm run check` runs this same gate now that cs-ledger installs from the
-  # lockfile, so the job is here for the reason the prose and refs jobs are: it
-  # answers in seconds, and it answers even when the tests are failing.
+  # `npm run ci` runs this same gate, so the job is here for the reason the prose
+  # and refs jobs are: it answers in seconds, and it answers even when the tests
+  # are failing.
   #
   # The version is pinned in package.json, and has to be. `check` compares the
   # committed page against the renderer that wrote it, so a newer binary reports
