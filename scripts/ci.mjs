@@ -36,10 +36,6 @@ function run(command, args) {
 // Named on the way out, so the closing line can say what this run did not cover.
 const skipped = [];
 
-function onPath(command) {
-  return spawnSync(command, ["--version"], { stdio: "ignore" }).status === 0;
-}
-
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
 // The gate itself. The workflow's prose, refs and readiness jobs each run one
@@ -52,18 +48,6 @@ run(npm, ["run", "check"]);
 // beside the other history rules, so this mirrors it rather than adding to it.
 say("commit bodies");
 run(npm, ["run", "lint:commits"]);
-
-// An invalid workflow file fails the run with zero jobs and no annotation,
-// which is the least legible failure the forge produces. actionlint is not an
-// npm package, so a machine without it reports a skip rather than a failure.
-say("workflows");
-if (onPath("actionlint")) {
-  run("actionlint", []);
-} else {
-  console.log("skipped: actionlint is not on the PATH, so the workflow files were not checked.");
-  console.log("         Install it from https://github.com/rhysd/actionlint to close this gap.");
-  skipped.push("the workflow files, for want of actionlint");
-}
 
 // Pixels and the axe report, in the image that pins the fonts and the browser.
 // The wrapper exits 2 when there is no container runtime to render in, which is a
@@ -118,5 +102,10 @@ run(npm, ["pack", "--dry-run", ".package"]);
 const ran = skipped.length === 0 ? "ci: every gate ran." : `ci: ${skipped.length} gate(s) did not run.`;
 const note = tty ? `\n\x1b[1m${ran}\x1b[0m` : `\n${ran}`;
 console.log(`${note} Not reproduced here: the Node 22.13 leg of the`);
-console.log("build-test matrix, and the clean install from the lockfile that CI starts from.");
+console.log("build-test matrix, the clean install from the lockfile that CI starts from,");
+// actionlint is a Go binary rather than a dependency of this package. Running it
+// only where it happened to be installed made `npm run ci` mean one thing on one
+// machine and another thing on the next, so the workflows job on the forge owns
+// this gate outright.
+console.log("and the workflow files, which the forge's own actionlint job checks.");
 for (const gap of skipped) console.log(`Also not reproduced here: ${gap}.`);

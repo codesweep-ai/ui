@@ -7,13 +7,28 @@ name: pages
 # the other repositories use. It resolves @codesweep-ai/ui to src/, so the page
 # shows the components at this commit rather than the last published ones, and
 # that only holds if something compiles it on every push.
+# On a finished build rather than on the push itself.
+#
+# This site now carries ci-status.json, which codesweep.ai/dashboards/ci reads,
+# and that file is a report on this repository's workflow runs. Built on push,
+# it would be written while ci was still running and would say so, and nothing
+# would rewrite it once ci finished. Waking on ci's completion is what makes the
+# file report a verdict.
+#
+# ci runs on every push to main, so the documents and the gallery still publish
+# on every push, a few minutes later than they used to.
+#
+# `completed` rather than a success filter: a failed build is exactly the news
+# the dashboard exists to show, so it has to publish too.
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
   contents: read # the site is built from the tree and nothing is written back
+  actions: read # ci-status.json is this repository's own workflow runs
   pages: write # publish the built site
   id-token: write # the deployment is minted from the run rather than from a key
 
@@ -28,10 +43,27 @@ concurrency:
 jobs:
   build:
     name: build the site
+    # ci runs on pull_request as well as on push, and workflow_run fires for
+    # either. Without this guard a pull request's build would publish that branch
+    # to the documentation URL everyone reads.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.head_branch == github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+
+      # Written before Jekyll runs, so Jekyll copies it into the site like any
+      # other file at the repository root. It reads this repository's own workflow
+      # runs and nothing else, so the job's GITHUB_TOKEN is enough.
+      #
+      # Pinned by commit rather than by branch, so a change over there cannot
+      # change what this build runs.
+      - name: write the CI status
+        uses: codesweep-ai/dashboards/action@4c204c69b8b2b79a101c65520b86944de06942a0
+        with:
+          window: "20"
 
       - uses: actions/setup-node@v6
         with:
@@ -65,6 +97,11 @@ jobs:
           mkdir -p site/preview
           cp -R _site/. site/
           cp -R preview/dist/. site/preview/
+
+      # A missing file here would show up only as ui quietly dropping off the
+      # dashboard, which is the kind of failure nobody goes looking for.
+      - name: check the status file was published
+        run: test -s site/ci-status.json
 
       - uses: actions/upload-pages-artifact@v3
         with:

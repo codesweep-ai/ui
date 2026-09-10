@@ -148,6 +148,24 @@ jobs:
   # against the renderer that wrote it, so a newer binary reports a perfectly
   # good page as coming from a different renderer. Moving the pin means
   # re-rendering the page in the same commit.
+  # actionlint is pinned the same way cs-ledger is, and for the same reason: an
+  # unpinned linter turns somebody else's release into a red build on a pull
+  # request that touched nothing. This repository has no go.mod to carry a `tool`
+  # directive, so the version lives in the install line.
+  workflows:
+    name: workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+      - name: install the pinned actionlint and check the workflows
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          "$(go env GOPATH)/bin/actionlint"
+
   ledger:
     name: ledger check
     runs-on: ubuntu-latest
