@@ -37,15 +37,16 @@ travel together in one commit.
 A commit that touches `ledger/` needs `cs-ledger render && cs-ledger check` to
 pass first. `npm run ledger` runs the check half.
 
-`cs-ledger` is a Go binary from
-[codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) rather than a
-dependency of this package. `npm run ci` does not gate on it, so a clone
-without it still passes every other gate. CI does gate on it: the
-`ledger check` job in `ci.yml` installs a pinned version and runs it.
+`cs-ledger` comes from
+[codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) as the
+`@codesweep-ai/cs-ledger` package, so `npm ci` installs it with everything else
+and `npm run check` gates on it. CI runs the same check in its own
+`ledger check` job.
 
-That pin is not decoration. `check` compares the committed page against the
-renderer that wrote it, so a newer binary reports a good page as stale. Moving
-the pin means re-rendering `ledger.html` in the same commit.
+`package.json` pins it to an exact version rather than a range, and that is not
+decoration. `check` compares the committed page against the renderer that wrote
+it, so a newer binary reports a good page as stale. Moving the pin means
+re-rendering `ledger.html` in the same commit.
 
 ## Before you push
 

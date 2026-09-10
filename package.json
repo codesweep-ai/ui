@@ -135,7 +135,7 @@
     "visual:compare:host": "npm run preview:build && node scripts/visual-baseline.mjs compare",
     "clean": "rm -rf dist coverage",
     "docs:compile": "node scripts/docs-compile.mjs",
-    "check": "npm run lint:integrity && npm run typecheck && npm run lint && npm run docs:prose && npm run docs:refs && npm run oss && npm run catalog:check && npm run test && npm run build && npm run docs:compile && npm run size:subpaths",
+    "check": "npm run lint:integrity && npm run typecheck && npm run lint && npm run docs:prose && npm run docs:refs && npm run oss && npm run ledger && npm run catalog:check && npm run test && npm run build && npm run docs:compile && npm run size:subpaths",
     "ci": "node scripts/ci.mjs",
     "stage": "npm run build && node scripts/stage-package.mjs",
     "prepublishOnly": "node -e \"console.error('publish the staged package: npm run stage && npm publish .package');process.exit(1)\"",
@@ -186,6 +186,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@codesweep-ai/cs-ledger": "0.0.0-20260910164917-9881277aba3b",
     "@codesweep-ai/cs-lint": "0.0.0-20260830063344-348ac8910f1c",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
