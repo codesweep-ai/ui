@@ -108,6 +108,58 @@ export function publishedReadme(text, ref) {
   return text;
 }
 
+/**
+ * The catalog as it ships. Every `spec` in the repository copy is a path
+ * relative to the repository root, and not one of those files is in the
+ * tarball. An agent told to read this index first therefore follows a pointer
+ * to nothing. They become absolute URLs, pinned to the same commit the
+ * README's links are, for the same reason.
+ */
+export function publishedCatalog(text, ref) {
+  if (!ref) throw new Error("stage-package: no commit to pin the catalog to.");
+  const catalog = JSON.parse(text);
+  const entries = [...(catalog.components ?? []), ...(catalog.patterns ?? [])];
+  if (entries.length === 0) throw new Error("stage-package: the catalog lists nothing.");
+
+  for (const entry of entries) {
+    if (typeof entry.spec === "string" && !/^https?:/.test(entry.spec)) {
+      entry.spec = `${REPO}/blob/${ref}/${entry.spec.replace(/^\.?\//, "")}`;
+    }
+  }
+
+  // The guard the README carries, for the reason it carries it: a pointer that
+  // reaches the tarball still relative resolves against a repository the reader
+  // has not got, and nothing downstream reports it. An entry with no `spec` at
+  // all fails here too, because a catalog entry that points nowhere is the same
+  // dead end by a different route.
+  const missed = entries.filter((e) => typeof e.spec !== "string" || !/^https?:/.test(e.spec));
+  if (missed.length) {
+    throw new Error(
+      `stage-package: ${missed.length} catalog spec(s) not absolute: ` +
+      missed.map((e) => `${e.name}=${e.spec}`).join(", "),
+    );
+  }
+
+  catalog.$generated =
+    `${catalog.$generated} Published copy: each spec is an absolute URL pinned to ${ref}.`;
+  return `${JSON.stringify(catalog, null, 2)}\n`;
+}
+
+/**
+ * The manifest as it ships. `homepage` is pinned for the reason the README's
+ * links are: unpinned it answers a question about the default branch, which is
+ * documentation for code the reader may not have. Dropping the scripts also
+ * stops npm running any lifecycle hook against the staged copy, so
+ * `npm publish .package` builds nothing and packs what is there.
+ */
+export function publishedManifest(manifest, ref) {
+  if (!ref) throw new Error("stage-package: no commit to pin the manifest to.");
+  const staged = { ...manifest, homepage: `${REPO}/blob/${ref}/README.md` };
+  delete staged.scripts;
+  delete staged.devDependencies;
+  return `${JSON.stringify(staged, null, 2)}\n`;
+}
+
 /** The commit this build came from, which build.mjs stamps into dist. */
 function builtCommit(root) {
   const stamp = join(root, "dist", "BUILD.json");
@@ -136,28 +188,30 @@ if (!existsSync(join(ROOT, "dist"))) {
 rmSync(STAGE, { recursive: true, force: true });
 mkdirSync(STAGE);
 
-// catalog.json ships: it is the index this project tells an agent to read
-// first, and a shipped artifact cannot disagree with the build it came in.
-for (const entry of ["dist", "LICENSE", "NOTICE", "catalog.json"]) {
+for (const entry of ["dist", "LICENSE", "NOTICE"]) {
   cpSync(join(ROOT, entry), join(STAGE, entry), { recursive: true });
 }
 
-// The one file that differs between the two roots.
+// The three files that differ between the two roots. Each is the repository's
+// own, rewritten for a reader who has the package and not the repository.
+const ref = builtCommit(ROOT);
 writeFileSync(
   join(STAGE, "README.md"),
-  publishedReadme(readFileSync(join(ROOT, "README.md"), "utf8"), builtCommit(ROOT)),
+  publishedReadme(readFileSync(join(ROOT, "README.md"), "utf8"), ref),
 );
-
-// The staged manifest describes a package rather than a working repository.
-// Dropping the scripts also stops npm running any lifecycle hook against the
-// staged copy, so `npm publish .package` builds nothing and packs what is here.
-delete manifest.scripts;
-delete manifest.devDependencies;
+// catalog.json ships: it is the index this project tells an agent to read
+// first, and a shipped artifact cannot disagree with the build it came in.
+writeFileSync(
+  join(STAGE, "catalog.json"),
+  publishedCatalog(readFileSync(join(ROOT, "catalog.json"), "utf8"), ref),
+);
+// Who publishes, rather than what was built: the scope and the issue tracker
+// follow the repository this run came from, so a fork publishes as itself.
+// `publishedManifest` owns the rest, which is what the build pins to a commit.
 manifest.name = publishedName(manifest.name);
 manifest.repository = { ...manifest.repository, url: `git+${REPO}.git` };
-manifest.homepage = `${REPO}#readme`;
 manifest.bugs = { url: `${REPO}/issues` };
-writeFileSync(join(STAGE, "package.json"), JSON.stringify(manifest, null, 2) + "\n");
+writeFileSync(join(STAGE, "package.json"), publishedManifest(manifest, ref));
 
 console.log(`staged ${manifest.name}@${manifest.version} in .package/`);
 } catch (error) {

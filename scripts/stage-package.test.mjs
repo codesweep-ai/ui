@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { publishedReadme } from "./stage-package.mjs";
+import { publishedReadme, publishedCatalog, publishedManifest } from "./stage-package.mjs";
 
 // The published README is the only documentation an install carries, and its
 // links are the only route to the rest. Pinning them to the commit the build
@@ -54,4 +54,57 @@ test("leaves absolute links alone", () => {
   const out = publishedReadme(external, SHA);
 
   assert.ok(out.includes("[npm](https://www.npmjs.com/)"));
+});
+
+// catalog.json is the one document that ships beside the code, and AGENTS.md
+// tells an agent to search it before building any UI. Its `spec` paths are
+// relative to the repository, which an install does not have, so unrewritten
+// they send that agent to a file that is not there. That is CUI-086.
+
+const CATALOG = JSON.stringify({
+  $generated: "Do not edit.",
+  counts: { components: 1, patterns: 1 },
+  components: [{ spec: "components/Button.md", name: "Button" }],
+  patterns: [{ spec: "patterns/Form.md", name: "Form" }],
+});
+
+test("pins every catalog spec to the commit rather than leaving it relative", () => {
+  const out = JSON.parse(publishedCatalog(CATALOG, SHA));
+
+  assert.equal(out.components[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/components/Button.md`);
+  assert.equal(out.patterns[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/patterns/Form.md`);
+  assert.doesNotMatch(publishedCatalog(CATALOG, SHA), /\/blob\/main\//);
+});
+
+test("says in the catalog itself which commit its specs point at", () => {
+  const out = JSON.parse(publishedCatalog(CATALOG, SHA));
+
+  assert.ok(out.$generated.includes(SHA), "the generated note should name the commit");
+});
+
+test("refuses to ship a catalog entry that points nowhere", () => {
+  // The same guard the README has. A pointer that reaches the tarball still
+  // relative resolves against a repository the reader has not got.
+  const broken = JSON.stringify({
+    components: [{ spec: "components/Button.md", name: "Button" }, { name: "Orphan" }],
+  });
+
+  assert.throws(() => publishedCatalog(broken, SHA), /not absolute.*Orphan/s);
+});
+
+test("refuses to stage a catalog or a manifest without a commit", () => {
+  assert.throws(() => publishedCatalog(CATALOG, ""), /no commit/);
+  assert.throws(() => publishedManifest({ name: "x" }, ""), /no commit/);
+});
+
+test("pins the manifest homepage and drops what a package must not carry", () => {
+  const out = JSON.parse(publishedManifest(
+    { name: "x", homepage: "https://github.com/codesweep-ai/ui#readme", scripts: { build: "x" }, devDependencies: { v: "1" } },
+    SHA,
+  ));
+
+  assert.equal(out.homepage, `https://github.com/codesweep-ai/ui/blob/${SHA}/README.md`);
+  assert.doesNotMatch(out.homepage, /#readme$/);
+  assert.equal(out.scripts, undefined);
+  assert.equal(out.devDependencies, undefined);
 });
