@@ -1,5 +1,18 @@
 {
-  "recommendedBy": "session agent, with nothing open",
-  "updated": "2026-09-09",
-  "items": []
+  "recommendedBy": "session agent, after measuring a consumer's header",
+  "updated": "2026-09-12",
+  "items": [
+    {
+      "id": "CUI-080",
+      "why": "A consumer is looking at it now, and upgrading does not fix it."
+    },
+    {
+      "id": "CUI-081",
+      "why": "Nav destinations render but cannot be reached, and one CSS declaration fixes it."
+    },
+    {
+      "id": "CUI-082",
+      "why": "Cheap to correct while the two defects above are open."
+    }
+  ]
 }

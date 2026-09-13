@@ -1,0 +1,29 @@
+{
+  "id": "CUI-081",
+  "title": "A crowded nav runs off screen above 48rem with no way to reach it",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent, probing Header with many nav items after the report behind CUI-080",
+  "opened": "2026-09-12",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`flex-wrap: wrap` on the nav link row exists only inside `@media (max-width: 48rem)` in `src/styles/components/app-shell.css`. Above that breakpoint the row is `nowrap`, and `src/components/AppShell.responsive.test.tsx` asserts that at 1440 pixels wide.\n\nSo a header with many nav items has no handling at desktop widths. Measured at 8ada6d1 with 20 items: at 1000 pixels wide, 7 links sit past the right edge of the viewport, and at 1440 pixels wide, 1 does.\n\nThose links cannot be reached. `document.documentElement.scrollWidth` equals the viewport width in both cases, so no horizontal scrollbar appears. The shell root sets `overflow: hidden`, which clips them instead of scrolling to them.\n\nA nav destination that renders but cannot be clicked or tabbed to is worse than one that is absent, because nothing tells the reader it is there.\n\nMoving the one `flex-wrap` declaration out of the media query would fix the unreachability without a new prop or a new component. The cost is a taller header when the nav is crowded.",
+  "notes": [
+    {
+      "date": "2026-09-12",
+      "text": "Measured with markup replicated from `src/components/AppShell.tsx` and the real stylesheets, not with the rendered component. Confirm against the rendered `Header` before closing this."
+    }
+  ],
+  "links": [
+    "CUI-080",
+    "CUI-082",
+    "CUI-083"
+  ]
+}

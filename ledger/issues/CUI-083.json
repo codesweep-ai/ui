@@ -1,0 +1,23 @@
+{
+  "id": "CUI-083",
+  "title": "The header has no overflow affordance for a crowded nav",
+  "type": "feature-idea",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "another agent, relayed by the owner: \"NavItem is a flat list with no overflow slot; the Header takes navItems and renders them all\"",
+  "opened": "2026-09-12",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "The request is a nav that collapses into a \"More\" menu once it holds a lot of items. `Header` renders every entry of `navItems` and offers no slot to intercept them.\n\nThe cost is not the collapse logic. This package has no menu, no popover and no disclosure among its components. `Dropdown` is a styled native `select`, a form field taking `value` and `onChange`, so it cannot hold links. `Modal` is the only overlay. So this is adding the first floating menu, with its focus management, dismissal, roving arrow keys and positioning.\n\nTwo shapes are worth separating. A count-based menu hides items past a threshold the consumer names, needs no measurement, and stays deterministic under the visual gate. A width-based menu measures the bar and moves what does not fit.\n\nThe width-based shape is the risky one. It renders twice against a gate that allows no differing pixel, and it reads element rectangles in a place where CUI-055 already shows the comparison flaking. A correction pass on Tooltip once looped forever on rectangles that are zero without layout.\n\nNeither CUI-080 nor CUI-081 would be fixed by this. The consumer report that prompted it was label wrapping, and no item ran off screen at any width measured. That reorders the work: the two defects are cheaper and they are what a consumer is looking at.",
+  "notes": [],
+  "links": [
+    "CUI-080",
+    "CUI-081"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "CUI-082",
+  "title": "The AppShell specification claims an edge case it only half covers",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent, reading components/AppShell.md against src/styles/components/app-shell.css",
+  "opened": "2026-09-12",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`components/AppShell.md` lists \"Very many nav items\" among the edge cases the component handles, and answers it with \"Wraps to next line on mobile\".\n\nThe wrap rule lives only inside `@media (max-width: 48rem)`. Above that breakpoint nothing handles a crowded nav, which is the defect CUI-081 records.\n\nThe line is true and reads as a general answer. An agent scanning the edge-case table for \"very many nav items\" finds the case listed as covered and stops looking.\n\nThat happened in this session. The line was read as evidence that the kit already answered nav crowding, and the owner was told so before the measurement contradicted it.\n\nThis is the failure this repository keeps finding: a document asserting coverage that no gate checks. The fix is to say which widths the wrap applies to.",
+  "notes": [],
+  "links": [
+    "CUI-081"
+  ]
+}
