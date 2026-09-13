@@ -11,6 +11,10 @@
       "why": "A documented hook cannot do what its comment promises, and every chart consumer is affected."
     },
     {
+      "id": "CUI-086",
+      "why": "An agent installing the package cannot reach any component's documentation from the index it is told to read."
+    },
+    {
       "id": "CUI-081",
       "why": "Nav destinations render but cannot be reached, and one CSS declaration fixes it."
     },

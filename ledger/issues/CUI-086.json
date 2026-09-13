@@ -1,0 +1,25 @@
+{
+  "id": "CUI-086",
+  "title": "The shipped catalog points an agent at documents the package does not contain",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "user report (host), asking during review: \"if someone just installs the npm package, but not the repo, how do they see/read the docs?\"",
+  "opened": "2026-09-13",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`catalog.json` ships in the package and the markdown documents do not. The `files` list is `dist`, `LICENSE`, `NOTICE`, `catalog.json` and `README.md`.\n\nEvery catalog entry carries a `spec` field holding a relative path, such as `components/AgentStatus.md`. That path resolves against a repository the reader does not have, so it points at nothing inside the installed package.\n\nThis hits the audience the catalog is for. `scripts/stage-package.mjs` ships it on the grounds that it is the index this project tells an agent to read first, and `AGENTS.md` says to search the catalog before building any UI. So an agent installs the package, opens the index it was directed to, follows a component's pointer and finds no file, no address and no commit.\n\n`package.json` has the same weakness in a smaller way. Its `homepage` is the repository's readme at the default branch, carrying no version. An agent inspecting the manifest, which is the usual first stop inside an installed package, is sent to documentation for whatever the default branch holds rather than for the version in front of it.\n\nThe README is already handled correctly, which is what makes the other two look like oversights rather than a decision. `scripts/stage-package.mjs` rewrites its relative links into absolute repository URLs pinned to the commit recorded in `dist/BUILD.json`, and refuses to stage when that file is missing or records no sha. All seven documents the readme links to exist at 1638d27, the commit `v0.3.0` was built from.\n\nPinning to a commit is the right mechanism rather than a workaround. The documentation site is built and deployed only from the default branch, with no per-version path, so a link to the site would show a reader on an older version the documentation for a newer one.\n\nThe fix is to give `catalog.json` the rewrite the readme already gets, so each `spec` becomes an absolute URL pinned to the same sha, and to pin `homepage` the same way. Both keep one source of truth in the repository and make the shipped copy able to locate itself.",
+  "notes": [
+    {
+      "date": "2026-09-13",
+      "text": "Nobody working in this repository can meet this, because `components/` is on disk and every relative path resolves. It only appears from an installed package, which is the shape this ledger keeps finding: a failure that cannot occur where the work is done reports itself to whoever is downstream."
+    }
+  ],
+  "links": []
+}
