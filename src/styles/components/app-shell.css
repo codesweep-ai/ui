@@ -49,6 +49,13 @@
     flex-direction: column
 }
 
+/* The nav row wraps at every width. Without this a crowded nav overflows the
+   header, and the shell's own overflow: hidden clips the links past the edge
+   instead of scrolling to them, so those destinations cannot be reached. */
+.cs-component-app-shell-11 {
+    flex-wrap: wrap
+}
+
 .cs-component-app-shell-4,
 .cs-component-app-shell-6,
 .cs-component-app-shell-11,
@@ -126,6 +133,13 @@
 .cs-component-app-shell-6,
 .cs-component-app-shell-16 {
     text-decoration-line: none
+}
+
+/* A multi-word label breaks at its spaces once the row is crowded, which
+   stacks one link into a column of words and leaves the row ragged at several
+   heights. The row above wraps instead, so the label stays on one line. */
+.cs-component-app-shell-16 {
+    white-space: nowrap
 }
 
 .cs-component-app-shell-16 {
@@ -206,9 +220,6 @@
         gap: var(--space-2)
     }
 
-    .cs-component-app-shell-11 {
-        flex-wrap: wrap
-    }
 }
 
 /* Presence marker. src/lib/stylesheetWarning.ts reads this to tell a

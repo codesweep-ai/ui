@@ -7,7 +7,7 @@
   "chrome": {
     "raw": 156192,
     "gzip": 50804,
-    "eager": 177747
+    "eager": 177766
   },
   "./markdown": {
     "raw": 170094,

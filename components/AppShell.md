@@ -108,8 +108,8 @@ interface FooterProps {
 - **Clear space**: Minimum `var(--space-3)` (12px) around the mark on all sides.
 
 ### Nav Links
-- Container: `display: flex`, `gap: var(--space-1)`, `align-items: center`.
-- Link: `color: var(--muted)`, `padding: var(--space-2) var(--space-3)`, `font-size: var(--font-size-xs)`, `font-weight: var(--font-weight-medium)`, `border-radius: var(--radius-sm)`, `text-decoration: none`.
+- Container: `display: flex`, `gap: var(--space-1)`, `align-items: center`, `flex-wrap: wrap`.
+- Link: `color: var(--muted)`, `padding: var(--space-2) var(--space-3)`, `font-size: var(--font-size-xs)`, `font-weight: var(--font-weight-medium)`, `border-radius: var(--radius-sm)`, `text-decoration: none`, `white-space: nowrap`.
 
 ### Footer Styling
 - Background: `var(--color-header-bg)`.
@@ -130,7 +130,6 @@ interface FooterProps {
 
 ### Responsive (max-width: 48rem)
 - Header inner: `flex-direction: column`, `align-items: flex-start`, `gap: var(--space-2)`.
-- Nav links: `flex-wrap: wrap`.
 - The breakpoint is 768px at the browser's default root size. It is written in
   `rem` so it follows a reader who enlarges that size.
 
@@ -203,7 +202,9 @@ None at the shell level. Theme persistence handled by `ThemeToggle` / `useTheme`
 - **No nav items**: The navigation landmark remains available for `actions`; its link list is empty.
 - **No footer**: Footer is not rendered; main content area fills space.
 - **No logoSrc**: The text title is the brand mark (the normal case).
-- **Very many nav items**: Wraps to next line on mobile.
+- **Very many nav items**: The link row wraps to another line at any width, so a
+  crowded nav makes the header taller rather than running off its edge. A label
+  never breaks across lines; the row wraps instead.
 - **No actions**: Actions slot simply doesn't render.
 - **Logo fails to load**: Add `onerror` fallback to show text brand mark.
 
