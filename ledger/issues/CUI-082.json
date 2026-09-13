@@ -3,15 +3,17 @@
   "title": "The AppShell specification claims an edge case it only half covers",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, reading components/AppShell.md against src/styles/components/app-shell.css",
   "opened": "2026-09-12",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-13",
+  "stint": "nav crowding fixes, 2026-09-13",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "bc6df5c"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`components/AppShell.md` now states `flex-wrap: wrap` on the nav container and `white-space: nowrap` on the link, in the section describing them at every width. The responsive section no longer lists the wrap, because it is no longer bounded by the breakpoint. The edge case for very many nav items says the row wraps at any width and that a label never breaks. `npm run ci` exits 0 at bc6df5c."
   },
   "resolution": null,
   "details": "`components/AppShell.md` lists \"Very many nav items\" among the edge cases the component handles, and answers it with \"Wraps to next line on mobile\".\n\nThe wrap rule lives only inside `@media (max-width: 48rem)`. Above that breakpoint nothing handles a crowded nav, which is the defect CUI-081 records.\n\nThe line is true and reads as a general answer. An agent scanning the edge-case table for \"very many nav items\" finds the case listed as covered and stops looking.\n\nThat happened in this session. The line was read as evidence that the kit already answered nav crowding, and the owner was told so before the measurement contradicted it.\n\nThis is the failure this repository keeps finding: a document asserting coverage that no gate checks. The fix is to say which widths the wrap applies to.",

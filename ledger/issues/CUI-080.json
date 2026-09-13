@@ -3,15 +3,17 @@
   "title": "Nav link labels break word by word when the header is crowded",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "user report (host): \"has a lot of nav items, but doesn't seem to wrap gracefully\", relaying another agent's request; measured afterwards",
   "opened": "2026-09-12",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-13",
+  "stint": "nav crowding fixes, 2026-09-13",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "bc6df5c"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npx vitest run src/components/AppShell.responsive.test.tsx` passes 4 tests, one of which asserts that a label of six words keeps the height of a one-word label. Reverting only the stylesheet and rerunning fails it with `expected 'normal' to be 'nowrap'`, so the test can fail. `npm run ci` exits 0 at bc6df5c, and the visual gate compared 112 of 112 captures with 0 differing pixels, so no existing page moved."
   },
   "resolution": null,
   "details": "A consuming application renders seven nav items in `Header`, and every multi-word label breaks mid-phrase. One label reads as four stacked words.\n\nMeasured on that application at a viewport 1100 pixels wide. The seven links measure 34, 52, 70 and 88 pixels tall, which is one, two, three and four lines. The header grows from 63 pixels tall at 1920 wide to 144 pixels at 700 wide.\n\nNo link runs off screen at any width tested, so this is not an overflow problem. The cause is that `.cs-component-app-shell-16` in `src/styles/components/app-shell.css` sets no `white-space`, so a label breaks at any space when its link is squeezed.\n\nThat application predates the responsive header work, but that is not what it is hitting. Seven labels of one to four words reproduce the same four heights against the stylesheet at 8ada6d1. A consumer upgrading to 0.3.0 does not escape this.\n\nAdding `white-space: nowrap` on its own makes the header worse. The nav then holds its width and squeezes the brand, which wraps instead. The brand in the application measured here already wraps to three lines at 1100 pixels wide. The rule pairs with the wrap fix CUI-081 asks for.",
@@ -19,6 +21,10 @@
     {
       "date": "2026-09-12",
       "text": "Measured with markup replicated from `src/components/AppShell.tsx` and the real stylesheets, rather than with the rendered component. The replication reproduces the live application's four link heights exactly, which is what gives it credit. Confirm against the rendered `Header` before closing this."
+    },
+    {
+      "date": "2026-09-13",
+      "text": "The stylesheet was reverted on its own and the suite rerun, which failed 3 of the 4 tests. That is the check this repository keeps finding worthwhile, because a test that cannot fail is the bug."
     }
   ],
   "links": [

@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, after measuring a consumer's header and re-running a consumer's palette report",
+  "recommendedBy": "session agent, with the nav defects closed",
   "updated": "2026-09-13",
   "items": [
-    {
-      "id": "CUI-080",
-      "why": "A consumer is looking at it now, and upgrading does not fix it."
-    },
     {
       "id": "CUI-085",
       "why": "A documented hook cannot do what its comment promises, and every chart consumer is affected."
@@ -13,14 +9,6 @@
     {
       "id": "CUI-086",
       "why": "An agent installing the package cannot reach any component's documentation from the index it is told to read."
-    },
-    {
-      "id": "CUI-081",
-      "why": "Nav destinations render but cannot be reached, and one CSS declaration fixes it."
-    },
-    {
-      "id": "CUI-082",
-      "why": "Cheap to correct while the two nav defects above are open."
     },
     {
       "id": "CUI-084",
