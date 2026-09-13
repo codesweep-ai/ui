@@ -54,6 +54,7 @@ describe("Header responsive layout", () => {
     expect(rows.size).toBeGreaterThan(1);
     expect(links.scrollWidth).toBeLessThanOrEqual(links.clientWidth);
   });
+
   // Above the breakpoint the row used to be `nowrap`, so a crowded nav ran past
   // the right edge. The shell root sets `overflow: hidden`, so those links were
   // clipped rather than scrolled to, and no scrollbar offered a way to them.
