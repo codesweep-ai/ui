@@ -7,10 +7,6 @@
       "why": "A documented hook cannot do what its comment promises, and every chart consumer is affected."
     },
     {
-      "id": "CUI-086",
-      "why": "An agent installing the package cannot reach any component's documentation from the index it is told to read."
-    },
-    {
       "id": "CUI-084",
       "why": "Wants a token decision in the design system specification before any CSS is written."
     }
