@@ -1,0 +1,35 @@
+{
+  "id": "CUI-084",
+  "title": "The categorical palette fails colour-blind separation, and small marks need a ramp that does not",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "consumer report (host): an application consuming this package, moving from 0.2.0 to 0.3.0, with measurements and reproduction steps",
+  "opened": "2026-09-13",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "A consumer draws node-link diagrams over a model of 353 nodes and 411 edges, at dots of 3 to 5 pixels and lines of 1 pixel. They report that `--color-cat-1..10` does not hold at that mark size, and ask for a second ramp rather than hand-rolling one downstream.\n\nMeasured with the palette validator from the `dataviz` skill, which runs five checks: lightness band, chroma floor, adjacent-pair separation under colour-blind simulation, normal-vision separation, and contrast against the surface.\n\nNine of the ten base slots fail four of the five checks on the dark surface. Separation under deuteranopia falls to 1.8 between `#6ab0d4` and `#c489c9`, and normal-vision separation falls to 12.2 between `#4fb3a6` and `#6f93c9`, under a floor of 15. The light set fails the same way.\n\nThe `-mid` sub-shades are the obvious alternative and they also fail. Separation under deuteranopia is 1.8 between `#0ea5e9` and `#d946ef` on the dark set, and 2.5 between `#0369a1` and `#a21caf` on the light set.\n\nThe consumer has nine categories, and reports that every nine-hue set they tested merges a pair under deuteranopia or protanopia. They therefore ask for eight slots and a defined neutral, which matches the documented rule that a ninth category folds to \"Other\" rather than becoming a generated hue.\n\nThe proposal is `--color-graph-1..8` for small marks, leaving `--color-cat-*` untouched for bar charts, with `--color-graph-other` aliased to `--color-structural`. The light values are `#2a78d6`, `#e26432`, `#189d6e`, `#bb7f00`, `#cc6c90`, `#008300`, `#4a3aa7` and `#e34948`. The dark values are `#3987e5`, `#d95926`, `#199e70`, `#c98500`, `#d55181`, `#008300`, `#9085e9` and `#e66767`.\n\nThose values pass all five checks in both themes. Worst colour-blind separation is 8.7 light and 8.4 dark, worst normal-vision separation is 16.6 light and 19.3 dark, and every slot clears 3:1 contrast. The light surface tested was `#ffffff` and the dark surface `#0f1620`.\n\nUpgrading does not escape the problem. `src/styles/tokens.css` is byte-identical between the `v0.3.0` tag and main at 8ada6d1, and no `--color-graph-*` token exists.",
+  "notes": [
+    {
+      "date": "2026-09-13",
+      "text": "Every figure the reporter gave was re-run against the same validator before filing, and all five palettes reproduce exactly, including the two weaknesses they disclosed themselves. Those are a tritan separation of 3.7 between the proposed light slots 3 and 4, and a colour-blind margin of 8.4 to 8.7 that clears the floor of 8 with little room. The second means the ramp needs documenting as requiring secondary encoding, such as a legend, a label or a hover, rather than as safe on colour alone."
+    },
+    {
+      "date": "2026-09-13",
+      "text": "The report frames `--color-cat-*` as a good bar-chart palette that is poor for small marks. The measurements do not support the first half. A deuteranopia separation of 1.8 means two slots are the same colour, and a larger mark does not separate them. So adding a second ramp leaves the existing one failing for everyone who uses it, which makes this a wider decision than an additive token.\n\nAgainst that, the validator is a tool from an external skill rather than a gate this repository adopted, and there is no palette gate here. `src/styles/tokens.css` records a review of the palette on 2026-08-27 against a real 1,366-event strip in both themes. Whether these thresholds become the standard is a decision rather than a correction."
+    },
+    {
+      "date": "2026-09-13",
+      "text": "The report cited a seven-character sha for main to support its claim that the palette is unchanged. That commit was a ledger commit on an unmerged branch, made the day the report was written, and it touched no stylesheet. This record cites the tag comparison instead. Recorded because a wrong sha that still resolves against this repository passes the freshness gate while meaning something else."
+    }
+  ],
+  "links": [
+    "CUI-085"
+  ]
+}

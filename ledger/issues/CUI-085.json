@@ -1,0 +1,27 @@
+{
+  "id": "CUI-085",
+  "title": "useChartTheme never restyles on a theme toggle, which its own comment promises",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "consumer report (host): an application consuming this package, reported alongside the palette request in CUI-084",
+  "opened": "2026-09-13",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`useChartTheme` cannot do what it documents. Charts stay in whatever theme was active when they mounted.\n\n`src/lib/useTheme.ts` holds the chosen mode in a plain `useState` with no React context. Its initial value is read once, from the URL parameter or from `localStorage`. Nothing subscribes to later changes.\n\nSo each caller gets an independent copy of the state. `src/components/ThemeToggle.tsx` calls it at line 25 and `src/lib/chartTheme.ts` calls it again at line 83. The toggle sets `data-theme` on the root element and writes `localStorage`, but the chart's own copy of `mode` never changes.\n\n`src/lib/chartTheme.ts` re-reads the CSS variables in an effect keyed on `resolved`, at lines 86 to 88. That value is derived from the copy of `mode` that never changes, so the effect never fires again after mount.\n\nThe comment above the function, at lines 136 to 139, says it \"re-reads the CSS variables whenever the resolved theme flips, so charts restyle on light/dark toggle\".\n\nThe reporter verified this in the published 0.3.0 build, in `dist/lib/chartTheme.js` and `dist/lib/useTheme.js`, rather than in the source alone.\n\nEither shape fixes it. `useTheme` could hold its state in a context provider, or `useChartTheme` could observe `data-theme` on the root element with a `MutationObserver`.",
+  "notes": [
+    {
+      "date": "2026-09-13",
+      "text": "Two things narrow the blast radius without excusing it. A chart mounted after a toggle reads the stored mode at mount and gets the right theme, so only charts already on screen freeze. And the reporter works around it by putting `var(--token)` directly in the SVG and letting the cascade resolve it, which works.\n\nThe cost is that the documented bridge goes unused. A consumer who follows the documentation instead gets charts that silently stop matching the page."
+    }
+  ],
+  "links": [
+    "CUI-084"
+  ]
+}

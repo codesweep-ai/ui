@@ -1,10 +1,14 @@
 {
-  "recommendedBy": "session agent, after measuring a consumer's header",
-  "updated": "2026-09-12",
+  "recommendedBy": "session agent, after measuring a consumer's header and re-running a consumer's palette report",
+  "updated": "2026-09-13",
   "items": [
     {
       "id": "CUI-080",
       "why": "A consumer is looking at it now, and upgrading does not fix it."
+    },
+    {
+      "id": "CUI-085",
+      "why": "A documented hook cannot do what its comment promises, and every chart consumer is affected."
     },
     {
       "id": "CUI-081",
@@ -12,7 +16,11 @@
     },
     {
       "id": "CUI-082",
-      "why": "Cheap to correct while the two defects above are open."
+      "why": "Cheap to correct while the two nav defects above are open."
+    },
+    {
+      "id": "CUI-084",
+      "why": "Wants a token decision in the design system specification before any CSS is written."
     }
   ]
 }
