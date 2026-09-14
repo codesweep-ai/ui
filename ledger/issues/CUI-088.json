@@ -1,0 +1,20 @@
+{
+  "id": "CUI-088",
+  "title": "Version annotations name a 1.x line the package never published",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "consumer-facing test: two agents reading an installed copy independently flagged the version metadata as untrustworthy",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "The package is at 0.3.0 and `CHANGELOG.md` says 0.3.0 is the first tagged release. The version metadata in the documentation describes a 1.x line instead.\n\n`catalog.json` carries `since` values of 1.0.0, 1.1.0, 1.3.0, 1.4.0, 1.5.0 and 1.11.0, all above the version that ships. The component documents carry `Added v1.3.0` fourteen times, and also `Added v1.2.0`, `Added v1.5.0`, `Added v1.7.0`, `Added v1.11.0` and `Added v1.12.0`. Alongside them sit eight instances of `Added v0.3.0`, so the two numbering lines are mixed in the same files.\n\nA reader cannot act on this. `Added v1.3.0` on a package calling itself 0.3.0 reads as a feature they do not have, when in fact they do. Both agents in the test reached the same conclusion independently and both advised ignoring the version fields entirely, trusting the type declarations and the build commit instead.\n\nThat advice is correct and it is the problem. The fields exist to answer the question \"do I have this yet\", and a reader who has learned to ignore them has lost the only thing they were for.",
+  "notes": [],
+  "links": []
+}

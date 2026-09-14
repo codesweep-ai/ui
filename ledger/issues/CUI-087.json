@@ -1,0 +1,27 @@
+{
+  "id": "CUI-087",
+  "title": "Nothing checks that the commit a published package pins is one a reader can fetch",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent, from a controlled test in which two agents were each given an installed copy of the package and asked how they would learn to use it",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Every documentation pointer in the published package is an absolute URL pinned to the commit the build came from. `scripts/build.mjs` records that commit as whatever `git rev-parse HEAD` returns. Nothing then checks that the commit is one a reader can reach.\n\nSo a package staged from a commit that has not been pushed ships with its entire documentation surface dead. That is the README's seven links, the `spec` of all 49 catalog entries, and the manifest's `homepage`. Each returns 404, and nothing in the publish path reports it.\n\nObserved rather than reasoned about. A package was staged from an unmerged branch and given to an agent with no knowledge of this repository. It followed a catalog `spec` to the pinned URL, got 404, then asked the forge directly and was told `No commit found for SHA`. It recovered by reading the default branch instead, which is the outcome the pinning exists to prevent.\n\nThe workflows are safe. `npm.yml` runs on a push to the default branch and `release.yml` on a pushed tag, so both pin a commit the forge already has. The exposure is the manual path, which this repository documents: the root manifest's `prepublishOnly` refuses a direct publish and prints `npm run stage && npm publish .package` as the way to do it. Neither half of that command looks at whether the commit is public.\n\n`scripts/stage-package.mjs` already refuses to stage when `dist/BUILD.json` is missing or records no sha. It treats an absent commit as fatal and an unreachable one as fine, and the second ships a package that looks correct and documents nothing.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "The same check would have to decide what reachable means, and the honest answer is narrow. Asking the forge costs a network call in a script that otherwise needs none. Asking git whether the commit is an ancestor of a tracked remote branch is local and catches the case that actually happens, which is staging from work that has not left the machine."
+    }
+  ],
+  "links": [
+    "CUI-086"
+  ]
+}

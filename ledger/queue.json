@@ -1,6 +1,6 @@
 {
   "recommendedBy": "session agent, with the nav defects closed",
-  "updated": "2026-09-13",
+  "updated": "2026-09-14",
   "items": [
     {
       "id": "CUI-085",
@@ -9,6 +9,14 @@
     {
       "id": "CUI-084",
       "why": "Wants a token decision in the design system specification before any CSS is written."
+    },
+    {
+      "id": "CUI-087",
+      "why": "A hand-run publish ships a package whose every documentation link is dead, and nothing reports it."
+    },
+    {
+      "id": "CUI-088",
+      "why": "The version fields answer the one question they exist for incorrectly, so readers are told to ignore them."
     }
   ]
 }
