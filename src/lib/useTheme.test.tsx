@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { themeBootScript, useTheme } from "./useTheme";
+import { useChartTheme } from "./chartTheme";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 beforeEach(() => {
   localStorage.clear();
@@ -160,5 +162,85 @@ describe("themeBootScript", () => {
     localStorage.setItem("cs-theme", "system");
     (0, eval)(themeBootScript());
     expect(document.documentElement).toHaveAttribute("data-theme", "light");
+  });
+});
+
+// Every caller used to hold a private copy of the mode, so a toggle in the
+// header and a chart in the page never heard each other. The chart kept the
+// theme it mounted in and the effect that re-reads the CSS variables never ran
+// again. That is CUI-085.
+describe("one theme, shared by every caller", () => {
+  it("moves a second useTheme when the first one sets a mode", async () => {
+    function Two() {
+      const a = useTheme();
+      const b = useTheme();
+      return (
+        <div>
+          <button onClick={() => a.setMode("dark")}>set from a</button>
+          <span data-testid="b-mode">{b.mode}</span>
+          <span data-testid="b-resolved">{b.resolved}</span>
+        </div>
+      );
+    }
+    render(<Two />);
+    expect(screen.getByTestId("b-mode").textContent).toBe("system");
+
+    await userEvent.click(screen.getByText("set from a"));
+
+    expect(screen.getByTestId("b-mode").textContent).toBe("dark");
+    expect(screen.getByTestId("b-resolved").textContent).toBe("dark");
+  });
+
+  it("re-renders a separate component's useTheme when a ThemeToggle flips", async () => {
+    const seen: string[] = [];
+    function Watcher() {
+      seen.push(useTheme().resolved);
+      return null;
+    }
+    render(
+      <div>
+        <ThemeToggle variant="radio-group" />
+        <Watcher />
+      </div>,
+    );
+    const before = seen.length;
+
+    await userEvent.click(screen.getByRole("radio", { name: "Dark" }));
+
+    expect(seen.length).toBeGreaterThan(before);
+    expect(seen[seen.length - 1]).toBe("dark");
+  });
+
+  it("re-reads the chart colours when a toggle elsewhere flips the theme", async () => {
+    // Identity rather than colour: jsdom resolves no custom properties, so the
+    // question is whether the effect ran at all, and a fresh object says it did.
+    const seen: unknown[] = [];
+    function Chart() {
+      seen.push(useChartTheme());
+      return null;
+    }
+    render(
+      <div>
+        <ThemeToggle variant="radio-group" />
+        <Chart />
+      </div>,
+    );
+    const first = seen[seen.length - 1];
+
+    await userEvent.click(screen.getByRole("radio", { name: "Dark" }));
+
+    expect(seen[seen.length - 1]).not.toBe(first);
+  });
+
+  it("drops the adopted mode once nothing is mounted, so a later mount asks again", async () => {
+    const { unmount } = render(<Probe />);
+    await userEvent.click(screen.getByText("dark"));
+    expect(localStorage.getItem("cs-theme")).toBe("dark");
+    unmount();
+
+    localStorage.setItem("cs-theme", "light");
+    render(<Probe />);
+
+    expect(screen.getByTestId("mode").textContent).toBe("light");
   });
 });
