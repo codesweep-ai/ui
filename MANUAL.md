@@ -137,6 +137,10 @@ carries the same index as data: one record per component, with its intents, when
 to use it, and the path to its specification. Search that rather than the source
 tree.
 
+Each record also carries the `import` specifier. Read it rather than assuming
+the root. Six components sit behind a subpath, which keeps the markdown, mermaid
+and syntax-highlighting weight away from a consumer who only wants a button.
+
 Both files are generated from the frontmatter in `components/` and
 `patterns/`, so an edit goes to the specification and `npm run catalog`
 regenerates them.

@@ -202,11 +202,16 @@ Four files move together:
 2. `components/<Name>.md` specifies it, including the frontmatter and the props
    table.
 3. The matching preview section or pattern demo.
-4. `src/index.ts`, when the public export changes.
+4. `src/index.ts`, or the subpath entry under `src/`, when the public export
+   changes.
 5. Any pattern that composes the component, under `patterns/`.
 
 Run `npm run catalog` after editing frontmatter. `CATALOG.md` and `catalog.json`
-are generated, and an edit to either by hand is undone by the next run.
+are generated, and an edit to either by hand is undone by the next run. The
+`import` field is not frontmatter: it is read from the entry points
+`package.json` declares. A component no entry point exports fails
+`npm run catalog:check`, and so does one that two entry points export unless it
+is listed as deliberate in `scripts/gen-catalog.mjs`.
 
 **Look at the patterns.** They are the worked examples of how the components are
 meant to be composed. A change that is right for a component on its own can

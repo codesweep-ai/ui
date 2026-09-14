@@ -1,15 +1,16 @@
-<!-- GENERATED FILE — do not edit. Source: components/*.md + patterns/*.md frontmatter, cross-checked against src/index.ts. Regenerate with `npm run catalog`. -->
+<!-- GENERATED FILE — do not edit. Source: components/*.md + patterns/*.md frontmatter, cross-checked against src/index.ts and the entry points in package.json. Regenerate with `npm run catalog`. -->
 
 # @codesweep-ai/ui — Component Catalog
 
 This index lists every component and pattern the package exports, and it is the **look-here-first** place for reuse. Search it by intent, for example "graph", "table" or "steps", before building any UI.
 
-**Decision order:** match an entry → import from `@codesweep-ai/ui` and compose · close but missing a prop → enhance that component · no match → add a new one (see [CONTRIBUTING.md](CONTRIBUTING.md)). Never hand-roll a duplicate.
+**Decision order:** match an entry → import it from the specifier on that entry and compose · close but missing a prop → enhance that component · no match → add a new one (see [CONTRIBUTING.md](CONTRIBUTING.md)). Never hand-roll a duplicate.
 
 ## Components
 
 ### AgentStatus  ·  since 1.4.0
 Single-line status row for visible agent work; shows a verb-phrase and animated indicator so users always know what the agent is doing.
+- import: `@codesweep-ai/ui`
 - intents: `agent status`, `activity indicator`, `loading state`, `in-flight`, `progress`, `verb phrase`, `streaming status`, `live update`, `aria-live`, `pulse badge`, `spinner alternative`, `agent feedback`, `task status`, `llm progress`
 - use when: Displaying the work an agent has in hand (reading, generating, inferring)
 - use when: Replacing generic spinners or "Loading…" text with a specific verb phrase
@@ -21,6 +22,7 @@ Single-line status row for visible agent work; shows a verb-phrase and animated 
 
 ### AgentTrace  ·  since 1.4.0
 Vertical, expandable list of chronological agent steps with status icons.
+- import: `@codesweep-ai/ui`
 - intents: `agent`, `trace`, `steps`, `activity`, `log`, `history`, `timeline`, `audit`, `run log`, `agent steps`, `chronological`
 - use when: Showing the chronological list of steps an agent has taken (settled history)
 - avoid when: One thing happening right now → AgentStatus
@@ -32,6 +34,7 @@ Vertical, expandable list of chronological agent steps with status icons.
 
 ### AppShell  ·  since 1.0.0
 Application shell with always-dark sticky header, scrollable content area, and optional footer; the top-level layout wrapper for every page.
+- import: `@codesweep-ai/ui`
 - intents: `app shell`, `layout`, `header`, `footer`, `navigation`, `nav bar`, `top bar`, `app frame`, `page layout`, `sticky header`, `dark header`, `logo`, `nav links`, `global chrome`, `app wrapper`, `spa layout`
 - use when: Wrapping any full-page app view that needs a header with nav + branding
 - use when: Any page that uses ThemeToggle or top-level navigation
@@ -43,6 +46,7 @@ Application shell with always-dark sticky header, scrollable content area, and o
 
 ### Button  ·  since 1.0.0
 Standard interactive button with six visual variants (primary, secondary, danger, ghost, success, warning) and two sizes.
+- import: `@codesweep-ai/ui`
 - intents: `button`, `cta`, `call to action`, `submit`, `click`, `action`, `primary button`, `ghost button`, `danger button`, `secondary button`, `interactive`, `trigger`, `form submit`, `icon button`, `control`
 - use when: Any user-triggered action (submit, confirm, cancel, navigate)
 - use when: Icon-only controls in toolbars (ghost variant, add aria-label)
@@ -53,6 +57,7 @@ Standard interactive button with six visual variants (primary, secondary, danger
 
 ### Card  ·  since 1.0.0
 Content container with background, border, optional header, and loading/error/empty state support; the primary surface for grouping related content.
+- import: `@codesweep-ai/ui`
 - intents: `card`, `panel`, `container`, `content surface`, `tile`, `widget`, `dashboard tile`, `loading skeleton`, `bordered container`, `card header`, `maximize`, `minimize`, `card group`, `content card`, `info card`
 - use when: Grouping related content with a consistent bordered surface
 - use when: Dashboard tiles or stats cards that may have a loading state
@@ -64,6 +69,7 @@ Content container with background, border, optional header, and loading/error/em
 
 ### CardGroup  ·  since 1.0.0
 Layout container that manages maximize/minimize state for a group of Cards; supports fill (fixed-viewport) and natural-height stack modes.
+- import: `@codesweep-ai/ui`
 - intents: `card group`, `maximize`, `minimize`, `card layout`, `dashboard layout`, `expand collapse`, `viewport fill`, `card container`, `multi-card`, `card state`, `controlled layout`, `card grid`, `stacked cards`, `dashboard panel`
 - use when: Laying out multiple Cards that should share a fixed viewport height (fill mode)
 - use when: Providing maximize/minimize affordance across sibling Cards
@@ -74,6 +80,7 @@ Layout container that manages maximize/minimize state for a group of Cards; supp
 
 ### ChartFrame  ·  since 1.5.0
 Card frame + loading/error/empty states around a chart you render inside.
+- import: `@codesweep-ai/ui/chart`
 - intents: `chart`, `graph`, `plot`, `visualization`, `viz`, `dataviz`, `d3`, `recharts`, `sankey`, `bar chart`, `line chart`, `area chart`, `scatter`, `timeseries`, `force-directed graph`, `network graph`, `dashboard tile`
 - use when: Rendering any chart/visualization that needs consistent card chrome + states
 - use when: Always pair with useChartTheme() for theme-aware colors and axes
@@ -84,6 +91,7 @@ Card frame + loading/error/empty states around a chart you render inside.
 
 ### ChartTooltip  ·  since 1.5.0
 Token-styled tooltip shell for charts, positioned absolutely; handles bg, border, shadow, and radius so every chart's tooltip looks identical.
+- import: `@codesweep-ai/ui/chart`
 - intents: `chart tooltip`, `graph tooltip`, `data tooltip`, `hover tooltip`, `chart hover`, `visualization tooltip`, `recharts tooltip`, `d3 tooltip`, `dataviz tooltip`, `absolute tooltip`, `chart annotation`, `cursor tooltip`, `plot tooltip`
 - use when: Adding a hover tooltip to any custom chart or visualization inside a ChartFrame
 - use when: Ensuring consistent tooltip chrome across all charts without custom CSS
@@ -93,6 +101,7 @@ Token-styled tooltip shell for charts, positioned absolutely; handles bg, border
 
 ### CheckboxGroup  ·  since 1.0.0
 List of checkboxes with select-all/none controls, optional filter input, and collapsible grouped sections; integrates with FormGroup for label/helper/error rendering.
+- import: `@codesweep-ai/ui`
 - intents: `checkbox group`, `multi-select`, `checkboxes`, `filter checkboxes`, `select all`, `select none`, `grouped checkboxes`, `collapsible sections`, `filter sidebar`, `multi-select filter`, `checkbox list`, `form multi-select`, `faceted filter`, `options list`, `toggle group`
 - use when: Multi-select filter sidebar, for example file types, statuses or categories
 - use when: Any form field requiring multiple boolean selections from a list
@@ -104,6 +113,7 @@ List of checkboxes with select-all/none controls, optional filter input, and col
 
 ### Chip  ·  since 0.2.0  ·  experimental
 Dense toggle pill for toolbar filters, with pressed, count, and disabled states.
+- import: `@codesweep-ai/ui`
 - intents: `chip`, `filter chip`, `pill`, `toggle`, `toolbar filter`, `count`, `pressed`
 - use when: Toggling independent filters in a compact toolbar
 - use when: Showing a filter label with a small result count
@@ -114,6 +124,7 @@ Dense toggle pill for toolbar filters, with pressed, count, and disabled states.
 
 ### CodeBlock  ·  since 1.0.0
 Syntax-highlighted code display with line numbers, copy button, line highlights, and query match highlighting; supports all highlight.js languages.
+- import: `@codesweep-ai/ui/code`
 - intents: `code block`, `syntax highlighting`, `code display`, `highlight.js`, `code viewer`, `copy code`, `line numbers`, `code snippet`, `source code`, `programming language`, `code diff`, `search highlight`, `code highlight`, `monospace`, `code panel`
 - use when: Displaying source code with syntax highlighting and a copy affordance
 - use when: Showing a code snippet with specific lines highlighted, as search results do
@@ -125,6 +136,7 @@ Syntax-highlighted code display with line numbers, copy button, line highlights,
 
 ### Dropdown  ·  since 1.0.0
 Styled native select element for choosing a single value from a list of options, with optional label, helper, and error states.
+- import: `@codesweep-ai/ui`
 - intents: `dropdown`, `select`, `native select`, `option`, `picker`, `choose`, `single select`, `combo`, `form field`, `filter`, `menu`, `selector`, `listbox`, `choice`
 - use when: Choosing one value from a short or long predefined list
 - use when: A form field needs a label, helper text, or inline validation error
@@ -136,6 +148,7 @@ Styled native select element for choosing a single value from a list of options,
 
 ### EventLanes  ·  since 0.2.0  ·  experimental
 Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.
+- import: `@codesweep-ai/ui`
 - intents: `event lanes`, `event timeline`, `event strip`, `canvas timeline`, `trace events`, `agent events`, `multi-agent timeline`, `spans`, `overview`, `virtual listbox`
 - use when: Showing an ordered event stream on one or more named lanes
 - use when: A dense trace needs thousands of selectable events without thousands of laid-out DOM marks
@@ -148,6 +161,7 @@ Canvas-rendered events on a shared global-index axis, with lanes, spans, overvie
 
 ### FormGroup  ·  since 1.3.0
 Label + control + helper/error composition wrapper. The canonical way to render any single form field with accessible label binding, error messaging, and aria wiring.
+- import: `@codesweep-ai/ui`
 - intents: `form group`, `label`, `field wrapper`, `helper text`, `error message`, `validation`, `aria`, `accessible form`, `input wrapper`, `form field`, `required`, `hint`, `describedby`
 - use when: Wrapping any single Input, Dropdown, or custom control with a visible label
 - use when: Displaying inline validation errors or helper hints below a field
@@ -158,6 +172,7 @@ Label + control + helper/error composition wrapper. The canonical way to render 
 
 ### HighlightText  ·  since 1.0.0
 Renders text with matched substrings visually highlighted using semantic mark elements. Used in search results, filtered lists, and autocomplete suggestions.
+- import: `@codesweep-ai/ui`
 - intents: `highlight`, `text highlight`, `search highlight`, `mark`, `match`, `substring`, `autocomplete`, `filter`, `query match`, `search results`, `bolden`, `emphasize`, `annotate`
 - use when: Showing which part of a result matched a user's search query
 - use when: Highlighting matches in a filtered list or autocomplete dropdown
@@ -167,6 +182,7 @@ Renders text with matched substrings visually highlighted using semantic mark el
 
 ### Input  ·  since 1.3.0
 Standard text input supporting plain text, email, password, number, tel, url, and multiline (textarea) variants, with optional prefix/suffix slots and error state.
+- import: `@codesweep-ai/ui`
 - intents: `input`, `text input`, `text field`, `textarea`, `multiline`, `email`, `password`, `number`, `form control`, `prefix`, `suffix`, `search field`, `field`, `controlled input`
 - use when: Collecting freeform text from the user in a form
 - use when: Needing a multiline textarea (set multiline=true)
@@ -178,6 +194,7 @@ Standard text input supporting plain text, email, password, number, tel, url, an
 
 ### Legend  ·  since 0.2.0  ·  experimental
 Compact token-colour legend that can be static or toggle a selected item set.
+- import: `@codesweep-ai/ui`
 - intents: `legend`, `key`, `swatch`, `color key`, `filter legend`, `toggle legend`, `categories`
 - use when: Explaining token-coloured categories beside a chart, event lane, or trace
 - use when: Letting users show or hide categories without building custom legend buttons
@@ -189,6 +206,7 @@ Compact token-colour legend that can be static or toggle a selected item set.
 
 ### MarkdownMinimap  ·  since 1.0.0
 Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown container. Draws a block silhouette of headings and content, overlays the current viewport, and lets the user click or drag to scroll.
+- import: `@codesweep-ai/ui/minimap`
 - intents: `minimap`, `overview`, `scrollbar`, `canvas`, `scroll indicator`, `document map`, `navigation`, `long document`, `outline`, `viewport`, `scroll position`, `markdown nav`
 - use when: Providing a bird's-eye navigation control alongside a long markdown document
 - use when: Users need to jump to arbitrary scroll positions quickly
@@ -199,6 +217,7 @@ Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown co
 
 ### MarkdownViewer  ·  since 1.0.0
 Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline.
+- import: `@codesweep-ai/ui/markdown` or `@codesweep-ai/ui/markdown/rich`
 - intents: `markdown`, `markdown viewer`, `gfm`, `github flavored markdown`, `syntax highlight`, `mermaid`, `katex`, `math`, `outline`, `minimap`, `document viewer`, `rich text`, `code block`, `alert`
 - use when: Rendering markdown documents with headings, code blocks, or tables
 - use when: A long document needs heading-based navigation (outline) or a scroll minimap
@@ -211,6 +230,7 @@ Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline
 
 ### MermaidDiagram  ·  since 1.0.0
 Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-theme change) and shows a friendly error block with raw source if the diagram fails to parse.
+- import: `@codesweep-ai/ui/mermaid`
 - intents: `mermaid`, `diagram`, `flowchart`, `sequence diagram`, `gantt`, `graph`, `chart`, `uml`, `visualization`, `dsl`, `svg diagram`, `architecture diagram`, `flow diagram`, `sketch`, `hand-drawn`, `roughjs-style`
 - use when: Rendering a Mermaid DSL string as an SVG diagram
 - use when: Embedding diagrams inside a MarkdownViewer via a fenced code block
@@ -223,6 +243,7 @@ Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-
 
 ### Modal  ·  since 1.0.0
 Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, scrollable content area, header with close button, and optional footer actions.
+- import: `@codesweep-ai/ui`
 - intents: `modal`, `dialog`, `overlay`, `popup`, `lightbox`, `confirm`, `confirmation`, `alert dialog`, `drawer`, `sheet`, `portal`, `focus trap`, `backdrop`, `dismiss`
 - use when: Asking for user confirmation before a destructive or irreversible action
 - use when: Presenting a form or detail view without navigating away
@@ -234,6 +255,7 @@ Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, s
 
 ### Page  ·  since 0.3.0  ·  experimental
 Page-level content container that owns the inset from the window edge, the content width and the vertical scroll.
+- import: `@codesweep-ai/ui`
 - intents: `page`, `page layout`, `content area`, `main`, `layout container`, `page padding`, `page inset`, `max width`, `readable width`, `centered content`, `content width`, `page scroll`, `single scrollbar`, `scrollbar gutter`, `layout mode`, `main landmark`
 - use when: Wrapping the content of a page, inside AppShell or on its own
 - use when: A page should scroll once, rather than each box inside it scrolling separately
@@ -246,6 +268,7 @@ Page-level content container that owns the inset from the window edge, the conte
 
 ### Panel  ·  since 1.0.0
 Collapsible side panel with a header and scrollable content area. Used for file trees, doc outlines, and filter panels inside flex layouts.
+- import: `@codesweep-ai/ui`
 - intents: `panel`, `sidebar`, `collapsible`, `side panel`, `pane`, `drawer`, `filter panel`, `file tree panel`, `outline`, `collapse`, `expand`, `header`, `layout`
 - use when: Providing a collapsible sidebar alongside main content in a flex layout
 - use when: Wrapping a Tree, SectionedTree, or filter controls in a titled panel
@@ -257,6 +280,7 @@ Collapsible side panel with a header and scrollable content area. Used for file 
 
 ### PulseBadge  ·  since 1.4.0
 Small pulsing dot that signals live, in-progress activity.
+- import: `@codesweep-ai/ui`
 - intents: `pulse`, `badge`, `dot`, `live`, `activity`, `animated`, `indicator`, `status dot`, `pulsing`, `real-time`, `streaming`, `agent activity`
 - use when: Indicating that an agent or process is running
 - use when: Decorating a label with a live-activity signal, as AgentStatus does
@@ -267,6 +291,7 @@ Small pulsing dot that signals live, in-progress activity.
 
 ### RadioGroup  ·  since 0.2.0  ·  experimental
 Exclusive choice among two or more options, each able to carry a description.
+- import: `@codesweep-ai/ui`
 - intents: `radio`, `radio group`, `radiogroup`, `exclusive options`, `single select`, `choice`, `mode`
 - use when: Choosing one of several mutually exclusive options that each need explaining
 - use when: More options than SegmentedControl accepts, or options too long for a compact toolbar
@@ -279,6 +304,7 @@ Exclusive choice among two or more options, each able to carry a description.
 
 ### SearchInput  ·  since 1.0.0
 Integrated search bar with inline search button, clear button, and optional auto-search after a character threshold.
+- import: `@codesweep-ai/ui`
 - intents: `search`, `input`, `filter`, `query`, `search bar`, `autocomplete`, `debounce`, `clear`, `find`, `lookup`, `search field`, `text input`
 - use when: Providing a standalone search bar that fires a query callback
 - use when: Auto-searching as the user types past a character threshold
@@ -289,6 +315,7 @@ Integrated search bar with inline search button, clear button, and optional auto
 
 ### SectionedTree  ·  since 1.0.0
 Self-managing component that renders multiple independent tree sections with collapsible headers, per-section search, and shared selection.
+- import: `@codesweep-ai/ui`
 - intents: `sectioned tree`, `grouped tree`, `file explorer`, `multi-section`, `collapsible`, `sidebar`, `navigation`, `tree groups`, `project files`, `dependencies`, `explorer`
 - use when: Showing multiple independent tree groups, such as project files and dependencies
 - use when: Explorer-style sidebar with collapsible named sections
@@ -300,6 +327,7 @@ Self-managing component that renders multiple independent tree sections with col
 
 ### SegmentedControl  ·  since 0.2.0  ·  experimental
 Compact radiogroup for choosing one of two to five adjacent options.
+- import: `@codesweep-ai/ui`
 - intents: `segmented control`, `radio group`, `view switcher`, `mode toggle`, `exclusive options`
 - use when: Switching between two to five mutually exclusive views or render modes
 - use when: Keeping a small mode choice visible in a compact toolbar
@@ -311,6 +339,7 @@ Compact radiogroup for choosing one of two to five adjacent options.
 
 ### Skeleton  ·  since 1.1.0
 Primitive shimmer placeholder for loading states — indicates where content will appear without a generic spinner.
+- import: `@codesweep-ai/ui`
 - intents: `skeleton`, `loading`, `shimmer`, `placeholder`, `spinner alternative`, `content placeholder`, `loading state`, `pulse`, `rect`, `circle`, `text placeholder`
 - use when: Filling space where async content is loading
 - use when: Building component-level loading states (tables, cards, lists)
@@ -320,6 +349,7 @@ Primitive shimmer placeholder for loading states — indicates where content wil
 
 ### SplitPane  ·  since 1.0.0
 Container with two or three resizable panes separated by drag handles, with optional per-pane width persistence.
+- import: `@codesweep-ai/ui`
 - intents: `split pane`, `resizable`, `drag handle`, `layout`, `panels`, `two-column`, `three-column`, `side by side`, `resize`, `master detail`, `panel layout`, `persistent width`
 - use when: Two- or three-column layouts where the user should control pane widths
 - use when: File explorer + detail view side-by-side
@@ -330,6 +360,7 @@ Container with two or three resizable panes separated by drag handles, with opti
 
 ### StatusBadge  ·  since 1.0.0
 Small static indicator for status values with a colored dot and uppercase label.
+- import: `@codesweep-ai/ui`
 - intents: `status badge`, `badge`, `indicator`, `success`, `warning`, `error`, `neutral`, `dot`, `label`, `state indicator`, `tag`, `chip`, `status label`
 - use when: Displaying a discrete status value (success / warning / error / neutral)
 - use when: Labelling an item's current state in a table, card, or list row
@@ -339,6 +370,7 @@ Small static indicator for status values with a colored dot and uppercase label.
 
 ### StreamingText  ·  since 1.4.0
 Live-rendered plain text that reveals characters at a configurable speed with a blinking trailing cursor, for streaming model output.
+- import: `@codesweep-ai/ui`
 - intents: `streaming text`, `typewriter`, `token stream`, `live text`, `model output`, `llm output`, `character reveal`, `cursor`, `animated text`, `streaming`, `real-time`, `chat output`
 - use when: Rendering token-by-token model output as it streams from the backend
 - use when: Showing live plain-text output below an AgentStatus row
@@ -349,6 +381,7 @@ Live-rendered plain text that reveals characters at a configurable speed with a 
 
 ### Table  ·  since 1.0.0
 Data table with sortable columns, filtering, pagination, and async states.
+- import: `@codesweep-ai/ui`
 - intents: `table`, `grid`, `data table`, `tabular`, `rows`, `columns`, `sortable`, `sort`, `filter`, `search`, `paginate`, `pagination`, `list view`, `spreadsheet`, `dataset`
 - use when: Displaying rows of structured data across multiple columns
 - use when: You need sorting, client-side filtering, or pagination
@@ -359,6 +392,7 @@ Data table with sortable columns, filtering, pagination, and async states.
 
 ### ThemeToggle  ·  since 1.0.0
 Button or radio-group control for cycling through theme modes (system, light, dark), with localStorage persistence.
+- import: `@codesweep-ai/ui`
 - intents: `theme toggle`, `dark mode`, `light mode`, `color scheme`, `theme switcher`, `appearance`, `system theme`, `mode toggle`, `dark light`, `preferences`, `ui theme`
 - use when: Letting users switch between light, dark, and system color schemes
 - use when: Placing a theme control in the app header or settings panel
@@ -367,6 +401,7 @@ Button or radio-group control for cycling through theme modes (system, light, da
 
 ### Toast  ·  since 1.11.0
 Single transient notification — feedback for an action that auto-dismisses, with a colored variant + screen-reader announcement.
+- import: `@codesweep-ai/ui`
 - intents: `toast`, `notification`, `snackbar`, `alert`, `feedback`, `transient`, `popup`, `success message`, `error message`, `status`, `dismiss`, `announce`, `sr-only`, `aria-live`, `role status`, `role alert`
 - use when: Confirming an action completed ("Saved", "Copied")
 - use when: Reporting a recoverable error ("Couldn't save — retry")
@@ -378,6 +413,7 @@ Single transient notification — feedback for an action that auto-dismisses, wi
 
 ### ToastContainer  ·  since 1.11.0
 Host for the toast system — mount once at the app root and call `toast.success(...)` etc. from anywhere.
+- import: `@codesweep-ai/ui`
 - intents: `toast`, `notifications`, `snackbar`, `container`, `host`, `root`, `stacking`, `bottom-right`, `auto-dismiss`, `imperative api`, `pub sub`, `store`, `feedback layer`
 - use when: Adding the global toast / notification system to an app — mount once at root
 - avoid when: You need persistent / structural messaging — use an inline Alert / Banner
@@ -387,6 +423,7 @@ Host for the toast system — mount once at the app root and call `toast.success
 
 ### Tooltip  ·  since 0.3.0
 Accessible hover and focus tooltip, with an overflow-only mode for labels cut off by their container.
+- import: `@codesweep-ai/ui`
 - intents: `tooltip`, `hover`, `focus`, `popover`, `hint`, `truncation`, `ellipsis`, `overflow`, `title attribute`, `accessible tooltip`, `describedby`, `escape to dismiss`, `keyboard`
 - use when: A truncated label needs to offer its full text
 - use when: A control needs a hint its accessible name does not already carry
@@ -400,6 +437,7 @@ Accessible hover and focus tooltip, with an overflow-only mode for labels cut of
 
 ### Tree  ·  since 1.0.0
 Hierarchical tree view with expand/collapse, selection, search/filter, and optional drag-to-reorder.
+- import: `@codesweep-ai/ui`
 - intents: `tree`, `hierarchy`, `file tree`, `expand collapse`, `treeview`, `navigation`, `folder`, `nodes`, `filterable`, `search tree`, `drag reorder`, `file browser`, `ast`
 - use when: Displaying a hierarchical data structure (file system, AST, module graph)
 - use when: Navigating nested nodes with expand/collapse and selection

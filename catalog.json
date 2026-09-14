@@ -8,6 +8,9 @@
     {
       "spec": "components/AgentStatus.md",
       "name": "AgentStatus",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Single-line status row for visible agent work; shows a verb-phrase and animated indicator so users always know what the agent is doing.",
       "keywords": [
         "agent status",
@@ -49,6 +52,9 @@
     {
       "spec": "components/AgentTrace.md",
       "name": "AgentTrace",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Vertical, expandable list of chronological agent steps with status icons.",
       "keywords": [
         "agent",
@@ -88,6 +94,9 @@
     {
       "spec": "components/AppShell.md",
       "name": "AppShell",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Application shell with always-dark sticky header, scrollable content area, and optional footer; the top-level layout wrapper for every page.",
       "keywords": [
         "app shell",
@@ -128,6 +137,9 @@
     {
       "spec": "components/Button.md",
       "name": "Button",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Standard interactive button with six visual variants (primary, secondary, danger, ghost, success, warning) and two sizes.",
       "keywords": [
         "button",
@@ -168,6 +180,9 @@
     {
       "spec": "components/Card.md",
       "name": "Card",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Content container with background, border, optional header, and loading/error/empty state support; the primary surface for grouping related content.",
       "keywords": [
         "card",
@@ -210,6 +225,9 @@
     {
       "spec": "components/CardGroup.md",
       "name": "CardGroup",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Layout container that manages maximize/minimize state for a group of Cards; supports fill (fixed-viewport) and natural-height stack modes.",
       "keywords": [
         "card group",
@@ -249,6 +267,9 @@
     {
       "spec": "components/ChartFrame.md",
       "name": "ChartFrame",
+      "import": [
+        "@codesweep-ai/ui/chart"
+      ],
       "summary": "Card frame + loading/error/empty states around a chart you render inside.",
       "keywords": [
         "chart",
@@ -290,6 +311,9 @@
     {
       "spec": "components/ChartTooltip.md",
       "name": "ChartTooltip",
+      "import": [
+        "@codesweep-ai/ui/chart"
+      ],
       "summary": "Token-styled tooltip shell for charts, positioned absolutely; handles bg, border, shadow, and radius so every chart's tooltip looks identical.",
       "keywords": [
         "chart tooltip",
@@ -327,6 +351,9 @@
     {
       "spec": "components/CheckboxGroup.md",
       "name": "CheckboxGroup",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "List of checkboxes with select-all/none controls, optional filter input, and collapsible grouped sections; integrates with FormGroup for label/helper/error rendering.",
       "keywords": [
         "checkbox group",
@@ -370,6 +397,9 @@
     {
       "spec": "components/Chip.md",
       "name": "Chip",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Dense toggle pill for toolbar filters, with pressed, count, and disabled states.",
       "keywords": [
         "chip",
@@ -404,6 +434,9 @@
     {
       "spec": "components/CodeBlock.md",
       "name": "CodeBlock",
+      "import": [
+        "@codesweep-ai/ui/code"
+      ],
       "summary": "Syntax-highlighted code display with line numbers, copy button, line highlights, and query match highlighting; supports all highlight.js languages.",
       "keywords": [
         "code block",
@@ -445,6 +478,9 @@
     {
       "spec": "components/Dropdown.md",
       "name": "Dropdown",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Styled native select element for choosing a single value from a list of options, with optional label, helper, and error states.",
       "keywords": [
         "dropdown",
@@ -487,6 +523,9 @@
     {
       "spec": "components/EventLanes.md",
       "name": "EventLanes",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.",
       "keywords": [
         "event lanes",
@@ -523,6 +562,9 @@
     {
       "spec": "components/FormGroup.md",
       "name": "FormGroup",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Label + control + helper/error composition wrapper. The canonical way to render any single form field with accessible label binding, error messaging, and aria wiring.",
       "keywords": [
         "form group",
@@ -562,6 +604,9 @@
     {
       "spec": "components/HighlightText.md",
       "name": "HighlightText",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Renders text with matched substrings visually highlighted using semantic mark elements. Used in search results, filtered lists, and autocomplete suggestions.",
       "keywords": [
         "highlight",
@@ -600,6 +645,9 @@
     {
       "spec": "components/Input.md",
       "name": "Input",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Standard text input supporting plain text, email, password, number, tel, url, and multiline (textarea) variants, with optional prefix/suffix slots and error state.",
       "keywords": [
         "input",
@@ -642,6 +690,9 @@
     {
       "spec": "components/Legend.md",
       "name": "Legend",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Compact token-colour legend that can be static or toggle a selected item set.",
       "keywords": [
         "legend",
@@ -676,6 +727,9 @@
     {
       "spec": "components/MarkdownMinimap.md",
       "name": "MarkdownMinimap",
+      "import": [
+        "@codesweep-ai/ui/minimap"
+      ],
       "summary": "Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown container. Draws a block silhouette of headings and content, overlays the current viewport, and lets the user click or drag to scroll.",
       "keywords": [
         "minimap",
@@ -713,6 +767,10 @@
     {
       "spec": "components/MarkdownViewer.md",
       "name": "MarkdownViewer",
+      "import": [
+        "@codesweep-ai/ui/markdown",
+        "@codesweep-ai/ui/markdown/rich"
+      ],
       "summary": "Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline.",
       "keywords": [
         "markdown",
@@ -755,6 +813,9 @@
     {
       "spec": "components/MermaidDiagram.md",
       "name": "MermaidDiagram",
+      "import": [
+        "@codesweep-ai/ui/mermaid"
+      ],
       "summary": "Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-theme change) and shows a friendly error block with raw source if the diagram fails to parse.",
       "keywords": [
         "mermaid",
@@ -797,6 +858,9 @@
     {
       "spec": "components/Modal.md",
       "name": "Modal",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, scrollable content area, header with close button, and optional footer actions.",
       "keywords": [
         "modal",
@@ -835,6 +899,9 @@
     {
       "spec": "components/Page.md",
       "name": "Page",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Page-level content container that owns the inset from the window edge, the content width and the vertical scroll.",
       "keywords": [
         "page",
@@ -879,6 +946,9 @@
     {
       "spec": "components/Panel.md",
       "name": "Panel",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Collapsible side panel with a header and scrollable content area. Used for file trees, doc outlines, and filter panels inside flex layouts.",
       "keywords": [
         "panel",
@@ -923,6 +993,9 @@
     {
       "spec": "components/PulseBadge.md",
       "name": "PulseBadge",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Small pulsing dot that signals live, in-progress activity.",
       "keywords": [
         "pulse",
@@ -962,6 +1035,9 @@
     {
       "spec": "components/RadioGroup.md",
       "name": "RadioGroup",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Exclusive choice among two or more options, each able to carry a description.",
       "keywords": [
         "radio",
@@ -998,6 +1074,9 @@
     {
       "spec": "components/SearchInput.md",
       "name": "SearchInput",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Integrated search bar with inline search button, clear button, and optional auto-search after a character threshold.",
       "keywords": [
         "search",
@@ -1037,6 +1116,9 @@
     {
       "spec": "components/SectionedTree.md",
       "name": "SectionedTree",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Self-managing component that renders multiple independent tree sections with collapsible headers, per-section search, and shared selection.",
       "keywords": [
         "sectioned tree",
@@ -1078,6 +1160,9 @@
     {
       "spec": "components/SegmentedControl.md",
       "name": "SegmentedControl",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Compact radiogroup for choosing one of two to five adjacent options.",
       "keywords": [
         "segmented control",
@@ -1112,6 +1197,9 @@
     {
       "spec": "components/Skeleton.md",
       "name": "Skeleton",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Primitive shimmer placeholder for loading states — indicates where content will appear without a generic spinner.",
       "keywords": [
         "skeleton",
@@ -1147,6 +1235,9 @@
     {
       "spec": "components/SplitPane.md",
       "name": "SplitPane",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Container with two or three resizable panes separated by drag handles, with optional per-pane width persistence.",
       "keywords": [
         "split pane",
@@ -1184,6 +1275,9 @@
     {
       "spec": "components/StatusBadge.md",
       "name": "StatusBadge",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Small static indicator for status values with a colored dot and uppercase label.",
       "keywords": [
         "status badge",
@@ -1222,6 +1316,9 @@
     {
       "spec": "components/StreamingText.md",
       "name": "StreamingText",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Live-rendered plain text that reveals characters at a configurable speed with a blinking trailing cursor, for streaming model output.",
       "keywords": [
         "streaming text",
@@ -1261,6 +1358,9 @@
     {
       "spec": "components/Table.md",
       "name": "Table",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Data table with sortable columns, filtering, pagination, and async states.",
       "keywords": [
         "table",
@@ -1307,6 +1407,9 @@
     {
       "spec": "components/ThemeToggle.md",
       "name": "ThemeToggle",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Button or radio-group control for cycling through theme modes (system, light, dark), with localStorage persistence.",
       "keywords": [
         "theme toggle",
@@ -1337,6 +1440,9 @@
     {
       "spec": "components/Toast.md",
       "name": "Toast",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Single transient notification — feedback for an action that auto-dismisses, with a colored variant + screen-reader announcement.",
       "keywords": [
         "toast",
@@ -1376,6 +1482,9 @@
     {
       "spec": "components/ToastContainer.md",
       "name": "ToastContainer",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Host for the toast system — mount once at the app root and call `toast.success(...)` etc. from anywhere.",
       "keywords": [
         "toast",
@@ -1410,6 +1519,9 @@
     {
       "spec": "components/Tooltip.md",
       "name": "Tooltip",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Accessible hover and focus tooltip, with an overflow-only mode for labels cut off by their container.",
       "keywords": [
         "tooltip",
@@ -1453,6 +1565,9 @@
     {
       "spec": "components/Tree.md",
       "name": "Tree",
+      "import": [
+        "@codesweep-ai/ui"
+      ],
       "summary": "Hierarchical tree view with expand/collapse, selection, search/filter, and optional drag-to-reorder.",
       "keywords": [
         "tree",

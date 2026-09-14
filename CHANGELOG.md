@@ -44,6 +44,12 @@ holds today.
   categorical ramp for charts where any pair of categories can meet: a
   node-link diagram, a scatter plot, a map, a small multiple. `useChartTheme()`
   exposes them as `theme.graph` and `theme.graphOther`.
+- Every component in `CATALOG.md` and `catalog.json` names the specifier it is
+  imported from. Six of the 38 sit behind a subpath rather than the root, and
+  the index used to be silent about which, so a reader following it wrote the
+  root import and learned otherwise from the compiler. In `catalog.json` the
+  field is `import` and it holds a list, because `MarkdownViewer` is importable
+  from both `@codesweep-ai/ui/markdown` and `@codesweep-ai/ui/markdown/rich`.
 
 ## 0.3.0
 
