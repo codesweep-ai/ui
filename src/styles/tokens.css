@@ -368,13 +368,13 @@
      beside any other, and the categorical set collapses there. Eight slots and
      a neutral, because no nine-hue set tested survives protanopia.
      Both palettes need a second channel: a legend, a label, a shape. */
-  --color-graph-1: #f05f95;   /* pink */
-  --color-graph-2: #902804;   /* red */
-  --color-graph-3: #c58916;   /* ochre */
-  --color-graph-4: #24804f;   /* green */
-  --color-graph-5: #00a2c7;   /* cyan */
-  --color-graph-6: #406be0;   /* blue */
-  --color-graph-7: #5c2eaa;   /* violet */
-  --color-graph-8: #9b5299;   /* purple */
+  --color-graph-1: #e9578b;   /* pink */
+  --color-graph-2: #853604;   /* red */
+  --color-graph-3: #a28b17;   /* ochre */
+  --color-graph-4: #247e4b;   /* green */
+  --color-graph-5: #0298be;   /* cyan */
+  --color-graph-6: #5768e2;   /* blue */
+  --color-graph-7: #5e2da9;   /* violet */
+  --color-graph-8: #9f468e;   /* purple */
   --color-graph-other: var(--color-structural);
 }

@@ -549,10 +549,12 @@ a legend, a direct label, a shape or a position.
 | Palette | Regime | Slots that hold | Worst separation under colour-blind simulation |
 |---|---|---|---|
 | `--color-cat-*` | adjacent pairs | 6 | 9.4 dark, 8.0 light |
-| `--color-graph-*` | any pair | 8 | 9.6 dark, 10.0 light |
+| `--color-graph-*` | any pair | 8 | 9.6 dark, 9.5 light |
 
 `--color-cat-*` holds to six slots. At seven the worst adjacent pair separates
-by 6.4 in the dark theme and 4.4 in the light one, against a floor of 6. Slots
+by 6.4 in the dark theme and 4.4 in the light one, against the floor of 8 this
+project holds a palette to. Six is where it still clears that floor, and the
+light theme clears it exactly, with no headroom. Slots
 seven to ten exist and are not guaranteed separable. A chart carrying more than
 six categories folds the remainder rather than reaching for them.
 
@@ -574,20 +576,31 @@ six categories folds the remainder rather than reaching for them.
 
 | Token | Dark | Light | Hue |
 |---|---|---|---|
-| `--color-graph-1` | `#e85d90` | `#f05f95` | Pink |
-| `--color-graph-2` | `#bf300e` | `#902804` | Red |
-| `--color-graph-3` | `#b98d21` | `#c58916` | Ochre |
-| `--color-graph-4` | `#05744c` | `#24804f` | Green |
-| `--color-graph-5` | `#03a0b9` | `#00a2c7` | Cyan |
-| `--color-graph-6` | `#2462d0` | `#406be0` | Blue |
-| `--color-graph-7` | `#937af9` | `#5c2eaa` | Violet |
-| `--color-graph-8` | `#904598` | `#9b5299` | Purple |
+| `--color-graph-1` | `#e85d90` | `#e9578b` | Pink |
+| `--color-graph-2` | `#bf300e` | `#853604` | Red |
+| `--color-graph-3` | `#b98d21` | `#a28b17` | Ochre |
+| `--color-graph-4` | `#05744c` | `#247e4b` | Green |
+| `--color-graph-5` | `#03a0b9` | `#0298be` | Cyan |
+| `--color-graph-6` | `#2462d0` | `#5768e2` | Blue |
+| `--color-graph-7` | `#937af9` | `#5e2da9` | Violet |
+| `--color-graph-8` | `#904598` | `#9f468e` | Purple |
 | `--color-graph-other` | `var(--color-structural)` | `var(--color-structural)` | Neutral |
 
-Each slot keeps its hue between the themes, within eight degrees, which is the
-drift the categorical palette already holds to. Lightness is what differs, and
-it differs a lot. A colour-blind reader keeps lightness when hue collapses, so
-spreading it is what holds eight slots apart.
+Each slot keeps its hue between the themes, within twelve degrees, so a
+category stays the same colour when the reader toggles. Lightness is what
+differs, and it differs a lot. A colour-blind reader keeps lightness when hue
+collapses, so spreading it is what holds eight slots apart.
+
+Both themes are measured against the surface that binds them, which is the one
+a mark contrasts least against. In the light theme that is the page rather than
+a card, and validating against the card alone once let three slots ship under
+the 3:1 a graphical object needs.
+
+`--color-graph-other` is not held to the separation contract, and a reader
+should not assume it is. It carries almost no chroma, so under colour blindness
+it separates from the nearest slot by about 2, where the slots hold 9.5 apart.
+It is told apart by sitting last in a legend and by being the only muted mark on
+the page, not by its hue. Do not use it as a ninth category.
 
 #### When there are more categories than slots
 
