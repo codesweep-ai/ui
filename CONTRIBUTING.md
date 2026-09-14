@@ -134,9 +134,51 @@ it.
   carries the behaviour before a `div` and an ARIA role.
 - **A component rendering a DOM element forwards its ref.** Files using state,
   effects, refs or browser APIs carry a top-level `"use client"`.
+- **A categorical colour holds to a measured contract.** `check:palette` holds
+  `--color-cat-*` and `--color-graph-*` to section 4.12 of the specification,
+  and `npm run check` runs it.
 
 Section 4 of [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) has the tokens and
 the reasoning behind them.
+
+`check:palette` reads the colours out of `src/styles/tokens.css` and holds each
+categorical ramp to what section 4.12 promises for it:
+
+```sh
+npm run check:palette      # both ramps, against the contract in the spec
+```
+
+Every contract it holds prints a line, passing or failing, naming the pair and
+the figure measured. Run it when you move a colour token, and read the lines
+rather than the exit code: a pass can sit close to its floor.
+
+The two ramps are held to different pairs and to different checks.
+`--color-cat-*` is measured on neighbouring slots, because a bar, line or
+stacked chart only puts a series beside the one next to it in the order.
+`--color-graph-*` is measured on every pair, because a node-link diagram, a
+scatter plot or a small multiple can put any category beside any other.
+
+`--color-graph-*` answers for every check the gate carries:
+
+- Two colours separate under simulated red-green colour blindness.
+- Two colours separate for a reader with full colour vision.
+- Lightness stays inside the band the theme declares.
+- Chroma stays above the floor where a hue starts reading as grey.
+- A mark contrasts with both surfaces it can land on.
+
+`--color-cat-*` answers for the separation under colour blindness and for the
+contrast, and for nothing else on that list. It is a muted set by decision, so
+its chroma sits under that floor and its lightness sits outside that band.
+Holding it to either would fail the build over something this project chose on
+purpose.
+
+What the gate leaves alone is written in `scripts/check-palette.mjs`, above the
+contracts it declares. `--color-cat-1` and `--color-cat-2` sit closer than the
+floor for a reader with full colour vision. That gap is a miss rather than a
+decision, and CUI-091 tracks it. The slots past what section 4.12 holds each
+ramp to are declared and never measured. Read those comments before you widen
+or narrow what the gate asks. A gate that quietly checks less than it appears
+to is how the graph ramp shipped with a contrast failure.
 
 ## Tests
 

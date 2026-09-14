@@ -10,6 +10,19 @@ holds today.
 
 ## Unreleased
 
+### Breaking changes
+
+- `--color-cat-*` holds to six slots rather than ten. Its values have not
+  moved, and slots seven to ten still resolve to the colours they always did.
+  What they no longer carry is the promise that a reader can tell them apart.
+  Past six, adjacent hues sit too close, so a chart with more than six series
+  takes `theme.graph` or folds the remainder. It is filed as breaking rather
+  than as changed behaviour, because a consumer drawing seven series has lost a
+  guarantee this package gave them. Nothing they render today looks any
+  different. Section 4.12 of
+  [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) states what each palette holds
+  to, and what to do at nine categories.
+
 ### Fixed
 
 - `useChartTheme` restyles a chart when the theme changes. Every caller of
@@ -31,15 +44,6 @@ holds today.
   categorical ramp for charts where any pair of categories can meet: a
   node-link diagram, a scatter plot, a map, a small multiple. `useChartTheme()`
   exposes them as `theme.graph` and `theme.graphOther`.
-
-### Changed behaviour
-
-- `--color-cat-*` is documented as holding to six slots rather than ten. Its
-  values have not moved. Past six, adjacent hues are not far enough apart to
-  stay distinct, so a chart with more than six series takes `theme.graph` or
-  folds the remainder. Section 4.12 of
-  [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) states what each palette holds
-  to, and what to do at nine categories.
 
 ## 0.3.0
 
