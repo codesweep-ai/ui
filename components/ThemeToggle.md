@@ -86,7 +86,9 @@ interface ThemeToggleProps {
 - **Click (radio-group)**: Sets theme to the clicked option.
 - Theme is applied via `document.documentElement.setAttribute("data-theme", resolved)`.
 - The chosen **mode** (never the resolved theme) persists in `localStorage` under `storageKey` (default `cs-theme`; a tool that already has a key passes its own).
-- `?theme=light|dark|system` in the URL overrides the mode for that load and is not saved; pass `urlParam={false}` to opt out.
+- `?theme=light|dark|system` in the URL seeds the mode and is not saved; pass `urlParam={false}` to opt out.
+- The seed wins until the reader chooses a mode themselves. That choice then holds for the rest of the visit — every remount and every reload of the tab — because a toggle that silently undoes itself is a worse surprise than a link that does not pin. A seed whose value differs from the one last applied is a new instruction and seeds again.
+- A visit is the tab. Two keys under `storageKey` in `sessionStorage` record it: `<storageKey>:chosen` and `<storageKey>:seed`. Same-origin documents in one tab share them, so a page embedded in a same-origin iframe sees the choice made in its parent.
 - The same behaviour is available to custom controls through `useTheme({ storageKey, urlParam })`.
 - Resolved theme: if mode is "system", detect via `window.matchMedia("(prefers-color-scheme: dark)")`.
 

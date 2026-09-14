@@ -24,8 +24,15 @@ export interface UseThemeOptions {
   /** localStorage key the chosen mode persists under, and the identity of the shared theme. */
   storageKey?: string;
   /**
-   * Query parameter that overrides the mode for this load only (never saved);
-   * `false` disables it. Resolved once per storage key per load, as above.
+   * Query parameter that seeds the mode without saving it; `false` disables it.
+   * Resolved once per storage key per load, as above.
+   *
+   * The seed governs until the reader chooses a mode themselves, after which
+   * their choice holds for the rest of the visit — every remount, and every
+   * reload of the tab. A seed the reader has not answered yet still wins, and
+   * so does a seed whose value differs from the one last honoured, because a
+   * link carrying a different theme is a new instruction rather than the one
+   * already declined.
    */
   urlParam?: string | false;
 }
@@ -45,6 +52,59 @@ function readUrlMode(param: string | false): ThemeMode | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * What a visit remembers, in `sessionStorage`: whether the reader has chosen a
+ * mode, and the seed that was last honoured.
+ *
+ * A visit is the tab, which is what `sessionStorage` already means. The store
+ * cannot answer this on its own: it drops everything when the last caller
+ * unmounts, which is the point of it, and a route change or React's strict
+ * mode does exactly that. A flag that lives in the store would therefore last
+ * until the next route change; one in `localStorage` would outlive the tab and
+ * make the seed permanently dead. Between those, the tab is the span a reader
+ * would call "this visit".
+ */
+const CHOSEN_SUFFIX = ":chosen";
+const SEED_SUFFIX = ":seed";
+
+function readVisit(storageKey: string): { chosen: boolean; seed: string | null } {
+  if (typeof sessionStorage === "undefined") return { chosen: false, seed: null };
+  try {
+    return {
+      chosen: sessionStorage.getItem(storageKey + CHOSEN_SUFFIX) === "1",
+      seed: sessionStorage.getItem(storageKey + SEED_SUFFIX),
+    };
+  } catch {
+    return { chosen: false, seed: null };
+  }
+}
+
+/**
+ * Whether a seed still outranks what the reader has chosen.
+ *
+ * A read, and nothing else, because `getSnapshot` calls the function that
+ * calls this and may do so during a render React throws away.
+ */
+function seedOutranks(storageKey: string, seed: ThemeMode): boolean {
+  const visit = readVisit(storageKey);
+  return !visit.chosen || visit.seed !== seed;
+}
+
+/** Record that this seed has been applied, which re-seeds the visit. */
+function honourSeed(storageKey: string, seed: ThemeMode): void {
+  try {
+    sessionStorage.setItem(storageKey + SEED_SUFFIX, seed);
+    sessionStorage.removeItem(storageKey + CHOSEN_SUFFIX);
+  } catch { /* sessionStorage may be unavailable */ }
+}
+
+/** Record that the reader has chosen, so the seed stops outranking them. */
+function rememberChoice(storageKey: string): void {
+  try {
+    sessionStorage.setItem(storageKey + CHOSEN_SUFFIX, "1");
+  } catch { /* sessionStorage may be unavailable */ }
 }
 
 function getSystemTheme(): ResolvedTheme {
@@ -75,6 +135,10 @@ function readStoredMode(storageKey: string): ThemeMode {
  * Return a synchronous, dependency-free boot script that applies the same
  * URL → stored mode → system preference resolution as `useTheme` before React
  * mounts. Insert the returned string in an inline script in the document head.
+ *
+ * It reads the visit the same way `useTheme` does, so a reader who chose a mode
+ * and then reloaded a page that still carries `?theme=` is not shown the seed's
+ * colour for a frame before React corrects it.
  */
 export function themeBootScript(options: UseThemeOptions = {}): string {
   const storageKey = JSON.stringify(options.storageKey ?? DEFAULT_STORAGE_KEY).replace(/</g, "\\u003c");
@@ -82,7 +146,7 @@ export function themeBootScript(options: UseThemeOptions = {}): string {
     ? "null"
     : JSON.stringify(options.urlParam ?? DEFAULT_URL_PARAM).replace(/</g, "\\u003c");
 
-  return `(()=>{const k=${storageKey},p=${urlParam},ok=v=>v==="light"||v==="dark"||v==="system";let m=null;if(p){try{const q=new URLSearchParams(location.search).get(p);if(ok(q))m=q}catch{}}if(!m){try{const s=localStorage.getItem(k);if(ok(s))m=s}catch{}}if(!m)m="system";const r=m==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):m;document.documentElement.setAttribute("data-theme",r)})();`;
+  return `(()=>{const k=${storageKey},p=${urlParam},ok=v=>v==="light"||v==="dark"||v==="system";let m=null;if(p){try{const q=new URLSearchParams(location.search).get(p);if(ok(q)){let c=null,s=null;try{c=sessionStorage.getItem(k+":chosen");s=sessionStorage.getItem(k+":seed")}catch{}if(c!=="1"||s!==q)m=q}}catch{}}if(!m){try{const s=localStorage.getItem(k);if(ok(s))m=s}catch{}}if(!m)m="system";const r=m==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):m;document.documentElement.setAttribute("data-theme",r)})();`;
 }
 
 type Listener = () => void;
@@ -155,7 +219,9 @@ function publish(store: ThemeStore, mode: ThemeMode): void {
 
 /** What the store of record asks for right now. A read, and nothing else. */
 function initialMode(storageKey: string, urlParam: string | false): ThemeMode {
-  return readUrlMode(urlParam) ?? readStoredMode(storageKey);
+  const seed = readUrlMode(urlParam);
+  if (seed && seedOutranks(storageKey, seed)) return seed;
+  return readStoredMode(storageKey);
 }
 
 const warnedConflicts = new Set<string>();
@@ -212,6 +278,11 @@ function adopt(store: ThemeStore, urlParam: string | false): void {
   store.live = true;
   store.urlParam = urlParam;
   const mode = initialMode(store.storageKey, urlParam);
+  // The one place the visit is written from the seed side. `initialMode` is
+  // also reached from `getSnapshot`, which may run for a render React throws
+  // away, so it stays a read and this adoption records what it decided.
+  const seed = readUrlMode(urlParam);
+  if (seed && seed === mode) honourSeed(store.storageKey, seed);
   store.mode = mode;
   store.snapshot = snapshotOf(mode);
 }
@@ -238,6 +309,7 @@ function setStoreMode(store: ThemeStore, mode: ThemeMode): void {
   try {
     localStorage.setItem(store.storageKey, mode);
   } catch { /* localStorage may be unavailable */ }
+  rememberChoice(store.storageKey);
   applyTheme(resolveTheme(mode));
   publish(store, mode);
 }

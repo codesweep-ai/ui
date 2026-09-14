@@ -10,6 +10,8 @@ import { ThemeToggle } from "../components/ThemeToggle";
 
 beforeEach(() => {
   localStorage.clear();
+  // A visit outlives a component by design, so it outlives a test too.
+  sessionStorage.clear();
   document.documentElement.removeAttribute("data-theme");
 });
 
@@ -131,6 +133,112 @@ describe("useTheme options", () => {
     } finally {
       window.history.replaceState(null, "", window.location.pathname);
     }
+  });
+
+  // CUI-092. The seed used to be re-read every time the store adopted, and it
+  // adopts whenever it gains its first caller. So a route change, or strict
+  // mode's mount-unmount-mount, put the seed back over a mode the reader had
+  // chosen, while their choice sat in localStorage where setMode wrote it.
+  describe("a seed the reader has answered", () => {
+    function withSeed(seed: string, body: () => void) {
+      window.history.replaceState(null, "", `?theme=${seed}`);
+      try {
+        body();
+      } finally {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+    }
+
+    it("yields to a choice made after it, across an unmount", () => {
+      withSeed("dark", () => {
+        const first = render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("dark");
+
+        act(() => { screen.getByText("light").click(); });
+        expect(screen.getByTestId("mode").textContent).toBe("light");
+        first.unmount();
+
+        render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("light");
+      });
+    });
+
+    it("yields to it again on the next load of the same tab", () => {
+      withSeed("dark", () => {
+        const first = render(<Probe />);
+        act(() => { screen.getByText("light").click(); });
+        first.unmount();
+
+        // What survives a reload is sessionStorage and localStorage; the
+        // module-level stores do not, so drop the live one to stand in for it.
+        act(() => { render(<Probe />).unmount(); });
+
+        render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("light");
+      });
+    });
+
+    it("still governs a load the reader has not answered", () => {
+      localStorage.setItem("cs-theme", "light");
+      withSeed("dark", () => {
+        const first = render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("dark");
+        first.unmount();
+
+        render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("dark");
+      });
+    });
+
+    it("pins again when the link carries a different theme", () => {
+      withSeed("dark", () => {
+        const first = render(<Probe />);
+        act(() => { screen.getByText("light").click(); });
+        first.unmount();
+      });
+
+      // A different value is a new instruction rather than the one declined.
+      withSeed("system", () => {
+        const second = render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("system");
+        second.unmount();
+
+        // And it holds, rather than falling back to the earlier choice.
+        render(<Probe />);
+        expect(screen.getByTestId("mode").textContent).toBe("system");
+      });
+    });
+
+    it("leaves the boot script painting what the hook would read", () => {
+      withSeed("dark", () => {
+        const first = render(<Probe />);
+        act(() => { screen.getByText("light").click(); });
+        first.unmount();
+        document.documentElement.removeAttribute("data-theme");
+
+        (0, eval)(themeBootScript());
+
+        expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+      });
+    });
+
+    it("paints the seed from the boot script before the reader has answered", () => {
+      localStorage.setItem("cs-theme", "light");
+      withSeed("dark", () => {
+        document.documentElement.removeAttribute("data-theme");
+
+        (0, eval)(themeBootScript());
+
+        expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+      });
+    });
+
+    it("does not save the seed, so leaving the link behind restores the choice", () => {
+      withSeed("dark", () => {
+        render(<Probe />).unmount();
+      });
+      expect(localStorage.getItem("cs-theme")).toBeNull();
+    });
   });
 
   it("ignores the URL when urlParam is false", () => {

@@ -12,6 +12,17 @@ holds today.
 
 ### Breaking changes
 
+- A `?theme=` parameter no longer outranks a mode the reader chose. It seeds
+  the theme until they choose for themselves, and their choice then holds for
+  the rest of the tab, across remounts and reloads. It used to be re-read every
+  time the shared store gained its first caller, so a route change, or React's
+  strict mode, put the seed back over a choice that was already saved. A seed
+  whose value differs from the one last applied still seeds, so a link carrying
+  a different theme keeps working. The visit is recorded under two
+  `sessionStorage` keys, `<storageKey>:chosen` and `<storageKey>:seed`, and
+  `themeBootScript` reads them too, so a reload does not flash the seed's
+  colour. A consumer who wants the old behaviour has no switch for it; say so
+  if you need one.
 - `FormGroup` no longer wires a child it cannot see is a control. It clones a
   native `input`, `select` or `textarea`, and an element already marked
   `role="group"` or `role="radiogroup"`. A component child, or a plain wrapper,

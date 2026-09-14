@@ -100,8 +100,10 @@ applies the stored choice before React paints. [INSTALL.md](INSTALL.md) step 4
 shows where that script goes.
 
 The choice persists under one storage key, `cs-theme` unless you pass
-`storageKey`. A `?theme=light` or `?theme=dark` parameter wins for that one page
-load, and is not stored.
+`storageKey`. A `?theme=light` or `?theme=dark` parameter seeds the mode and is
+not stored. It wins until the reader chooses for themselves, and their choice
+then holds for the rest of the tab, including across reloads. A link carrying a
+different theme from the one last applied seeds again.
 
 ## Chrome for tools built on this package
 
