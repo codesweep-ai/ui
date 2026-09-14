@@ -3,10 +3,6 @@
   "updated": "2026-09-14",
   "items": [
     {
-      "id": "CUI-091",
-      "why": "The first two categorical slots are too close for any reader, and a review found the decision was skipped."
-    },
-    {
       "id": "CUI-088",
       "why": "The version fields answer the one question they exist for incorrectly, so readers are told to ignore them."
     },
