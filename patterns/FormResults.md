@@ -1,7 +1,7 @@
 ---
 name: FormResults
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Pinned search/filter form at top with scrollable result cards below for query-driven workflows.
 keywords: [search results, search page, form results, query results, code search, filter results, find page, search interface, result cards, query-driven]
 use_when:

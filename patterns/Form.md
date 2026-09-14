@@ -1,7 +1,7 @@
 ---
 name: Form
 status: stable
-since: 1.3.0
+since: 0.3.0
 summary: Composition rules for form fields — layout, validation, submit placement, and error-summary patterns.
 keywords: [form, form layout, field validation, form group, input, submit button, error summary, form validation, accessible form, form pattern]
 use_when:

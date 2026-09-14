@@ -1,7 +1,7 @@
 ---
 name: CodeBlock
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Syntax-highlighted code display with line numbers, copy button, line highlights, and query match highlighting; supports all highlight.js languages.
 keywords: [code block, syntax highlighting, code display, highlight.js, code viewer,
            copy code, line numbers, code snippet, source code, programming language,

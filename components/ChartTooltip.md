@@ -1,7 +1,7 @@
 ---
 name: ChartTooltip
 status: stable
-since: 1.5.0
+since: 0.3.0
 summary: Token-styled tooltip shell for charts, positioned absolutely; handles bg, border, shadow, and radius so every chart's tooltip looks identical.
 keywords: [chart tooltip, graph tooltip, data tooltip, hover tooltip, chart hover,
            visualization tooltip, recharts tooltip, d3 tooltip, dataviz tooltip,

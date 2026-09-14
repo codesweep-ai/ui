@@ -20,7 +20,7 @@ interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   /**
    * When true, render a "no results" message inline below the input.
    * Consumers set this based on their search result state. Default: false.
-   * Added v1.2.0.
+   * Added v0.3.0.
    */
   noResults?: boolean;
   /** Message shown when noResults=true. Default: "No results." */

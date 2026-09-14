@@ -1,7 +1,7 @@
 ---
 name: SearchInput
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Integrated search bar with inline search button, clear button, and optional auto-search after a character threshold.
 keywords: [search, input, filter, query, search bar, autocomplete, debounce,
            clear, find, lookup, search field, text input]
@@ -39,7 +39,7 @@ interface SearchInputProps {
   debounceMs?: number;
   /** Additional className */
   className?: string;
-  /** Render a "no results" message inline below the input. Default: false. Added v1.2.0. */
+  /** Render a "no results" message inline below the input. Default: false. Added v0.3.0. */
   noResults?: boolean;
   /** Message shown when noResults=true. Default: "No results." */
   noResultsMessage?: string;

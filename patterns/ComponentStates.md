@@ -1,7 +1,7 @@
 ---
 name: ComponentStates
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Canonical empty, loading, and error state contract for every component that renders async data.
 keywords: [loading state, empty state, error state, async data, skeleton, retry, component states, loading skeleton, empty message, error handling]
 use_when:

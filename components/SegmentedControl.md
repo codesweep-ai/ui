@@ -1,7 +1,7 @@
 ---
 name: SegmentedControl
 status: experimental
-since: 0.2.0
+since: 0.3.0
 summary: Compact radiogroup for choosing one of two to five adjacent options.
 keywords: [segmented control, radio group, view switcher, mode toggle, exclusive options]
 use_when:

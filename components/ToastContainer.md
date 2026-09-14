@@ -1,7 +1,7 @@
 ---
 name: ToastContainer
 status: stable
-since: 1.11.0
+since: 0.3.0
 summary: Host for the toast system — mount once at the app root and call `toast.success(...)` etc. from anywhere.
 keywords: [toast, notifications, snackbar, container, host, root, stacking,
            bottom-right, auto-dismiss, imperative api, pub sub, store,

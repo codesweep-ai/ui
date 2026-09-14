@@ -1,7 +1,7 @@
 ---
 name: CardGroup
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Layout container that manages maximize/minimize state for a group of Cards; supports fill (fixed-viewport) and natural-height stack modes.
 keywords: [card group, maximize, minimize, card layout, dashboard layout,
            expand collapse, viewport fill, card container, multi-card, card state,
@@ -34,7 +34,7 @@ interface CardGroupProps {
    * Fill the group's height and distribute it across cards (each card scrolls
    * internally) — the fixed-viewport dashboard layout. Default `true`. Set
    * `false` for a natural-height stack where the page scrolls instead. A
-   * maximized card fills the viewport in either mode. Added v1.7.0.
+   * maximized card fills the viewport in either mode. Added v0.3.0.
    */
   fill?: boolean;
   /** Additional className */

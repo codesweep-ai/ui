@@ -1,7 +1,7 @@
 ---
 name: PulseBadge
 status: stable
-since: 1.4.0
+since: 0.3.0
 summary: Small pulsing dot that signals live, in-progress activity.
 keywords: [pulse, badge, dot, live, activity, animated, indicator, status dot,
            pulsing, real-time, streaming, agent activity]

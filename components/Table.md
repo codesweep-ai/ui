@@ -1,7 +1,7 @@
 ---
 name: Table
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Data table with sortable columns, filtering, pagination, and async states.
 keywords: [table, grid, data table, tabular, rows, columns, sortable, sort,
            filter, search, paginate, pagination, list view, spreadsheet, dataset]

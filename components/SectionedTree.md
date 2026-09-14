@@ -1,7 +1,7 @@
 ---
 name: SectionedTree
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Self-managing component that renders multiple independent tree sections with collapsible headers, per-section search, and shared selection.
 keywords: [sectioned tree, grouped tree, file explorer, multi-section, collapsible,
            sidebar, navigation, tree groups, project files, dependencies, explorer]

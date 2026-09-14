@@ -115,7 +115,7 @@
   /* severe: the step between warning and error, for 4-level ordered severity
      scales (low/med/high/critical). Status colors ship with a label or shape —
      never color alone; adjacent hot hues (warning/severe/error) are not
-     separable by hue for CVD readers. Added v1.12.0 (unreleased). */
+     separable by hue for CVD readers. Added v0.3.0. */
   --color-severe: #f97316;
   --color-severe-bg: rgba(249, 115, 22, 0.1);
 
@@ -137,8 +137,8 @@
   --z-sticky: 10;
   --z-header: 100;
   --z-modal: 200;
-  --z-tooltip: 300; /* above modal — chart/UI tooltips. Added v1.5.0. */
-  --z-toast: 400;   /* above tooltips — transient feedback. Added v1.11.0. */
+  --z-tooltip: 300; /* above modal — chart/UI tooltips. Added v0.3.0. */
+  --z-toast: 400;   /* above tooltips — transient feedback. Added v0.3.0. */
 
   /* --- Overlay --- */
   --color-overlay: rgba(0, 0, 0, 0.5);

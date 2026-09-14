@@ -1,7 +1,7 @@
 ---
 name: CheckboxGroup
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: List of checkboxes with select-all/none controls, optional filter input, and collapsible grouped sections; integrates with FormGroup for label/helper/error rendering.
 keywords: [checkbox group, multi-select, checkboxes, filter checkboxes, select all,
            select none, grouped checkboxes, collapsible sections, filter sidebar,
@@ -47,9 +47,9 @@ interface CheckboxGroupProps {
   onChange: (selected: Set<string>) => void;
   /** Group label displayed above the checkboxes */
   label?: string;
-  /** Grey hint below the group (hidden when error is set). Added v1.3.0. */
+  /** Grey hint below the group (hidden when error is set). Added v0.3.0. */
   helper?: string;
-  /** Red error message below the group (replaces helper). Added v1.3.0. */
+  /** Red error message below the group (replaces helper). Added v0.3.0. */
   error?: string;
   /** Show a filter input to narrow visible options. Default: false */
   filterable?: boolean;

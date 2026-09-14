@@ -1,7 +1,7 @@
 ---
 name: MarkdownViewer
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Document browser with outline navigation, minimap, and rich markdown rendering for in-app documentation.
 keywords: [markdown viewer, document browser, markdown renderer, outline navigation, minimap, documentation, readme viewer, spec viewer, doc browser, in-app docs]
 use_when:

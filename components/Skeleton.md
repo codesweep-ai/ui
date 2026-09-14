@@ -1,7 +1,7 @@
 ---
 name: Skeleton
 status: stable
-since: 1.1.0
+since: 0.3.0
 summary: Primitive shimmer placeholder for loading states — indicates where content will appear without a generic spinner.
 keywords: [skeleton, loading, shimmer, placeholder, spinner alternative, content placeholder,
            loading state, pulse, rect, circle, text placeholder]

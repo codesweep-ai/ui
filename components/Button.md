@@ -1,7 +1,7 @@
 ---
 name: Button
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Standard interactive button with six visual variants (primary, secondary, danger, ghost, success, warning) and two sizes.
 keywords: [button, cta, call to action, submit, click, action, primary button,
            ghost button, danger button, secondary button, interactive, trigger,

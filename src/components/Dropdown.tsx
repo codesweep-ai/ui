@@ -19,15 +19,15 @@ interface DropdownProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElemen
   className?: string;
   /** Text shown as the sole disabled option when `options` is empty. Default: "No options available." */
   emptyMessage?: string;
-  /** Optional label rendered above the select. Added v1.3.0. */
+  /** Optional label rendered above the select. Added v0.3.0. */
   label?: string;
-  /** id on the underlying <select>. Used as the label's htmlFor. Auto-generated when omitted. Added v1.3.0. */
+  /** id on the underlying <select>. Used as the label's htmlFor. Auto-generated when omitted. Added v0.3.0. */
   id?: string;
-  /** Required marker on the label. Added v1.3.0. */
+  /** Required marker on the label. Added v0.3.0. */
   required?: boolean;
-  /** Grey helper text below the select. Added v1.3.0. */
+  /** Grey helper text below the select. Added v0.3.0. */
   helper?: string;
-  /** Red error message below the select; paints the red border. Added v1.3.0. */
+  /** Red error message below the select; paints the red border. Added v0.3.0. */
   error?: string;
 }
 

@@ -1,7 +1,7 @@
 ---
 name: Card
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Content container with background, border, optional header, and loading/error/empty state support; the primary surface for grouping related content.
 keywords: [card, panel, container, content surface, tile, widget, dashboard tile,
            loading skeleton, bordered container, card header, maximize, minimize,
@@ -43,7 +43,7 @@ interface CardProps {
   onToggle?: () => void;
   /** When true (and inside a CardGroup with an `id`), renders a maximize/minimize toggle button in the header */
   maximizable?: boolean;
-  /** Loading state: replace body with 3 skeleton lines, header preserved. Added v1.2.0. */
+  /** Loading state: replace body with 3 skeleton lines, header preserved. Added v0.3.0. */
   loading?: boolean;
 }
 ```
@@ -125,7 +125,7 @@ When a Card has `id`, `maximizable`, and is inside a `CardGroup`:
 - Root div adds `flex: 1`, `min-height: 0`, `display: flex`, `flex-direction: column` — cards share the CardGroup's height equally and use flex column layout internally.
 - Body div adds `flex: 1`, `min-height: 0`, `overflow-y: auto` — the content area fills remaining space and scrolls when children with a fixed CSS height exceed it.
 - **When maximized** the body div additionally gets `display: flex`, `flex-direction: column` so children with `flex: 1; min-height: 0` can grow to fill the maximized card.
-- In a **non-filling** group (`CardGroup fill={false}`) and not maximized, the card takes its **natural height** (no `flex`/`overflow` on root or body) so the page scrolls instead of the card body. Added v1.7.0.
+- In a **non-filling** group (`CardGroup fill={false}`) and not maximized, the card takes its **natural height** (no `flex`/`overflow` on root or body) so the page scrolls instead of the card body. Added v0.3.0.
 
 **When hidden:** Renders an empty element with the component's `display: none` class to preserve React tree stability.
 

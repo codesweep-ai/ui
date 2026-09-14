@@ -1,7 +1,7 @@
 ---
 name: Toast
 status: stable
-since: 1.11.0
+since: 0.3.0
 summary: Single transient notification — feedback for an action that auto-dismisses, with a colored variant + screen-reader announcement.
 keywords: [toast, notification, snackbar, alert, feedback, transient, popup,
            success message, error message, status, dismiss, announce, sr-only,

@@ -1,7 +1,7 @@
 ---
 name: ChartFrame
 status: stable
-since: 1.5.0
+since: 0.3.0
 summary: Card frame + loading/error/empty states around a chart you render inside.
 keywords: [chart, graph, plot, visualization, viz, dataviz, d3, recharts,
            sankey, bar chart, line chart, area chart, scatter, timeseries,

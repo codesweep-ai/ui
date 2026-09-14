@@ -1,7 +1,7 @@
 ---
 name: DataTable
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Full-featured table with filtering, sorting, pagination, and search highlighting for large flat datasets.
 keywords: [data table, table, sortable table, paginated table, search table, filter table, list view, registry, audit log, inventory, tabular data]
 use_when:

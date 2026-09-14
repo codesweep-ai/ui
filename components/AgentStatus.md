@@ -1,7 +1,7 @@
 ---
 name: AgentStatus
 status: stable
-since: 1.4.0
+since: 0.3.0
 summary: Single-line status row for visible agent work; shows a verb-phrase and animated indicator so users always know what the agent is doing.
 keywords: [agent status, activity indicator, loading state, in-flight, progress,
            verb phrase, streaming status, live update, aria-live, pulse badge,

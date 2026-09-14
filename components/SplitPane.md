@@ -1,7 +1,7 @@
 ---
 name: SplitPane
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Container with two or three resizable panes separated by drag handles, with optional per-pane width persistence.
 keywords: [split pane, resizable, drag handle, layout, panels, two-column, three-column,
            side by side, resize, master detail, panel layout, persistent width]

@@ -1,7 +1,7 @@
 ---
 name: ThemeToggle
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Button or radio-group control for cycling through theme modes (system, light, dark), with localStorage persistence.
 keywords: [theme toggle, dark mode, light mode, color scheme, theme switcher, appearance,
            system theme, mode toggle, dark light, preferences, ui theme]

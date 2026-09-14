@@ -1,7 +1,7 @@
 ---
 name: Explorer
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Tree sidebar with resizable content pane for browsing and navigating hierarchical data structures.
 keywords: [explorer, file tree, tree sidebar, hierarchical navigation, split pane, document browser, file browser, nested navigation, sidebar tree, tree view]
 use_when:

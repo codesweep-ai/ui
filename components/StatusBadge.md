@@ -1,7 +1,7 @@
 ---
 name: StatusBadge
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Small static indicator for status values with a colored dot and uppercase label.
 keywords: [status badge, badge, indicator, success, warning, error, neutral, dot,
            label, state indicator, tag, chip, status label]

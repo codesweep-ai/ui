@@ -1,7 +1,7 @@
 ---
 name: Legend
 status: experimental
-since: 0.2.0
+since: 0.3.0
 summary: Compact token-colour legend that can be static or toggle a selected item set.
 keywords: [legend, key, swatch, color key, filter legend, toggle legend, categories]
 use_when:

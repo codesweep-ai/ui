@@ -1,7 +1,7 @@
 ---
 name: Modal
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, scrollable content area, header with close button, and optional footer actions.
 keywords: [modal, dialog, overlay, popup, lightbox, confirm, confirmation, alert dialog,
            drawer, sheet, portal, focus trap, backdrop, dismiss]

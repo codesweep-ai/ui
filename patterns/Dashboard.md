@@ -1,7 +1,7 @@
 ---
 name: Dashboard
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Stats bar, filterable chart, and optional sidebar for summarizing and exploring aggregate data.
 keywords: [dashboard, metrics, stats bar, chart filter, kpi, data summary, analytics page, filterable chart, aggregate view, overview page]
 use_when:

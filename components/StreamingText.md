@@ -1,7 +1,7 @@
 ---
 name: StreamingText
 status: stable
-since: 1.4.0
+since: 0.3.0
 summary: Live-rendered plain text that reveals characters at a configurable speed with a blinking trailing cursor, for streaming model output.
 keywords: [streaming text, typewriter, token stream, live text, model output, llm output,
            character reveal, cursor, animated text, streaming, real-time, chat output]

@@ -137,6 +137,10 @@ it.
 - **A categorical colour holds to a measured contract.** `check:palette` holds
   `--color-cat-*` and `--color-graph-*` to section 4.12 of the specification,
   and `npm run check` runs it.
+- **A version annotation names a release that exists.** `since:` in the
+  frontmatter and `Added vX.Y.Z` in prose or TSDoc both answer "do I have this
+  yet". `check:versions` fails any that names a version above the one in
+  `package.json`, and `npm run check` runs it.
 
 Section 4 of [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) has the tokens and
 the reasoning behind them.

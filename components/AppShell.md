@@ -1,7 +1,7 @@
 ---
 name: AppShell
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Application shell with always-dark sticky header, scrollable content area, and optional footer; the top-level layout wrapper for every page.
 keywords: [app shell, layout, header, footer, navigation, nav bar, top bar,
            app frame, page layout, sticky header, dark header, logo, nav links,

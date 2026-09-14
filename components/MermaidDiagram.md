@@ -1,7 +1,7 @@
 ---
 name: MermaidDiagram
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-theme change) and shows a friendly error block with raw source if the diagram fails to parse.
 keywords: [mermaid, diagram, flowchart, sequence diagram, gantt, graph, chart,
            uml, visualization, dsl, svg diagram, architecture diagram, flow diagram,

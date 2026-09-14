@@ -14,7 +14,7 @@ interface CardGroupProps {
    * Fill the group's height and distribute it across cards (each scrolls
    * internally) — the fixed-viewport dashboard layout. Default true. Set
    * false for a natural-height stack where the page scrolls instead. A
-   * maximized card fills the viewport in either mode. Added v1.7.0.
+   * maximized card fills the viewport in either mode. Added v0.3.0.
    */
   fill?: boolean;
   className?: string;

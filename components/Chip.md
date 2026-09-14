@@ -1,7 +1,7 @@
 ---
 name: Chip
 status: experimental
-since: 0.2.0
+since: 0.3.0
 summary: Dense toggle pill for toolbar filters, with pressed, count, and disabled states.
 keywords: [chip, filter chip, pill, toggle, toolbar filter, count, pressed]
 use_when:

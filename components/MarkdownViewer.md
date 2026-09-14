@@ -1,7 +1,7 @@
 ---
 name: MarkdownViewer
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline.
 keywords: [markdown, markdown viewer, gfm, github flavored markdown, syntax highlight,
            mermaid, katex, math, outline, minimap, document viewer, rich text, code block, alert]

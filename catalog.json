@@ -28,7 +28,7 @@
         "task status",
         "llm progress"
       ],
-      "since": "1.4.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Displaying the work an agent has in hand (reading, generating, inferring)",
@@ -69,7 +69,7 @@
         "agent steps",
         "chronological"
       ],
-      "since": "1.4.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Showing the chronological list of steps an agent has taken (settled history)"
@@ -116,7 +116,7 @@
         "app wrapper",
         "spa layout"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Wrapping any full-page app view that needs a header with nav + branding",
@@ -158,7 +158,7 @@
         "icon button",
         "control"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Any user-triggered action (submit, confirm, cancel, navigate)",
@@ -201,7 +201,7 @@
         "content card",
         "info card"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Grouping related content with a consistent bordered surface",
@@ -245,7 +245,7 @@
         "stacked cards",
         "dashboard panel"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Laying out multiple Cards that should share a fixed viewport height (fill mode)",
@@ -290,7 +290,7 @@
         "network graph",
         "dashboard tile"
       ],
-      "since": "1.5.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Rendering any chart/visualization that needs consistent card chrome + states",
@@ -330,7 +330,7 @@
         "cursor tooltip",
         "plot tooltip"
       ],
-      "since": "1.5.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Adding a hover tooltip to any custom chart or visualization inside a ChartFrame",
@@ -372,7 +372,7 @@
         "options list",
         "toggle group"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Multi-select filter sidebar, for example file types, statuses or categories",
@@ -410,7 +410,7 @@
         "count",
         "pressed"
       ],
-      "since": "0.2.0",
+      "since": "0.3.0",
       "status": "experimental",
       "use_when": [
         "Toggling independent filters in a compact toolbar",
@@ -455,7 +455,7 @@
         "monospace",
         "code panel"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Displaying source code with syntax highlighting and a copy affordance",
@@ -498,7 +498,7 @@
         "listbox",
         "choice"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Choosing one value from a short or long predefined list",
@@ -539,7 +539,7 @@
         "overview",
         "virtual listbox"
       ],
-      "since": "0.2.0",
+      "since": "0.3.0",
       "status": "experimental",
       "use_when": [
         "Showing an ordered event stream on one or more named lanes",
@@ -581,7 +581,7 @@
         "hint",
         "describedby"
       ],
-      "since": "1.3.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Wrapping any single Input, Dropdown, or custom control with a visible label",
@@ -623,7 +623,7 @@
         "emphasize",
         "annotate"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Showing which part of a result matched a user's search query",
@@ -665,7 +665,7 @@
         "field",
         "controlled input"
       ],
-      "since": "1.3.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Collecting freeform text from the user in a form",
@@ -703,7 +703,7 @@
         "toggle legend",
         "categories"
       ],
-      "since": "0.2.0",
+      "since": "0.3.0",
       "status": "experimental",
       "use_when": [
         "Explaining token-coloured categories beside a chart, event lane, or trace",
@@ -745,7 +745,7 @@
         "scroll position",
         "markdown nav"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Providing a bird's-eye navigation control alongside a long markdown document",
@@ -788,7 +788,7 @@
         "code block",
         "alert"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Rendering markdown documents with headings, code blocks, or tables",
@@ -835,7 +835,7 @@
         "hand-drawn",
         "roughjs-style"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Rendering a Mermaid DSL string as an SVG diagram",
@@ -878,7 +878,7 @@
         "backdrop",
         "dismiss"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Asking for user confirmation before a destructive or irreversible action",
@@ -965,7 +965,7 @@
         "header",
         "layout"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Providing a collapsible sidebar alongside main content in a flex layout",
@@ -1011,7 +1011,7 @@
         "streaming",
         "agent activity"
       ],
-      "since": "1.4.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Indicating that an agent or process is running",
@@ -1048,7 +1048,7 @@
         "choice",
         "mode"
       ],
-      "since": "0.2.0",
+      "since": "0.3.0",
       "status": "experimental",
       "use_when": [
         "Choosing one of several mutually exclusive options that each need explaining",
@@ -1092,7 +1092,7 @@
         "search field",
         "text input"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Providing a standalone search bar that fires a query callback",
@@ -1133,7 +1133,7 @@
         "dependencies",
         "explorer"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Showing multiple independent tree groups, such as project files and dependencies",
@@ -1171,7 +1171,7 @@
         "mode toggle",
         "exclusive options"
       ],
-      "since": "0.2.0",
+      "since": "0.3.0",
       "status": "experimental",
       "use_when": [
         "Switching between two to five mutually exclusive views or render modes",
@@ -1214,7 +1214,7 @@
         "circle",
         "text placeholder"
       ],
-      "since": "1.1.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Filling space where async content is loading",
@@ -1253,7 +1253,7 @@
         "panel layout",
         "persistent width"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Two- or three-column layouts where the user should control pane widths",
@@ -1294,7 +1294,7 @@
         "chip",
         "status label"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Displaying a discrete status value (success / warning / error / neutral)",
@@ -1334,7 +1334,7 @@
         "real-time",
         "chat output"
       ],
-      "since": "1.4.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Rendering token-by-token model output as it streams from the backend",
@@ -1379,7 +1379,7 @@
         "spreadsheet",
         "dataset"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Displaying rows of structured data across multiple columns",
@@ -1424,7 +1424,7 @@
         "preferences",
         "ui theme"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Letting users switch between light, dark, and system color schemes",
@@ -1462,7 +1462,7 @@
         "role status",
         "role alert"
       ],
-      "since": "1.11.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Confirming an action completed (\"Saved\", \"Copied\")",
@@ -1501,7 +1501,7 @@
         "store",
         "feedback layer"
       ],
-      "since": "1.11.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Adding the global toast / notification system to an app — mount once at root"
@@ -1584,7 +1584,7 @@
         "file browser",
         "ast"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Displaying a hierarchical data structure (file system, AST, module graph)",
@@ -1625,7 +1625,7 @@
         "in-flight",
         "agentic ui"
       ],
-      "since": "1.4.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "An AI agent is actively doing work the user should be able to observe",
@@ -1665,7 +1665,7 @@
         "categorical palette",
         "chart tooltip"
       ],
-      "since": "1.5.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Building any chart that must respect light/dark theme switching",
@@ -1699,7 +1699,7 @@
         "empty message",
         "error handling"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Adding a new component that fetches or streams data",
@@ -1739,7 +1739,7 @@
         "aggregate view",
         "overview page"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Showing high-level metrics alongside a chart visualization",
@@ -1777,7 +1777,7 @@
         "inventory",
         "tabular data"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Displaying a large flat dataset (10+ rows) with search and pagination",
@@ -1815,7 +1815,7 @@
         "sidebar tree",
         "tree view"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Browsing file trees, documentation structures, or package hierarchies",
@@ -1854,7 +1854,7 @@
         "accessible form",
         "form pattern"
       ],
-      "since": "1.3.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Building any form with one or more user-editable fields",
@@ -1890,7 +1890,7 @@
         "result cards",
         "query-driven"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Search interfaces where the user provides criteria and gets a list of results",
@@ -1927,7 +1927,7 @@
         "doc browser",
         "in-app docs"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Rendering documentation, specs, or help content in-app",
@@ -1967,7 +1967,7 @@
         "table detail",
         "side panel"
       ],
-      "since": "1.0.0",
+      "since": "0.3.0",
       "status": "stable",
       "use_when": [
         "Browsing a flat list of records where each record has rich detail",

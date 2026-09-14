@@ -29,9 +29,9 @@ interface CheckboxGroupProps {
   onChange: (selected: Set<string>) => void;
   /** Group label displayed above the checkboxes */
   label?: string;
-  /** Optional grey helper text below the group. Added v1.3.0. */
+  /** Optional grey helper text below the group. Added v0.3.0. */
   helper?: string;
-  /** Optional red error message below the group (replaces helper). Added v1.3.0. */
+  /** Optional red error message below the group (replaces helper). Added v0.3.0. */
   error?: string;
   /** Show a filter input to narrow visible options. Default: false */
   filterable?: boolean;

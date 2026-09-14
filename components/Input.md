@@ -1,7 +1,7 @@
 ---
 name: Input
 status: stable
-since: 1.3.0
+since: 0.3.0
 summary: Standard text input supporting plain text, email, password, number, tel, url, and multiline (textarea) variants, with optional prefix/suffix slots and error state.
 keywords: [input, text input, text field, textarea, multiline, email, password,
            number, form control, prefix, suffix, search field, field, controlled input]

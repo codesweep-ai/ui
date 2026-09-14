@@ -1,7 +1,7 @@
 ---
 name: Chart
 status: stable
-since: 1.5.0
+since: 0.3.0
 summary: Theme-aware chart bridge for d3, recharts, and any other library — routes all colors through design-system tokens.
 keywords: [chart, data visualization, themed chart, d3, recharts, chart colors, dark mode chart, chart theming, categorical palette, chart tooltip]
 use_when:

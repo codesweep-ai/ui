@@ -1,7 +1,7 @@
 ---
 name: Panel
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Collapsible side panel with a header and scrollable content area. Used for file trees, doc outlines, and filter panels inside flex layouts.
 keywords: [panel, sidebar, collapsible, side panel, pane, drawer, filter panel,
            file tree panel, outline, collapse, expand, header, layout]

@@ -22,7 +22,7 @@ interface CardProps extends React.HTMLAttributes<HTMLElement> {
   collapsible?: boolean;
   collapsed?: boolean;
   onToggle?: () => void;
-  /** Loading state: replace card body with skeleton lines (header preserved). Added v1.2.0. */
+  /** Loading state: replace card body with skeleton lines (header preserved). Added v0.3.0. */
   loading?: boolean;
 }
 

@@ -33,6 +33,12 @@ holds today.
 
 ### Fixed
 
+- The version annotations name 0.3.0, the release they shipped in. Every `since`
+  in `catalog.json` named a 1.x line this package never published, and 33
+  `Added vX.Y.Z` notes in the documentation and in TSDoc named the same line.
+  Two agents reading an installed copy each concluded the version fields could
+  not be trusted, and advised ignoring them. A new check, `check:versions`,
+  fails any annotation naming a version above the one in `package.json`.
 - `useChartTheme` restyles a chart when the theme changes. Every caller of
   `useTheme` used to hold a private copy of the mode, so a chart kept whatever
   theme it mounted in while the toggle moved everything else. A consumer who

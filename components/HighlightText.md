@@ -1,7 +1,7 @@
 ---
 name: HighlightText
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Renders text with matched substrings visually highlighted using semantic mark elements. Used in search results, filtered lists, and autocomplete suggestions.
 keywords: [highlight, text highlight, search highlight, mark, match, substring,
            autocomplete, filter, query match, search results, bolden, emphasize, annotate]

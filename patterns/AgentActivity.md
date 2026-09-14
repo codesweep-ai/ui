@@ -1,7 +1,7 @@
 ---
 name: AgentActivity
 status: stable
-since: 1.4.0
+since: 0.3.0
 summary: Visual language for surfacing real-time AI agent work — in-flight, paused, and settled states.
 keywords: [agent activity, ai agent, streaming output, real-time progress, agent status, live work, agent trace, step history, in-flight, agentic ui]
 use_when:

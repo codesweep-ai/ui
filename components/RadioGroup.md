@@ -1,7 +1,7 @@
 ---
 name: RadioGroup
 status: experimental
-since: 0.2.0
+since: 0.3.0
 summary: Exclusive choice among two or more options, each able to carry a description.
 keywords: [radio, radio group, radiogroup, exclusive options, single select, choice, mode]
 use_when:

@@ -1,7 +1,7 @@
 ---
 name: Dropdown
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Styled native select element for choosing a single value from a list of options, with optional label, helper, and error states.
 keywords: [dropdown, select, native select, option, picker, choose, single select,
            combo, form field, filter, menu, selector, listbox, choice]
@@ -36,17 +36,17 @@ interface DropdownProps {
   disabled?: boolean;
   /** Additional className */
   className?: string;
-  /** Text shown as the sole disabled option when `options` is empty. Default: "No options available." Added v1.2.0. */
+  /** Text shown as the sole disabled option when `options` is empty. Default: "No options available." Added v0.3.0. */
   emptyMessage?: string;
-  /** Label rendered above the select via FormGroup. Added v1.3.0. */
+  /** Label rendered above the select via FormGroup. Added v0.3.0. */
   label?: string;
-  /** `id` on the underlying `<select>` — auto-generated when omitted. Added v1.3.0. */
+  /** `id` on the underlying `<select>` — auto-generated when omitted. Added v0.3.0. */
   id?: string;
-  /** Render a required marker on the label and forward `required` to the select. Added v1.3.0. */
+  /** Render a required marker on the label and forward `required` to the select. Added v0.3.0. */
   required?: boolean;
-  /** Grey hint below the select (hidden when error is set). Added v1.3.0. */
+  /** Grey hint below the select (hidden when error is set). Added v0.3.0. */
   helper?: string;
-  /** Red error message below the select; paints the red border. Added v1.3.0. */
+  /** Red error message below the select; paints the red border. Added v0.3.0. */
   error?: string;
   /** Native select props, including aria-label, are forwarded. */
   [selectProp: string]: unknown;

@@ -1,7 +1,7 @@
 ---
 name: FormGroup
 status: stable
-since: 1.3.0
+since: 0.3.0
 summary: Label + control + helper/error composition wrapper. The canonical way to render any single form field with accessible label binding, error messaging, and aria wiring.
 keywords: [form group, label, field wrapper, helper text, error message, validation,
            aria, accessible form, input wrapper, form field, required, hint, describedby]

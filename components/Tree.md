@@ -1,7 +1,7 @@
 ---
 name: Tree
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Hierarchical tree view with expand/collapse, selection, search/filter, and optional drag-to-reorder.
 keywords: [tree, hierarchy, file tree, expand collapse, treeview, navigation, folder,
            nodes, filterable, search tree, drag reorder, file browser, ast]

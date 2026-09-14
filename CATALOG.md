@@ -8,7 +8,7 @@ This index lists every component and pattern the package exports, and it is the 
 
 ## Components
 
-### AgentStatus  ·  since 1.4.0
+### AgentStatus  ·  since 0.3.0
 Single-line status row for visible agent work; shows a verb-phrase and animated indicator so users always know what the agent is doing.
 - import: `@codesweep-ai/ui`
 - intents: `agent status`, `activity indicator`, `loading state`, `in-flight`, `progress`, `verb phrase`, `streaming status`, `live update`, `aria-live`, `pulse badge`, `spinner alternative`, `agent feedback`, `task status`, `llm progress`
@@ -20,7 +20,7 @@ Single-line status row for visible agent work; shows a verb-phrase and animated 
 - related: PulseBadge, StreamingText, AgentTrace · patterns: AgentActivity
 - spec: [components/AgentStatus.md](components/AgentStatus.md)
 
-### AgentTrace  ·  since 1.4.0
+### AgentTrace  ·  since 0.3.0
 Vertical, expandable list of chronological agent steps with status icons.
 - import: `@codesweep-ai/ui`
 - intents: `agent`, `trace`, `steps`, `activity`, `log`, `history`, `timeline`, `audit`, `run log`, `agent steps`, `chronological`
@@ -32,7 +32,7 @@ Vertical, expandable list of chronological agent steps with status icons.
 - related: AgentStatus, StreamingText, EventLanes, PulseBadge · patterns: AgentActivity
 - spec: [components/AgentTrace.md](components/AgentTrace.md)
 
-### AppShell  ·  since 1.0.0
+### AppShell  ·  since 0.3.0
 Application shell with always-dark sticky header, scrollable content area, and optional footer; the top-level layout wrapper for every page.
 - import: `@codesweep-ai/ui`
 - intents: `app shell`, `layout`, `header`, `footer`, `navigation`, `nav bar`, `top bar`, `app frame`, `page layout`, `sticky header`, `dark header`, `logo`, `nav links`, `global chrome`, `app wrapper`, `spa layout`
@@ -44,7 +44,7 @@ Application shell with always-dark sticky header, scrollable content area, and o
 - related: ThemeToggle · patterns: Dashboard
 - spec: [components/AppShell.md](components/AppShell.md)
 
-### Button  ·  since 1.0.0
+### Button  ·  since 0.3.0
 Standard interactive button with six visual variants (primary, secondary, danger, ghost, success, warning) and two sizes.
 - import: `@codesweep-ai/ui`
 - intents: `button`, `cta`, `call to action`, `submit`, `click`, `action`, `primary button`, `ghost button`, `danger button`, `secondary button`, `interactive`, `trigger`, `form submit`, `icon button`, `control`
@@ -55,7 +55,7 @@ Standard interactive button with six visual variants (primary, secondary, danger
 - related: FormGroup, Modal · patterns: Form
 - spec: [components/Button.md](components/Button.md)
 
-### Card  ·  since 1.0.0
+### Card  ·  since 0.3.0
 Content container with background, border, optional header, and loading/error/empty state support; the primary surface for grouping related content.
 - import: `@codesweep-ai/ui`
 - intents: `card`, `panel`, `container`, `content surface`, `tile`, `widget`, `dashboard tile`, `loading skeleton`, `bordered container`, `card header`, `maximize`, `minimize`, `card group`, `content card`, `info card`
@@ -67,7 +67,7 @@ Content container with background, border, optional header, and loading/error/em
 - related: CardGroup, Panel, Skeleton · patterns: Dashboard
 - spec: [components/Card.md](components/Card.md)
 
-### CardGroup  ·  since 1.0.0
+### CardGroup  ·  since 0.3.0
 Layout container that manages maximize/minimize state for a group of Cards; supports fill (fixed-viewport) and natural-height stack modes.
 - import: `@codesweep-ai/ui`
 - intents: `card group`, `maximize`, `minimize`, `card layout`, `dashboard layout`, `expand collapse`, `viewport fill`, `card container`, `multi-card`, `card state`, `controlled layout`, `card grid`, `stacked cards`, `dashboard panel`
@@ -78,7 +78,7 @@ Layout container that manages maximize/minimize state for a group of Cards; supp
 - related: Card, Page · patterns: Dashboard
 - spec: [components/CardGroup.md](components/CardGroup.md)
 
-### ChartFrame  ·  since 1.5.0
+### ChartFrame  ·  since 0.3.0
 Card frame + loading/error/empty states around a chart you render inside.
 - import: `@codesweep-ai/ui/chart`
 - intents: `chart`, `graph`, `plot`, `visualization`, `viz`, `dataviz`, `d3`, `recharts`, `sankey`, `bar chart`, `line chart`, `area chart`, `scatter`, `timeseries`, `force-directed graph`, `network graph`, `dashboard tile`
@@ -89,7 +89,7 @@ Card frame + loading/error/empty states around a chart you render inside.
 - related: ChartTooltip · patterns: Chart, Dashboard
 - spec: [components/ChartFrame.md](components/ChartFrame.md)
 
-### ChartTooltip  ·  since 1.5.0
+### ChartTooltip  ·  since 0.3.0
 Token-styled tooltip shell for charts, positioned absolutely; handles bg, border, shadow, and radius so every chart's tooltip looks identical.
 - import: `@codesweep-ai/ui/chart`
 - intents: `chart tooltip`, `graph tooltip`, `data tooltip`, `hover tooltip`, `chart hover`, `visualization tooltip`, `recharts tooltip`, `d3 tooltip`, `dataviz tooltip`, `absolute tooltip`, `chart annotation`, `cursor tooltip`, `plot tooltip`
@@ -99,7 +99,7 @@ Token-styled tooltip shell for charts, positioned absolutely; handles bg, border
 - related: ChartFrame · patterns: Chart, Dashboard
 - spec: [components/ChartTooltip.md](components/ChartTooltip.md)
 
-### CheckboxGroup  ·  since 1.0.0
+### CheckboxGroup  ·  since 0.3.0
 List of checkboxes with select-all/none controls, optional filter input, and collapsible grouped sections; integrates with FormGroup for label/helper/error rendering.
 - import: `@codesweep-ai/ui`
 - intents: `checkbox group`, `multi-select`, `checkboxes`, `filter checkboxes`, `select all`, `select none`, `grouped checkboxes`, `collapsible sections`, `filter sidebar`, `multi-select filter`, `checkbox list`, `form multi-select`, `faceted filter`, `options list`, `toggle group`
@@ -111,7 +111,7 @@ List of checkboxes with select-all/none controls, optional filter input, and col
 - related: FormGroup, Input, SearchInput · patterns: Form, Dashboard
 - spec: [components/CheckboxGroup.md](components/CheckboxGroup.md)
 
-### Chip  ·  since 0.2.0  ·  experimental
+### Chip  ·  since 0.3.0  ·  experimental
 Dense toggle pill for toolbar filters, with pressed, count, and disabled states.
 - import: `@codesweep-ai/ui`
 - intents: `chip`, `filter chip`, `pill`, `toggle`, `toolbar filter`, `count`, `pressed`
@@ -122,7 +122,7 @@ Dense toggle pill for toolbar filters, with pressed, count, and disabled states.
 - related: SegmentedControl, Dropdown, Legend · patterns: DataTable, FormResults
 - spec: [components/Chip.md](components/Chip.md)
 
-### CodeBlock  ·  since 1.0.0
+### CodeBlock  ·  since 0.3.0
 Syntax-highlighted code display with line numbers, copy button, line highlights, and query match highlighting; supports all highlight.js languages.
 - import: `@codesweep-ai/ui/code`
 - intents: `code block`, `syntax highlighting`, `code display`, `highlight.js`, `code viewer`, `copy code`, `line numbers`, `code snippet`, `source code`, `programming language`, `code diff`, `search highlight`, `code highlight`, `monospace`, `code panel`
@@ -134,7 +134,7 @@ Syntax-highlighted code display with line numbers, copy button, line highlights,
 - related: MarkdownViewer, HighlightText · patterns: MasterDetail
 - spec: [components/CodeBlock.md](components/CodeBlock.md)
 
-### Dropdown  ·  since 1.0.0
+### Dropdown  ·  since 0.3.0
 Styled native select element for choosing a single value from a list of options, with optional label, helper, and error states.
 - import: `@codesweep-ai/ui`
 - intents: `dropdown`, `select`, `native select`, `option`, `picker`, `choose`, `single select`, `combo`, `form field`, `filter`, `menu`, `selector`, `listbox`, `choice`
@@ -146,7 +146,7 @@ Styled native select element for choosing a single value from a list of options,
 - related: FormGroup, Input, CheckboxGroup, SearchInput · patterns: Form
 - spec: [components/Dropdown.md](components/Dropdown.md)
 
-### EventLanes  ·  since 0.2.0  ·  experimental
+### EventLanes  ·  since 0.3.0  ·  experimental
 Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.
 - import: `@codesweep-ai/ui`
 - intents: `event lanes`, `event timeline`, `event strip`, `canvas timeline`, `trace events`, `agent events`, `multi-agent timeline`, `spans`, `overview`, `virtual listbox`
@@ -159,7 +159,7 @@ Canvas-rendered events on a shared global-index axis, with lanes, spans, overvie
 - related: ChartTooltip, AgentTrace · patterns: AgentActivity
 - spec: [components/EventLanes.md](components/EventLanes.md)
 
-### FormGroup  ·  since 1.3.0
+### FormGroup  ·  since 0.3.0
 Label + control + helper/error composition wrapper. The canonical way to render any single form field with accessible label binding, error messaging, and aria wiring.
 - import: `@codesweep-ai/ui`
 - intents: `form group`, `label`, `field wrapper`, `helper text`, `error message`, `validation`, `aria`, `accessible form`, `input wrapper`, `form field`, `required`, `hint`, `describedby`
@@ -170,7 +170,7 @@ Label + control + helper/error composition wrapper. The canonical way to render 
 - related: Input, Dropdown, CheckboxGroup · patterns: Form
 - spec: [components/FormGroup.md](components/FormGroup.md)
 
-### HighlightText  ·  since 1.0.0
+### HighlightText  ·  since 0.3.0
 Renders text with matched substrings visually highlighted using semantic mark elements. Used in search results, filtered lists, and autocomplete suggestions.
 - import: `@codesweep-ai/ui`
 - intents: `highlight`, `text highlight`, `search highlight`, `mark`, `match`, `substring`, `autocomplete`, `filter`, `query match`, `search results`, `bolden`, `emphasize`, `annotate`
@@ -180,7 +180,7 @@ Renders text with matched substrings visually highlighted using semantic mark el
 - related: SearchInput, Table · patterns: DataTable, FormResults
 - spec: [components/HighlightText.md](components/HighlightText.md)
 
-### Input  ·  since 1.3.0
+### Input  ·  since 0.3.0
 Standard text input supporting plain text, email, password, number, tel, url, and multiline (textarea) variants, with optional prefix/suffix slots and error state.
 - import: `@codesweep-ai/ui`
 - intents: `input`, `text input`, `text field`, `textarea`, `multiline`, `email`, `password`, `number`, `form control`, `prefix`, `suffix`, `search field`, `field`, `controlled input`
@@ -192,7 +192,7 @@ Standard text input supporting plain text, email, password, number, tel, url, an
 - related: FormGroup, Dropdown, SearchInput, CheckboxGroup · patterns: Form
 - spec: [components/Input.md](components/Input.md)
 
-### Legend  ·  since 0.2.0  ·  experimental
+### Legend  ·  since 0.3.0  ·  experimental
 Compact token-colour legend that can be static or toggle a selected item set.
 - import: `@codesweep-ai/ui`
 - intents: `legend`, `key`, `swatch`, `color key`, `filter legend`, `toggle legend`, `categories`
@@ -204,7 +204,7 @@ Compact token-colour legend that can be static or toggle a selected item set.
 - related: EventLanes, Chip, SegmentedControl, StatusBadge · patterns: Dashboard
 - spec: [components/Legend.md](components/Legend.md)
 
-### MarkdownMinimap  ·  since 1.0.0
+### MarkdownMinimap  ·  since 0.3.0
 Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown container. Draws a block silhouette of headings and content, overlays the current viewport, and lets the user click or drag to scroll.
 - import: `@codesweep-ai/ui/minimap`
 - intents: `minimap`, `overview`, `scrollbar`, `canvas`, `scroll indicator`, `document map`, `navigation`, `long document`, `outline`, `viewport`, `scroll position`, `markdown nav`
@@ -215,7 +215,7 @@ Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown co
 - related: MarkdownViewer, SplitPane, Panel · patterns: MarkdownViewer
 - spec: [components/MarkdownMinimap.md](components/MarkdownMinimap.md)
 
-### MarkdownViewer  ·  since 1.0.0
+### MarkdownViewer  ·  since 0.3.0
 Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline.
 - import: `@codesweep-ai/ui/markdown` or `@codesweep-ai/ui/markdown/rich`
 - intents: `markdown`, `markdown viewer`, `gfm`, `github flavored markdown`, `syntax highlight`, `mermaid`, `katex`, `math`, `outline`, `minimap`, `document viewer`, `rich text`, `code block`, `alert`
@@ -228,7 +228,7 @@ Lightweight safe markdown renderer with an opt-in CommonMark/GFM plugin pipeline
 - related: MermaidDiagram, MarkdownMinimap, CodeBlock, Skeleton · patterns: MarkdownViewer
 - spec: [components/MarkdownViewer.md](components/MarkdownViewer.md)
 
-### MermaidDiagram  ·  since 1.0.0
+### MermaidDiagram  ·  since 0.3.0
 Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-theme change) and shows a friendly error block with raw source if the diagram fails to parse.
 - import: `@codesweep-ai/ui/mermaid`
 - intents: `mermaid`, `diagram`, `flowchart`, `sequence diagram`, `gantt`, `graph`, `chart`, `uml`, `visualization`, `dsl`, `svg diagram`, `architecture diagram`, `flow diagram`, `sketch`, `hand-drawn`, `roughjs-style`
@@ -241,7 +241,7 @@ Renders a Mermaid diagram from a source string. Theme-aware (re-renders on data-
 - related: MarkdownViewer, ChartFrame · patterns: MarkdownViewer
 - spec: [components/MermaidDiagram.md](components/MermaidDiagram.md)
 
-### Modal  ·  since 1.0.0
+### Modal  ·  since 0.3.0
 Dialog overlay for confirmations, forms, or detail views. Provides a backdrop, scrollable content area, header with close button, and optional footer actions.
 - import: `@codesweep-ai/ui`
 - intents: `modal`, `dialog`, `overlay`, `popup`, `lightbox`, `confirm`, `confirmation`, `alert dialog`, `drawer`, `sheet`, `portal`, `focus trap`, `backdrop`, `dismiss`
@@ -266,7 +266,7 @@ Page-level content container that owns the inset from the window edge, the conte
 - related: AppShell, Card, CardGroup, Panel, SplitPane
 - spec: [components/Page.md](components/Page.md)
 
-### Panel  ·  since 1.0.0
+### Panel  ·  since 0.3.0
 Collapsible side panel with a header and scrollable content area. Used for file trees, doc outlines, and filter panels inside flex layouts.
 - import: `@codesweep-ai/ui`
 - intents: `panel`, `sidebar`, `collapsible`, `side panel`, `pane`, `drawer`, `filter panel`, `file tree panel`, `outline`, `collapse`, `expand`, `header`, `layout`
@@ -278,7 +278,7 @@ Collapsible side panel with a header and scrollable content area. Used for file 
 - related: SplitPane, Tree, SectionedTree, Card · patterns: Explorer, MasterDetail, Dashboard, NavSidebar
 - spec: [components/Panel.md](components/Panel.md)
 
-### PulseBadge  ·  since 1.4.0
+### PulseBadge  ·  since 0.3.0
 Small pulsing dot that signals live, in-progress activity.
 - import: `@codesweep-ai/ui`
 - intents: `pulse`, `badge`, `dot`, `live`, `activity`, `animated`, `indicator`, `status dot`, `pulsing`, `real-time`, `streaming`, `agent activity`
@@ -289,7 +289,7 @@ Small pulsing dot that signals live, in-progress activity.
 - related: AgentStatus, StreamingText, AgentTrace, StatusBadge · patterns: AgentActivity
 - spec: [components/PulseBadge.md](components/PulseBadge.md)
 
-### RadioGroup  ·  since 0.2.0  ·  experimental
+### RadioGroup  ·  since 0.3.0  ·  experimental
 Exclusive choice among two or more options, each able to carry a description.
 - import: `@codesweep-ai/ui`
 - intents: `radio`, `radio group`, `radiogroup`, `exclusive options`, `single select`, `choice`, `mode`
@@ -302,7 +302,7 @@ Exclusive choice among two or more options, each able to carry a description.
 - related: SegmentedControl, CheckboxGroup, Dropdown, FormGroup · patterns: MarkdownViewer
 - spec: [components/RadioGroup.md](components/RadioGroup.md)
 
-### SearchInput  ·  since 1.0.0
+### SearchInput  ·  since 0.3.0
 Integrated search bar with inline search button, clear button, and optional auto-search after a character threshold.
 - import: `@codesweep-ai/ui`
 - intents: `search`, `input`, `filter`, `query`, `search bar`, `autocomplete`, `debounce`, `clear`, `find`, `lookup`, `search field`, `text input`
@@ -313,7 +313,7 @@ Integrated search bar with inline search button, clear button, and optional auto
 - related: Input, FormGroup, Table · patterns: Form, FormResults
 - spec: [components/SearchInput.md](components/SearchInput.md)
 
-### SectionedTree  ·  since 1.0.0
+### SectionedTree  ·  since 0.3.0
 Self-managing component that renders multiple independent tree sections with collapsible headers, per-section search, and shared selection.
 - import: `@codesweep-ai/ui`
 - intents: `sectioned tree`, `grouped tree`, `file explorer`, `multi-section`, `collapsible`, `sidebar`, `navigation`, `tree groups`, `project files`, `dependencies`, `explorer`
@@ -325,7 +325,7 @@ Self-managing component that renders multiple independent tree sections with col
 - related: Tree, SearchInput, HighlightText, SplitPane · patterns: Explorer, MasterDetail, NavSidebar
 - spec: [components/SectionedTree.md](components/SectionedTree.md)
 
-### SegmentedControl  ·  since 0.2.0  ·  experimental
+### SegmentedControl  ·  since 0.3.0  ·  experimental
 Compact radiogroup for choosing one of two to five adjacent options.
 - import: `@codesweep-ai/ui`
 - intents: `segmented control`, `radio group`, `view switcher`, `mode toggle`, `exclusive options`
@@ -337,7 +337,7 @@ Compact radiogroup for choosing one of two to five adjacent options.
 - related: RadioGroup, Chip, Dropdown, Legend · patterns: DataTable, FormResults
 - spec: [components/SegmentedControl.md](components/SegmentedControl.md)
 
-### Skeleton  ·  since 1.1.0
+### Skeleton  ·  since 0.3.0
 Primitive shimmer placeholder for loading states — indicates where content will appear without a generic spinner.
 - import: `@codesweep-ai/ui`
 - intents: `skeleton`, `loading`, `shimmer`, `placeholder`, `spinner alternative`, `content placeholder`, `loading state`, `pulse`, `rect`, `circle`, `text placeholder`
@@ -347,7 +347,7 @@ Primitive shimmer placeholder for loading states — indicates where content wil
 - related: Table, Card, CardGroup · patterns: ComponentStates
 - spec: [components/Skeleton.md](components/Skeleton.md)
 
-### SplitPane  ·  since 1.0.0
+### SplitPane  ·  since 0.3.0
 Container with two or three resizable panes separated by drag handles, with optional per-pane width persistence.
 - import: `@codesweep-ai/ui`
 - intents: `split pane`, `resizable`, `drag handle`, `layout`, `panels`, `two-column`, `three-column`, `side by side`, `resize`, `master detail`, `panel layout`, `persistent width`
@@ -358,7 +358,7 @@ Container with two or three resizable panes separated by drag handles, with opti
 - related: Panel, SectionedTree, Tree · patterns: MasterDetail, Explorer
 - spec: [components/SplitPane.md](components/SplitPane.md)
 
-### StatusBadge  ·  since 1.0.0
+### StatusBadge  ·  since 0.3.0
 Small static indicator for status values with a colored dot and uppercase label.
 - import: `@codesweep-ai/ui`
 - intents: `status badge`, `badge`, `indicator`, `success`, `warning`, `error`, `neutral`, `dot`, `label`, `state indicator`, `tag`, `chip`, `status label`
@@ -368,7 +368,7 @@ Small static indicator for status values with a colored dot and uppercase label.
 - related: PulseBadge, Table, Card · patterns: ComponentStates
 - spec: [components/StatusBadge.md](components/StatusBadge.md)
 
-### StreamingText  ·  since 1.4.0
+### StreamingText  ·  since 0.3.0
 Live-rendered plain text that reveals characters at a configurable speed with a blinking trailing cursor, for streaming model output.
 - import: `@codesweep-ai/ui`
 - intents: `streaming text`, `typewriter`, `token stream`, `live text`, `model output`, `llm output`, `character reveal`, `cursor`, `animated text`, `streaming`, `real-time`, `chat output`
@@ -379,7 +379,7 @@ Live-rendered plain text that reveals characters at a configurable speed with a 
 - related: AgentStatus, AgentTrace, PulseBadge, MarkdownViewer · patterns: AgentActivity
 - spec: [components/StreamingText.md](components/StreamingText.md)
 
-### Table  ·  since 1.0.0
+### Table  ·  since 0.3.0
 Data table with sortable columns, filtering, pagination, and async states.
 - import: `@codesweep-ai/ui`
 - intents: `table`, `grid`, `data table`, `tabular`, `rows`, `columns`, `sortable`, `sort`, `filter`, `search`, `paginate`, `pagination`, `list view`, `spreadsheet`, `dataset`
@@ -390,7 +390,7 @@ Data table with sortable columns, filtering, pagination, and async states.
 - related: SectionedTree, Tree, SearchInput, Dropdown, StatusBadge, HighlightText · patterns: DataTable, Explorer, MasterDetail
 - spec: [components/Table.md](components/Table.md)
 
-### ThemeToggle  ·  since 1.0.0
+### ThemeToggle  ·  since 0.3.0
 Button or radio-group control for cycling through theme modes (system, light, dark), with localStorage persistence.
 - import: `@codesweep-ai/ui`
 - intents: `theme toggle`, `dark mode`, `light mode`, `color scheme`, `theme switcher`, `appearance`, `system theme`, `mode toggle`, `dark light`, `preferences`, `ui theme`
@@ -399,7 +399,7 @@ Button or radio-group control for cycling through theme modes (system, light, da
 - related: AppShell
 - spec: [components/ThemeToggle.md](components/ThemeToggle.md)
 
-### Toast  ·  since 1.11.0
+### Toast  ·  since 0.3.0
 Single transient notification — feedback for an action that auto-dismisses, with a colored variant + screen-reader announcement.
 - import: `@codesweep-ai/ui`
 - intents: `toast`, `notification`, `snackbar`, `alert`, `feedback`, `transient`, `popup`, `success message`, `error message`, `status`, `dismiss`, `announce`, `sr-only`, `aria-live`, `role status`, `role alert`
@@ -411,7 +411,7 @@ Single transient notification — feedback for an action that auto-dismisses, wi
 - related: ToastContainer
 - spec: [components/Toast.md](components/Toast.md)
 
-### ToastContainer  ·  since 1.11.0
+### ToastContainer  ·  since 0.3.0
 Host for the toast system — mount once at the app root and call `toast.success(...)` etc. from anywhere.
 - import: `@codesweep-ai/ui`
 - intents: `toast`, `notifications`, `snackbar`, `container`, `host`, `root`, `stacking`, `bottom-right`, `auto-dismiss`, `imperative api`, `pub sub`, `store`, `feedback layer`
@@ -435,7 +435,7 @@ Accessible hover and focus tooltip, with an overflow-only mode for labels cut of
 - related: ChartTooltip, Tree, SectionedTree, Table, EventLanes · patterns: DataTable
 - spec: [components/Tooltip.md](components/Tooltip.md)
 
-### Tree  ·  since 1.0.0
+### Tree  ·  since 0.3.0
 Hierarchical tree view with expand/collapse, selection, search/filter, and optional drag-to-reorder.
 - import: `@codesweep-ai/ui`
 - intents: `tree`, `hierarchy`, `file tree`, `expand collapse`, `treeview`, `navigation`, `folder`, `nodes`, `filterable`, `search tree`, `drag reorder`, `file browser`, `ast`
@@ -448,7 +448,7 @@ Hierarchical tree view with expand/collapse, selection, search/filter, and optio
 
 ## Patterns
 
-### AgentActivity  ·  since 1.4.0
+### AgentActivity  ·  since 0.3.0
 Visual language for surfacing real-time AI agent work — in-flight, paused, and settled states.
 - intents: `agent activity`, `ai agent`, `streaming output`, `real-time progress`, `agent status`, `live work`, `agent trace`, `step history`, `in-flight`, `agentic ui`
 - use when: An AI agent is actively doing work the user should be able to observe
@@ -460,7 +460,7 @@ Visual language for surfacing real-time AI agent work — in-flight, paused, and
 - related: AgentStatus, AgentTrace, EventLanes, PulseBadge, StreamingText, StatusBadge, Skeleton
 - spec: [patterns/AgentActivity.md](patterns/AgentActivity.md)
 
-### Chart  ·  since 1.5.0
+### Chart  ·  since 0.3.0
 Theme-aware chart bridge for d3, recharts, and any other library — routes all colors through design-system tokens.
 - intents: `chart`, `data visualization`, `themed chart`, `d3`, `recharts`, `chart colors`, `dark mode chart`, `chart theming`, `categorical palette`, `chart tooltip`
 - use when: Building any chart that must respect light/dark theme switching
@@ -472,7 +472,7 @@ Theme-aware chart bridge for d3, recharts, and any other library — routes all 
 - related: ChartFrame, ChartTooltip
 - spec: [patterns/Chart.md](patterns/Chart.md)
 
-### ComponentStates  ·  since 1.0.0
+### ComponentStates  ·  since 0.3.0
 Canonical empty, loading, and error state contract for every component that renders async data.
 - intents: `loading state`, `empty state`, `error state`, `async data`, `skeleton`, `retry`, `component states`, `loading skeleton`, `empty message`, `error handling`
 - use when: Adding a new component that fetches or streams data
@@ -482,7 +482,7 @@ Canonical empty, loading, and error state contract for every component that rend
 - related: Skeleton, Button, Table, Tree, SectionedTree, MarkdownViewer, Dropdown, SearchInput, Card
 - spec: [patterns/ComponentStates.md](patterns/ComponentStates.md)
 
-### Dashboard  ·  since 1.0.0
+### Dashboard  ·  since 0.3.0
 Stats bar, filterable chart, and optional sidebar for summarizing and exploring aggregate data.
 - intents: `dashboard`, `metrics`, `stats bar`, `chart filter`, `kpi`, `data summary`, `analytics page`, `filterable chart`, `aggregate view`, `overview page`
 - use when: Showing high-level metrics alongside a chart visualization
@@ -492,7 +492,7 @@ Stats bar, filterable chart, and optional sidebar for summarizing and exploring 
 - related: Card, CardGroup, CheckboxGroup, ChartFrame, ChartTooltip, Legend
 - spec: [patterns/Dashboard.md](patterns/Dashboard.md)
 
-### DataTable  ·  since 1.0.0
+### DataTable  ·  since 0.3.0
 Full-featured table with filtering, sorting, pagination, and search highlighting for large flat datasets.
 - intents: `data table`, `table`, `sortable table`, `paginated table`, `search table`, `filter table`, `list view`, `registry`, `audit log`, `inventory`, `tabular data`
 - use when: Displaying a large flat dataset (10+ rows) with search and pagination
@@ -504,7 +504,7 @@ Full-featured table with filtering, sorting, pagination, and search highlighting
 - related: Table, HighlightText, StatusBadge, SearchInput, Dropdown
 - spec: [patterns/DataTable.md](patterns/DataTable.md)
 
-### Explorer  ·  since 1.0.0
+### Explorer  ·  since 0.3.0
 Tree sidebar with resizable content pane for browsing and navigating hierarchical data structures.
 - intents: `explorer`, `file tree`, `tree sidebar`, `hierarchical navigation`, `split pane`, `document browser`, `file browser`, `nested navigation`, `sidebar tree`, `tree view`
 - use when: Browsing file trees, documentation structures, or package hierarchies
@@ -515,7 +515,7 @@ Tree sidebar with resizable content pane for browsing and navigating hierarchica
 - related: SplitPane, Panel, Tree, SectionedTree, Card, CardGroup, SearchInput
 - spec: [patterns/Explorer.md](patterns/Explorer.md)
 
-### Form  ·  since 1.3.0
+### Form  ·  since 0.3.0
 Composition rules for form fields — layout, validation, submit placement, and error-summary patterns.
 - intents: `form`, `form layout`, `field validation`, `form group`, `input`, `submit button`, `error summary`, `form validation`, `accessible form`, `form pattern`
 - use when: Building any form with one or more user-editable fields
@@ -525,7 +525,7 @@ Composition rules for form fields — layout, validation, submit placement, and 
 - related: FormGroup, Input, Button, Dropdown, CheckboxGroup
 - spec: [patterns/Form.md](patterns/Form.md)
 
-### FormResults  ·  since 1.0.0
+### FormResults  ·  since 0.3.0
 Pinned search/filter form at top with scrollable result cards below for query-driven workflows.
 - intents: `search results`, `search page`, `form results`, `query results`, `code search`, `filter results`, `find page`, `search interface`, `result cards`, `query-driven`
 - use when: Search interfaces where the user provides criteria and gets a list of results
@@ -535,7 +535,7 @@ Pinned search/filter form at top with scrollable result cards below for query-dr
 - related: Card, SearchInput, HighlightText, Dropdown, StatusBadge, CodeBlock
 - spec: [patterns/FormResults.md](patterns/FormResults.md)
 
-### MarkdownViewer  ·  since 1.0.0
+### MarkdownViewer  ·  since 0.3.0
 Document browser with outline navigation, minimap, and rich markdown rendering for in-app documentation.
 - intents: `markdown viewer`, `document browser`, `markdown renderer`, `outline navigation`, `minimap`, `documentation`, `readme viewer`, `spec viewer`, `doc browser`, `in-app docs`
 - use when: Rendering documentation, specs, or help content in-app
@@ -547,7 +547,7 @@ Document browser with outline navigation, minimap, and rich markdown rendering f
 - related: MarkdownViewer, MarkdownMinimap, SplitPane, Panel, Tree, Card, CardGroup
 - spec: [patterns/MarkdownViewer.md](patterns/MarkdownViewer.md)
 
-### MasterDetail  ·  since 1.0.0
+### MasterDetail  ·  since 0.3.0
 Sortable list or table on one side with a detail pane on the other for inspecting individual records.
 - intents: `master detail`, `list detail`, `record detail`, `split view`, `row selection`, `detail pane`, `inspect record`, `two panel`, `table detail`, `side panel`
 - use when: Browsing a flat list of records where each record has rich detail

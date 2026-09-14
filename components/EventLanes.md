@@ -1,7 +1,7 @@
 ---
 name: EventLanes
 status: experimental
-since: 0.2.0
+since: 0.3.0
 summary: Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.
 keywords: [event lanes, event timeline, event strip, canvas timeline, trace events,
            agent events, multi-agent timeline, spans, overview, virtual listbox]

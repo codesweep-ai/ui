@@ -1,7 +1,7 @@
 ---
 name: MarkdownMinimap
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Canvas-based minimap (overview scrollbar) for a long-form scrollable markdown container. Draws a block silhouette of headings and content, overlays the current viewport, and lets the user click or drag to scroll.
 keywords: [minimap, overview, scrollbar, canvas, scroll indicator, document map,
            navigation, long document, outline, viewport, scroll position, markdown nav]

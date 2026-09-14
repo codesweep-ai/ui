@@ -1,7 +1,7 @@
 ---
 name: MasterDetail
 status: stable
-since: 1.0.0
+since: 0.3.0
 summary: Sortable list or table on one side with a detail pane on the other for inspecting individual records.
 keywords: [master detail, list detail, record detail, split view, row selection, detail pane, inspect record, two panel, table detail, side panel]
 use_when:

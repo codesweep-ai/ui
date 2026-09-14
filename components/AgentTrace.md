@@ -1,7 +1,7 @@
 ---
 name: AgentTrace
 status: stable
-since: 1.4.0
+since: 0.3.0
 summary: Vertical, expandable list of chronological agent steps with status icons.
 keywords: [agent, trace, steps, activity, log, history, timeline, audit, run log,
            agent steps, chronological]
