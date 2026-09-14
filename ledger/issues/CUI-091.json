@@ -1,0 +1,27 @@
+{
+  "id": "CUI-091",
+  "title": "The categorical palette's first two slots are too close for full colour vision",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "independent review of the palette work, which found the decision CUI-084 recorded as needed and then closed without making",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`--color-cat-1` and `--color-cat-2` separate by 12.2 against a floor of 15, for a reader whose vision is not simulated at all. They are the first two slots, so they are the two series of any two-series chart drawn with this palette, and `--color-cat-5` against `--color-cat-6` measures 9.9.\n\nThis is not the colour-blind collapse CUI-084 was about. It is a separate miss, in the common case rather than a specialised one, and a reader with full colour vision meets it.\n\nCUI-084's own note of 2026-09-13 named it and said it needed a decision either way. That record then closed having fixed the eight-slot ramp and capped the categorical contract at six slots, neither of which moves these values. The miss survived the work that was supposed to settle it.\n\nThe palette is muted by decision, and mutedness is what puts these hues close together, so this is a trade rather than an oversight to correct blindly. Raising the separation costs some of the muted character that a colour review chose. That is the decision to make.\n\n`scripts/check-palette.mjs` does not hold the categorical palette to the normal-vision floor, and its comment says why and points here. Adding that check without moving the values would fail the build.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "The gate names this record in a comment, so the exemption is visible in the file rather than inferred from what is absent. That matters because the graph ramp shipped with a contrast failure exactly through a gate that checked less than it appeared to."
+    }
+  ],
+  "links": [
+    "CUI-084"
+  ]
+}

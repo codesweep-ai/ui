@@ -135,13 +135,6 @@
     text-decoration-line: none
 }
 
-/* A multi-word label breaks at its spaces once the row is crowded, which
-   stacks one link into a column of words and leaves the row ragged at several
-   heights. The row above wraps instead, so the label stays on one line. */
-.cs-component-app-shell-16 {
-    white-space: nowrap
-}
-
 .cs-component-app-shell-16 {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

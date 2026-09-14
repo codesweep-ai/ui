@@ -1,0 +1,27 @@
+{
+  "id": "CUI-092",
+  "title": "A URL theme seed outranks a reader's own choice after every caller unmounts",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "another agent, while making useTheme's snapshot a pure read, and reproduced before filing",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`useTheme` takes a query parameter that seeds the mode for a load without saving it. The shared store reads that seed whenever it adopts, and it adopts whenever it gains its first caller. So a page carrying `?theme=dark` puts the seed back every time the last caller unmounts and another mounts, discarding a mode the reader chose earlier in the same load.\n\nReproduced before filing. With `?theme=dark` in the address, a probe renders and reads `dark`, chooses `light`, unmounts, and renders again. It reads `dark`. The choice is gone, and it is still in `localStorage` where the choice was written.\n\nA route change that unmounts every consumer is the ordinary way to meet this. React's strict mode mounts, unmounts and mounts again, so it happens there too.\n\nThe behaviour predates the shared store, because each caller read the seed at mount before it existed. The store widens it: what used to move one remounted component now moves every caller at once, because they share the mode.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "A fix was written and reverted rather than shipped, because it is a decision rather than a correction. Making a chosen mode outrank the seed fails the existing test that the seed governs the load, since nothing tells the store when a load ends: the flag that records the choice outlives every component, which is the point of it, so the seed stops working for the rest of the session after the first toggle.\n\nSo the question is what the seed means. If it pins the theme for a load, as its documentation says, then re-applying it on remount is correct and the reader's choice is what should yield. If it seeds only the first paint, the choice should win and the parameter needs to say so. Both are defensible and the documentation currently supports the first.\n\nWhoever settles it should also decide what a load is, because the store has no signal for it."
+    }
+  ],
+  "links": [
+    "CUI-085"
+  ]
+}

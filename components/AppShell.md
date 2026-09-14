@@ -109,7 +109,7 @@ interface FooterProps {
 
 ### Nav Links
 - Container: `display: flex`, `gap: var(--space-1)`, `align-items: center`, `flex-wrap: wrap`.
-- Link: `color: var(--muted)`, `padding: var(--space-2) var(--space-3)`, `font-size: var(--font-size-xs)`, `font-weight: var(--font-weight-medium)`, `border-radius: var(--radius-sm)`, `text-decoration: none`, `white-space: nowrap`.
+- Link: `color: var(--muted)`, `padding: var(--space-2) var(--space-3)`, `font-size: var(--font-size-xs)`, `font-weight: var(--font-weight-medium)`, `border-radius: var(--radius-sm)`, `text-decoration: none`.
 
 ### Footer Styling
 - Background: `var(--color-header-bg)`.
@@ -204,7 +204,11 @@ None at the shell level. Theme persistence handled by `ThemeToggle` / `useTheme`
 - **No logoSrc**: The text title is the brand mark (the normal case).
 - **Very many nav items**: The link row wraps to another line at any width, so a
   crowded nav makes the header taller rather than running off its edge. A label
-  never breaks across lines; the row wraps instead.
+  is not broken up to make room, because a link moves to the next row rather
+  than being squeezed.
+- **One nav label wider than the row**: it breaks across lines. Nothing else
+  can happen to it: wrapping the row moves whole links and cannot shrink one,
+  and the shell clips what overflows without offering a scrollbar.
 - **No actions**: Actions slot simply doesn't render.
 - **Logo fails to load**: Add `onerror` fallback to show text brand mark.
 

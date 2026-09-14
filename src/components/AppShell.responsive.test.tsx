@@ -16,25 +16,28 @@ const items = [
   { label: "Tokens", href: "#t" },
 ];
 
-afterEach(async () => {
-  await page.viewport(WIDE, HEIGHT);
-});
+// Reach the links by `data-header-nav-link`, the hook components/AppShell.md
+// names, rather than by position in the tree: a separator or a wrapper added
+// between the nav and its links moves the position and keeps the hook. The row
+// that wraps them is then the nav child holding a link, found the same way.
+const navLinks = (nav: Element) => Array.from(nav.querySelectorAll("a[data-header-nav-link]"));
+const navRow = (nav: Element) => navLinks(nav)[0].closest("nav > *")!;
 
 describe("Header responsive layout", () => {
   it("stacks the header and wraps the nav below the breakpoint", async () => {
     render(<Header title="App" navItems={items} />);
     const nav = screen.getByRole("navigation");
     const inner = nav.parentElement!;
-    const links = nav.firstElementChild!;
+    const row = navRow(nav);
 
     await page.viewport(WIDE, HEIGHT);
     expect(getComputedStyle(inner).flexDirection).toBe("row");
-    expect(getComputedStyle(links).flexWrap).toBe("wrap");
+    expect(getComputedStyle(row).flexWrap).toBe("wrap");
 
     await page.viewport(NARROW, HEIGHT);
     expect(getComputedStyle(inner).flexDirection).toBe("column");
     expect(getComputedStyle(inner).alignItems).toBe("flex-start");
-    expect(getComputedStyle(links).flexWrap).toBe("wrap");
+    expect(getComputedStyle(row).flexWrap).toBe("wrap");
   });
 
   it("lets many nav items reach a second row instead of overflowing", async () => {
@@ -44,15 +47,15 @@ describe("Header responsive layout", () => {
     }));
     render(<Header title="App" navItems={many} />);
     const nav = screen.getByRole("navigation");
-    const links = nav.firstElementChild!;
 
     await page.viewport(NARROW, HEIGHT);
 
     const rows = new Set(
-      Array.from(links.children, (child) => Math.round(child.getBoundingClientRect().top)),
+      navLinks(nav).map((a) => Math.round(a.getBoundingClientRect().top)),
     );
     expect(rows.size).toBeGreaterThan(1);
-    expect(links.scrollWidth).toBeLessThanOrEqual(links.clientWidth);
+    const row = navRow(nav);
+    expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
   });
 
   // Above the breakpoint the row used to be `nowrap`, so a crowded nav ran past
@@ -68,33 +71,64 @@ describe("Header responsive layout", () => {
 
     await page.viewport(1000, HEIGHT);
 
-    const links = Array.from(nav.querySelectorAll("a[data-header-nav-link]"));
+    const links = navLinks(nav);
     expect(links).toHaveLength(20);
     const offscreen = links.filter((a) => a.getBoundingClientRect().right > window.innerWidth + 0.5);
     expect(offscreen).toHaveLength(0);
   });
 
-  // A label free to break at its spaces stacks into a column of words, which
-  // leaves the row ragged at several heights. The row wraps instead.
-  it("never breaks a nav label across lines", async () => {
+  // Crowding is what used to break a label: a squeezed link wrapped at its
+  // spaces and the row went ragged at several heights. A link now moves to the
+  // next row instead of being squeezed, so every label keeps one line.
+  it("keeps every label on one line when the row is crowded", async () => {
     render(
       <Header
         title="App"
         navItems={[
-          { label: "One", href: "#one" },
-          { label: "A rather long multi word label", href: "#long" },
+          { label: "What you can say", href: "#a" },
+          { label: "Where do I start?", href: "#b" },
+          { label: "The model", href: "#c" },
+          { label: "How you can measure it", href: "#d" },
+          { label: "How it is defined", href: "#e" },
+          { label: "Reference", href: "#f" },
+          { label: "Key findings", href: "#g" },
+        ]}
+        actions={<div style={{ width: 390, height: 34, flex: "0 0 390px" }} />}
+      />,
+    );
+    const nav = screen.getByRole("navigation");
+
+    await page.viewport(1100, HEIGHT);
+
+    const heights = new Set(
+      navLinks(nav).map((a) => Math.round(a.getBoundingClientRect().height)),
+    );
+    expect(heights.size).toBe(1);
+  });
+
+  // The row wrapping moves whole links and cannot shrink one, so a label wider
+  // than the row on its own has to break. If it does not, it runs past the edge
+  // and the shell clips it with no scrollbar to reach it, which is CUI-081.
+  it("breaks a label too wide for the row rather than letting it escape", async () => {
+    render(
+      <Header
+        title="App"
+        navItems={[
+          { label: "Short", href: "#s" },
+          { label: "Betriebskostenabrechnung und Grundstuecksverwaltung Uebersicht", href: "#l" },
         ]}
       />,
     );
     const nav = screen.getByRole("navigation");
-    const [short, long] = Array.from(nav.querySelectorAll("a[data-header-nav-link]"));
 
-    await page.viewport(420, HEIGHT);
+    await page.viewport(390, HEIGHT);
 
-    expect(getComputedStyle(long).whiteSpace).toBe("nowrap");
-    expect(long.getBoundingClientRect().height).toBeCloseTo(
-      short.getBoundingClientRect().height,
-      1,
+    const links = navLinks(nav);
+    const escaped = links.filter((a) => a.getBoundingClientRect().right > window.innerWidth + 0.5);
+    expect(escaped).toHaveLength(0);
+    // It broke rather than fitting by luck: the long one is taller than the short one.
+    expect(links[1].getBoundingClientRect().height).toBeGreaterThan(
+      links[0].getBoundingClientRect().height,
     );
   });
 });
