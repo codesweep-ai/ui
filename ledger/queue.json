@@ -3,10 +3,6 @@
   "updated": "2026-09-14",
   "items": [
     {
-      "id": "CUI-093",
-      "why": "A group's helper and error text is wired to an element that cannot announce it, so a screen reader is told neither."
-    },
-    {
       "id": "CUI-092",
       "why": "Needs a decision on what a URL theme seed governs, which no measurement settles."
     }
