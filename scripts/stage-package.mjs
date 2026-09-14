@@ -160,6 +160,42 @@ export function publishedManifest(manifest, ref) {
   return `${JSON.stringify(staged, null, 2)}\n`;
 }
 
+/**
+ * Refuse a commit that has not left this machine.
+ *
+ * Every documentation pointer this package ships is pinned to the build's
+ * commit, so a commit nobody can fetch ships a package that documents nothing:
+ * the README's links, all 49 catalog specs and the manifest's homepage all 404
+ * together, and the publish reports nothing. Staging already treats an absent
+ * commit as fatal, and an unreachable one is the same failure later.
+ *
+ * Reachability is asked of this repository rather than of the forge, so the
+ * check costs no network and answers the case that actually happens: staging
+ * from work that has not been pushed. A commit on a remote-tracking branch or
+ * on a tag has left; one on neither has not.
+ *
+ * Where there is no remote-tracking ref and no tag to judge against, it says
+ * nothing rather than guessing. A check with no evidence should not be the
+ * thing that stops a release.
+ */
+export function assertCommitIsFetchable(sha, run) {
+  const containing = run([
+    "for-each-ref", "--format=%(refname)", "--contains", sha, "refs/remotes", "refs/tags",
+  ]).trim();
+  if (containing) return;
+
+  const anyRef = run([
+    "for-each-ref", "--count=1", "--format=%(refname)", "refs/remotes", "refs/tags",
+  ]).trim();
+  if (!anyRef) return;
+
+  throw new Error(
+    `stage-package: ${sha} is on no remote branch and no tag, so it is not a commit a reader ` +
+    "can fetch. Every documentation link this package ships would 404. Push the commit, or " +
+    "stage from one that has been pushed.",
+  );
+}
+
 /** The commit this build came from, which build.mjs stamps into dist. */
 function builtCommit(root) {
   const stamp = join(root, "dist", "BUILD.json");
@@ -195,6 +231,20 @@ for (const entry of ["dist", "LICENSE", "NOTICE"]) {
 // The three files that differ between the two roots. Each is the repository's
 // own, rewritten for a reader who has the package and not the repository.
 const ref = builtCommit(ROOT);
+const git = (args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8" });
+if (process.env.CS_UI_STAGE_INSPECT === "1") {
+  // `npm run ci` stages to prove the tarball assembles and publishes nothing,
+  // so an unpushed commit is not a reason to fail it. Refusing there would mean
+  // a branch could not pass its own gate until it had been pushed, which is the
+  // wrong way round: the gate exists to be run before anything leaves.
+  try {
+    assertCommitIsFetchable(ref, git);
+  } catch (err) {
+    console.warn(`${err.message}\n  (staging anyway: this run inspects the tarball rather than publishing it)`);
+  }
+} else {
+  assertCommitIsFetchable(ref, git);
+}
 writeFileSync(
   join(STAGE, "README.md"),
   publishedReadme(readFileSync(join(ROOT, "README.md"), "utf8"), ref),

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { publishedReadme, publishedCatalog, publishedManifest } from "./stage-package.mjs";
+import { publishedReadme, publishedCatalog, publishedManifest, assertCommitIsFetchable } from "./stage-package.mjs";
 
 // The published README is the only documentation an install carries, and its
 // links are the only route to the rest. Pinning them to the commit the build
@@ -107,4 +107,33 @@ test("pins the manifest homepage and drops what a package must not carry", () =>
   assert.doesNotMatch(out.homepage, /#readme$/);
   assert.equal(out.scripts, undefined);
   assert.equal(out.devDependencies, undefined);
+});
+
+// A commit nobody can fetch ships a package whose every documentation link
+// 404s, and the publish says nothing. That is CUI-087. The runner is injected
+// so these ask about the logic rather than about whatever this checkout holds.
+
+test("accepts a commit a remote branch or a tag contains", () => {
+  const run = (args) =>
+    args.includes("--contains") ? "refs/remotes/origin/main\n" : "refs/remotes/origin/main\n";
+
+  assert.doesNotThrow(() => assertCommitIsFetchable(SHA, run));
+});
+
+test("refuses a commit no remote branch and no tag contains", () => {
+  const run = (args) => (args.includes("--contains") ? "" : "refs/remotes/origin/main\n");
+
+  assert.throws(() => assertCommitIsFetchable(SHA, run), (err) => {
+    assert.match(err.message, new RegExp(SHA));
+    assert.match(err.message, /no remote branch and no tag/);
+    return true;
+  });
+});
+
+test("says nothing when there is no ref to judge against", () => {
+  // A checkout with neither a remote-tracking ref nor a tag cannot answer the
+  // question. A check with no evidence should not be what stops a release.
+  const run = () => "";
+
+  assert.doesNotThrow(() => assertCommitIsFetchable(SHA, run));
 });

@@ -96,6 +96,9 @@ run(npm, ["run", "preview:rich-check"]);
 
 say("the package the release workflow would publish");
 // `check` above has already built dist/, so this stages without rebuilding it.
+// This run assembles the tarball to check it assembles. It publishes nothing,
+// so staging reports an unpushed commit here rather than refusing one.
+process.env.CS_UI_STAGE_INSPECT = "1";
 run("node", ["scripts/stage-package.mjs"]);
 run(npm, ["pack", "--dry-run", ".package"]);
 
