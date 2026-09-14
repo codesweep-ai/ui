@@ -14,6 +14,10 @@ function setVars() {
   root.style.setProperty("--color-success", "#34d399");
   root.style.setProperty("--color-warning", "#f59e0b");
   root.style.setProperty("--color-error", "#f87171");
+  for (let i = 1; i <= 8; i++) {
+    root.style.setProperty(`--color-graph-${i}`, `#4444d${i}`);
+  }
+  root.style.setProperty("--color-graph-other", "#6b7580");
   for (let i = 1; i <= 10; i++) {
     root.style.setProperty(`--color-cat-${i}`, `#00000${i % 10}`);
     root.style.setProperty(`--color-cat-${i}-light`, `#11111${i % 10}`);
@@ -106,5 +110,29 @@ describe("assignSeriesColors", () => {
     expect(map.k00).toBe("c0");
     expect(map.k10).toBe("c0"); // 10 % 10 = 0
     expect(map.k11).toBe("c1");
+  });
+});
+
+// A node-link diagram can put any pair of categories side by side, which the
+// categorical ramp is not built for. `graph` is the ramp that is, and a chart
+// cannot reach it unless the bridge carries it. That is part of CUI-084.
+describe("useChartTheme exposes the graph ramp", () => {
+  beforeEach(setVars);
+  afterEach(clearVars);
+
+  it("reads all eight graph slots and the neutral", () => {
+    const { result } = renderHook(() => useChartTheme());
+
+    expect(result.current.graph).toHaveLength(8);
+    expect(result.current.graph[0]).toBe("#4444d1");
+    expect(result.current.graph[7]).toBe("#4444d8");
+    expect(result.current.graphOther).toBe("#6b7580");
+  });
+
+  it("keeps the graph ramp separate from the categorical one", () => {
+    const { result } = renderHook(() => useChartTheme());
+
+    expect(result.current.categorical).toHaveLength(10);
+    expect(result.current.graph).not.toEqual(result.current.categorical.slice(0, 8));
   });
 });

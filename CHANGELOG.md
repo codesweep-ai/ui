@@ -8,6 +8,39 @@ Each published build's README links back to the commit it was built from, so
 this file describes the version you installed rather than whatever `main`
 holds today.
 
+## Unreleased
+
+### Fixed
+
+- `useChartTheme` restyles a chart when the theme changes. Every caller of
+  `useTheme` used to hold a private copy of the mode, so a chart kept whatever
+  theme it mounted in while the toggle moved everything else. A consumer who
+  worked around it by putting `var(--token)` in the SVG can keep doing so, and
+  no longer has to.
+- The header's nav wraps at any width rather than only below the breakpoint,
+  and a nav label no longer breaks across lines. A crowded nav used to run past
+  the right edge, where the shell's `overflow: hidden` clipped it with no
+  scrollbar to reach it. See [components/AppShell.md](components/AppShell.md).
+- `catalog.json` ships with each `spec` as an absolute URL pinned to the commit
+  the build came from, and `homepage` is pinned the same way. Both used to
+  point at paths and branches the installed package does not carry.
+
+### Added
+
+- `--color-graph-1` to `--color-graph-8` and `--color-graph-other`, a
+  categorical ramp for charts where any pair of categories can meet: a
+  node-link diagram, a scatter plot, a map, a small multiple. `useChartTheme()`
+  exposes them as `theme.graph` and `theme.graphOther`.
+
+### Changed behaviour
+
+- `--color-cat-*` is documented as holding to six slots rather than ten. Its
+  values have not moved. Past six, adjacent hues are not far enough apart to
+  stay distinct, so a chart with more than six series takes `theme.graph` or
+  folds the remainder. Section 4.12 of
+  [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) states what each palette holds
+  to, and what to do at nine categories.
+
 ## 0.3.0
 
 This release went out on 2026-09-09. It is the first tagged release, so a bare

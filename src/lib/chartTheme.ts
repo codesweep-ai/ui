@@ -22,6 +22,19 @@ export interface ChartTheme {
   categoricalMid: string[];
   categoricalDark: string[];
 
+  /**
+   * Eight series colours for a chart where any pair of categories can meet:
+   * a node-link diagram, a scatter plot, a map, a small multiple. Use
+   * `categorical` instead where only neighbouring series ever touch, which is
+   * a bar, line, stacked or area chart.
+   *
+   * Separation holds across all eight, and past eight the remainder folds into
+   * `graphOther`. Section 4.12 of DESIGN_SYSTEM_SPEC.md states both contracts.
+   */
+  graph: string[];
+  /** The neutral the overflow past `graph`'s eight slots takes. */
+  graphOther: string;
+
   // ── Typography ──────────────────────────────────────────────────────────
   // Colour is not the only thing a drawing consumer cannot take from a CSS
   // custom property. `ctx.font` will not accept a `var()` string, and nothing
@@ -45,6 +58,7 @@ export interface ChartTheme {
 }
 
 const CATEGORICAL_COUNT = 10;
+const GRAPH_COUNT = 8;
 
 // One canvas for the life of the page. A chart that lays out around its text
 // measures once per label per redraw, so allocating a context per call is the
@@ -95,6 +109,7 @@ function readVars(): ChartTheme {
       axisLabel: "", accent: "", accentSoft: "", success: "", warning: "",
       error: "", categorical: empty, categoricalLight: [...empty],
       categoricalMid: [...empty], categoricalDark: [...empty],
+      graph: Array.from({ length: GRAPH_COUNT }, () => ""), graphOther: "",
       fontFamily: "", fontSizeAxis: 0, measureText: () => 0,
     };
   }
@@ -126,6 +141,8 @@ function readVars(): ChartTheme {
     categoricalLight: series("-light"),
     categoricalMid: series("-mid"),
     categoricalDark: series("-dark"),
+    graph: Array.from({ length: GRAPH_COUNT }, (_, i) => v(`--color-graph-${i + 1}`)),
+    graphOther: v("--color-graph-other"),
     fontFamily,
     fontSizeAxis,
     measureText: measurer(`${fontSizeAxis}px ${fontFamily}`),

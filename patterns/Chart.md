@@ -28,6 +28,7 @@ Added in `@codesweep-ai/ui@1.5.0`.
 
 1. **Never use raw hex in chart code.** Always pull colors from [`useChartTheme()`](../components/ChartFrame.md). Hardcoded hex in a `d3.select(...).attr("fill", ...)` call is a bug — the `@codesweep-ai/no-hardcoded-chart-colors` ESLint rule catches it.
 2. **Series colors come from `theme.categorical[i]`** — never `var(--color-cat-1)` directly inside JS chart code, and never a literal hex.
+2b. **Which ramp depends on which pairs can meet, not on mark size.** A bar, line, stacked or area chart only ever puts a series beside its neighbour, so `theme.categorical` fits and holds to six slots. A node-link diagram, a scatter plot, a map or a small multiple can put any category beside any other, so use `theme.graph`, which holds all eight. Past eight, fold the rest into `theme.graphOther` or separate them by shape rather than reaching for a ninth hue. Section 4.12 of [DESIGN_SYSTEM_SPEC.md](../DESIGN_SYSTEM_SPEC.md) states both contracts.
 3. **Use `assignSeriesColors(keys, theme)`** when the same series appears on multiple pages, so "auth" is always the same color everywhere (keys are sorted before assignment for stability).
 4. **Wrap every chart in [`<ChartFrame>`](../components/ChartFrame.md)** for consistent loading / empty / error states. The chart only renders the happy path.
 5. **Axes (imperative/d3): use `styleAxis(selection, theme)`** — no inline axis styling.
@@ -52,8 +53,10 @@ import { useChartTheme } from "@codesweep-ai/ui";
 
 const theme = useChartTheme();
 // theme.bg, theme.fg, theme.muted, theme.accent, theme.success, …
-// theme.categorical[i]      → base 10-color palette
+// theme.categorical[i]      → 10 hues, safe where only neighbours meet
 // theme.categoricalLight[i] / .categoricalMid[i] / .categoricalDark[i]
+// theme.graph[i]            → 8 hues, safe where any pair can meet
+// theme.graphOther          → the neutral the ninth category folds into
 // theme.fontFamily          → resolved mono stack
 // theme.fontSizeAxis        → resolved axis size, in pixels
 // theme.measureText(label)  → rendered width in pixels
