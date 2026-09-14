@@ -3,15 +3,17 @@
   "title": "useChartTheme never restyles on a theme toggle, which its own comment promises",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report (host): an application consuming this package, reported alongside the palette request in CUI-084",
   "opened": "2026-09-13",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-14",
+  "stint": "consumer-facing fixes, 2026-09-14",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "a6766df"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Three new tests cover the reported failure: a second `useTheme` moves when the first sets a mode, a separate component re-renders when a `ThemeToggle` flips, and a `useChartTheme` consumer gets a fresh theme object when a toggle elsewhere changes the theme. Reverting only `src/lib/useTheme.ts` and rerunning fails all three, so they measure the fix rather than its presence.\n\n`npx vitest run src/lib/useTheme.test.tsx` passes 19 tests. The five suites that touch the theme, which are `useTheme`, `ThemeToggle`, `storageKey`, `chartTheme` and `chartTheme.text`, pass 35 tests between them with no change to any of them.\n\nMeasured in the published build rather than the source: `dist/lib/useTheme.js` contains `useSyncExternalStore` and the store map, and `dist/lib/chartTheme.js` still imports the hook. The root bundle grows 834 bytes raw and 319 gzipped, recorded in `preview/src/data/subpath-sizes.json` and inside the existing budget.\n\n`npm run ci` exits 0 at a6766df, with the visual gate comparing 112 of 112 captures at 0 differing pixels and no axe rule matching more nodes."
   },
   "resolution": null,
   "details": "`useChartTheme` cannot do what it documents. Charts stay in whatever theme was active when they mounted.\n\n`src/lib/useTheme.ts` holds the chosen mode in a plain `useState` with no React context. Its initial value is read once, from the URL parameter or from `localStorage`. Nothing subscribes to later changes.\n\nSo each caller gets an independent copy of the state. `src/components/ThemeToggle.tsx` calls it at line 25 and `src/lib/chartTheme.ts` calls it again at line 83. The toggle sets `data-theme` on the root element and writes `localStorage`, but the chart's own copy of `mode` never changes.\n\n`src/lib/chartTheme.ts` re-reads the CSS variables in an effect keyed on `resolved`, at lines 86 to 88. That value is derived from the copy of `mode` that never changes, so the effect never fires again after mount.\n\nThe comment above the function, at lines 136 to 139, says it \"re-reads the CSS variables whenever the resolved theme flips, so charts restyle on light/dark toggle\".\n\nThe reporter verified this in the published 0.3.0 build, in `dist/lib/chartTheme.js` and `dist/lib/useTheme.js`, rather than in the source alone.\n\nEither shape fixes it. `useTheme` could hold its state in a context provider, or `useChartTheme` could observe `data-theme` on the root element with a `MutationObserver`.",
@@ -19,6 +21,14 @@
     {
       "date": "2026-09-13",
       "text": "Two things narrow the blast radius without excusing it. A chart mounted after a toggle reads the stored mode at mount and gets the right theme, so only charts already on screen freeze. And the reporter works around it by putting `var(--token)` directly in the SVG and letting the cascade resolve it, which works.\n\nThe cost is that the documented bridge goes unused. A consumer who follows the documentation instead gets charts that silently stop matching the page."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "A fourth test was written and is not evidence. It asserts that the store drops its adopted mode when the last caller unmounts, so a later mount reads storage again. It passes against the old code as well, because a per-caller `useState` re-read storage on every mount by construction.\n\nIt stays because it guards a risk the fix introduces rather than one it removes. State that lives in a module outlives the components that read it, and a store that kept a mode across mounts would answer a later reader from a session that had ended."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "The snapshot is the string `mode|resolved` rather than an object, for two reasons worth keeping. `useSyncExternalStore` compares snapshots by identity, so returning a fresh object on every call loops it. And `mode` on its own does not change when the operating system moves between light and dark under `system`, so a snapshot of the mode alone would hold every caller in the theme the page loaded in, which is a smaller version of the defect this record is about."
     }
   ],
   "links": [
