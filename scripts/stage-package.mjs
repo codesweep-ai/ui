@@ -118,7 +118,15 @@ export function publishedReadme(text, ref) {
 export function publishedCatalog(text, ref) {
   if (!ref) throw new Error("stage-package: no commit to pin the catalog to.");
   const catalog = JSON.parse(text);
-  const entries = [...(catalog.components ?? []), ...(catalog.patterns ?? [])];
+  // Whatever entry arrays this catalog carries, rather than the two it carries
+  // today. A third kind added to gen-catalog.mjs would otherwise ship with its
+  // `spec` paths still relative, past the rewrite and past the guard below, and
+  // nothing downstream would say so. `$generated` is prose and `counts` is an
+  // object, so this sees the entries and nothing else.
+  const entries = Object.values(catalog)
+    .filter(Array.isArray)
+    .flat()
+    .filter((entry) => entry !== null && typeof entry === "object");
   if (entries.length === 0) throw new Error("stage-package: the catalog lists nothing.");
 
   for (const entry of entries) {
@@ -174,26 +182,61 @@ export function publishedManifest(manifest, ref) {
  * from work that has not been pushed. A commit on a remote-tracking branch or
  * on a tag has left; one on neither has not.
  *
- * Where there is no remote-tracking ref and no tag to judge against, it says
- * nothing rather than guessing. A check with no evidence should not be the
- * thing that stops a release.
+ * The answer is a verdict rather than only the absence of a throw: "contained"
+ * when a remote branch or a tag holds the commit, and "no-refs" where there is
+ * neither to judge against. The second guesses nothing, because a check with no
+ * evidence should not be the thing that stops a release, but it is not a check
+ * that passed either, and the caller has to be able to tell the two apart.
  */
 export function assertCommitIsFetchable(sha, run) {
   const containing = run([
     "for-each-ref", "--format=%(refname)", "--contains", sha, "refs/remotes", "refs/tags",
   ]).trim();
-  if (containing) return;
+  if (containing) return "contained";
 
   const anyRef = run([
     "for-each-ref", "--count=1", "--format=%(refname)", "refs/remotes", "refs/tags",
   ]).trim();
-  if (!anyRef) return;
+  if (!anyRef) return "no-refs";
 
   throw new Error(
     `stage-package: ${sha} is on no remote branch and no tag, so it is not a commit a reader ` +
     "can fetch. Every documentation link this package ships would 404. Push the commit, or " +
     "stage from one that has been pushed.",
   );
+}
+
+/**
+ * What to say when that guard had nothing to judge against.
+ *
+ * Returning without complaint is the right answer to a question that cannot be
+ * asked. Saying nothing is not: a guard gone quiet reads exactly like a guard
+ * that passed, and the difference is a publish nobody is checking. The
+ * publishing workflows check out with `fetch-depth: 0`, and that is what puts
+ * the remote-tracking refs and the tags in front of this check; take that away
+ * and the publish keeps working, with this line as the only sign of it.
+ */
+function noRefsNote(sha) {
+  return (
+    "stage-package: this checkout has no remote-tracking branch and no tag, so whether " +
+    `${sha} can be fetched could not be judged and that check did not run. The publishing ` +
+    "workflows check out with `fetch-depth: 0`, which is what normally puts those refs here."
+  );
+}
+
+/**
+ * Whether this run assembles the tarball to look at it rather than to publish
+ * it, which is the one case where an unpushed commit is not a reason to stop.
+ *
+ * An argument, and deliberately not an environment variable. `CS_UI_STAGE_INSPECT=1`
+ * left in a shell, a dotfile or a runner's environment disarmed the guard above
+ * for every later `npm run stage` that inherited it, at a distance and without
+ * saying so. An argument is written by whoever invoked this run: `scripts/ci.mjs`
+ * passes it because that run publishes nothing, and a bare `npm run stage` has no
+ * way to acquire it by accident.
+ */
+export function inspectionOnly(argv) {
+  return argv.includes("--inspect");
 }
 
 /** The commit this build came from, which build.mjs stamps into dist. */
@@ -232,18 +275,23 @@ for (const entry of ["dist", "LICENSE", "NOTICE"]) {
 // own, rewritten for a reader who has the package and not the repository.
 const ref = builtCommit(ROOT);
 const git = (args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8" });
-if (process.env.CS_UI_STAGE_INSPECT === "1") {
-  // `npm run ci` stages to prove the tarball assembles and publishes nothing,
-  // so an unpushed commit is not a reason to fail it. Refusing there would mean
-  // a branch could not pass its own gate until it had been pushed, which is the
-  // wrong way round: the gate exists to be run before anything leaves.
+// `npm run ci` stages to prove the tarball assembles and publishes nothing, so
+// an unpushed commit is not a reason to fail it there. Refusing would mean a
+// branch could not pass its own gate until it had been pushed, which is the
+// wrong way round: the gate exists to be run before anything leaves.
+//
+// Either way the verdict is read rather than merely survived. A run that found
+// no ref to judge against checked nothing, and it has to say so: `fetch-depth:
+// 0` in the publishing workflows is the only reason there is anything here to
+// judge against, and nothing else would report its loss.
+if (inspectionOnly(process.argv.slice(2))) {
   try {
-    assertCommitIsFetchable(ref, git);
+    if (assertCommitIsFetchable(ref, git) === "no-refs") console.warn(noRefsNote(ref));
   } catch (err) {
     console.warn(`${err.message}\n  (staging anyway: this run inspects the tarball rather than publishing it)`);
   }
-} else {
-  assertCommitIsFetchable(ref, git);
+} else if (assertCommitIsFetchable(ref, git) === "no-refs") {
+  console.warn(noRefsNote(ref));
 }
 writeFileSync(
   join(STAGE, "README.md"),

@@ -97,9 +97,12 @@ run(npm, ["run", "preview:rich-check"]);
 say("the package the release workflow would publish");
 // `check` above has already built dist/, so this stages without rebuilding it.
 // This run assembles the tarball to check it assembles. It publishes nothing,
-// so staging reports an unpushed commit here rather than refusing one.
-process.env.CS_UI_STAGE_INSPECT = "1";
-run("node", ["scripts/stage-package.mjs"]);
+// so `--inspect` has staging report an unpushed commit here rather than refuse
+// it. An argument rather than an environment variable: a variable this set
+// would be inherited by anything this run went on to start, and one exported in
+// a shell or a dotfile would disarm the publish guard of every `npm run stage`
+// in it without saying so.
+run("node", ["scripts/stage-package.mjs", "--inspect"]);
 run(npm, ["pack", "--dry-run", ".package"]);
 
 // The ledger's freshness gate, which `check` leaves to this run the way the

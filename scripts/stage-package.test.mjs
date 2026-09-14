@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { publishedReadme, publishedCatalog, publishedManifest, assertCommitIsFetchable } from "./stage-package.mjs";
+import {
+  publishedReadme,
+  publishedCatalog,
+  publishedManifest,
+  assertCommitIsFetchable,
+  inspectionOnly,
+} from "./stage-package.mjs";
 
 // The published README is the only documentation an install carries, and its
 // links are the only route to the rest. Pinning them to the commit the build
@@ -92,6 +98,35 @@ test("refuses to ship a catalog entry that points nowhere", () => {
   assert.throws(() => publishedCatalog(broken, SHA), /not absolute.*Orphan/s);
 });
 
+test("pins the entries in an array this catalog has never carried before", () => {
+  // `components` and `patterns` are what gen-catalog.mjs writes today. A third
+  // kind of entry must not be able to reach the tarball still pointing at the
+  // repository, which is what walking those two arrays by name would allow.
+  const withTokens = JSON.stringify({
+    $generated: "Do not edit.",
+    counts: { components: 1, tokens: 1 },
+    components: [{ spec: "components/Button.md", name: "Button" }],
+    tokens: [{ spec: "tokens/Color.md", name: "Color" }],
+  });
+
+  const out = JSON.parse(publishedCatalog(withTokens, SHA));
+
+  assert.equal(out.tokens[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/tokens/Color.md`);
+  assert.equal(out.components[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/components/Button.md`);
+});
+
+test("refuses a dead entry in an array it has never seen before", () => {
+  // The rewrite and the guard have to cover the same ground. An array only the
+  // guard reached would fail every build; one only the rewrite reached would
+  // ship a dead pointer quietly.
+  const broken = JSON.stringify({
+    components: [{ spec: "components/Button.md", name: "Button" }],
+    tokens: [{ name: "Orphan" }],
+  });
+
+  assert.throws(() => publishedCatalog(broken, SHA), /not absolute.*Orphan/s);
+});
+
 test("refuses to stage a catalog or a manifest without a commit", () => {
   assert.throws(() => publishedCatalog(CATALOG, ""), /no commit/);
   assert.throws(() => publishedManifest({ name: "x" }, ""), /no commit/);
@@ -114,10 +149,18 @@ test("pins the manifest homepage and drops what a package must not carry", () =>
 // so these ask about the logic rather than about whatever this checkout holds.
 
 test("accepts a commit a remote branch or a tag contains", () => {
-  const run = (args) =>
-    args.includes("--contains") ? "refs/remotes/origin/main\n" : "refs/remotes/origin/main\n";
+  // The two questions get different answers, and the second one is the answer
+  // that disarms the check. A run that asked it anyway, or that judged by it,
+  // reaches a different verdict rather than the same one by luck.
+  const asked = [];
+  const run = (args) => {
+    asked.push(args.join(" "));
+    return args.includes("--contains") ? "refs/tags/v0.3.0\n" : "";
+  };
 
-  assert.doesNotThrow(() => assertCommitIsFetchable(SHA, run));
+  assert.equal(assertCommitIsFetchable(SHA, run), "contained");
+  assert.equal(asked.length, 1, "a ref that contains the commit answers it; nothing else is asked");
+  assert.match(asked[0], /--contains/);
 });
 
 test("refuses a commit no remote branch and no tag contains", () => {
@@ -130,10 +173,27 @@ test("refuses a commit no remote branch and no tag contains", () => {
   });
 });
 
-test("says nothing when there is no ref to judge against", () => {
+test("reports that there was no ref to judge against rather than going quiet", () => {
   // A checkout with neither a remote-tracking ref nor a tag cannot answer the
-  // question. A check with no evidence should not be what stops a release.
+  // question. A check with no evidence should not be what stops a release, but
+  // the caller has to be able to tell that from a check that passed: this is
+  // the case `fetch-depth: 0` in the publishing workflows exists to avoid.
   const run = () => "";
 
-  assert.doesNotThrow(() => assertCommitIsFetchable(SHA, run));
+  assert.equal(assertCommitIsFetchable(SHA, run), "no-refs");
+});
+
+test("staging inspects only when it was asked to by argument", () => {
+  // The defect: CS_UI_STAGE_INSPECT=1 exported in a shell, a dotfile or a CI
+  // runner disarmed the guard above for every `npm run stage` that inherited
+  // it, and the publish that followed said nothing about it.
+  const prior = process.env.CS_UI_STAGE_INSPECT;
+  process.env.CS_UI_STAGE_INSPECT = "1";
+  try {
+    assert.equal(inspectionOnly([]), false, "an ambient variable must not disarm the guard");
+    assert.equal(inspectionOnly(["--inspect"]), true, "the gate asks for it where it is read");
+  } finally {
+    if (prior === undefined) delete process.env.CS_UI_STAGE_INSPECT;
+    else process.env.CS_UI_STAGE_INSPECT = prior;
+  }
 });

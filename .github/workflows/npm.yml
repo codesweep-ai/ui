@@ -35,7 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0 # the version is the commit, so the history has to be here
+          # The version is the commit, so the history has to be here. The depth is
+          # also load-bearing for the publish guard: stage-package.mjs judges whether
+          # that commit can be fetched, from the remote refs and tags a full fetch brings.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:

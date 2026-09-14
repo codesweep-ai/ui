@@ -21,7 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0 # the readiness rules read the history
+          # The readiness rules read the history. The depth is also load-bearing for
+          # the publish guard: stage-package.mjs judges whether the commit can be
+          # fetched, from the remote refs and tags a full fetch brings.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:
