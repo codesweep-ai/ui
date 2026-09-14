@@ -17,6 +17,14 @@
     {
       "id": "CUI-088",
       "why": "The version fields answer the one question they exist for incorrectly, so readers are told to ignore them."
+    },
+    {
+      "id": "CUI-090",
+      "why": "A consumer can only learn the accessibility contract by reading compiled output."
+    },
+    {
+      "id": "CUI-089",
+      "why": "Six of 38 catalogued components fail the import a reader of the index would write."
     }
   ]
 }

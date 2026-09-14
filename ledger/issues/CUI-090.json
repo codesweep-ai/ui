@@ -1,0 +1,31 @@
+{
+  "id": "CUI-090",
+  "title": "The accessibility contract reaches a consumer only as prose the package does not carry",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "consumer-facing test: two agents given an installed copy both reconstructed the accessibility contract by reading compiled JavaScript",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "What a component guarantees to assistive technology is written in `components/<Name>.md`, and those documents do not ship. The type declarations that do ship carry almost none of it: 4 of about 38 declaration files mention `aria-` at all.\n\nSo a consumer holding the package has no machine-readable account of the contract. Two agents were each given an installed copy and asked how they would use the library. Both, independently and without being asked about accessibility, ended up reading `dist/components/*.js` to work out the wiring. Deriving a contract from compiled output is not reading documentation.\n\nBoth found the same two silent failures in `FormGroup`. It clones its child, and so supplies `id`, `aria-describedby`, `aria-invalid` and `required`, only when it has exactly one valid element child; a second child drops all four with no error. And its label carries `htmlFor` only when the consumer passes one, so omitting it leaves the label unassociated while the control still receives a generated id. Both are the kind of defect that ships and is found by an audit.\n\nThe recommendation is to split the contract by shape rather than to move it wholesale. Where a guarantee is bound to a prop, it belongs in that prop's TSDoc, which is already the practice: `FormGroup`'s `htmlFor` carries exactly that prose today, and both agents quoted it. The gap there is coverage rather than approach.\n\nWhere a guarantee has no prop to attach to, TSDoc cannot hold it. The single-child rule is a fact about children, and documenting it on an unrelated prop puts it where nobody looks. For those the kit already has a better instrument in `src/lib/stylesheetWarning.ts` and its neighbour `clippedContentWarning`: a warning in the consumer's development build, at the moment the mistake is made.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "The obstacle that would otherwise sink a runtime warning is already solved here. `src/lib/stylesheetWarning.ts` guards on `process.env.NODE_ENV` rather than on `import.meta.env.DEV`, and says why: the latter is replaced when this package is built, which would leave the check dead in every published copy and warn nobody. A new warning copies that guard, and whoever writes one confirms it survives into `dist/` rather than trusting that it does."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "One judgement is left open and belongs to the owner. Putting an operative sentence in TSDoc while the full contract stays in the component document duplicates a fact, and `CONTRIBUTING.md` holds that every fact lives in exactly one place. The argument for accepting it is that the TSDoc carries a warning at the point of use rather than a second description of the behaviour. The argument against is that this repository is strict about that rule for good reasons, and a duplicated sentence drifts. Settle this before writing the first one."
+    }
+  ],
+  "links": [
+    "CUI-086"
+  ]
+}

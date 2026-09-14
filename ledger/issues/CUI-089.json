@@ -1,0 +1,27 @@
+{
+  "id": "CUI-089",
+  "title": "The catalog never says which entry point a component is imported from",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "consumer-facing test: an agent reading an installed copy found six catalogued components absent from the root export",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`catalog.json` lists 38 components and gives each a name, a summary, keywords and an intent. It does not say where to import any of them from.\n\nSix are not exported from the root: `ChartFrame`, `ChartTooltip`, `CodeBlock`, `MarkdownMinimap`, `MarkdownViewer` and `MermaidDiagram`. They live behind the `chart`, `code`, `minimap`, `markdown` and `mermaid` subpaths, which is deliberate. Preserved-module builds keep the heavy subpath exports isolated, and those six pull in the markdown, mermaid and syntax-highlighting weight that a consumer of a button should never carry.\n\nThe omission is correct and the index is silent about it. A reader following the catalog writes the obvious root import for 6 of 38 components and learns otherwise from the compiler. The catalog exists to answer which component to reach for, and an entry a reader cannot import leaves that answer half given.\n\nThe proposal is an `import` field carrying the whole specifier, `@codesweep-ai/ui` or `@codesweep-ai/ui/chart`, rather than a flag saying a component is not at the root. A flag says where the component is not, so a reader still has to go looking. The specifier is the thing they paste.\n\nIt should be derived in `scripts/gen-catalog.mjs` from the entry sources rather than written by hand, which keeps the promise the catalog already makes about not disagreeing with the build it came in. Measured before proposing: all 38 components resolve to exactly one entry point, with none ambiguous and none unresolved, so the derivation has no cases to guess at.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "Worth pairing with a cross-check that every catalogued component is exported from exactly one entry point. It costs little and covers the case this record is not about: a component dropping out of the root export by accident would fail the check rather than ship as an entry nobody can import."
+    }
+  ],
+  "links": [
+    "CUI-086"
+  ]
+}
