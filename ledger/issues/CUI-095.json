@@ -1,0 +1,22 @@
+{
+  "id": "CUI-095",
+  "title": "The local registry script cannot publish a prerelease, which is every build between releases",
+  "type": "defect",
+  "severity": "low",
+  "status": "closed",
+  "foundBy": "using the script to hand a consumer agent a build of an unreleased commit",
+  "opened": "2026-09-14",
+  "resolved": "2026-09-14",
+  "stint": "consumer handover, 2026-09-14",
+  "evidence": {
+    "commits": [
+      "980ff4c"
+    ],
+    "integrated": [],
+    "verified": "Reproduced first: with package.json at a prerelease version, `npm run registry:local` exited non-zero on the publish step with npm's prerelease-tag error, after staging had succeeded. With the fix, the same command exits 0 and reports \"Publishing to http://localhost:4873/ with tag dev\".\n\nNo unit test. This repository tests its CLI scripts by running them, as `scripts/dev-version.test.mjs` does with `spawnSync`, and running this one boots verdaccio and publishes, which is too much to put in `npm test` for a dev-only script. The verification above is the execution, and it covers both the failing and the fixed case."
+  },
+  "resolution": null,
+  "details": "`scripts/local-registry.mjs` publishes with `npm publish .package --access public` and no `--tag`. npm refuses a prerelease without one: \"You must specify a tag using --tag when publishing a prerelease version.\"\n\nEvery version between two releases is a prerelease. `scripts/dev-version.mjs` produces `0.3.1-dev.<stamp>.<sha>`, which is the shape the publish workflow uses, so the script worked only when package.json carried a plain release version. That is the one case a developer is least likely to be testing: the point of the script is to rehearse a publish of work in progress.\n\nThe fix publishes under the `dev` tag when the version is a prerelease, matching the dist-tag the workflow uses, so `npm install <name>@dev` reaches a local build the way it would reach a published one.",
+  "notes": [],
+  "links": []
+}

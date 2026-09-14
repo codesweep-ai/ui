@@ -1,0 +1,30 @@
+{
+  "id": "CUI-094",
+  "title": "catalog.json ships but is not in the exports map, so importing it is a resolution error",
+  "type": "defect",
+  "severity": "med",
+  "status": "closed",
+  "foundBy": "installing the package from a local registry to hand a consumer agent a build, which is the first time anything read the catalog by specifier",
+  "opened": "2026-09-14",
+  "resolved": "2026-09-14",
+  "stint": "consumer handover, 2026-09-14",
+  "evidence": {
+    "commits": [
+      "980ff4c"
+    ],
+    "integrated": [],
+    "verified": "`npm run ci` exits 0. The failure was reproduced from a consumer's position rather than argued: a clean `npm init` directory, `npm install @codesweep-ai/ui@dev` from a registry on this machine, and `require(\"@codesweep-ai/ui/catalog.json\")`, which answered `ERR_PACKAGE_PATH_NOT_EXPORTED`. After the fix the same call resolves.\n\nThe test added to `scripts/stage-package.test.mjs` asserts the general rule rather than the one file: every JSON file in `files` must have an `exports` entry. It was proved to fail by removing the entry again, which failed exactly that test and left the other 16 passing."
+  },
+  "resolution": null,
+  "details": "`catalog.json` is in `files`, so it ships in the tarball, and the published README tells a reader it is the index to read first. It is not in `exports`, and `exports` is what decides whether a specifier resolves. `require(\"@codesweep-ai/ui/catalog.json\")` therefore answers `ERR_PACKAGE_PATH_NOT_EXPORTED`, and the only way to reach the file is a path into `node_modules`, which is the thing an export map exists to stop a consumer doing.\n\nThis is not new and it is not a consequence of any recent work: `git show v0.3.0:package.json` has the same eleven export keys and the same `files` list, so every consumer of the published 0.3.0 meets it today.\n\nIt is the same family as CUI-086 and CUI-087. Those were about the catalog shipping with pointers a reader could not follow; this is the catalog itself being unreachable by the name the documentation gives. The fix is one entry in the export map.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "Worth knowing for whoever adds the next shipped file: `files` and `exports` answer different questions, and nothing until now held them to each other. `files` decides what is in the tarball; `exports` decides what a specifier can reach. A file can pass every gate this repository has, ship correctly, and still be unreachable by the name its own documentation uses. The new test closes that gap for JSON, which is the only kind of shipped file a reader is currently told to import."
+    }
+  ],
+  "links": [
+    "CUI-086",
+    "CUI-087"
+  ]
+}
