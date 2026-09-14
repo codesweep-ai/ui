@@ -54,6 +54,16 @@ holds today.
 
 ### Added
 
+- A development warning when `FormGroup` renders without the wiring it exists
+  to supply: a helper or error message that no control refers to, or a label
+  with no `htmlFor` beside a single control. Both were silent, and both are the
+  kind of defect an audit finds rather than a build. It is stripped from a
+  production build by the same `process.env.NODE_ENV` guard the stylesheet
+  warning uses.
+- `Input`'s `error`, `CheckboxGroup`'s `label` and `StatusBadge`'s `announce`
+  say in their TSDoc what they do and do not convey to assistive technology.
+  The component documents carry the full contract and do not ship, so a
+  consumer reading the type declarations had no account of it.
 - `--color-graph-1` to `--color-graph-8` and `--color-graph-other`, a
   categorical ramp for charts where any pair of categories can meet: a
   node-link diagram, a scatter plot, a map, a small multiple. `useChartTheme()`

@@ -348,6 +348,19 @@ The changelog is the exception, and a deliberate one. A change that asks
 something of a consumer is described where it belongs, and named again there.
 A reader upgrading has no way to know which of forty documents moved.
 
+An accessibility guarantee is the second exception, and a narrower one. The
+component documents do not ship, so a consumer holding the package cannot read
+them. Where such a guarantee is bound to a prop, a short operative sentence may sit
+in that prop's TSDoc, while the full contract stays in the component document.
+The TSDoc is a warning at the point of use rather than a second description of
+the behaviour. This does not license copying a contract wholesale.
+
+Where a guarantee has no prop to attach to, TSDoc cannot hold it, and prose
+nobody reads is not an answer either. Those belong in a development warning, at
+the moment the mistake is made. `src/lib/formWiringWarning.ts` is the worked
+example, and `src/lib/stylesheetWarning.ts` explains the guard such a warning
+needs to survive into a consumer's build.
+
 | The change | Where it goes |
 |---|---|
 | A component's props, states or DOM hooks | `components/<Name>.md` |

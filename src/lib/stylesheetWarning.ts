@@ -1,4 +1,5 @@
 import { warnWhenClipped } from "./clippedContentWarning";
+import { warnWhenFieldUnwired } from "./formWiringWarning";
 import type { Ref } from "react";
 
 const warned = new Set<string>();
@@ -56,5 +57,6 @@ export function checkedRootRef<T extends HTMLElement>(ref?: Ref<T>) {
     else if (ref) (ref as { current: T | null }).current = node;
     warnWhenUnstyled(node);
     warnWhenClipped(node);
+    warnWhenFieldUnwired(node);
   };
 }

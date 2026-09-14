@@ -8,7 +8,12 @@ interface StatusBadgeProps {
   color?: string;
   size?: "sm" | "md" | "lg";
   emphasis?: "default" | "ring" | "label";
-  /** Announce changing badge content through a polite live region. */
+  /**
+   * Announce changing badge content through a polite live region. Set it only
+   * when the label or status changes while on screen: it swaps the static
+   * `role="img"` for `role="status"`, and a live region that never changes is
+   * one more thing for a screen reader to track.
+   */
   announce?: boolean;
   full?: boolean;
   className?: string;

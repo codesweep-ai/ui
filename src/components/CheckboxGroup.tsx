@@ -27,7 +27,11 @@ interface CheckboxGroupProps {
   selected: Set<string>;
   /** Called when selection changes */
   onChange: (selected: Set<string>) => void;
-  /** Group label displayed above the checkboxes */
+  /**
+   * Group label displayed above the checkboxes. When omitted, give the
+   * container an `aria-label`: without either, the group has no accessible
+   * name.
+   */
   label?: string;
   /** Optional grey helper text below the group. Added v0.3.0. */
   helper?: string;

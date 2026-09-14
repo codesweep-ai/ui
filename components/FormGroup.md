@@ -98,6 +98,8 @@ When multiple children are passed (or a fragment), the consumer is responsible f
 - `aria-describedby` points to a stable id (`<controlId>-helper` or `<controlId>-error`).
 - Error span has `role="alert"` so screen readers announce validation failures as they appear.
 - Required asterisk is `aria-hidden="true"` to avoid the redundant announcement — the `required` attribute on the control conveys the semantics.
+- The wiring reaches the control only when `FormGroup` has exactly one element child. A second child, or a fragment, drops `id`, `aria-describedby`, `aria-invalid` and `required` together.
+- Both failures above warn in a development build rather than only here: a helper or error that nothing refers to, and a label with no `htmlFor` beside a single control. See `src/lib/formWiringWarning.ts`.
 
 ## Persistence
 

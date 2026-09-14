@@ -17,7 +17,11 @@ type InputType = "text" | "email" | "password" | "number" | "tel" | "url";
 interface InputBaseProps {
   /** Visual size. Default: "md" */
   size?: "sm" | "md";
-  /** Error state — paints the red border + ring. */
+  /**
+   * Error state — paints the red border + ring. Visual only: it conveys
+   * nothing to assistive technology. To do that, set `aria-invalid` and give
+   * the message to `FormGroup error="…"`, which wires both.
+   */
   error?: boolean;
   /** Inline content rendered inside the left edge (icon or short label). */
   prefix?: React.ReactNode;
