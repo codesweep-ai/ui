@@ -78,7 +78,7 @@ Card frame + loading/error/empty states around a chart you render inside.
 - use when: Rendering any chart/visualization that needs consistent card chrome + states
 - use when: Always pair with useChartTheme() for theme-aware colors and axes
 - avoid when: You need the chart primitive itself — ChartFrame is the frame only
-- ⚠ The DS provides the frame + theme bridge (useChartTheme), NOT chart primitives. For a force-directed graph: render d3-force inside a ChartFrame and color via useChartTheme(). Don't reinvent the card/state shell.
+- ⚠ The DS provides the frame + theme bridge (useChartTheme), NOT chart primitives. For a force-directed graph: render d3-force inside a ChartFrame and colour from theme.graph rather than theme.categorical, because any pair of nodes can end up side by side. Don't reinvent the card/state shell.
 - related: ChartTooltip · patterns: Chart, Dashboard
 - spec: [components/ChartFrame.md](components/ChartFrame.md)
 

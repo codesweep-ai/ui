@@ -136,3 +136,51 @@ describe("useChartTheme exposes the graph ramp", () => {
     expect(result.current.graph).not.toEqual(result.current.categorical.slice(0, 8));
   });
 });
+
+// A consumer drawing the chart the graph ramp exists for could not reach it
+// through the helper that keeps a series the same colour across pages, and the
+// helper still handed out categorical slots the spec stopped guaranteeing.
+describe("assignSeriesColors picks a ramp", () => {
+  beforeEach(setVars);
+  afterEach(clearVars);
+
+  it("draws from the graph ramp when asked, in sorted key order", () => {
+    const { result } = renderHook(() => useChartTheme());
+    const out = assignSeriesColors(["beta", "alpha"], result.current, { ramp: "graph" });
+
+    expect(out.alpha).toBe(result.current.graph[0]);
+    expect(out.beta).toBe(result.current.graph[1]);
+  });
+
+  it("folds everything past the eighth slot into the neutral", () => {
+    const { result } = renderHook(() => useChartTheme());
+    const keys = Array.from({ length: 11 }, (_, i) => `s${String(i).padStart(2, "0")}`);
+    const out = assignSeriesColors(keys, result.current, { ramp: "graph" });
+
+    expect(out.s07).toBe(result.current.graph[7]);
+    expect(out.s08).toBe(result.current.graphOther);
+    expect(out.s10).toBe(result.current.graphOther);
+    // The fold must not reuse a hue: a ninth category sharing slot one would
+    // read as the same category rather than as the overflow.
+    expect(out.s08).not.toBe(result.current.graph[0]);
+  });
+
+  it("leaves the categorical ramp cycling, so existing charts do not repaint", () => {
+    const { result } = renderHook(() => useChartTheme());
+    const keys = Array.from({ length: 11 }, (_, i) => `s${String(i).padStart(2, "0")}`);
+    const out = assignSeriesColors(keys, result.current);
+
+    expect(out.s00).toBe(result.current.categorical[0]);
+    expect(out.s10).toBe(result.current.categorical[0]);
+  });
+
+  it("says so when a chart asks for more series than the ramp keeps apart", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { result } = renderHook(() => useChartTheme());
+
+    assignSeriesColors(["a", "b", "c", "d", "e", "f", "g"], result.current);
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("keeps 6 apart"));
+    warn.mockRestore();
+  });
+});

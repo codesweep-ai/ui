@@ -209,15 +209,68 @@ export function styleAxis(selection: AxisSelection, theme: ChartTheme): void {
  * same series name ("auth") always maps to the same categorical color across
  * different pages, regardless of arrival order.
  */
+export interface AssignSeriesOptions {
+  /**
+   * Which ramp the colours come from. Default `"categorical"`, which suits a
+   * bar, line, stacked or area chart. Pass `"graph"` where any pair of series
+   * can appear side by side: a node-link diagram, a scatter plot, a map, a
+   * small multiple. Section 4.12 of DESIGN_SYSTEM_SPEC.md states both contracts.
+   */
+  ramp?: "categorical" | "graph";
+}
+
+/** Slots `--color-cat-*` is documented to keep separable. */
+const CATEGORICAL_SAFE_SLOTS = 6;
+const warnedOverflow = new Set<string>();
+
+/**
+ * Say so when a chart asks for more series than its ramp keeps apart.
+ *
+ * Guarded the way `stylesheetWarning` is, and for its reason: `NODE_ENV` is
+ * replaced by the consumer's own bundler, so the check survives into their
+ * development build, where `import.meta.env.DEV` would be replaced when this
+ * package is built and warn nobody.
+ */
+function warnPastSlots(ramp: string, asked: number, safe: number): void {
+  if (typeof process !== "undefined" && process.env.NODE_ENV === "production") return;
+  if (asked <= safe) return;
+
+  const key = `${ramp}:${asked}`;
+  if (warnedOverflow.has(key)) return;
+  warnedOverflow.add(key);
+  console.warn(
+    `[@codesweep-ai/ui] assignSeriesColors was given ${asked} series, and the ` +
+    `${ramp} ramp keeps ${safe} apart. Past that, colours repeat or stop being ` +
+    "distinguishable. Fold the remainder, separate them by shape, or use small multiples.",
+  );
+}
+
+/**
+ * A colour per series key, stable across pages because the keys are sorted
+ * before they are assigned.
+ *
+ * The `graph` ramp folds everything past its eighth slot into
+ * `theme.graphOther`, which is what the specification asks for: the neutral
+ * carries the overflow rather than a ninth hue being invented for it. The
+ * categorical ramp keeps its existing behaviour of cycling, because changing
+ * it would repaint every chart that already has more than ten series.
+ */
 export function assignSeriesColors(
   keys: string[],
   theme: ChartTheme,
+  options: AssignSeriesOptions = {},
 ): Record<string, string> {
   const sorted = [...keys].sort();
+
+  if (options.ramp === "graph") {
+    warnPastSlots("graph", sorted.length, theme.graph.length);
+    return Object.fromEntries(
+      sorted.map((k, i) => [k, i < theme.graph.length ? theme.graph[i] : theme.graphOther]),
+    );
+  }
+
+  warnPastSlots("categorical", sorted.length, CATEGORICAL_SAFE_SLOTS);
   return Object.fromEntries(
-    sorted.map((k, i) => [
-      k,
-      theme.categorical[i % theme.categorical.length],
-    ]),
+    sorted.map((k, i) => [k, theme.categorical[i % theme.categorical.length]]),
   );
 }

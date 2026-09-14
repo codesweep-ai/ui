@@ -16,7 +16,8 @@ patterns: [Chart, Dashboard]
 note: >
   The DS provides the frame + theme bridge (useChartTheme), NOT chart
   primitives. For a force-directed graph: render d3-force inside a ChartFrame
-  and color via useChartTheme(). Don't reinvent the card/state shell.
+  and colour from theme.graph rather than theme.categorical, because any pair
+  of nodes can end up side by side. Don't reinvent the card/state shell.
 ---
 
 # ChartFrame

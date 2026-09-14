@@ -28,12 +28,12 @@ Added in `@codesweep-ai/ui@1.5.0`.
 
 1. **Never use raw hex in chart code.** Always pull colors from [`useChartTheme()`](../components/ChartFrame.md). Hardcoded hex in a `d3.select(...).attr("fill", ...)` call is a bug — the `@codesweep-ai/no-hardcoded-chart-colors` ESLint rule catches it.
 2. **Series colors come from `theme.categorical[i]`** — never `var(--color-cat-1)` directly inside JS chart code, and never a literal hex.
-2b. **Which ramp depends on which pairs can meet, not on mark size.** A bar, line, stacked or area chart only ever puts a series beside its neighbour, so `theme.categorical` fits and holds to six slots. A node-link diagram, a scatter plot, a map or a small multiple can put any category beside any other, so use `theme.graph`, which holds all eight. Past eight, fold the rest into `theme.graphOther` or separate them by shape rather than reaching for a ninth hue. Section 4.12 of [DESIGN_SYSTEM_SPEC.md](../DESIGN_SYSTEM_SPEC.md) states both contracts.
-3. **Use `assignSeriesColors(keys, theme)`** when the same series appears on multiple pages, so "auth" is always the same color everywhere (keys are sorted before assignment for stability).
-4. **Wrap every chart in [`<ChartFrame>`](../components/ChartFrame.md)** for consistent loading / empty / error states. The chart only renders the happy path.
-5. **Axes (imperative/d3): use `styleAxis(selection, theme)`** — no inline axis styling.
-6. **Tooltips:** for imperative / hand-drawn / d3 charts use [`<ChartTooltip>`](../components/ChartTooltip.md) (no custom box styling). Declarative libs that own their tooltip lifecycle (recharts) are the exception — see "Works with any lib" below.
-7. **Re-render the chart on theme change.** `useChartTheme()` does this automatically (it re-reads the CSS variables when the resolved theme flips); just make sure your chart's draw effect depends on the returned `theme` object (e.g. `useEffect(draw, [theme])` for d3).
+3. **Which ramp depends on which pairs can meet, not on mark size.** A bar, line, stacked or area chart only ever puts a series beside its neighbour, so `theme.categorical` fits and holds to six slots. A node-link diagram, a scatter plot, a map or a small multiple can put any category beside any other, so use `theme.graph`, which holds all eight. Past eight, fold the rest into `theme.graphOther` or separate them by shape rather than reaching for a ninth hue. Section 4.12 of [DESIGN_SYSTEM_SPEC.md](../DESIGN_SYSTEM_SPEC.md) states both contracts.
+4. **Use `assignSeriesColors(keys, theme)`** when the same series appears on multiple pages, so "auth" is always the same color everywhere (keys are sorted before assignment for stability). Pass `{ ramp: "graph" }` for the all-pairs case; it folds everything past the eighth slot into `theme.graphOther` rather than reusing a hue.
+5. **Wrap every chart in [`<ChartFrame>`](../components/ChartFrame.md)** for consistent loading / empty / error states. The chart only renders the happy path.
+6. **Axes (imperative/d3): use `styleAxis(selection, theme)`** — no inline axis styling.
+7. **Tooltips:** for imperative / hand-drawn / d3 charts use [`<ChartTooltip>`](../components/ChartTooltip.md) (no custom box styling). Declarative libs that own their tooltip lifecycle (recharts) are the exception — see "Works with any lib" below.
+8. **Re-render the chart on theme change.** `useChartTheme()` does this automatically (it re-reads the CSS variables when the resolved theme flips); just make sure your chart's draw effect depends on the returned `theme` object (e.g. `useEffect(draw, [theme])` for d3).
 
 ## Works with any lib (the bridge is lib-agnostic)
 
