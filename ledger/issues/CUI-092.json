@@ -3,15 +3,17 @@
   "title": "A URL theme seed outranks a reader's own choice after every caller unmounts",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "another agent, while making useTheme's snapshot a pure read, and reproduced before filing",
   "opened": "2026-09-14",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-14",
+  "stint": "catalog entry points, 2026-09-14",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "03eba48"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run ci` exits 0. `useTheme.test.tsx` runs 30 tests where it ran 23, the visual gate compared 112 of 112 captures at 0 differing pixels, and axe is unchanged.\n\nThe reproduction in this record is now a test. With `?theme=dark` in the address a probe renders and reads dark, chooses light, unmounts, and renders again: it reads light. A second test stands in for a reload by dropping the live store, and reads light there too.\n\nEach of the four mechanisms was proved to be load-bearing by mutation, not assumed. Making the seed always outrank the choice fails 2 tests; never recording the choice fails 3; making the boot script ignore the visit fails 1; and not re-seeding the visit when a new seed is honoured fails 1. The file was restored and `git diff` read clean.\n\nMeasured on the artifact. `dist/lib/useTheme.js` carries the sessionStorage reads, and the built `themeBootScript` was run in a jsdom document at `?theme=dark`: it paints dark before the reader has chosen, light after they chose and reloaded, and dark again once the last honoured seed differs from the one in the address. That is the published file, and it is what keeps a reload from flashing the seed's colour.\n\nThe existing test that the seed governs the load passes untouched, which the note below expected to have to change."
   },
   "resolution": null,
   "details": "`useTheme` takes a query parameter that seeds the mode for a load without saving it. The shared store reads that seed whenever it adopts, and it adopts whenever it gains its first caller. So a page carrying `?theme=dark` puts the seed back every time the last caller unmounts and another mounts, discarding a mode the reader chose earlier in the same load.\n\nReproduced before filing. With `?theme=dark` in the address, a probe renders and reads `dark`, chooses `light`, unmounts, and renders again. It reads `dark`. The choice is gone, and it is still in `localStorage` where the choice was written.\n\nA route change that unmounts every consumer is the ordinary way to meet this. React's strict mode mounts, unmounts and mounts again, so it happens there too.\n\nThe behaviour predates the shared store, because each caller read the seed at mount before it existed. The store widens it: what used to move one remounted component now moves every caller at once, because they share the mode.",
@@ -23,6 +25,14 @@
     {
       "date": "2026-09-14",
       "text": "Decided by the owner: the reader's own choice wins for the rest of the visit. A link that does not pin quite as hard as advertised is a smaller surprise than a toggle that silently undoes itself.\n\nThe setting was never at risk. `setMode` writes it to `localStorage` and it survives reloads. The defect is only that the URL parameter outranks storage on every re-read, so a page opened with `?theme=` puts the seed back each time the store adopts again.\n\nThe obstacle is unchanged and is the work: the store has no notion of when a visit ends, so whoever implements this defines that first. A flag recording the choice has to outlive every component, which is what broke the existing test that the seed governs the load. Expect to change that test deliberately, and to say in `UseThemeOptions` what the parameter now promises."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "A visit is the tab, recorded in `sessionStorage` under `<storageKey>:chosen` and `<storageKey>:seed`.\n\nThe alternative considered was the document: a flag on the module-level store, cleared by nothing but a new page load. It is smaller, needs no new storage and no change to `themeBootScript`. It was not chosen because it fixes the route change and strict mode and leaves the case a reader actually meets: a refresh with the link still in the address puts the seed back, so the toggle still undoes itself. The tab is what a reader means by a visit and it is what `sessionStorage` already spans.\n\nA seed whose value differs from the one last honoured seeds again, and clears the choice. Without that, a link carrying a different theme would be dead for the rest of the tab, which is more than the ruling gave up. With it, a refresh keeps the choice, because the value has not changed, and a genuinely new link still pins."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Two things worth knowing for whoever meets this next.\n\n`initialMode` is reached from `getSnapshot`, which React may call for a render it throws away, so it stays a read: it asks whether the seed outranks the choice and never records that it did. The write lives in `adopt`, which is the same reason the file gives for adopting there rather than in `getSnapshot`.\n\n`sessionStorage` is shared by same-origin documents in one tab, so a page embedded in a same-origin iframe sees a choice made in its parent and its own `?theme=` is declined. Nothing in this package embeds anything, so it is a consumer-side case rather than a live one, and it is documented in components/ThemeToggle.md rather than worked around."
     }
   ],
   "links": [
