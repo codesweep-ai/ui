@@ -165,12 +165,12 @@
   --pulse-size-lg: 10px;
 
   /* --- Categorical palette (charts, legends, grouping) — muted set (color review) --- */
-  --color-cat-1: #6f93c9;   /* blue    */
-  --color-cat-2: #4fb3a6;   /* teal    */
-  --color-cat-3: #d2a44e;   /* amber   */
-  --color-cat-4: #d77f8b;   /* rose    */
-  --color-cat-5: #9e90cc;   /* violet  */
-  --color-cat-6: #d89259;   /* orange  */
+  --color-cat-1: #6d89c2;   /* blue    */
+  --color-cat-2: #56b9a8;   /* teal    */
+  --color-cat-3: #d2a750;   /* amber   */
+  --color-cat-4: #ce747a;   /* rose    */
+  --color-cat-5: #a29cda;   /* violet  */
+  --color-cat-6: #d9925a;   /* orange  */
   --color-cat-7: #5fae8a;   /* emerald */
   --color-cat-8: #c489c9;   /* fuchsia */
   --color-cat-9: #6ab0d4;   /* sky     */
@@ -318,11 +318,11 @@
   --color-row-hover: rgba(0, 0, 0, 0.04);
 
   /* --- Categorical palette (light — muted set, darkened for contrast on white) --- */
-  --color-cat-1: #3f6491;   /* blue    */
-  --color-cat-2: #2f8a80;   /* teal    */
-  --color-cat-3: #a9772f;   /* amber   */
-  --color-cat-4: #b15562;   /* rose    */
-  --color-cat-5: #6c5da0;   /* violet  */
+  --color-cat-1: #3b5e8c;   /* blue    */
+  --color-cat-2: #358f84;   /* teal    */
+  --color-cat-3: #a57c28;   /* amber   */
+  --color-cat-4: #ac4e63;   /* rose    */
+  --color-cat-5: #635c9f;   /* violet  */
   --color-cat-6: #b06a3c;   /* orange  */
   --color-cat-7: #3f7d5e;   /* emerald */
   --color-cat-8: #95548c;   /* fuchsia */

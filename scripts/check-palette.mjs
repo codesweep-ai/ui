@@ -171,19 +171,18 @@ export function readPalettes(css) {
  *
  * `graph` answers for all five, because it was designed against them.
  *
- * `cat` answers for separation and contrast only. It is a muted set by
- * decision, so its chroma sits under the floor a vivid ramp is held to, and
- * its lightness sits outside the band. Holding it to those two would fail the
- * build over something the project chose on purpose. Its normal-vision
- * separation is a genuine miss rather than a decision, and CUI-091 tracks it:
- * `--color-cat-1` and `--color-cat-2` separate by 12.2 against a floor of 15.
- * That is named here rather than left for a reader to infer from what is
- * absent, because a gate that quietly checks less than it appears to is how
- * the graph ramp shipped with a contrast failure.
+ * `cat` answers for both separation floors and for contrast. It is a muted set
+ * by decision, so its chroma sits under the floor a vivid ramp is held to and
+ * its lightness sits outside the band, and holding it to those two would fail
+ * the build over something the project chose on purpose. Those two are the
+ * whole of what it is excused, and the exemption is named here rather than
+ * left for a reader to infer from what is absent, because a gate that quietly
+ * checks less than it appears to is how the graph ramp shipped with a contrast
+ * failure.
  */
 const CONTRACTS = [
   { family: "cat", regime: "adjacent", slots: CAT_SLOTS,
-    checks: ["cvd", "contrast"],
+    checks: ["cvd", "normal", "contrast"],
     why: "a bar, line or stacked chart only puts a series beside its neighbour" },
   { family: "graph", regime: "all", slots: GRAPH_SLOTS,
     checks: ["cvd", "normal", "band", "chroma", "contrast"],

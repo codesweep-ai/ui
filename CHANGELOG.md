@@ -12,6 +12,14 @@ holds today.
 
 ### Breaking changes
 
+- The first six `--color-cat-*` slots have new values in both themes. Every
+  adjacent pair now separates by at least 15 for a reader with full colour
+  vision. Three pairs in the dark theme and two in the light one sat below that
+  floor, the worst at 12.1. The hues are still blue, teal, amber, rose, violet
+  and orange. Mean chroma rose by about one and a half per cent, so the muted
+  character the colour review chose survives. A chart drawn with these slots
+  looks slightly different, and nothing needs doing unless a consumer
+  hard-coded the old values. Slots seven to ten have not moved.
 - `--color-cat-*` holds to six slots rather than ten. Its values have not
   moved, and slots seven to ten still resolve to the colours they always did.
   What they no longer carry is the promise that a reader can tell them apart.

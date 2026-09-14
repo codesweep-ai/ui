@@ -546,17 +546,23 @@ a legend, a direct label, a shape or a position.
 
 #### What each contract holds to
 
-| Palette | Regime | Slots that hold | Worst separation under colour-blind simulation |
-|---|---|---|---|
-| `--color-cat-*` | adjacent pairs | 6 | 9.4 dark, 8.0 light |
-| `--color-graph-*` | any pair | 8 | 9.6 dark, 9.5 light |
+| Palette | Regime | Slots that hold | Worst separation, colour-blind | Worst separation, full colour vision |
+|---|---|---|---|---|
+| `--color-cat-*` | adjacent pairs | 6 | 11.0 dark, 10.0 light | 15.4 dark, 15.4 light |
+| `--color-graph-*` | any pair | 8 | 9.6 dark, 9.5 light | 16.6 dark, 15.2 light |
 
 `--color-cat-*` holds to six slots. At seven the worst adjacent pair separates
-by 6.4 in the dark theme and 4.4 in the light one, against the floor of 8 this
-project holds a palette to. Six is where it still clears that floor, and the
-light theme clears it exactly, with no headroom. Slots
+by 6.3 in the dark theme and 4.4 in the light one, against the floor of 8 this
+project holds a palette to. Six is where it clears that floor, at 11.0 dark and
+10.0 light. Slots
 seven to ten exist and are not guaranteed separable. A chart carrying more than
 six categories folds the remainder rather than reaching for them.
+
+The first six slots are also held to the 15 a reader with full colour vision
+needs, on the same adjacent pairs. Five adjacent pairs across the two themes
+sat below that floor before the check existed, the worst at 12.1. Raising them
+cost about one and a half per cent of mean chroma, so the set stays as muted as
+the colour review that chose it intended.
 
 #### Assigning a slot
 
@@ -619,16 +625,16 @@ kit already spends that on the overflow slot and on de-emphasis.
 
 #### Base colors
 
-Muted set (color review): lower-chroma than the vivid palette ramp they were derived from, for a more composed look in charts/legends. Dark stays lighter than light for contrast on its background.
+Muted set (color review): lower-chroma than the vivid palette ramp they were derived from, for a more composed look in charts/legends. Dark stays lighter than light for contrast on its background. Slots one to six were re-tuned for separation; the hue names still hold and mean chroma moved by about one and a half per cent.
 
 | Token            | Dark (on dark bg) | Light (on light bg) | Hue     |
 |------------------|-------------------|---------------------|---------|
-| `--color-cat-1`  | `#6f93c9`         | `#3f6491`           | Blue    |
-| `--color-cat-2`  | `#4fb3a6`         | `#2f8a80`           | Teal    |
-| `--color-cat-3`  | `#d2a44e`         | `#a9772f`           | Amber   |
-| `--color-cat-4`  | `#d77f8b`         | `#b15562`           | Rose    |
-| `--color-cat-5`  | `#9e90cc`         | `#6c5da0`           | Violet  |
-| `--color-cat-6`  | `#d89259`         | `#b06a3c`           | Orange  |
+| `--color-cat-1`  | `#6d89c2`         | `#3b5e8c`           | Blue    |
+| `--color-cat-2`  | `#56b9a8`         | `#358f84`           | Teal    |
+| `--color-cat-3`  | `#d2a750`         | `#a57c28`           | Amber   |
+| `--color-cat-4`  | `#ce747a`         | `#ac4e63`           | Rose    |
+| `--color-cat-5`  | `#a29cda`         | `#635c9f`           | Violet  |
+| `--color-cat-6`  | `#d9925a`         | `#b06a3c`           | Orange  |
 | `--color-cat-7`  | `#5fae8a`         | `#3f7d5e`           | Emerald |
 | `--color-cat-8`  | `#c489c9`         | `#95548c`           | Fuchsia |
 | `--color-cat-9`  | `#6ab0d4`         | `#2f78a0`           | Sky     |

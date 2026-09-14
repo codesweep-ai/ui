@@ -82,6 +82,21 @@ test("measures contrast and the OKLCH pair the other checks read", () => {
   assert.ok(lightnessChroma("#6b7580").C < 0.1, "a grey is under the chroma floor");
 });
 
+test("holds the categorical palette to the normal-vision floor as well", () => {
+  // The six slots this package shipped before CUI-091. They clear the
+  // colour-blind floor and the contrast minimum, and a reader whose vision is
+  // not simulated at all still cannot separate the first two.
+  const before = ["#6f93c9", "#4fb3a6", "#d2a44e", "#d77f8b", "#9e90cc", "#d89259"];
+  const palettes = { dark: { cat: before, graph: before }, light: { cat: before, graph: before } };
+
+  const { failures } = check(palettes, { dark: ["#0f1620", "#0b0f14"], light: ["#ffffff", "#f3f4f6"] });
+  const normal = failures.find((f) => /--color-cat-\*/.test(f) && /full colour vision/.test(f));
+
+  assert.ok(normal, "the categorical palette should be held to the normal-vision floor");
+  assert.match(normal, /12\.2/);
+  assert.match(normal, /#6f93c9/);
+});
+
 test("fails a slot that clears the card and not the page", () => {
   const eight = (c) => Array.from({ length: 8 }, () => c);
   const palettes = {
