@@ -58,6 +58,8 @@ export type { TreeNode } from "./components/Tree";
 
 // Lib
 export { cn } from "./lib/cn";
+export { useFormGroupField } from "./lib/formGroupField";
+export type { FormGroupField } from "./lib/formGroupField";
 export { useChartTheme, styleAxis, assignSeriesColors } from "./lib/chartTheme";
 export type { ChartTheme } from "./lib/chartTheme";
 export { themeBootScript, useTheme } from "./lib/useTheme";

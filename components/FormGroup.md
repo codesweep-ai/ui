@@ -98,7 +98,8 @@ When multiple children are passed (or a fragment), the consumer is responsible f
 - `aria-describedby` points to a stable id (`<controlId>-helper` or `<controlId>-error`).
 - Error span has `role="alert"` so screen readers announce validation failures as they appear.
 - Required asterisk is `aria-hidden="true"` to avoid the redundant announcement — the `required` attribute on the control conveys the semantics.
-- The wiring reaches the control only when `FormGroup` has exactly one element child. A second child, or a fragment, drops `id`, `aria-describedby`, `aria-invalid` and `required` together.
+- The wiring reaches the control only when `FormGroup` has exactly one child it can see is able to carry it: a native `input`, `select` or `textarea`, or an element already marked `role="group"` or `role="radiogroup"`. A second child, or a fragment, drops `id`, `aria-describedby`, `aria-invalid` and `required` together.
+- A component child is not wired, because `FormGroup` cannot see what it renders. It reads the same wiring from `useFormGroupField()` and puts it on the element that can carry it. `Input`, `Dropdown` and `CheckboxGroup` do this, and a consumer's own control does the same.
 - Both failures above warn in a development build rather than only here: a helper or error that nothing refers to, and a label with no `htmlFor` beside a single control. See `src/lib/formWiringWarning.ts`.
 
 ## Persistence

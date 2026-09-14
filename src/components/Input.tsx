@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 
 import { warnWhenUnstyled } from "../lib/stylesheetWarning";
 import { cn } from "../lib/cn";
+import { useFormGroupField } from "../lib/formGroupField";
 
 type NativeInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -69,10 +70,28 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
       ...rest
     } = props;
 
-    // FormGroup marks an invalid child with aria-invalid rather than passing a
+    // Input renders a wrapper around its field, so FormGroup cannot wire it
+    // directly and does not try. The wiring is read here and put on the field
+    // itself. Anything the consumer set wins: this only fills the gaps.
+    const field = useFormGroupField();
+    const typed = rest as Record<string, unknown>;
+    const wiring = field
+      ? {
+          id: (typed.id as string | undefined) ?? field.controlId,
+          "aria-describedby":
+            (typed["aria-describedby"] as string | undefined) ?? field.describedBy,
+          "aria-invalid":
+            (typed["aria-invalid"] as boolean | "true" | "false" | undefined) ??
+            (field.invalid || undefined),
+          required: (typed.required as boolean | undefined) ?? (field.required || undefined),
+        }
+      : {};
+
+    // FormGroup marks an invalid field with aria-invalid rather than passing a
     // private prop, so the border follows the ARIA state as well as `error`.
     // A consumer using Input on its own still sets `error` directly.
-    const ariaInvalid = (props as { "aria-invalid"?: boolean | "true" | "false" })["aria-invalid"];
+    const ariaInvalid = (wiring as { "aria-invalid"?: boolean | "true" | "false" })["aria-invalid"]
+      ?? (props as { "aria-invalid"?: boolean | "true" | "false" })["aria-invalid"];
     const invalid = error || ariaInvalid === true || ariaInvalid === "true";
 
     const wrapperClass = cn(
@@ -116,6 +135,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
             readOnly={readOnly}
             className={cn(fieldClass, "cs-component-input-41 ")}
             {...(textareaRest as NativeTextareaProps)}
+            {...wiring}
           />
           {suffix && <span className={affixClass}>{suffix}</span>}
         </div>
@@ -133,6 +153,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
           readOnly={readOnly}
           className={fieldClass}
           {...(inputRest as NativeInputProps)}
+          {...wiring}
         />
         {suffix && <span className={affixClass}>{suffix}</span>}
       </div>

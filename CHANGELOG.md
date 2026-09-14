@@ -12,6 +12,16 @@ holds today.
 
 ### Breaking changes
 
+- `FormGroup` no longer wires a child it cannot see is a control. It clones a
+  native `input`, `select` or `textarea`, and an element already marked
+  `role="group"` or `role="radiogroup"`. A component child, or a plain wrapper,
+  is left alone and reads the wiring from the new `useFormGroupField()` hook
+  instead. It used to clone any single element child, which is how
+  `aria-describedby` came to point at a `<div>` that announces nothing, and how
+  `required` came to sit on one, where it is not a valid attribute. A consumer
+  wrapping their own control in a `FormGroup` takes the wiring from the hook:
+  `id`, `describedBy`, `invalid` and `required`, to put where they belong. A
+  bare native control needs no change.
 - The first six `--color-cat-*` slots have new values in both themes. Every
   adjacent pair now separates by at least 15 for a reader with full colour
   vision. Three pairs in the dark theme and two in the light one sat below that
@@ -33,6 +43,13 @@ holds today.
 
 ### Fixed
 
+- `Dropdown` and `CheckboxGroup` announce their helper and error text. Both
+  wrap their control, so `FormGroup` put `aria-describedby` on that wrapper: a
+  `<div>` with no role, which a screen reader does not announce. The message
+  was on the page and reached nobody. `Dropdown` now points its `<select>` at
+  it, and `CheckboxGroup`'s container is `role="group"` with the label as its
+  accessible name. `Dropdown` also stops putting `required` and `aria-invalid`
+  on its wrapper, both of which its `<select>` already carried.
 - The version annotations name 0.3.0, the release they shipped in. Every `since`
   in `catalog.json` named a 1.x line this package never published, and 33
   `Added vX.Y.Z` notes in the documentation and in TSDoc named the same line.

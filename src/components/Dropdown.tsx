@@ -2,6 +2,7 @@ import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../lib/cn";
 import { FormGroup } from "./FormGroup";
+import { fieldMessageIds, useFormGroupField } from "../lib/formGroupField";
 import { useId } from "react";
 
 interface DropdownOption {
@@ -49,14 +50,26 @@ function DropdownImpl({
   ...selectProps
 }: DropdownProps) {
   const generatedId = useId();
-  const controlId = id ?? generatedId;
+  // A consumer's own FormGroup, when Dropdown is the control inside one. It
+  // cannot wire the select itself, because Dropdown wraps it for the chevron
+  // and `aria-describedby` on that wrapper is announced to nobody.
+  const outer = useFormGroupField();
+  const controlId = id ?? outer?.controlId ?? generatedId;
   const isEmpty = options.length === 0;
   const hasError = !!error;
-  // FormGroup marks an invalid child with aria-invalid. Read it rather than
+  // FormGroup marks an invalid field with aria-invalid. Read it rather than
   // overwrite it, so a Dropdown inside an errored FormGroup paints its border
   // while the group keeps ownership of the message.
   const invalid =
-    hasError || ariaInvalidProp === true || ariaInvalidProp === "true";
+    hasError
+    || ariaInvalidProp === true
+    || ariaInvalidProp === "true"
+    || (outer?.invalid ?? false);
+  // Its own chrome first, then the enclosing group's. Dropdown renders the
+  // FormGroup below, so it is that group's parent and cannot read its context.
+  const describedBy =
+    fieldMessageIds(controlId, { helper, error }).describedBy ?? outer?.describedBy;
+  const isRequired = required ?? (outer?.required || undefined);
 
   const control = (
     <div id={`${controlId}-wrapper`} data-component="Dropdown" className={cn("cs-component-dropdown-6 ", className)}>
@@ -66,7 +79,8 @@ function DropdownImpl({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled || isEmpty}
-        required={required}
+        required={isRequired}
+        aria-describedby={describedBy}
         aria-invalid={invalid || undefined}
         aria-label={ariaLabel ?? (!label ? placeholder ?? "Select option" : undefined)}
         data-testid={isEmpty ? "dropdown-empty" : undefined}
@@ -119,7 +133,7 @@ function DropdownImpl({
     <FormGroup
       label={label}
       htmlFor={controlId}
-      required={required}
+      required={isRequired}
       helper={helper}
       error={error}
     >

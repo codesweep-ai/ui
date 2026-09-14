@@ -4,6 +4,21 @@ import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 
 import { Children, cloneElement, isValidElement, useId } from "react";
 import { cn } from "../lib/cn";
+import { FormGroupContext, fieldMessageIds, type FormGroupField } from "../lib/formGroupField";
+
+// The wiring only means something on an element that can carry it: a native
+// control, or an element the author has already declared a group, which is
+// what a set of checkboxes is. FormGroup cannot see inside a component child,
+// so it does not guess at one — that child reads the wiring from context and
+// puts it on the element it knows about. Cloning regardless is how `required`
+// came to sit on a `<div>` and an error message came to be described to one.
+const WIRABLE_TAGS = new Set(["input", "select", "textarea"]);
+const WIRABLE_ROLES = new Set(["group", "radiogroup"]);
+
+function canCarryWiring(node: React.ReactElement<Record<string, unknown>>): boolean {
+  if (typeof node.type !== "string") return false;
+  return WIRABLE_TAGS.has(node.type) || WIRABLE_ROLES.has(String(node.props.role ?? ""));
+}
 
 interface FormGroupProps {
   /**
@@ -48,19 +63,21 @@ function FormGroupImpl({
 }: FormGroupProps) {
   const reactId = useId();
   const controlId = htmlFor ?? `formgroup-${reactId}`;
-  const helperId = helper ? `${controlId}-helper` : undefined;
-  const errorId = error ? `${controlId}-error` : undefined;
-  const describedBy = errorId ?? helperId;
+  const { helperId, errorId, describedBy } = fieldMessageIds(controlId, { helper, error });
 
-  // If a single React element is passed, clone it to forward id / aria props.
-  // Every child gets the same DOM-safe attributes, whether it is an element or
-  // a component. A control paints its error border from `aria-invalid`, which
-  // is the standard signal and is already forwarded here, so nothing private
-  // passes between FormGroup and the controls it wraps.
-  // Composite children (multiple nodes, fragments) are rendered as-is.
+  // A control paints its error border from `aria-invalid`, which is the
+  // standard signal, so nothing private passes between FormGroup and the
+  // controls it wraps. Composite children (multiple nodes, fragments) are
+  // rendered as-is, and so is any component child: those read `field` below.
+  const field: FormGroupField = {
+    controlId,
+    describedBy,
+    invalid: Boolean(error),
+    required,
+  };
   const childArr = Children.toArray(children);
   let enhancedChildren: React.ReactNode = children;
-  if (childArr.length === 1 && isValidElement(childArr[0])) {
+  if (childArr.length === 1 && isValidElement(childArr[0]) && canCarryWiring(childArr[0] as React.ReactElement<Record<string, unknown>>)) {
     const child = childArr[0] as React.ReactElement<Record<string, unknown>>;
     const next: Record<string, unknown> = {
       id: (child.props.id as string | undefined) ?? controlId,
@@ -100,7 +117,7 @@ function FormGroupImpl({
           )}
         </label>
       )}
-      {enhancedChildren}
+      <FormGroupContext.Provider value={field}>{enhancedChildren}</FormGroupContext.Provider>
       {/* The message slot holds its line whether or not there is a message, so
           a field that turns invalid does not push everything below it down the
           page. A field with helper text already occupied the slot; this gives

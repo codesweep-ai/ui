@@ -286,7 +286,12 @@ function CheckboxGroupImpl({
       )}
     >
       <FormGroup label={label} helper={helper} error={error}>
-        <div className="cs-component-checkbox-group-42 ">
+        {/* A set of checkboxes is a group, and saying so is what lets
+            FormGroup's `aria-describedby` and `aria-invalid` mean anything
+            here: on a bare wrapper they are announced to nobody. The name
+            comes from `label`, which FormGroup renders above but cannot bind
+            to a single control, because there is not one. */}
+        <div role="group" aria-label={label} className="cs-component-checkbox-group-42 ">
 
       {filterable && (
         <div className="cs-component-checkbox-group-43">
