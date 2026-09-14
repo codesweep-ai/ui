@@ -527,9 +527,64 @@ These tokens size every lucide-react icon. Component sheets set both `width` and
 | `--icon-size-md` | `16px` | Close buttons, copy/search icons         |
 | `--icon-size-lg` | `18px` | Theme toggle, modal close                |
 
-### 4.12 Categorical Palette
+### 4.12 Categorical palettes
 
-10 theme-aware hues for charts, legends, and grouped data, each with 4 shades (light, base, mid, dark) for sub-category breakdowns. Hues are ordered for maximum visual contrast between adjacent indices.
+This package ships two categorical palettes, and each carries a contract.
+Which one a chart needs is
+decided by which pairs of hues can ever meet, not by how large its marks are.
+
+`--color-cat-*` is safe where only adjacent series meet. A bar, line, stacked or
+area chart asks one question of colour: is this series distinguishable from its
+neighbour in the ordering? Ten hues are declared, and each carries four shades.
+
+`--color-graph-*` is safe where any pair may meet. A node-link diagram, a
+scatter plot, a map or a small multiple asks it of every pair, because any
+category can land beside any other. Eight hues and a neutral are declared.
+
+Neither palette carries a distinction on its own. Both require a second channel:
+a legend, a direct label, a shape or a position.
+
+#### What each contract holds to
+
+| Palette | Regime | Slots that hold | Worst separation under colour-blind simulation |
+|---|---|---|---|
+| `--color-cat-*` | adjacent pairs | 6 | 9.4 dark, 8.0 light |
+| `--color-graph-*` | any pair | 8 | 8.4 dark, 8.7 light |
+
+`--color-cat-*` holds to six slots. At seven the worst adjacent pair separates
+by 6.4 in the dark theme and 4.4 in the light one, against a floor of 6. Slots
+seven to ten exist and are not guaranteed separable. A chart carrying more than
+six categories folds the remainder rather than reaching for them.
+
+#### Assigning a slot
+
+- **Colour follows the entity, never its rank.** Assign from a fixed declared
+  order, so a category keeps its colour across every chart. A rule such as "the
+  smallest folds" moves a category's colour depending on which measurement is
+  open.
+- **An empty category is absent, not neutral.** A category with nothing in it
+  draws no mark and no legend row. `--color-graph-other` is for the overflow
+  past the last slot, and for nothing else.
+- **A ninth category is never a generated hue.** It folds into the neutral
+  slot, into small multiples, or into a composite encoding.
+- Do not use either palette for semantic meaning. Error, success and warning
+  have their own tokens.
+
+#### Graph palette values
+
+| Token | Dark | Light | Hue |
+|---|---|---|---|
+| `--color-graph-1` | `#3987e5` | `#2a78d6` | Blue |
+| `--color-graph-2` | `#d95926` | `#e26432` | Orange |
+| `--color-graph-3` | `#199e70` | `#189d6e` | Green |
+| `--color-graph-4` | `#c98500` | `#bb7f00` | Amber |
+| `--color-graph-5` | `#d55181` | `#cc6c90` | Pink |
+| `--color-graph-6` | `#008300` | `#008300` | Deep green |
+| `--color-graph-7` | `#9085e9` | `#4a3aa7` | Indigo |
+| `--color-graph-8` | `#e66767` | `#e34948` | Red |
+| `--color-graph-other` | `var(--color-structural)` | `var(--color-structural)` | Neutral |
+
+Slot 6 is the same value in both themes, because it clears both surfaces.
 
 #### Base colors
 
@@ -577,7 +632,9 @@ Blue (cat-1) declares these tokens:
 - Do not use these for semantic meaning (error, success, warning). Use the semantic color tokens for that.
 - Dark-theme base values sit at the source ramp's 400 level (lighter/pastel). Light-theme base values sit at 500–600 (darker/saturated) for contrast on white.
 - Sub-shades within a hue are designed to be visually distinct from each other while remaining clearly related.
-- When more than 10 categories are needed, consider grouping or using opacity variants.
+- Past six categories, reach for `--color-graph-*` or fold the remainder. Do not
+  reach for opacity variants: lowering chroma moves a hue toward the background
+  and makes colour-blind separation worse rather than better.
 
 ### 4.13 Letter Spacing
 

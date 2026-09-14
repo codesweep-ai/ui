@@ -208,6 +208,23 @@
   --color-cat-10-mid: #84cc16;
   --color-cat-10-dark: #65a30d;
 
+  /* --- Graph palette: safe where any pair of hues may meet ---
+     --color-cat-* answers whether a series is distinct from its neighbour,
+     which is all a bar or a line chart asks. A node-link diagram, a scatter or
+     a small multiple asks it of every pair, because any category can land
+     beside any other, and the categorical set collapses there. Eight slots and
+     a neutral, because no nine-hue set tested survives protanopia.
+     Both palettes need a second channel: a legend, a label, a shape. */
+  --color-graph-1: #3987e5;   /* blue */
+  --color-graph-2: #d95926;   /* orange */
+  --color-graph-3: #199e70;   /* green */
+  --color-graph-4: #c98500;   /* amber */
+  --color-graph-5: #d55181;   /* pink */
+  --color-graph-6: #008300;   /* deep green */
+  --color-graph-7: #9085e9;   /* indigo */
+  --color-graph-8: #e66767;   /* red */
+  --color-graph-other: var(--color-structural);
+
   /* --- Semantic typography --- */
   --font-size-page-title: var(--font-size-xl);
   --font-size-section-title: var(--font-size-lg);
@@ -343,4 +360,21 @@
   --color-cat-10-light: #84cc16;
   --color-cat-10-mid: #4d7c0f;
   --color-cat-10-dark: #3f6212;
+
+  /* --- Graph palette: safe where any pair of hues may meet ---
+     --color-cat-* answers whether a series is distinct from its neighbour,
+     which is all a bar or a line chart asks. A node-link diagram, a scatter or
+     a small multiple asks it of every pair, because any category can land
+     beside any other, and the categorical set collapses there. Eight slots and
+     a neutral, because no nine-hue set tested survives protanopia.
+     Both palettes need a second channel: a legend, a label, a shape. */
+  --color-graph-1: #2a78d6;   /* blue */
+  --color-graph-2: #e26432;   /* orange */
+  --color-graph-3: #189d6e;   /* green */
+  --color-graph-4: #bb7f00;   /* amber */
+  --color-graph-5: #cc6c90;   /* pink */
+  --color-graph-6: #008300;   /* deep green */
+  --color-graph-7: #4a3aa7;   /* indigo */
+  --color-graph-8: #e34948;   /* red */
+  --color-graph-other: var(--color-structural);
 }
