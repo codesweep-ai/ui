@@ -3,11 +3,11 @@
   "title": "The categorical palette fails colour-blind separation, and small marks need a ramp that does not",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "in-progress",
   "foundBy": "consumer report (host): an application consuming this package, moving from 0.2.0 to 0.3.0, with measurements and reproduction steps",
   "opened": "2026-09-13",
   "resolved": null,
-  "stint": null,
+  "stint": "palette contracts, 2026-09-14",
   "evidence": {
     "commits": [],
     "integrated": [],
@@ -43,6 +43,14 @@
     {
       "date": "2026-09-13",
       "text": "Two rules for the contract, supplied by the reporter from five real drawings rather than from principle.\n\nAn empty category is absent rather than neutral. Four of their five drawings populate fewer than eight categories, and an unpopulated one draws no mark and no legend row. The neutral is only ever for the overflow past eight. Without saying so, an implementer reaches for the neutral to mean empty and the two meanings collide.\n\nSlots are assigned from a fixed declared order, never by size or rank. The smallest populated category differs in every one of their drawings, so a rule that folds the smallest would move the neutral between drawings and change a category's colour depending on which drawing is open. Colour follows the entity rather than its rank, and the neutral always takes the same ninth position.\n\nTheir taxonomy declares nine categories. All nine appear together in one drawing of the five, where the ninth carries two elements out of 442. So eight slots and a neutral cost that consumer two marks on one drawing and nothing on the other four."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "First two steps landed in a8d8c6d. Section 4.12 of the design system specification now states a contract for each palette, and `--color-graph-1..8` and `--color-graph-other` exist in both themes. Nothing consumes them yet, so the visual gate compared 112 of 112 captures at 0 differing pixels.\n\nThe eight values were validated again after they were in `src/styles/tokens.css`, read back out of the file rather than taken from the report. Both themes pass all five checks, with worst colour-blind separation of 8.4 dark and 8.7 light."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "The count the categorical palette can claim was measured rather than assumed, and it is six. Adjacent separation holds at 9.4 dark and 8.0 light through six slots. At seven it falls to 6.4 dark and 4.4 light, and the light theme is the binding constraint.\n\nThat matters for what remains. A separation of 4.4 sits under the floor of 6, so seven slots cannot be rescued by secondary encoding either. The specification now says the palette holds to six, and that slots seven to ten are not guaranteed separable.\n\nThe earlier report measured the dark theme and the light theme was not checked. Light is worse at every count past five."
     }
   ],
   "links": [
