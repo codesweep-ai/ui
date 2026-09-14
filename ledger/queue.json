@@ -15,10 +15,6 @@
       "why": "A consumer can only learn the accessibility contract by reading compiled output."
     },
     {
-      "id": "CUI-089",
-      "why": "Six of 38 catalogued components fail the import a reader of the index would write."
-    },
-    {
       "id": "CUI-092",
       "why": "Needs a decision on what a URL theme seed governs, which no measurement settles."
     }

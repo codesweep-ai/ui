@@ -3,15 +3,17 @@
   "title": "The catalog never says which entry point a component is imported from",
   "type": "improvement",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer-facing test: an agent reading an installed copy found six catalogued components absent from the root export",
   "opened": "2026-09-14",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-14",
+  "stint": "catalog entry points, 2026-09-14",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "c0f1a4e"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run ci` exits 0 with the change in. The catalog check passes at 38 components and 11 patterns, the visual gate compared 112 of 112 captures at 0 differing pixels, and `node --test scripts/gen-catalog.test.mjs` passes 8 tests.\n\nBoth new gate paths were proved to fail rather than assumed to. Emptying `MULTI_ENTRY` made `npm run catalog:check` report MarkdownViewer as exported from two entry points where one is expected. Removing the `ChartFrame` re-export from `src/chart.ts` made it report that no entry point exports ChartFrame. Both files were restored and `git diff` read clean afterwards.\n\nThe tests were proved able to fail by mutating the implementation rather than by reverting it: dropping the local-const branch from `exportedValueNames`, which reduces it to what the old regex could see, failed exactly the two tests that cover MarkdownViewer's second entry point and left the other six passing.\n\nMeasured on the artifact rather than the source. `publishedCatalog` from `scripts/stage-package.mjs` was run over the catalog, and all 38 staged components carry an `import` list with `spec` still rewritten to an absolute pinned URL. `npm run stage` itself refuses to run while the branch is unpushed, which is the CUI-087 guard working."
   },
   "resolution": null,
   "details": "`catalog.json` lists 38 components and gives each a name, a summary, keywords and an intent. It does not say where to import any of them from.\n\nSix are not exported from the root: `ChartFrame`, `ChartTooltip`, `CodeBlock`, `MarkdownMinimap`, `MarkdownViewer` and `MermaidDiagram`. They live behind the `chart`, `code`, `minimap`, `markdown` and `mermaid` subpaths, which is deliberate. Preserved-module builds keep the heavy subpath exports isolated, and those six pull in the markdown, mermaid and syntax-highlighting weight that a consumer of a button should never carry.\n\nThe omission is correct and the index is silent about it. A reader following the catalog writes the obvious root import for 6 of 38 components and learns otherwise from the compiler. The catalog exists to answer which component to reach for, and an entry a reader cannot import leaves that answer half given.\n\nThe proposal is an `import` field carrying the whole specifier, `@codesweep-ai/ui` or `@codesweep-ai/ui/chart`, rather than a flag saying a component is not at the root. A flag says where the component is not, so a reader still has to go looking. The specifier is the thing they paste.\n\nIt should be derived in `scripts/gen-catalog.mjs` from the entry sources rather than written by hand, which keeps the promise the catalog already makes about not disagreeing with the build it came in. Measured before proposing: all 38 components resolve to exactly one entry point, with none ambiguous and none unresolved, so the derivation has no cases to guess at.",
@@ -19,6 +21,14 @@
     {
       "date": "2026-09-14",
       "text": "Worth pairing with a cross-check that every catalogued component is exported from exactly one entry point. It costs little and covers the case this record is not about: a component dropping out of the root export by accident would fail the check rather than ship as an entry nobody can import."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "The measurement this record proposed on was wrong. It says all 38 components resolve to exactly one entry point with none ambiguous. It is 37 of 38. `MarkdownViewer` resolves to two: `@codesweep-ai/ui/markdown` carries the lightweight parser and `@codesweep-ai/ui/markdown/rich` the build-time opt-in to the full CommonMark and GFM pipeline. The two take different props, and components/MarkdownViewer.md documented both before this record was filed.\n\nThe earlier count matched `export ... from \"./components/X\"` across the entry sources, which is the shape `componentSourceFiles()` uses. `src/markdown/rich.ts` exports its viewer as a local const built by `createMarkdownViewer`, and no such pattern sees that. The derivation that shipped reads the syntax tree instead, and a test holds it to this exact case."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Decided by the owner before the work, and shipped. `import` carries a list on every component rather than a string, so the field has one type everywhere and the two-entry case is stated rather than dropped. Thirty-seven entries carry one specifier and `MarkdownViewer` carries both.\n\nThe cross-check the note above asked for became this: a component no entry point exports fails, and a component two entry points export fails unless it is named in `MULTI_ENTRY` in `scripts/gen-catalog.mjs`, which today names `MarkdownViewer` alone. A name left in that list after losing its second entry point fails too, so the exemption cannot outlive the reason for it.\n\n`CATALOG.md` no longer tells every reader to import from the root, which was wrong for the six components behind a subpath."
     }
   ],
   "links": [
