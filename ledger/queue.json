@@ -3,8 +3,8 @@
   "updated": "2026-09-14",
   "items": [
     {
-      "id": "CUI-090",
-      "why": "A consumer can only learn the accessibility contract by reading compiled output."
+      "id": "CUI-093",
+      "why": "A group's helper and error text is wired to an element that cannot announce it, so a screen reader is told neither."
     },
     {
       "id": "CUI-092",

@@ -1,0 +1,27 @@
+{
+  "id": "CUI-093",
+  "title": "CheckboxGroup's helper and error text is described to a div, so nothing announces it",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "writing the FormGroup development warning for CUI-090, which made the wiring visible in the DOM",
+  "opened": "2026-09-14",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`CheckboxGroup` wraps its own content in a `FormGroup`, passing `label`, `helper` and `error`, and hands it a single `<div>` as the child. `FormGroup` wires a child by cloning it, so the `id`, `aria-describedby`, `aria-invalid` and `required` it generates all land on that div.\n\nRendered and read back: the element carrying `aria-describedby=\"formgroup-<id>-helper\"` is a `<div>` with no role, and the helper text it points at is on the page. `aria-describedby` on a non-interactive element with no role is not announced, so a reader using a screen reader is told neither the helper text nor, on an invalid group, the error. `aria-invalid` on the same div means nothing, and `required` does not survive onto it at all: a rendered group carrying `required` has zero elements with the attribute.\n\nThis is not the case CUI-090 was about. That record is about a contract reaching a consumer, and the warning written for it deliberately passes this: something does refer to the helper's id, so the wiring is present. It is pointed at an element that cannot carry it, which the warning's predicate does not test for and should not, because `FormGroup` cannot know what its child renders.\n\nThe fix belongs in `CheckboxGroup` rather than in `FormGroup`. A group of checkboxes has a natural home for this: a `role=\"group\"` on the wrapper, or a `fieldset` with the label as its `legend`, either of which makes `aria-describedby` meaningful. Whichever is chosen also settles what `aria-invalid` should mean for a group.",
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "Worth checking the other composite that does this before fixing one of them. `Dropdown` also renders a `FormGroup` around its own content, and whether its child is the native `<select>` or a wrapper decides whether it has the same defect or none."
+    }
+  ],
+  "links": [
+    "CUI-090"
+  ]
+}
