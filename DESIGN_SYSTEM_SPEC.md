@@ -549,7 +549,7 @@ a legend, a direct label, a shape or a position.
 | Palette | Regime | Slots that hold | Worst separation under colour-blind simulation |
 |---|---|---|---|
 | `--color-cat-*` | adjacent pairs | 6 | 9.4 dark, 8.0 light |
-| `--color-graph-*` | any pair | 8 | 8.4 dark, 8.7 light |
+| `--color-graph-*` | any pair | 8 | 9.6 dark, 10.0 light |
 
 `--color-cat-*` holds to six slots. At seven the worst adjacent pair separates
 by 6.4 in the dark theme and 4.4 in the light one, against a floor of 6. Slots
@@ -574,17 +574,35 @@ six categories folds the remainder rather than reaching for them.
 
 | Token | Dark | Light | Hue |
 |---|---|---|---|
-| `--color-graph-1` | `#3987e5` | `#2a78d6` | Blue |
-| `--color-graph-2` | `#d95926` | `#e26432` | Orange |
-| `--color-graph-3` | `#199e70` | `#189d6e` | Green |
-| `--color-graph-4` | `#c98500` | `#bb7f00` | Amber |
-| `--color-graph-5` | `#d55181` | `#cc6c90` | Pink |
-| `--color-graph-6` | `#008300` | `#008300` | Deep green |
-| `--color-graph-7` | `#9085e9` | `#4a3aa7` | Indigo |
-| `--color-graph-8` | `#e66767` | `#e34948` | Red |
+| `--color-graph-1` | `#e85d90` | `#f05f95` | Pink |
+| `--color-graph-2` | `#bf300e` | `#902804` | Red |
+| `--color-graph-3` | `#b98d21` | `#c58916` | Ochre |
+| `--color-graph-4` | `#05744c` | `#24804f` | Green |
+| `--color-graph-5` | `#03a0b9` | `#00a2c7` | Cyan |
+| `--color-graph-6` | `#2462d0` | `#406be0` | Blue |
+| `--color-graph-7` | `#937af9` | `#5c2eaa` | Violet |
+| `--color-graph-8` | `#904598` | `#9b5299` | Purple |
 | `--color-graph-other` | `var(--color-structural)` | `var(--color-structural)` | Neutral |
 
-Slot 6 is the same value in both themes, because it clears both surfaces.
+Each slot keeps its hue between the themes, within eight degrees, which is the
+drift the categorical palette already holds to. Lightness is what differs, and
+it differs a lot. A colour-blind reader keeps lightness when hue collapses, so
+spreading it is what holds eight slots apart.
+
+#### When there are more categories than slots
+
+Eight is what colour can carry here. Past that, the answer is not another hue.
+Nor is it a second neutral, because low chroma reads as structural, and this
+kit already spends that on the overflow slot and on de-emphasis.
+
+- **Fold the remainder.** Give the categories that answer the reader's question
+  their own slot, and put the rest in `--color-graph-other`.
+- **Add a channel colour does not use.** Shape separates a scatter or a
+  node-link diagram and survives colour blindness untouched. So does letting the
+  reader select one category and dim the others, which works where a legend
+  cannot: a legend does not tell two adjacent dots apart.
+- **Use small multiples.** One panel per category leaves colour separating one
+  or two things instead of nine.
 
 #### Base colors
 

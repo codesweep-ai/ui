@@ -215,14 +215,14 @@
      beside any other, and the categorical set collapses there. Eight slots and
      a neutral, because no nine-hue set tested survives protanopia.
      Both palettes need a second channel: a legend, a label, a shape. */
-  --color-graph-1: #3987e5;   /* blue */
-  --color-graph-2: #d95926;   /* orange */
-  --color-graph-3: #199e70;   /* green */
-  --color-graph-4: #c98500;   /* amber */
-  --color-graph-5: #d55181;   /* pink */
-  --color-graph-6: #008300;   /* deep green */
-  --color-graph-7: #9085e9;   /* indigo */
-  --color-graph-8: #e66767;   /* red */
+  --color-graph-1: #e85d90;   /* pink */
+  --color-graph-2: #bf300e;   /* red */
+  --color-graph-3: #b98d21;   /* ochre */
+  --color-graph-4: #05744c;   /* green */
+  --color-graph-5: #03a0b9;   /* cyan */
+  --color-graph-6: #2462d0;   /* blue */
+  --color-graph-7: #937af9;   /* violet */
+  --color-graph-8: #904598;   /* purple */
   --color-graph-other: var(--color-structural);
 
   /* --- Semantic typography --- */
@@ -368,13 +368,13 @@
      beside any other, and the categorical set collapses there. Eight slots and
      a neutral, because no nine-hue set tested survives protanopia.
      Both palettes need a second channel: a legend, a label, a shape. */
-  --color-graph-1: #2a78d6;   /* blue */
-  --color-graph-2: #e26432;   /* orange */
-  --color-graph-3: #189d6e;   /* green */
-  --color-graph-4: #bb7f00;   /* amber */
-  --color-graph-5: #cc6c90;   /* pink */
-  --color-graph-6: #008300;   /* deep green */
-  --color-graph-7: #4a3aa7;   /* indigo */
-  --color-graph-8: #e34948;   /* red */
+  --color-graph-1: #f05f95;   /* pink */
+  --color-graph-2: #902804;   /* red */
+  --color-graph-3: #c58916;   /* ochre */
+  --color-graph-4: #24804f;   /* green */
+  --color-graph-5: #00a2c7;   /* cyan */
+  --color-graph-6: #406be0;   /* blue */
+  --color-graph-7: #5c2eaa;   /* violet */
+  --color-graph-8: #9b5299;   /* purple */
   --color-graph-other: var(--color-structural);
 }
