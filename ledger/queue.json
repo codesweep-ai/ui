@@ -1,11 +1,7 @@
 {
-  "recommendedBy": "session agent, with the nav defects closed",
+  "recommendedBy": "session agent, with the palette work under way",
   "updated": "2026-09-14",
   "items": [
-    {
-      "id": "CUI-084",
-      "why": "Wants a token decision in the design system specification before any CSS is written."
-    },
     {
       "id": "CUI-088",
       "why": "The version fields answer the one question they exist for incorrectly, so readers are told to ignore them."
