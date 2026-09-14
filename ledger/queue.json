@@ -1,7 +1,11 @@
 {
-  "recommendedBy": "session agent, with the palette work under way",
+  "recommendedBy": "session agent, after an independent review of the branch",
   "updated": "2026-09-14",
   "items": [
+    {
+      "id": "CUI-091",
+      "why": "The first two categorical slots are too close for any reader, and a review found the decision was skipped."
+    },
     {
       "id": "CUI-088",
       "why": "The version fields answer the one question they exist for incorrectly, so readers are told to ignore them."
@@ -13,6 +17,10 @@
     {
       "id": "CUI-089",
       "why": "Six of 38 catalogued components fail the import a reader of the index would write."
+    },
+    {
+      "id": "CUI-092",
+      "why": "Needs a decision on what a URL theme seed governs, which no measurement settles."
     }
   ]
 }
