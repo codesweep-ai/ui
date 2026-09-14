@@ -23,6 +23,10 @@
     {
       "date": "2026-09-14",
       "text": "One judgement is left open and belongs to the owner. Putting an operative sentence in TSDoc while the full contract stays in the component document duplicates a fact, and `CONTRIBUTING.md` holds that every fact lives in exactly one place. The argument for accepting it is that the TSDoc carries a warning at the point of use rather than a second description of the behaviour. The argument against is that this repository is strict about that rule for good reasons, and a duplicated sentence drifts. Settle this before writing the first one."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Decided by the owner: the duplication is accepted, for prop-bound guarantees only. A short operative sentence may sit in a prop's TSDoc while the full contract stays in the component document, because the TSDoc is a warning at the point of use rather than a second description of the behaviour.\n\nThat is a deliberate exception to the rule in `CONTRIBUTING.md` that a fact lives in one place, and it is bounded: it does not license copying the contract wholesale. A guarantee with no prop to attach to, such as the rule that `FormGroup` wires nothing unless it has exactly one element child, still belongs in a development warning rather than in prose nobody reads."
     }
   ],
   "links": [

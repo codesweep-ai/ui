@@ -19,6 +19,10 @@
     {
       "date": "2026-09-14",
       "text": "The gate names this record in a comment, so the exemption is visible in the file rather than inferred from what is absent. That matters because the graph ramp shipped with a contrast failure exactly through a gate that checked less than it appeared to."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Decided by the owner: fix the values rather than document the miss. Two default chart colours that a reader with full colour vision struggles to tell apart is a worse thing for this package to carry than a palette slightly less muted than the one a colour review chose.\n\nSo the work is to raise the separation of `--color-cat-1` against `--color-cat-2`, and of any other pair that falls under the floor, while giving up as little of the muted character as the measurements allow. Whoever does it should add the normal-vision check to the categorical contract in `scripts/check-palette.mjs` at the same time, and remove the exemption its comment records, so the gate holds the palette to what it now claims.\n\nThis changes what existing consumers see, so it re-records visual captures and belongs in the changelog as a breaking change alongside the six-slot narrowing."
     }
   ],
   "links": [

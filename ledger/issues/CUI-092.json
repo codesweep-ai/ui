@@ -19,6 +19,10 @@
     {
       "date": "2026-09-14",
       "text": "A fix was written and reverted rather than shipped, because it is a decision rather than a correction. Making a chosen mode outrank the seed fails the existing test that the seed governs the load, since nothing tells the store when a load ends: the flag that records the choice outlives every component, which is the point of it, so the seed stops working for the rest of the session after the first toggle.\n\nSo the question is what the seed means. If it pins the theme for a load, as its documentation says, then re-applying it on remount is correct and the reader's choice is what should yield. If it seeds only the first paint, the choice should win and the parameter needs to say so. Both are defensible and the documentation currently supports the first.\n\nWhoever settles it should also decide what a load is, because the store has no signal for it."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Decided by the owner: the reader's own choice wins for the rest of the visit. A link that does not pin quite as hard as advertised is a smaller surprise than a toggle that silently undoes itself.\n\nThe setting was never at risk. `setMode` writes it to `localStorage` and it survives reloads. The defect is only that the URL parameter outranks storage on every re-read, so a page opened with `?theme=` puts the seed back each time the store adopts again.\n\nThe obstacle is unchanged and is the work: the store has no notion of when a visit ends, so whoever implements this defines that first. A flag recording the choice has to outlive every component, which is what broke the existing test that the seed governs the load. Expect to change that test deliberately, and to say in `UseThemeOptions` what the parameter now promises."
     }
   ],
   "links": [
