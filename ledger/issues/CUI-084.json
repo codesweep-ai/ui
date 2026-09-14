@@ -3,15 +3,19 @@
   "title": "The categorical palette fails colour-blind separation, and small marks need a ramp that does not",
   "type": "improvement",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "consumer report (host): an application consuming this package, moving from 0.2.0 to 0.3.0, with measurements and reproduction steps",
   "opened": "2026-09-13",
-  "resolved": null,
+  "resolved": "2026-09-14",
   "stint": "palette contracts, 2026-09-14",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "a8d8c6d",
+      "9fb6149",
+      "10b1514"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`node scripts/check-palette.mjs` holds each palette to the contract section 4.12 states for it, and all four hold. `--color-cat-*` separates by 9.4 dark and 8.0 light across six adjacent pairs. `--color-graph-*` separates by 9.6 dark and 10.0 light across all 28 pairs of its eight slots, against a floor of 8.\n\nThe values were confirmed against an independent implementation of the same published maths, which reports the same figures and passes all five of its checks in both themes, including the normal-vision floor at 16.6 dark and 15.6 light. `scripts/check-palette.test.mjs` passes 5 tests holding this implementation to figures that implementation produced, including a separation of 1.0 between two categorical slots under protanopia.\n\nMeasured in the published build rather than the source: `dist/lib/chartTheme.js` reads the new tokens, `dist/lib/chartTheme.d.ts` declares `graph` and `graphOther`, and `dist/styles/tokens.css` carries all 18 declarations. `npm run ci` exits 0 at 10b1514 with the palette check running inside `npm run check`, which is what the workflow runs, and the visual gate comparing 112 of 112 captures at 0 differing pixels."
   },
   "resolution": null,
   "details": "A consumer draws node-link diagrams over a model of 353 nodes and 411 edges, at dots of 3 to 5 pixels and lines of 1 pixel. They report that `--color-cat-1..10` does not hold at that mark size, and ask for a second ramp rather than hand-rolling one downstream.\n\nMeasured with the palette validator from the `dataviz` skill, which runs five checks: lightness band, chroma floor, adjacent-pair separation under colour-blind simulation, normal-vision separation, and contrast against the surface.\n\nNine of the ten base slots fail four of the five checks on the dark surface. Separation under deuteranopia falls to 1.8 between `#6ab0d4` and `#c489c9`, and normal-vision separation falls to 12.2 between `#4fb3a6` and `#6f93c9`, under a floor of 15. The light set fails the same way.\n\nThe `-mid` sub-shades are the obvious alternative and they also fail. Separation under deuteranopia is 1.8 between `#0ea5e9` and `#d946ef` on the dark set, and 2.5 between `#0369a1` and `#a21caf` on the light set.\n\nThe consumer has nine categories, and reports that every nine-hue set they tested merges a pair under deuteranopia or protanopia. They therefore ask for eight slots and a defined neutral, which matches the documented rule that a ninth category folds to \"Other\" rather than becoming a generated hue.\n\nThe proposal is `--color-graph-1..8` for small marks, leaving `--color-cat-*` untouched for bar charts, with `--color-graph-other` aliased to `--color-structural`. The light values are `#2a78d6`, `#e26432`, `#189d6e`, `#bb7f00`, `#cc6c90`, `#008300`, `#4a3aa7` and `#e34948`. The dark values are `#3987e5`, `#d95926`, `#199e70`, `#c98500`, `#d55181`, `#008300`, `#9085e9` and `#e66767`.\n\nThose values pass all five checks in both themes. Worst colour-blind separation is 8.7 light and 8.4 dark, worst normal-vision separation is 16.6 light and 19.3 dark, and every slot clears 3:1 contrast. The light surface tested was `#ffffff` and the dark surface `#0f1620`.\n\nUpgrading does not escape the problem. `src/styles/tokens.css` is byte-identical between the `v0.3.0` tag and main at 8ada6d1, and no `--color-graph-*` token exists.",
@@ -63,6 +67,10 @@
     {
       "date": "2026-09-14",
       "text": "Eight is what colour carries here, and the specification now says what to do at nine rather than leaving it to the reader. Fold the remainder into the neutral, add a channel colour does not use, or use small multiples.\n\nA second neutral is the wrong answer and the specification says so. Low chroma reads as structural, and this project already spends that on the overflow slot and on de-emphasis. Naming selection as a second channel came from the owner: a reader who can isolate one category resolves a collision that a legend cannot, because a legend does not tell two adjacent dots apart."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "The gate went in before the values were replaced, which is why the false claim was caught rather than shipped. Had the remediation come first, the specification would have carried a number nobody re-measured, and the check would have been written to agree with it.\n\n`npm run check` was the right home for it. The workflow runs that and one job per linter, so a check added to the local mirror alone would have run on a contributor's machine and nowhere else."
     }
   ],
   "links": [
