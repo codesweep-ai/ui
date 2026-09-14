@@ -54,6 +54,11 @@ holds today.
 
 ### Fixed
 
+- `catalog.json` can be imported. It has always shipped, and the README has
+  always sent a reader to it, but it was missing from the `exports` map, so
+  `@codesweep-ai/ui/catalog.json` answered `ERR_PACKAGE_PATH_NOT_EXPORTED` and
+  the only route to it was a path into `node_modules`. This affected 0.3.0 as
+  published.
 - `Dropdown` and `CheckboxGroup` announce their helper and error text. Both
   wrap their control, so `FormGroup` put `aria-describedby` on that wrapper: a
   `<div>` with no role, which a screen reader does not announce. The message

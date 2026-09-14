@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -25,6 +26,22 @@ const README = [
   "- [INSTALL.md](INSTALL.md) · getting it",
   "",
 ].join("\n");
+
+// `files` puts a file in the tarball. Only `exports` makes it importable, and
+// a file that ships unexported answers `ERR_PACKAGE_PATH_NOT_EXPORTED` to the
+// specifier a reader would write. catalog.json shipped that way in 0.3.0,
+// while the README it ships beside told the reader to go and read it.
+test("exports every JSON file it ships, so a reader can import what they are sent to", () => {
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  const shipped = pkg.files.filter((f) => f.endsWith(".json"));
+
+  assert.ok(shipped.length > 0, "no JSON file ships, so this test is checking nothing");
+  for (const file of shipped)
+    assert.ok(
+      `./${file}` in pkg.exports,
+      `${file} is in "files" but not in "exports", so importing it is a resolution error`,
+    );
+});
 
 test("pins every link to the commit rather than to a branch", () => {
   const out = publishedReadme(README, SHA);

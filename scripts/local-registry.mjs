@@ -143,6 +143,23 @@ if (await reachable()) {
   }
 }
 
+/**
+ * The dist-tag to publish under.
+ *
+ * npm refuses a prerelease with no `--tag`, and every version between two
+ * releases is one: `scripts/dev-version.mjs` produces
+ * `0.3.1-dev.<stamp>.<sha>`, which is the shape the publish workflow uses. So
+ * the untagged form of this script only ever worked on a release version,
+ * which is the one case a developer is least likely to be testing.
+ *
+ * `dev` rather than the default `latest`, matching what the workflow publishes
+ * a build of one commit under, so `npm install <name>@dev` reaches it here the
+ * way it would from the real registry.
+ */
+function tagArgs(version) {
+  return /-/.test(version) ? ["--tag", "dev"] : [];
+}
+
 // A version cannot be published twice, and a script meant to be run after every
 // change would stop at the second run. Dropping the previous copy first is what
 // makes this repeatable, and is only safe because the registry is this one.
@@ -154,7 +171,7 @@ console.log("==> publishing");
 // including the README the package ships rather than the one the repository has.
 const staged = run(npm, ["run", "stage"]);
 if (staged.status !== 0) process.exit(staged.status ?? 1);
-const published = run(npm, ["publish", ".package", "--access", "public"], { env: npmEnv });
+const published = run(npm, ["publish", ".package", "--access", "public", ...tagArgs(version)], { env: npmEnv });
 if (published.status !== 0) process.exit(published.status ?? 1);
 
 console.log(`

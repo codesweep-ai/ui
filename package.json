@@ -61,6 +61,7 @@
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing/index.js"
     },
+    "./catalog.json": "./catalog.json",
     "./package.json": "./package.json"
   },
   "typesVersions": {
