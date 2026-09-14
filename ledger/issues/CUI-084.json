@@ -51,6 +51,18 @@
     {
       "date": "2026-09-14",
       "text": "The count the categorical palette can claim was measured rather than assumed, and it is six. Adjacent separation holds at 9.4 dark and 8.0 light through six slots. At seven it falls to 6.4 dark and 4.4 light, and the light theme is the binding constraint.\n\nThat matters for what remains. A separation of 4.4 sits under the floor of 6, so seven slots cannot be rescued by secondary encoding either. The specification now says the palette holds to six, and that slots seven to ten are not guaranteed separable.\n\nThe earlier report measured the dark theme and the light theme was not checked. Light is worse at every count past five."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "The proposed ramp did not meet the regime it was proposed for, and the gate found it on its first run. The report validated those values with the tool's default, which compares adjacent pairs only. Their whole purpose is the case where any pair can meet.\n\nMeasured on all pairs, the proposal separated by 1.6 dark and 1.9 light under deuteranopia. Worse, it missed the normal-vision floor as well, at 7.1 dark and 6.1 light against a floor of 15: its orange and its red were hard to tell apart for a reader with full colour vision. Seven of 28 pairs fell under that floor in the dark theme and six of 28 in the light one.\n\nThis session repeated the error before catching it. The adjacent figures were re-run, agreed with, and written into the specification as though they answered the all-pairs question."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Replacement values were searched against the checks rather than chosen, and they hold. On all pairs they separate by 9.6 dark and 10.0 light under colour blindness, against a target of 8, and by 16.6 and 15.6 for normal vision against a floor of 15. Every one of the five checks passes in both themes, confirmed against an independent implementation.\n\nLightness is what made it possible. A colour-blind reader keeps lightness when hue collapses, so spreading lightness across the slots separates eight of them where hue alone separates three. The cost is that the ramp looks less composed than the muted categorical set, which was the trade the owner accepted.\n\nAn earlier attempt searched each theme on its own and passed every check, then had to be thrown away: its slots drifted up to 59 degrees of hue between the themes, so a category would have changed colour when the reader toggled. The categorical palette holds that drift to 8 degrees. The values that shipped fix the hue angles from the dark theme and solve only lightness and chroma for the light one, which keeps the drift inside 8."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Eight is what colour carries here, and the specification now says what to do at nine rather than leaving it to the reader. Fold the remainder into the neutral, add a channel colour does not use, or use small multiples.\n\nA second neutral is the wrong answer and the specification says so. Low chroma reads as structural, and this project already spends that on the overflow slot and on de-emphasis. Naming selection as a second channel came from the owner: a reader who can isolate one category resolves a collision that a legend cannot, because a legend does not tell two adjacent dots apart."
     }
   ],
   "links": [
