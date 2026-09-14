@@ -1,5 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { Component, type ReactNode } from "react";
 import { render, screen, act } from "@testing-library/react";
+import { hydrateRoot } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import userEvent from "@testing-library/user-event";
 import { themeBootScript, useTheme } from "./useTheme";
 import { useChartTheme } from "./chartTheme";
@@ -244,3 +247,165 @@ describe("one theme, shared by every caller", () => {
     expect(screen.getByTestId("mode").textContent).toBe("light");
   });
 });
+
+// A page that ships `themeBootScript` has the correct theme on the root element
+// before React mounts. A hydrating render is handed the server snapshot, whose
+// resolved theme is a placeholder, so writing that to the root would paint over
+// the right answer and flash the wrong theme at the reader.
+describe("hydration does not paint over the boot script", () => {
+  it("never writes the placeholder theme while hydrating a stored light mode", async () => {
+    localStorage.setItem("cs-theme", "light");
+    document.documentElement.setAttribute("data-theme", "light");
+
+    // Real server markup, so React hydrates it instead of discarding it and
+    // client-rendering, which would never consult the server snapshot at all.
+    const host = document.createElement("div");
+    host.innerHTML = renderToString(<Probe />);
+    document.body.appendChild(host);
+    expect(host.querySelector('[data-testid="mode"]')?.textContent).toBe("system");
+
+    const seen: (string | null)[] = [];
+    const observer = new MutationObserver(() => {
+      seen.push(document.documentElement.getAttribute("data-theme"));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    let root: ReturnType<typeof hydrateRoot> | undefined;
+    await act(async () => {
+      root = hydrateRoot(host, <Probe />);
+    });
+    observer.disconnect();
+
+    expect(seen).not.toContain("dark");
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+
+    // Unmount rather than only removing the node. A root left mounted stays
+    // subscribed, so the shared store never drops what it adopted and every
+    // later test in this file reads a mode this one chose.
+    await act(async () => {
+      root?.unmount();
+    });
+    host.remove();
+  });
+});
+
+// `getSnapshot` has to be a read. It used to adopt the store — set `live`, pull
+// the URL and localStorage into `mode` — and React is free to call it during a
+// render it then throws away. Nothing subscribes from a render that never
+// commits, so nothing ever drops that adoption, and the next real mount is
+// answered out of a session that never happened.
+describe("getSnapshot does not adopt the store", () => {
+  class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+    state = { failed: false };
+    static getDerivedStateFromError() {
+      return { failed: true };
+    }
+    render() {
+      return this.state.failed ? <span data-testid="failed" /> : this.props.children;
+    }
+  }
+
+  it("leaves the store unadopted when the render never commits", () => {
+    // Its own key, so a failure here does not leak into the default store and
+    // take unrelated tests down with it.
+    const key = "cs-discarded-render";
+    localStorage.setItem(key, "dark");
+
+    // `never` rather than an inferred `void`, which is not a JSX element type.
+    function Boom(): never {
+      useTheme({ storageKey: key });
+      throw new Error("this render is thrown away");
+    }
+
+    // The boundary catching the throw is the point of the test, so React's
+    // report of it, and jsdom's, are noise.
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    const swallow = (event: ErrorEvent) => event.preventDefault();
+    window.addEventListener("error", swallow);
+    try {
+      render(
+        <Boundary>
+          <Boom />
+        </Boundary>,
+      );
+    } finally {
+      window.removeEventListener("error", swallow);
+      errors.mockRestore();
+    }
+    expect(screen.getByTestId("failed")).toBeInTheDocument();
+
+    // Nothing committed, so nothing subscribed and nothing will ever
+    // unsubscribe. A later mount must still read the store of record rather
+    // than the mode the discarded render left behind.
+    localStorage.setItem(key, "light");
+    function Later() {
+      const { mode } = useTheme({ storageKey: key });
+      return <span data-testid="later">{mode}</span>;
+    }
+    render(<Later />);
+
+    expect(screen.getByTestId("later").textContent).toBe("light");
+  });
+});
+
+// One storage key is one theme: one `data-theme` attribute, one persisted
+// value, one answer. So a caller that honours `?theme=` and a caller of the
+// same key that does not cannot both be served, and the first to mount settles
+// it. That much is deliberate and documented on `UseThemeOptions`. What was
+// wrong is that it was settled in silence, with the answer depending on mount
+// order, after every call used to hold its own options privately.
+describe("two callers, one storage key, different options", () => {
+  it("warns when callers of one key disagree about urlParam", () => {
+    const key = "cs-mixed-urlparam";
+    window.history.replaceState(null, "", "?theme=dark");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      function Pair() {
+        const honours = useTheme({ storageKey: key });
+        const ignores = useTheme({ storageKey: key, urlParam: false });
+        return (
+          <span data-testid="pair">
+            {honours.mode}/{ignores.mode}
+          </span>
+        );
+      }
+      render(<Pair />);
+
+      // Shared, as documented: both answer with the first caller's reading of
+      // the URL, including the one that asked for no URL at all...
+      expect(screen.getByTestId("pair").textContent).toBe("dark/dark");
+      // ...and that is said out loud instead of being discovered in the wild.
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(String(warn.mock.calls[0]?.[0])).toContain("urlParam");
+      expect(String(warn.mock.calls[0]?.[0])).toContain(key);
+    } finally {
+      warn.mockRestore();
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  });
+
+  it("says nothing when callers of one key agree", () => {
+    const key = "cs-agreeing-urlparam";
+    window.history.replaceState(null, "", "?theme=dark");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      function Pair() {
+        const a = useTheme({ storageKey: key, urlParam: false });
+        const b = useTheme({ storageKey: key, urlParam: false });
+        return (
+          <span data-testid="agree">
+            {a.mode}/{b.mode}
+          </span>
+        );
+      }
+      render(<Pair />);
+
+      expect(screen.getByTestId("agree").textContent).toBe("system/system");
+      expect(warn).not.toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  });
+});
+

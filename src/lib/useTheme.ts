@@ -5,10 +5,28 @@ import { useEffect, useCallback, useSyncExternalStore } from "react";
 type ThemeMode = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
 
+/**
+ * Options for `useTheme`.
+ *
+ * `storageKey` is also the identity of the theme: every caller that names one
+ * key shares one mode, deliberately, because that mode is written to one
+ * `data-theme` attribute and persisted under one key. `urlParam` is therefore
+ * resolved once per load, by the first caller of that key to mount, and that
+ * reading stands for every caller of the key until the last one unmounts.
+ *
+ * Callers of one key that disagree about `urlParam` are a misconfiguration
+ * rather than a supported arrangement: one page cannot be both themes, so the
+ * disagreement cannot be honoured. It is warned about in development instead
+ * of being settled in silence. Callers that really want different themes want
+ * different `storageKey`s.
+ */
 export interface UseThemeOptions {
-  /** localStorage key the chosen mode persists under. */
+  /** localStorage key the chosen mode persists under, and the identity of the shared theme. */
   storageKey?: string;
-  /** Query parameter that overrides the mode for this load only (never saved); `false` disables it. */
+  /**
+   * Query parameter that overrides the mode for this load only (never saved);
+   * `false` disables it. Resolved once per storage key per load, as above.
+   */
   urlParam?: string | false;
 }
 
@@ -82,6 +100,8 @@ interface ThemeStore {
   listeners: Set<Listener>;
   /** False while nothing is mounted, so the next mount re-reads the store of record. */
   live: boolean;
+  /** The `urlParam` the live adoption read the URL with. Undefined while nothing is mounted. */
+  urlParam?: string | false;
   media?: MediaQueryList;
   onSystemChange?: () => void;
 }
@@ -97,12 +117,19 @@ interface ThemeStore {
  */
 const stores = new Map<string, ThemeStore>();
 
-const SERVER_SNAPSHOT = `system|${"dark"}`;
+// What a render on the server sees. It cannot read the URL, storage or the
+// operating system, so it answers with the mode that asks for none of them.
+// `resolved` is arbitrary here and only stands in until the client adopts.
+const SERVER_SNAPSHOT = "system|dark";
 
 function snapshotOf(mode: ThemeMode): string {
   return `${mode}|${resolveTheme(mode)}`;
 }
 
+// Called during render, and the one thing here that a render may leave behind:
+// an empty store with no listeners, not live, holding the server snapshot. It
+// is a cache entry rather than a decision, so a render React discards leaves
+// nothing that a later mount would answer from.
 function storeFor(storageKey: string): ThemeStore {
   let store = stores.get(storageKey);
   if (!store) {
@@ -126,18 +153,65 @@ function publish(store: ThemeStore, mode: ThemeMode): void {
   for (const listener of [...store.listeners]) listener();
 }
 
+/** What the store of record asks for right now. A read, and nothing else. */
+function initialMode(storageKey: string, urlParam: string | false): ThemeMode {
+  return readUrlMode(urlParam) ?? readStoredMode(storageKey);
+}
+
+const warnedConflicts = new Set<string>();
+
 /**
- * Read the store of record once, when the first caller arrives.
+ * Say so when two callers of one storage key disagree about `urlParam`.
  *
- * Deferred to the first read rather than done when the store is created,
- * because a module-level value read at import time is fixed before a consumer
- * can write one. Dropped again when the last caller leaves, so a later mount
- * asks again instead of answering from a session that has ended.
+ * One storage key is one theme: one `data-theme` attribute, one persisted
+ * value, one answer for every caller. A caller that honours `?theme=` and a
+ * caller that does not therefore cannot both be served, and the first to mount
+ * settles it for the load. Each call used to hold its own options privately,
+ * so this is a real change, and settling it in silence is what made it a trap:
+ * the same page answers differently depending on which component mounted first.
+ *
+ * Guarded the way `stylesheetWarning` is, and for its reason: `NODE_ENV` is
+ * replaced by the consumer's own bundler, so the check survives into their
+ * development build, where `import.meta.env.DEV` would be replaced when this
+ * package is built and warn nobody.
+ */
+function warnOnUrlParamConflict(store: ThemeStore, urlParam: string | false): void {
+  if (typeof process !== "undefined" && process.env.NODE_ENV === "production") return;
+  if (store.urlParam === undefined || store.urlParam === urlParam) return;
+
+  const seen = `${store.storageKey}:${String(store.urlParam)}:${String(urlParam)}`;
+  if (warnedConflicts.has(seen)) return;
+  warnedConflicts.add(seen);
+  console.warn(
+    `[@codesweep-ai/ui] useTheme(${JSON.stringify(store.storageKey)}) is mounted with ` +
+      `urlParam: ${JSON.stringify(store.urlParam)} and urlParam: ${JSON.stringify(urlParam)} ` +
+      "at once. One storage key is one shared theme, so the URL parameter is read once " +
+      "per load by the first caller to mount and that reading stands for every caller of " +
+      "the key. Pass the same urlParam to all of them, or give them different storageKeys.",
+  );
+}
+
+/**
+ * Read the store of record once, when the first caller subscribes.
+ *
+ * Deferred to the first subscription rather than done when the store is
+ * created, because a module-level value read at import time is fixed before a
+ * consumer can write one. Dropped again when the last caller leaves, so a
+ * later mount asks again instead of answering from a session that has ended.
+ *
+ * Here rather than in `getSnapshot`, because this writes. React may call
+ * `getSnapshot` during a render it then throws away, and adopting there left
+ * the store live with a mode read for a render that never committed — and with
+ * nothing subscribed, nothing would ever drop it again.
  */
 function adopt(store: ThemeStore, urlParam: string | false): void {
-  if (store.live) return;
+  if (store.live) {
+    warnOnUrlParamConflict(store, urlParam);
+    return;
+  }
   store.live = true;
-  const mode = readUrlMode(urlParam) ?? readStoredMode(store.storageKey);
+  store.urlParam = urlParam;
+  const mode = initialMode(store.storageKey, urlParam);
   store.mode = mode;
   store.snapshot = snapshotOf(mode);
 }
@@ -182,15 +256,21 @@ export function useTheme(options: UseThemeOptions = {}) {
       if (store.listeners.size === 0) {
         unwatchSystem(store);
         store.live = false;
+        store.urlParam = undefined;
       }
     };
   }, [store, urlParam]);
 
   const getSnapshot = useCallback(() => {
-    // Read during render, before `subscribe` runs, so the first paint already
-    // carries the stored mode rather than a default it corrects a tick later.
-    adopt(store, urlParam);
-    return store.snapshot;
+    // A read, and never a write. `useSyncExternalStore` may call this during a
+    // render React throws away, so adopting here left the store live with a
+    // mode read for a render that never committed, which nothing would ever
+    // drop because nothing subscribed. Until something has adopted, answer
+    // what adoption is about to produce, so the first paint still carries the
+    // stored mode rather than a default it corrects a tick later; `subscribe`
+    // then adopts that same value and the answer does not move.
+    if (store.live) return store.snapshot;
+    return snapshotOf(initialMode(store.storageKey, urlParam));
   }, [store, urlParam]);
 
   const snapshot = useSyncExternalStore(subscribe, getSnapshot, () => SERVER_SNAPSHOT);
@@ -209,8 +289,14 @@ export function useTheme(options: UseThemeOptions = {}) {
   }, [store]);
 
   useEffect(() => {
-    applyTheme(resolved);
-  }, [resolved]);
+    // From the store rather than from `resolved`. A hydrating render is handed
+    // the server snapshot, whose resolved theme is a placeholder, and writing
+    // that to the root element would paint over what `themeBootScript` had
+    // already set correctly before React mounted. By the time effects run the
+    // store has adopted, because `useSyncExternalStore` subscribes from an
+    // earlier hook position than this.
+    applyTheme(resolveTheme(store.mode));
+  }, [resolved, store]);
 
   return { mode, resolved, setMode, cycle };
 }
