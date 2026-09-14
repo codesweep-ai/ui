@@ -3,18 +3,29 @@
   "title": "Version annotations name a 1.x line the package never published",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer-facing test: two agents reading an installed copy independently flagged the version metadata as untrustworthy",
   "opened": "2026-09-14",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-09-14",
+  "stint": "catalog entry points, 2026-09-14",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "fd39ccb"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run ci` exits 0, and `check:versions` reports 82 annotations across 241 files with none above 0.3.0. Every `since` in `catalog.json` now reads 0.3.0 across all 49 entries, and all 33 `Added vX.Y.Z` notes read v0.3.0.\n\nThe collapse was checked against the registry and the tag rather than assumed. `npm view` lists 20 published versions, of which exactly one is not a prerelease, and no 1.x exists at all. The repository carries one tag, v0.3.0. Every file carrying an annotation is present at that tag, and for each of them the set of annotations is byte-identical to the set at the tag, so nothing annotated was added after 0.3.0 and naming 0.3.0 is true rather than merely tidy.\n\nThe gate was proved to fail rather than assumed to. Putting `since: 1.0.0` and one `Added v1.3.0` back into components/Dropdown.md made `npm run check:versions` exit 1 and name both, with file and line. The file was restored afterwards. The unit tests were proved able to fail by mutating `isAbove` to a string comparison, which failed the ordering test and left the other six passing.\n\nThe visual gate compared 112 of 112 captures at 0 differing pixels, so none of this reached anything that renders."
   },
   "resolution": null,
   "details": "The package is at 0.3.0 and `CHANGELOG.md` says 0.3.0 is the first tagged release. The version metadata in the documentation describes a 1.x line instead.\n\n`catalog.json` carries `since` values of 1.0.0, 1.1.0, 1.3.0, 1.4.0, 1.5.0 and 1.11.0, all above the version that ships. The component documents carry `Added v1.3.0` fourteen times, and also `Added v1.2.0`, `Added v1.5.0`, `Added v1.7.0`, `Added v1.11.0` and `Added v1.12.0`. Alongside them sit eight instances of `Added v0.3.0`, so the two numbering lines are mixed in the same files.\n\nA reader cannot act on this. `Added v1.3.0` on a package calling itself 0.3.0 reads as a feature they do not have, when in fact they do. Both agents in the test reached the same conclusion independently and both advised ignoring the version fields entirely, trusting the type declarations and the build commit instead.\n\nThat advice is correct and it is the problem. The fields exist to answer the question \"do I have this yet\", and a reader who has learned to ignore them has lost the only thing they were for.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-14",
+      "text": "Decided by the owner: collapse every annotation to 0.3.0 rather than drop the fields, and ship a check that caps an annotation at the version in `package.json`.\n\nCollapsing is the honest answer here rather than a convenient one. 0.3.0 is the only release a consumer can be on, so `since: 0.3.0` says what the field exists to say, and the first genuine additions of the next version will stand out against it.\n\nOnly the upper bound is checked. A version below the package's own is the normal case, meaning the thing has been there since an earlier release, so capping is the whole rule. `scripts/check-versions.mjs` runs in `npm run check` and `scripts/check-versions.test.mjs` runs in `npm test`."
+    },
+    {
+      "date": "2026-09-14",
+      "text": "Two things this record did not have.\n\nIt describes two numbering lines mixed together. There were three. Five specs carried `since: 0.2.0`, and 0.2.0 was never released either: the 0.2 line only ever shipped `0.2.1-dev` prereleases, so it names a version nobody could install, exactly as the 1.x values do.\n\n`--color-severe` in `src/styles/tokens.css` was annotated `Added v1.12.0 (unreleased)`. The token is present at tag v0.3.0, so the marker was a second stale claim sitting beside the first. It is gone rather than carried forward."
+    }
+  ],
   "links": []
 }
