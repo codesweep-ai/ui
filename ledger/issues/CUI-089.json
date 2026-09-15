@@ -10,7 +10,7 @@
   "stint": "catalog entry points, 2026-09-14",
   "evidence": {
     "commits": [
-      "c0f1a4e"
+      "83d9d5a"
     ],
     "integrated": [],
     "verified": "`npm run ci` exits 0 with the change in. The catalog check passes at 38 components and 11 patterns, the visual gate compared 112 of 112 captures at 0 differing pixels, and `node --test scripts/gen-catalog.test.mjs` passes 8 tests.\n\nBoth new gate paths were proved to fail rather than assumed to. Emptying `MULTI_ENTRY` made `npm run catalog:check` report MarkdownViewer as exported from two entry points where one is expected. Removing the `ChartFrame` re-export from `src/chart.ts` made it report that no entry point exports ChartFrame. Both files were restored and `git diff` read clean afterwards.\n\nThe tests were proved able to fail by mutating the implementation rather than by reverting it: dropping the local-const branch from `exportedValueNames`, which reduces it to what the old regex could see, failed exactly the two tests that cover MarkdownViewer's second entry point and left the other six passing.\n\nMeasured on the artifact rather than the source. `publishedCatalog` from `scripts/stage-package.mjs` was run over the catalog, and all 38 staged components carry an `import` list with `spec` still rewritten to an absolute pinned URL. `npm run stage` itself refuses to run while the branch is unpushed, which is the CUI-087 guard working."

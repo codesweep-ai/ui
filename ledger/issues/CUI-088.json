@@ -10,7 +10,7 @@
   "stint": "catalog entry points, 2026-09-14",
   "evidence": {
     "commits": [
-      "fd39ccb"
+      "007d7bb"
     ],
     "integrated": [],
     "verified": "`npm run ci` exits 0, and `check:versions` reports 82 annotations across 241 files with none above 0.3.0. Every `since` in `catalog.json` now reads 0.3.0 across all 49 entries, and all 33 `Added vX.Y.Z` notes read v0.3.0.\n\nThe collapse was checked against the registry and the tag rather than assumed. `npm view` lists 20 published versions, of which exactly one is not a prerelease, and no 1.x exists at all. The repository carries one tag, v0.3.0. Every file carrying an annotation is present at that tag, and for each of them the set of annotations is byte-identical to the set at the tag, so nothing annotated was added after 0.3.0 and naming 0.3.0 is true rather than merely tidy.\n\nThe gate was proved to fail rather than assumed to. Putting `since: 1.0.0` and one `Added v1.3.0` back into components/Dropdown.md made `npm run check:versions` exit 1 and name both, with file and line. The file was restored afterwards. The unit tests were proved able to fail by mutating `isAbove` to a string comparison, which failed the ordering test and left the other six passing.\n\nThe visual gate compared 112 of 112 captures at 0 differing pixels, so none of this reached anything that renders."

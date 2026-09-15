@@ -10,7 +10,7 @@
   "stint": "catalog entry points, 2026-09-14",
   "evidence": {
     "commits": [
-      "03eba48"
+      "45e3b7b"
     ],
     "integrated": [],
     "verified": "`npm run ci` exits 0. `useTheme.test.tsx` runs 30 tests where it ran 23, the visual gate compared 112 of 112 captures at 0 differing pixels, and axe is unchanged.\n\nThe reproduction in this record is now a test. With `?theme=dark` in the address a probe renders and reads dark, chooses light, unmounts, and renders again: it reads light. A second test stands in for a reload by dropping the live store, and reads light there too.\n\nEach of the four mechanisms was proved to be load-bearing by mutation, not assumed. Making the seed always outrank the choice fails 2 tests; never recording the choice fails 3; making the boot script ignore the visit fails 1; and not re-seeding the visit when a new seed is honoured fails 1. The file was restored and `git diff` read clean.\n\nMeasured on the artifact. `dist/lib/useTheme.js` carries the sessionStorage reads, and the built `themeBootScript` was run in a jsdom document at `?theme=dark`: it paints dark before the reader has chosen, light after they chose and reloaded, and dark again once the last honoured seed differs from the one in the address. That is the published file, and it is what keeps a reload from flashing the seed's colour.\n\nThe existing test that the seed governs the load passes untouched, which the note below expected to have to change."

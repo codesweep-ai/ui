@@ -10,7 +10,7 @@
   "stint": "consumer handover, 2026-09-14",
   "evidence": {
     "commits": [
-      "980ff4c"
+      "b4a7d94"
     ],
     "integrated": [],
     "verified": "`npm run ci` exits 0. The failure was reproduced from a consumer's position rather than argued: a clean `npm init` directory, `npm install @codesweep-ai/ui@dev` from a registry on this machine, and `require(\"@codesweep-ai/ui/catalog.json\")`, which answered `ERR_PACKAGE_PATH_NOT_EXPORTED`. After the fix the same call resolves.\n\nThe test added to `scripts/stage-package.test.mjs` asserts the general rule rather than the one file: every JSON file in `files` must have an `exports` entry. It was proved to fail by removing the entry again, which failed exactly that test and left the other 16 passing."

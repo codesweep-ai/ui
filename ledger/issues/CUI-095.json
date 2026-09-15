@@ -10,7 +10,7 @@
   "stint": "consumer handover, 2026-09-14",
   "evidence": {
     "commits": [
-      "980ff4c"
+      "b4a7d94"
     ],
     "integrated": [],
     "verified": "Reproduced first: with package.json at a prerelease version, `npm run registry:local` exited non-zero on the publish step with npm's prerelease-tag error, after staging had succeeded. With the fix, the same command exits 0 and reports \"Publishing to http://localhost:4873/ with tag dev\".\n\nNo unit test. This repository tests its CLI scripts by running them, as `scripts/dev-version.test.mjs` does with `spawnSync`, and running this one boots verdaccio and publishes, which is too much to put in `npm test` for a dev-only script. The verification above is the execution, and it covers both the failing and the fixed case."

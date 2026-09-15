@@ -10,7 +10,7 @@
   "stint": "catalog entry points, 2026-09-14",
   "evidence": {
     "commits": [
-      "e7506c5"
+      "999bc1d"
     ],
     "integrated": [],
     "verified": "`npm run ci` exits 0. All 733 existing tests pass alongside 9 new ones, the visual gate compared 112 of 112 captures at 0 differing pixels, and axe reports 0 violations with 0 rules matching more nodes. The `role=\"group\"` added to CheckboxGroup changes no pixel.\n\nMeasured the same way the defect was found, by rendering and reading the DOM back. Before: `aria-describedby` on a `<div>` with no role for both Dropdown and CheckboxGroup, and `required` on `div,select` for a required Dropdown. After: `aria-describedby` on `<select>` for Dropdown and on `<div role=\"group\">` for CheckboxGroup, and `required` on `select` alone.\n\nThe regression risk was the narrowed clone, since Input stopped being cloned and now reads context. Seven Input paths were rendered and read back: a generated id, an explicit htmlFor with an error, required forwarding, multiline, a consumer id winning over the generated one, a bare `<input>` child, and an Input outside any FormGroup. All wire as before, and the error border still follows `aria-invalid`.\n\nThe tests were proved able to fail by mutation. Restoring the old predicate, so that any element child is cloned again, failed 3 of the 9. Removing the provider failed 2. The file was restored and `git diff` read clean.\n\nMeasured on the artifact: `dist/index.d.ts` exports `useFormGroupField` and the `FormGroupField` type, `dist/index.js` carries the runtime export, `dist/components/Dropdown.js` carries `aria-describedby` and `dist/components/CheckboxGroup.js` carries `role: \"group\"`."
