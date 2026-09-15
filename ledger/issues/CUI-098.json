@@ -1,0 +1,20 @@
+{
+  "id": "CUI-098",
+  "title": "The CI status reports workflows as running long after they finish",
+  "type": "defect",
+  "severity": "med",
+  "status": "in-progress",
+  "foundBy": "repository owner, reading the CI dashboard: \"The ledger, ui, lint, and sandbox projects all show their CI status as running, even though they completed.\"",
+  "opened": "2026-09-15",
+  "resolved": null,
+  "stint": "2026-09-15 CI status reported as running",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`pages.yml` writes `ci-status.json` when ci finishes, and npm and publish images start at that same moment. The file is written within half a minute, so it records both runs as in progress. Nothing rewrites it until the next push, so the dashboard at codesweep.ai/dashboards/ci shows this repository as running from then on.\n\nOn 4337b2a, ci finished at 18:16:30 and all three workflows started at 18:16:32. The file was generated at 18:16:56. publish images finished at 18:17:16 and npm at 18:18:12. The status action leaves out only the run writing the file, so the other two are reported as unfinished.\n\nIt began when npm and publish images moved to start on ci's completion, in e745c6a and cb5fb40. The comment in `pages.yml` expected such a run to be a few minutes behind. It is reported as running instead, until the next push repeats the same race.",
+  "notes": [],
+  "links": []
+}
