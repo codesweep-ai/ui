@@ -326,16 +326,18 @@ already taken.
 
 ## Releasing
 
-Every commit on main publishes to the `dev` channel on npm, versioned from the
-commit itself. No tag is cut and `latest` does not move, so a dev build reaches
-only someone who asks for it:
+Every commit on main that passes `ci` publishes to the `dev` channel on npm,
+versioned from the commit itself. The `npm` workflow runs when `ci` finishes,
+and skips a commit that is no longer main's head by then. No tag is cut and
+`latest` does not move, so a dev build reaches only someone who asks for it:
 
 ```sh
 npm install --save-dev @codesweep-ai/ui@dev
 ```
 
 The `publish images` workflow pushes each commit on main and on this
-repository's pull requests to `ghcr.io/codesweep-ai/npm/ui:<version>`. Each
+repository's pull requests to `ghcr.io/codesweep-ai/npm/ui:<version>`. It runs
+as the last job of `ci`, once every other job has passed. Each
 image carries the last 20 versions of the package. `fetch` copies every tarball
 in the newest one into a directory, using podman or docker:
 
@@ -348,8 +350,8 @@ the `file:` spec itself, because npm refuses to override one. The script is
 shared with lint and ledger, so change all three together.
 
 A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
-push the tag; `release.yml` runs the gate, publishes to `latest`, and opens a
-GitHub release. Neither workflow stores a credential: each package names its
+push the tag. `release.yml` waits for `ci` to pass on the tagged commit, runs the
+gate, publishes to `latest`, and opens a GitHub release. Neither workflow stores a credential: each package names its
 workflow as a trusted publisher.
 
 ## Docs

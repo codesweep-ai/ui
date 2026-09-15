@@ -9,11 +9,14 @@ name: publish images
 # Nothing here reaches npm. It runs on pull requests as well as on main, because
 # unmerged builds are what the images are for, so it is a workflow of its own and
 # its token cannot publish to npm.
+#
+# ci.yml calls it, as its last job, once every other job has passed, so no image
+# is pushed from a commit that fails ci. Called rather than started by ci
+# finishing: a run started that way is recorded against main whatever branch ci
+# built. That would put every pull request's image build on main's status, and
+# lose the runs npm-images.mjs reads to find a branch's previous image.
 on:
-  push:
-    branches: [main]
-  pull_request:
-  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -52,8 +55,8 @@ jobs:
       - run: npm ci
 
       # Versioned as the npm workflow versions a dev build. Not gated on `npm run
-      # check`: ci.yml runs it on the same commit, and a build is worth trying
-      # before it passes.
+      # check` again: ci.yml has already run it on this commit by the time it
+      # gets here.
       - name: version this build
         run: |
           version="$(node scripts/dev-version.mjs)"

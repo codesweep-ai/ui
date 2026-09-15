@@ -43,9 +43,11 @@ import { parseArgs } from "node:util";
 // five packages at twenty versions is close to as far as this goes.
 export const KEEP = 20;
 
-// The workflow that publishes the images. Its successful runs on a branch name
-// the commits that branch has published, newest first.
-const WORKFLOW = "npm-images.yml";
+// The workflow that publishes the images: ci.yml, whose last job calls
+// npm-images.yml once the rest have passed. A called workflow records no runs of
+// its own, so its caller's successful runs on a branch are the commits that
+// branch has published, newest first.
+const WORKFLOW = "ci.yml";
 
 // The image is data rather than a program, so one platform serves every client:
 // an arm64 laptop copies files out of it exactly as an amd64 runner does.
@@ -334,7 +336,7 @@ async function successfulRuns(repository, branch) {
   const api = process.env.GITHUB_API_URL ?? "https://api.github.com";
   const url =
     `${api}/repos/${repository}/actions/workflows/${WORKFLOW}/runs` +
-    `?branch=${encodeURIComponent(branch)}&status=success&per_page=10`;
+    `?branch=${encodeURIComponent(branch)}&status=success&per_page=30`;
   const token = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN;
   const response = await fetch(url, {
     headers: { accept: "application/vnd.github+json", ...(token && { authorization: `Bearer ${token}` }) },
@@ -343,7 +345,10 @@ async function successfulRuns(repository, branch) {
     throw new Error(`GET ${url} answered ${response.status}: ${(await response.text()).slice(0, 200)}`);
   }
   const { workflow_runs: runs } = await response.json();
-  return [...new Set(runs.map((r) => r.head_sha))];
+  // A pull request from a fork is recorded against the fork's branch name, often
+  // this one's, and its ci passes without publishing an image.
+  const own = runs.filter((r) => r.head_repository?.full_name?.toLowerCase() === repository.toLowerCase());
+  return [...new Set(own.map((r) => r.head_sha))];
 }
 
 /**

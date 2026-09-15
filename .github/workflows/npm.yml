@@ -6,9 +6,15 @@ name: npm
 # This is separate from release.yml on purpose. Something that runs on every push
 # should not be able to reach the release machinery at all, and the permissions
 # below are what make that true rather than merely intended.
+#
+# On ci finishing rather than on the push, because a published version cannot be
+# taken back, so nothing publishes from a commit ci has not passed. Not a job in
+# ci.yml either: npm checks a trusted publisher against the workflow a run
+# started from, so a publish called from ci.yml would be refused as ci.yml's.
 on:
-  push:
-    branches: [main]
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -18,6 +24,7 @@ on:
 
 permissions:
   contents: read # this workflow reads the repository and writes nothing to it
+  actions: read # a dispatch reads ci's run on the commit it publishes
   id-token: write # provenance, minted from the run rather than from a key
 
 # One publish at a time, and a superseded one is dropped: two pushes in a row
@@ -29,10 +36,41 @@ concurrency:
 jobs:
   publish:
     name: publish a dev build
+    # A passing ci run on a push to main, and only while its commit is still
+    # main's head. A run started from ci builds main's head rather than the
+    # commit ci tested, and its provenance names main's head too, so the two
+    # have to be the same commit. One that is not has been superseded, and the
+    # newer commit publishes when its own ci run passes.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_sha == github.sha)
     # A cloud-hosted runner, which provenance requires.
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45 # a dispatch can sit out a whole ci run before it builds
     steps:
+      # A dispatch names a commit rather than a ci run, so it finds that commit's
+      # run and waits for its verdict. A pull request's run does not count: it
+      # tested the commit merged into main, not the commit itself. A dry run
+      # publishes nothing, so it waits for nothing.
+      - name: wait for ci to pass on this commit
+        if: github.event_name == 'workflow_dispatch' && !inputs.dry_run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for _ in $(seq 12); do
+            run=$(gh api "/repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA" \
+              --jq '[.workflow_runs[] | select(.event != "pull_request")][0].id // empty')
+            [ -n "$run" ] && break
+            sleep 10
+          done
+          if [ -z "$run" ]; then
+            echo "::error::ci has not run on $GITHUB_SHA, so nothing publishes from it. Run ci on it first."
+            exit 1
+          fi
+          gh run watch "$run" --repo "$GITHUB_REPOSITORY" --exit-status --compact --interval 30
+
       - uses: actions/checkout@v7
         with:
           # The version is the commit, so the history has to be here. The depth is
