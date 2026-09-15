@@ -200,15 +200,3 @@ jobs:
       - run: npx cs-lint oss
       # The one commit rule cs-lint does not carry. See scripts/check-commits.mjs.
       - run: npm run lint:commits
-
-  # The npm package as an image, pushed only from a commit every job above has
-  # passed. So every job above belongs in `needs`: one left out of it no longer
-  # holds the image back. npm-images.yml says why it is called from here.
-  images:
-    name: publish images
-    needs: [check, prose, refs, visual, pages, rich, workflows, ledger, oss]
-    permissions:
-      contents: read
-      actions: read # the branch's earlier runs name the image to carry forward
-      packages: write # push the image
-    uses: ./.github/workflows/npm-images.yml

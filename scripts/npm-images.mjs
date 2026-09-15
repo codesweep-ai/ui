@@ -43,10 +43,11 @@ import { parseArgs } from "node:util";
 // five packages at twenty versions is close to as far as this goes.
 export const KEEP = 20;
 
-// The workflow that publishes the images: ci.yml, whose last job calls
-// npm-images.yml once the rest have passed. A called workflow records no runs of
-// its own, so its caller's successful runs on a branch are the commits that
-// branch has published, newest first.
+// The workflow whose passing runs on a branch name the commits that can have an
+// image, newest first: ci.yml, which npm-images.yml waits for. Not npm-images.yml
+// itself, because a run started by another workflow finishing is recorded
+// against main's latest commit, not the commit it built. A commit that passed ci
+// and still has no image has no tag either, and tagForCommit passes over it.
 const WORKFLOW = "ci.yml";
 
 // The image is data rather than a program, so one platform serves every client:
@@ -331,7 +332,7 @@ function repositoryName() {
   return null;
 }
 
-/** The commits of the publishing workflow's successful runs on a branch, newest first. */
+/** The commits of ci's passing runs on a branch, newest first. */
 async function successfulRuns(repository, branch) {
   const api = process.env.GITHUB_API_URL ?? "https://api.github.com";
   const url =

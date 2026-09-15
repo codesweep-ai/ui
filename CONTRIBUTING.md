@@ -335,11 +335,11 @@ and skips a commit that is no longer main's head by then. No tag is cut and
 npm install --save-dev @codesweep-ai/ui@dev
 ```
 
-The `publish images` workflow pushes each commit on main and on this
-repository's pull requests to `ghcr.io/codesweep-ai/npm/ui:<version>`. It runs
-as the last job of `ci`, once every other job has passed. Each
-image carries the last 20 versions of the package. `fetch` copies every tarball
-in the newest one into a directory, using podman or docker:
+The `publish images` workflow pushes each commit on main that passes `ci` to
+`ghcr.io/codesweep-ai/npm/ui:<version>`, starting when `ci` finishes. Pull
+requests get no image. Each image carries the last 20 versions of the package.
+`fetch` copies every tarball in the newest one into a directory, using podman or
+docker:
 
 ```sh
 node scripts/npm-images.mjs fetch --data ./data @codesweep-ai/ui
@@ -357,9 +357,9 @@ publish through `scripts/publish-staged.mjs`, so re-running either is safe: it
 skips a version the registry already has from this commit, and stops on one it
 has from another commit.
 
-In a fork, or a copy under another owner, `ci` still pushes the images. Neither
-workflow publishes on its own there, because the package takes that owner's
-scope. That owner runs either one by hand, once the package names it as a
+In a fork, or a copy under another owner, the images are still published.
+Neither workflow publishes to npm on its own there, because the package takes
+that owner's scope. That owner runs either one by hand, once the package names it as a
 trusted publisher. A trusted publisher can only be added to a package that
 exists, so the first publish runs `scripts/publish-staged.mjs` from a machine
 logged in to npm.

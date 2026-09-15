@@ -1,50 +1,53 @@
 name: publish images
 
-# Publish this commit's npm package as a container image named like it:
+# Publish a commit's npm package as a container image named like it:
 # ghcr.io/<owner>/npm/ui:<version>. It holds this version's tarball, and carries
-# the last 20 versions forward from the branch's previous image. A client copies
-# the tarballs out with `node scripts/npm-images.mjs fetch`, and
-# prune-images.yml expires the old images.
+# the last 20 versions forward from main's previous image. A client copies the
+# tarballs out with `node scripts/npm-images.mjs fetch`, and prune-images.yml
+# expires the old images.
 #
-# Nothing here reaches npm. It runs on pull requests as well as on main, because
-# unmerged builds are what the images are for, so it is a workflow of its own and
-# its token cannot publish to npm.
+# Nothing here reaches npm. It is a workflow of its own, so its token cannot
+# publish to npm, and its builds show on the CI dashboard as a row of their own.
 #
-# ci.yml calls it, as its last job, once every other job has passed, so no image
-# is pushed from a commit that fails ci. Called rather than started by ci
-# finishing: a run started that way is recorded against main whatever branch ci
-# built. That would put every pull request's image build on main's status, and
-# lose the runs npm-images.mjs reads to find a branch's previous image.
+# It starts when ci finishes, and publishes only a push to main whose ci run
+# passed, so no image comes from a commit that fails any ci job. Pull requests
+# get none: `fetch` takes the newest image whatever branch built it, so an image
+# of a pull request would stand in for main's.
 on:
-  workflow_call:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
 
 permissions:
   contents: read
-  actions: read # the branch's earlier runs name the image to carry forward
+  actions: read # ci's earlier runs on main name the image to carry forward
   packages: write # push the image
 
-# One build per branch at a time, so each finds the one before it finished.
-# Not cancelled, because a superseded build still carries its package forward.
+# One build at a time, so each finds the one before it finished. Not cancelled,
+# because a superseded build still carries its package forward.
 concurrency:
-  group: npm-images-${{ github.head_ref || github.ref_name }}
+  group: npm-images
   cancel-in-progress: false
 
 jobs:
   publish:
     name: publish images
-    # A pull request from a fork gets a token that cannot write packages, so its
-    # push would fail after the whole build. Nothing consumes those images.
+    # A run started by ci finishing holds a token that can write packages even
+    # when ci ran for a fork's pull request. Asking for a push to main is what
+    # keeps unreviewed code away from that token, as well as what keeps pull
+    # requests out of the images.
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
-          # A pull request's head rather than its merge with main, so the version
-          # names a commit on the branch.
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          # The commit ci passed. A run started by ci finishing is otherwise on
+          # main's latest commit, which a later push may already have moved.
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0 # the version is the commit, so the history has to be here
 
       - uses: actions/setup-node@v6
@@ -55,8 +58,7 @@ jobs:
       - run: npm ci
 
       # Versioned as the npm workflow versions a dev build. Not gated on `npm run
-      # check` again: ci.yml has already run it on this commit by the time it
-      # gets here.
+      # check` again: ci has already passed it on this commit.
       - name: version this build
         run: |
           version="$(node scripts/dev-version.mjs)"

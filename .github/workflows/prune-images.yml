@@ -1,6 +1,6 @@
-# Expire the npm images. npm-images.yml publishes one for every commit that passes
-# ci, on main and on each push to a pull request, so without this the package
-# list grows without bound and the useful entries sink out of sight.
+# Expire the npm images. npm-images.yml publishes one for every commit on main
+# that passes ci, so without this the package list grows without bound and the
+# useful entries sink out of sight.
 #
 # The rule and the schedule are the sandbox repository's for its dev images: the
 # five most recent versions survive whatever their age, and everything else goes
@@ -20,7 +20,7 @@ on:
         default: true
 
 permissions:
-  actions: read # main's latest successful run names the image to keep
+  actions: read # main's passing ci runs name the image to keep
   packages: write
 
 jobs:
@@ -45,27 +45,6 @@ jobs:
           # The API takes a nested package name with its slash encoded.
           pkg=${PACKAGE//\//%2F}
 
-          # A failed lookup stops the job here, deleting nothing, rather than
-          # reading as "no image to keep". ci's runs, because ci.yml calls
-          # npm-images.yml as its last job, so a passing run is one that
-          # published. Push runs only: a pull request from a fork's own main is
-          # recorded against a branch of that name too, and publishes nothing.
-          main=$(gh api "/repos/$GITHUB_REPOSITORY" --jq .default_branch)
-          pinned=$(gh api "/repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?branch=$main&event=push&status=success&per_page=1" \
-            --jq '.workflow_runs[0].head_sha // empty')
-          echo "pinned: ${pinned:-<none>} (the latest commit on $main with an image)"
-
-          # A version's last identifier is its commit's abbreviated sha, so this
-          # is how a tag is recognised as that commit's.
-          of_pinned() {
-            local t sha
-            for t in ${1//,/ }; do
-              sha=${t##*[.-]}
-              [[ ${#sha} -ge 7 && $sha =~ ^[0-9a-f]+$ && -n $pinned && $pinned == "$sha"* ]] && return 0
-            done
-            return 1
-          }
-
           # An owner that is a user rather than an organisation answers on a
           # different path. Try the org one and say which failed, rather than
           # letting a 404 read as "nothing to prune".
@@ -73,6 +52,35 @@ jobs:
                 "/orgs/$owner/packages/container/$pkg/versions" 2>/dev/null); then
             versions=$(gh api --paginate "/users/$owner/packages/container/$pkg/versions")
           fi
+
+          # A version's last identifier is its commit's abbreviated sha, so this
+          # is how a tag among those listed (split on commas or whitespace) is
+          # recognised as a given commit's.
+          of_commit() {
+            local t sha
+            for t in ${1//,/ }; do
+              sha=${t##*[.-]}
+              [[ ${#sha} -ge 7 && $sha =~ ^[0-9a-f]+$ && $2 == "$sha"* ]] && return 0
+            done
+            return 1
+          }
+
+          # The newest commit on main that has an image. An image is published
+          # after its ci run passes, so main's latest passing commit may not
+          # have one yet, or ever: the walk goes back to the first that does.
+          # A failed lookup stops the job here, deleting nothing, rather than
+          # reading as "no image to keep". Push runs only: a pull request from a
+          # fork's own main is recorded against a branch of that name too, and
+          # publishes nothing.
+          main=$(gh api "/repos/$GITHUB_REPOSITORY" --jq .default_branch)
+          passed=$(gh api "/repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?branch=$main&event=push&status=success&per_page=30" \
+            --jq '.workflow_runs[].head_sha')
+          every_tag=$(jq -r '.[] | .metadata.container.tags // [] | .[]' <<<"$versions")
+          pinned=
+          for sha in $passed; do
+            if of_commit "$every_tag" "$sha"; then pinned=$sha; break; fi
+          done
+          echo "pinned: ${pinned:-<none>} (the latest commit on $main with an image)"
 
           echo "== $PACKAGE"
           # Newest first, so the index is the rank the keep-recent rule uses.
@@ -87,7 +95,7 @@ jobs:
               echo "  keep  ${tags:-<untagged>} (one of the $KEEP_RECENT most recent)"
               continue
             fi
-            if of_pinned "$tags"; then
+            if [ -n "$pinned" ] && of_commit "$tags" "$pinned"; then
               echo "  keep  $tags (the latest image on $main)"
               continue
             fi
