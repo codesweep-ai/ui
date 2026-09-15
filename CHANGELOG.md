@@ -87,6 +87,13 @@ holds today.
 
 ### Added
 
+- A development warning when a chart's colour tokens resolve to nothing. An
+  undefined custom property is not an error: `getPropertyValue` answers with an
+  empty string, a mark drawn with `fill=""` is invalid, and the browser paints
+  it black. A consumer met this across every graph view they had, with a clean
+  typecheck, a clean build and nothing on the console. Importing
+  `styles/components.css` without `styles/core.css` lands in the same place, and
+  so does rendering a chart outside the element a scoped token sheet covers.
 - A development warning when `FormGroup` renders without the wiring it exists
   to supply: a helper or error message that no control refers to, or a label
   with no `htmlFor` beside a single control. Both were silent, and both are the

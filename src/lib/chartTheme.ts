@@ -124,6 +124,13 @@ function readVars(): ChartTheme {
   const fontFamily = v("--font-family-mono");
   const fontSizeAxis = pixels(v("--font-size-chart-axis"));
 
+  const categorical = series();
+  const graph = Array.from({ length: GRAPH_COUNT }, (_, i) => v(`--color-graph-${i + 1}`));
+  // Only in this branch. The one above returns empty strings on purpose, where
+  // there is no document and empty is the right answer rather than a fault.
+  warnWhenPaletteEmpty("categorical", categorical, "--color-cat-1");
+  warnWhenPaletteEmpty("graph", graph, "--color-graph-1");
+
   return {
     bg: v("--bg"),
     card: v("--card"),
@@ -137,11 +144,11 @@ function readVars(): ChartTheme {
     success: v("--color-success"),
     warning: v("--color-warning"),
     error: v("--color-error"),
-    categorical: series(),
+    categorical,
     categoricalLight: series("-light"),
     categoricalMid: series("-mid"),
     categoricalDark: series("-dark"),
-    graph: Array.from({ length: GRAPH_COUNT }, (_, i) => v(`--color-graph-${i + 1}`)),
+    graph,
     graphOther: v("--color-graph-other"),
     fontFamily,
     fontSizeAxis,
@@ -242,6 +249,44 @@ function warnPastSlots(ramp: string, asked: number, safe: number): void {
     `[@codesweep-ai/ui] assignSeriesColors was given ${asked} series, and the ` +
     `${ramp} ramp keeps ${safe} apart. Past that, colours repeat or stop being ` +
     "distinguishable. Fold the remainder, separate them by shape, or use small multiples.",
+  );
+}
+
+const warnedEmpty = new Set<string>();
+
+/**
+ * Warn when the tokens a chart is drawn from resolve to nothing.
+ *
+ * An undefined custom property is not an error: `getPropertyValue` answers with
+ * an empty string, a mark drawn with `fill=""` is invalid, and the browser
+ * paints it black. Every step succeeds — the package installs, the types are
+ * satisfied, the build passes, the page renders — and a reader gets a chart of
+ * black marks with nothing said anywhere.
+ *
+ * A consumer met this on every graph view they had, from a build published
+ * before `--color-graph-*` existed. A stale build is only one way in, and not
+ * the interesting one: importing `styles/components.css` without
+ * `styles/core.css` leaves no tokens at all, and scoping the token sheet to a
+ * subtree leaves a chart rendered outside it with none. All three land here.
+ *
+ * `warnWhenUnstyled` exists for the same reason one layer up, because a
+ * component rendering with no stylesheet looks like a component that rendered.
+ *
+ * Guarded on `process.env.NODE_ENV` rather than `import.meta.env.DEV`, which is
+ * replaced when this package is built and would warn nobody.
+ */
+function warnWhenPaletteEmpty(family: string, values: string[], token: string): void {
+  if (typeof process !== "undefined" && process.env.NODE_ENV === "production") return;
+  if (values.some((value) => value !== "")) return;
+  if (warnedEmpty.has(family)) return;
+
+  warnedEmpty.add(family);
+  console.warn(
+    `[@codesweep-ai/ui] every ${family} colour resolved to nothing, so charts drawn with it ` +
+      `will paint black. \`${token}\` is not defined on this page. Import ` +
+      '"@codesweep-ai/ui/styles/core.css", which carries the tokens, and check that a chart ' +
+      "rendered outside the element the token sheet is scoped to is not what you meant. A build " +
+      "older than the token also does this: the graph ramp ships from 0.3.1 onward.",
   );
 }
 
