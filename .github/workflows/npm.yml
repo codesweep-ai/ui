@@ -41,9 +41,16 @@ jobs:
     # commit ci tested, and its provenance names main's head too, so the two
     # have to be the same commit. One that is not has been superseded, and the
     # newer commit publishes when its own ci run passes.
+    #
+    # And only in codesweep-ai's own repository. A fork, or a copy under another
+    # owner, publishes under that owner's scope, with credentials only that owner
+    # can set up, so a publish started by ci there could only fail. It is skipped
+    # instead. A dispatch publishes from anywhere, for an owner who has.
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
+      (github.repository_owner == 'codesweep-ai' &&
+       !github.event.repository.fork &&
+       github.event.workflow_run.conclusion == 'success' &&
        github.event.workflow_run.event == 'push' &&
        github.event.workflow_run.head_sha == github.sha)
     # A cloud-hosted runner, which provenance requires.

@@ -357,6 +357,13 @@ publish through `scripts/publish-staged.mjs`, so re-running either is safe: it
 skips a version the registry already has from this commit, and stops on one it
 has from another commit.
 
+In a fork, or a copy under another owner, `ci` still pushes the images. Neither
+workflow publishes on its own there, because the package takes that owner's
+scope. That owner runs either one by hand, once the package names it as a
+trusted publisher. A trusted publisher can only be added to a package that
+exists, so the first publish runs `scripts/publish-staged.mjs` from a machine
+logged in to npm.
+
 ## Docs
 
 A user-visible change lands in exactly one document. Every fact lives in one
