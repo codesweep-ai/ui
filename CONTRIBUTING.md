@@ -39,7 +39,7 @@ pass first. `npm run ledger` runs the check half.
 
 `cs-ledger` comes from
 [codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) as the
-`@codesweep-ai/cs-ledger` package, so `npm ci` installs it with everything else
+`@codesweep-ai/ledger` package, so `npm ci` installs it with everything else
 and `npm run check` gates on it. CI runs the same check in its own
 `ledger check` job.
 
