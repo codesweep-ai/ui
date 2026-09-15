@@ -68,7 +68,7 @@ compares the visual baseline, and builds the site, when there is a container
 runtime to run them in. Either way the closing line names what did not run.
 
 The site build is the gate that runs where the failure would otherwise land.
-`pages.yml` publishes on a push to `main` and runs nowhere else. Before this
+`pages.yml` publishes only from `main`, and runs nowhere else. Before this
 gate existed, the first build of a change happened after the merge, and it
 reported to whoever merged. That is how eleven Liquid braces once reached
 `main`. The gate is one command:
