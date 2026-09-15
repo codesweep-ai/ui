@@ -18,6 +18,7 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from "node
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
+import { publishedName } from "./stage-package.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STATE = join(ROOT, ".local-registry");
@@ -90,6 +91,12 @@ if (!existsSync(verdaccio)) {
 // resolves the tree, finds no react, and fails before it reads a single export.
 // Locally published versions still win, so the copy under test is the one that
 // gets installed.
+//
+// The name is the one the staged package gets, whose scope follows the checkout's
+// owner, so the rule below has to name that scope rather than this project's.
+const manifest = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
+const name = publishedName(manifest.name);
+const { version } = manifest;
 writeFileSync(CONFIG, `storage: ./storage
 auth:
   htpasswd:
@@ -99,7 +106,7 @@ uplinks:
     url: https://registry.npmjs.org/
     cache: true
 packages:
-  '@codesweep-ai/*':
+  '${name.split("/")[0]}/*':
     access: $anonymous
     publish: $anonymous
     unpublish: $anonymous
@@ -135,8 +142,6 @@ if (await reachable()) {
     process.exit(1);
   }
 }
-
-const { name, version } = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 
 // A version cannot be published twice, and a script meant to be run after every
 // change would stop at the second run. Dropping the previous copy first is what

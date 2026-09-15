@@ -22,6 +22,7 @@
 // Publishing from the repository root instead would ship the project README,
 // which is why the root manifest refuses it.
 
+import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -31,7 +32,34 @@ const STAGE = join(ROOT, ".package");
 
 const manifest = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 
-const REPO = "https://github.com/codesweep-ai/ui";
+// The package is named for the repository that publishes it, so a fork
+// publishes under its owner's scope rather than this project's. GitHub Actions
+// says which, and elsewhere the GitHub remote this checkout tracks does (origin,
+// unless the branch tracks another). npm's provenance check needs that too: it
+// refuses a `repository` other than the one the run came from.
+function repositoryName() {
+  if (process.env.GITHUB_REPOSITORY) return process.env.GITHUB_REPOSITORY;
+  try {
+    const url = execFileSync("git", ["ls-remote", "--get-url"], {
+      cwd: ROOT,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    });
+    const m = url.trim().match(/[@/]github\.com[:/]([^/]+)\/([^/]+?)(?:\.git)?\/?$/);
+    if (m) return `${m[1]}/${m[2]}`;
+  } catch {
+    // No git or no checkout, which is a build of this project's own source.
+  }
+  return "codesweep-ai/ui";
+}
+
+const REPO_NWO = repositoryName();
+const REPO = `https://github.com/${REPO_NWO}`;
+
+/** The name `name` publishes under: the same package, in the publisher's scope. */
+export function publishedName(name) {
+  return `@${REPO_NWO.split("/")[0].toLowerCase()}/${name.split("/")[1]}`;
+}
 
 export function publishedReadme(text, ref) {
   if (!ref) throw new Error("stage-package: no commit to pin the documentation links to.");
@@ -39,7 +67,7 @@ export function publishedReadme(text, ref) {
   // Said once, at the top of the list a reader would otherwise start following.
   const docs = "## Docs\n\n";
   const note =
-    `The documentation lives in the [codesweep-ai/ui](${REPO})\n` +
+    `The documentation lives in the [${REPO_NWO}](${REPO})\n` +
     "GitHub repository rather than in this package. Every link below is pinned\n" +
     `to \`${ref}\`, the commit this build came from, so it describes what you\n` +
     "installed and not whatever `main` holds when you follow it.\n\n" +
@@ -125,6 +153,10 @@ writeFileSync(
 // staged copy, so `npm publish .package` builds nothing and packs what is here.
 delete manifest.scripts;
 delete manifest.devDependencies;
+manifest.name = publishedName(manifest.name);
+manifest.repository = { ...manifest.repository, url: `git+${REPO}.git` };
+manifest.homepage = `${REPO}#readme`;
+manifest.bugs = { url: `${REPO}/issues` };
 writeFileSync(join(STAGE, "package.json"), JSON.stringify(manifest, null, 2) + "\n");
 
 console.log(`staged ${manifest.name}@${manifest.version} in .package/`);
