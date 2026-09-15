@@ -1,0 +1,27 @@
+{
+  "id": "CUI-097",
+  "title": "A chart whose colour tokens do not resolve paints black and says nothing",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "a consumer migrating to the published build, who met it on every graph view they have",
+  "opened": "2026-09-15",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`readVars` in `src/lib/chartTheme.ts` reads every colour with `getComputedStyle(document.documentElement).getPropertyValue(name).trim()`. A custom property that is not defined is not an error: `getPropertyValue` answers with an empty string. So `theme.graph` becomes an array of empty strings, a mark drawn with `fill=\"\"` is invalid, and the browser paints it black.\n\nNothing anywhere says so. The package installs, the types are satisfied, the build succeeds and the page renders. A consumer reported exactly this: they installed a dev build published before `--color-graph-*` existed, and every categorical colour in every graph view came out black, with a clean typecheck and no console output.\n\nThe tokens can be absent for reasons that have nothing to do with a stale build. A consumer who imports `styles/components.css` but not `styles/core.css` has no tokens at all. One who scopes the token sheet to a subtree and renders a chart outside it has none either. All three land in the same place, and none of them is told.\n\nThis kit already treats this class of failure as worth a warning. `warnWhenUnstyled` exists because a component rendering with no stylesheet looks like a component that rendered, and one application shipped that way unnoticed. An empty palette is the same failure one layer down.",
+  "notes": [
+    {
+      "date": "2026-09-15",
+      "text": "The instrument already exists and the guard is the one this file uses elsewhere. `warnPastSlots` in the same module warns when `assignSeriesColors` is asked for more series than a ramp keeps apart, once per case, behind `process.env.NODE_ENV` rather than `import.meta.env.DEV`, so it survives into a consumer's development build. A warning for an empty palette copies that shape.\n\nWhere it goes matters. `readVars` already branches on whether there is a document: the no-document branch returns empty strings deliberately, because that is server rendering and empty is correct there. The check belongs in the other branch, where a document exists and an empty token therefore means the stylesheet is missing rather than the environment is.\n\nWhoever writes it should confirm it survives into `dist/` by running the built file, not the source. A development-only guard that compiles to nothing is how this project has been caught before, and every test still passed."
+    }
+  ],
+  "links": [
+    "CUI-084"
+  ]
+}
