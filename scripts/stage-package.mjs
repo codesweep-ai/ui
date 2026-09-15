@@ -54,20 +54,30 @@ function repositoryName() {
 }
 
 const REPO_NWO = repositoryName();
-const REPO = `https://github.com/${REPO_NWO}`;
+const REPO = githubUrl(REPO_NWO);
+
+// The web root of an `owner/name`. The rewrites below are handed the repository
+// and build their links with this, rather than reading REPO, so their caller
+// decides what they link to and not whichever repository happens to run them.
+// Their tests pin the links exactly, and reading REPO failed them on a fork
+// whose links were correct.
+function githubUrl(repo) {
+  return `https://github.com/${repo}`;
+}
 
 /** The name `name` publishes under: the same package, in the publisher's scope. */
 export function publishedName(name) {
   return `@${REPO_NWO.split("/")[0].toLowerCase()}/${name.split("/")[1]}`;
 }
 
-export function publishedReadme(text, ref) {
+export function publishedReadme(text, ref, repo) {
   if (!ref) throw new Error("stage-package: no commit to pin the documentation links to.");
+  const url = githubUrl(repo);
 
   // Said once, at the top of the list a reader would otherwise start following.
   const docs = "## Docs\n\n";
   const note =
-    `The documentation lives in the [${REPO_NWO}](${REPO})\n` +
+    `The documentation lives in the [${repo}](${url})\n` +
     "GitHub repository rather than in this package. Every link below is pinned\n" +
     `to \`${ref}\`, the commit this build came from, so it describes what you\n` +
     "installed and not whatever `main` holds when you follow it.\n\n" +
@@ -93,7 +103,7 @@ export function publishedReadme(text, ref) {
   // available for a dev build and a release alike, and unlike a tag it cannot
   // be repointed afterwards.
   text = text.replace(LINK, (whole, label, target) =>
-    `[${label}](${REPO}/${target.endsWith("/") ? "tree" : "blob"}/${ref}/${target.replace(/\/$/, "")})`);
+    `[${label}](${url}/${target.endsWith("/") ? "tree" : "blob"}/${ref}/${target.replace(/\/$/, "")})`);
 
   // Nothing may reach the tarball still pointing at a path the reader has not
   // got. A link this missed would 404 from the npm page and from node_modules
@@ -115,8 +125,9 @@ export function publishedReadme(text, ref) {
  * to nothing. They become absolute URLs, pinned to the same commit the
  * README's links are, for the same reason.
  */
-export function publishedCatalog(text, ref) {
+export function publishedCatalog(text, ref, repo) {
   if (!ref) throw new Error("stage-package: no commit to pin the catalog to.");
+  const url = githubUrl(repo);
   const catalog = JSON.parse(text);
   // Whatever entry arrays this catalog carries, rather than the two it carries
   // today. A third kind added to gen-catalog.mjs would otherwise ship with its
@@ -131,7 +142,7 @@ export function publishedCatalog(text, ref) {
 
   for (const entry of entries) {
     if (typeof entry.spec === "string" && !/^https?:/.test(entry.spec)) {
-      entry.spec = `${REPO}/blob/${ref}/${entry.spec.replace(/^\.?\//, "")}`;
+      entry.spec = `${url}/blob/${ref}/${entry.spec.replace(/^\.?\//, "")}`;
     }
   }
 
@@ -160,9 +171,9 @@ export function publishedCatalog(text, ref) {
  * stops npm running any lifecycle hook against the staged copy, so
  * `npm publish .package` builds nothing and packs what is there.
  */
-export function publishedManifest(manifest, ref) {
+export function publishedManifest(manifest, ref, repo) {
   if (!ref) throw new Error("stage-package: no commit to pin the manifest to.");
-  const staged = { ...manifest, homepage: `${REPO}/blob/${ref}/README.md` };
+  const staged = { ...manifest, homepage: `${githubUrl(repo)}/blob/${ref}/README.md` };
   delete staged.scripts;
   delete staged.devDependencies;
   return `${JSON.stringify(staged, null, 2)}\n`;
@@ -295,13 +306,13 @@ if (inspectionOnly(process.argv.slice(2))) {
 }
 writeFileSync(
   join(STAGE, "README.md"),
-  publishedReadme(readFileSync(join(ROOT, "README.md"), "utf8"), ref),
+  publishedReadme(readFileSync(join(ROOT, "README.md"), "utf8"), ref, REPO_NWO),
 );
 // catalog.json ships: it is the index this project tells an agent to read
 // first, and a shipped artifact cannot disagree with the build it came in.
 writeFileSync(
   join(STAGE, "catalog.json"),
-  publishedCatalog(readFileSync(join(ROOT, "catalog.json"), "utf8"), ref),
+  publishedCatalog(readFileSync(join(ROOT, "catalog.json"), "utf8"), ref, REPO_NWO),
 );
 // Who publishes, rather than what was built: the scope and the issue tracker
 // follow the repository this run came from, so a fork publishes as itself.
@@ -309,7 +320,7 @@ writeFileSync(
 manifest.name = publishedName(manifest.name);
 manifest.repository = { ...manifest.repository, url: `git+${REPO}.git` };
 manifest.bugs = { url: `${REPO}/issues` };
-writeFileSync(join(STAGE, "package.json"), publishedManifest(manifest, ref));
+writeFileSync(join(STAGE, "package.json"), publishedManifest(manifest, ref, REPO_NWO));
 
 console.log(`staged ${manifest.name}@${manifest.version} in .package/`);
 } catch (error) {

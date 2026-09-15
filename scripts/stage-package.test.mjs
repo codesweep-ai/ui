@@ -16,6 +16,11 @@ import {
 // for code they do not have. That is CUI-071.
 
 const SHA = "0db9db173d714da625c2a58713f05d16fac7a131";
+// The repository every link points into. It is passed in, and it is a name no
+// real run carries: with `codesweep-ai/ui` written into the expectations, these
+// tests failed on a fork whose links were correct, and a rewrite that read
+// GITHUB_REPOSITORY instead of its argument would still pass upstream.
+const REPO = "example-org/ui";
 const README = [
   "# Package",
   "",
@@ -44,7 +49,7 @@ test("exports every JSON file it ships, so a reader can import what they are sen
 });
 
 test("pins every link to the commit rather than to a branch", () => {
-  const out = publishedReadme(README, SHA);
+  const out = publishedReadme(README, SHA, REPO);
 
   assert.match(out, new RegExp(`/blob/${SHA}/CATALOG\\.md`));
   assert.match(out, new RegExp(`/tree/${SHA}/components`));
@@ -53,7 +58,7 @@ test("pins every link to the commit rather than to a branch", () => {
 });
 
 test("names the commit and the one file that does ship", () => {
-  const out = publishedReadme(README, SHA);
+  const out = publishedReadme(README, SHA, REPO);
 
   assert.ok(out.includes(SHA), "the note should say which commit the links point at");
   assert.ok(out.includes("catalog.json"), "the note should say catalog.json ships");
@@ -61,7 +66,7 @@ test("names the commit and the one file that does ship", () => {
 
 test("refuses to stage without a commit to pin to", () => {
   // Better than quietly falling back to `main`, which is the defect.
-  assert.throws(() => publishedReadme(README, ""), /no commit to pin/);
+  assert.throws(() => publishedReadme(README, "", REPO), /no commit to pin/);
 });
 
 test("still refuses a link the rewrite could not reach", () => {
@@ -69,12 +74,12 @@ test("still refuses a link the rewrite could not reach", () => {
   // guard is deliberately looser so it can see what the rewrite cannot.
   const withTitle = README.replace("[INSTALL.md](INSTALL.md)", '[INSTALL.md](INSTALL.md "Install")');
 
-  assert.throws(() => publishedReadme(withTitle, SHA), /still relative/);
+  assert.throws(() => publishedReadme(withTitle, SHA, REPO), /still relative/);
 });
 
 test("leaves absolute links alone", () => {
   const external = README.replace("[CATALOG.md](CATALOG.md)", "[npm](https://www.npmjs.com/)");
-  const out = publishedReadme(external, SHA);
+  const out = publishedReadme(external, SHA, REPO);
 
   assert.ok(out.includes("[npm](https://www.npmjs.com/)"));
 });
@@ -92,15 +97,15 @@ const CATALOG = JSON.stringify({
 });
 
 test("pins every catalog spec to the commit rather than leaving it relative", () => {
-  const out = JSON.parse(publishedCatalog(CATALOG, SHA));
+  const out = JSON.parse(publishedCatalog(CATALOG, SHA, REPO));
 
-  assert.equal(out.components[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/components/Button.md`);
-  assert.equal(out.patterns[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/patterns/Form.md`);
-  assert.doesNotMatch(publishedCatalog(CATALOG, SHA), /\/blob\/main\//);
+  assert.equal(out.components[0].spec, `https://github.com/${REPO}/blob/${SHA}/components/Button.md`);
+  assert.equal(out.patterns[0].spec, `https://github.com/${REPO}/blob/${SHA}/patterns/Form.md`);
+  assert.doesNotMatch(publishedCatalog(CATALOG, SHA, REPO), /\/blob\/main\//);
 });
 
 test("says in the catalog itself which commit its specs point at", () => {
-  const out = JSON.parse(publishedCatalog(CATALOG, SHA));
+  const out = JSON.parse(publishedCatalog(CATALOG, SHA, REPO));
 
   assert.ok(out.$generated.includes(SHA), "the generated note should name the commit");
 });
@@ -112,7 +117,7 @@ test("refuses to ship a catalog entry that points nowhere", () => {
     components: [{ spec: "components/Button.md", name: "Button" }, { name: "Orphan" }],
   });
 
-  assert.throws(() => publishedCatalog(broken, SHA), /not absolute.*Orphan/s);
+  assert.throws(() => publishedCatalog(broken, SHA, REPO), /not absolute.*Orphan/s);
 });
 
 test("pins the entries in an array this catalog has never carried before", () => {
@@ -126,10 +131,10 @@ test("pins the entries in an array this catalog has never carried before", () =>
     tokens: [{ spec: "tokens/Color.md", name: "Color" }],
   });
 
-  const out = JSON.parse(publishedCatalog(withTokens, SHA));
+  const out = JSON.parse(publishedCatalog(withTokens, SHA, REPO));
 
-  assert.equal(out.tokens[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/tokens/Color.md`);
-  assert.equal(out.components[0].spec, `https://github.com/codesweep-ai/ui/blob/${SHA}/components/Button.md`);
+  assert.equal(out.tokens[0].spec, `https://github.com/${REPO}/blob/${SHA}/tokens/Color.md`);
+  assert.equal(out.components[0].spec, `https://github.com/${REPO}/blob/${SHA}/components/Button.md`);
 });
 
 test("refuses a dead entry in an array it has never seen before", () => {
@@ -141,21 +146,22 @@ test("refuses a dead entry in an array it has never seen before", () => {
     tokens: [{ name: "Orphan" }],
   });
 
-  assert.throws(() => publishedCatalog(broken, SHA), /not absolute.*Orphan/s);
+  assert.throws(() => publishedCatalog(broken, SHA, REPO), /not absolute.*Orphan/s);
 });
 
 test("refuses to stage a catalog or a manifest without a commit", () => {
-  assert.throws(() => publishedCatalog(CATALOG, ""), /no commit/);
-  assert.throws(() => publishedManifest({ name: "x" }, ""), /no commit/);
+  assert.throws(() => publishedCatalog(CATALOG, "", REPO), /no commit/);
+  assert.throws(() => publishedManifest({ name: "x" }, "", REPO), /no commit/);
 });
 
 test("pins the manifest homepage and drops what a package must not carry", () => {
   const out = JSON.parse(publishedManifest(
     { name: "x", homepage: "https://github.com/codesweep-ai/ui#readme", scripts: { build: "x" }, devDependencies: { v: "1" } },
     SHA,
+    REPO,
   ));
 
-  assert.equal(out.homepage, `https://github.com/codesweep-ai/ui/blob/${SHA}/README.md`);
+  assert.equal(out.homepage, `https://github.com/${REPO}/blob/${SHA}/README.md`);
   assert.doesNotMatch(out.homepage, /#readme$/);
   assert.equal(out.scripts, undefined);
   assert.equal(out.devDependencies, undefined);
