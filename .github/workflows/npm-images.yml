@@ -1,0 +1,73 @@
+name: publish images
+
+# Publish this commit's npm package as a container image named like it:
+# ghcr.io/<owner>/npm/ui:<version>. It holds this version's tarball, and carries
+# the last 20 versions forward from the branch's previous image. A client copies
+# the tarballs out with `node scripts/npm-images.mjs fetch`, and
+# prune-images.yml expires the old images.
+#
+# Nothing here reaches npm. It runs on pull requests as well as on main, because
+# unmerged builds are what the images are for, so it is a workflow of its own and
+# its token cannot publish to npm.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read # the branch's earlier runs name the image to carry forward
+  packages: write # push the image
+
+# One build per branch at a time, so each finds the one before it finished.
+# Not cancelled, because a superseded build still carries its package forward.
+concurrency:
+  group: npm-images-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish images
+    # A pull request from a fork gets a token that cannot write packages, so its
+    # push would fail after the whole build. Nothing consumes those images.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # A pull request's head rather than its merge with main, so the version
+          # names a commit on the branch.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0 # the version is the commit, so the history has to be here
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - run: npm ci
+
+      # Versioned as the npm workflow versions a dev build. Not gated on `npm run
+      # check`: ci.yml runs it on the same commit, and a build is worth trying
+      # before it passes.
+      - name: version this build
+        run: |
+          version="$(node scripts/dev-version.mjs)"
+          echo "building $version"
+          npm version "$version" --no-git-tag-version --allow-same-version
+
+      - run: npm run stage
+
+      - name: log in to ghcr.io
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "$GHCR_TOKEN" | podman login ghcr.io -u '${{ github.actor }}' --password-stdin
+
+      - name: publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/npm-images.mjs publish .package

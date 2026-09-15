@@ -334,6 +334,19 @@ only someone who asks for it:
 npm install --save-dev @codesweep-ai/ui@dev
 ```
 
+The `publish images` workflow pushes each commit on main and on this
+repository's pull requests to `ghcr.io/codesweep-ai/npm/ui:<version>`. Each
+image carries the last 20 versions of the package. `fetch` copies every tarball
+in the newest one into a directory, using podman or docker:
+
+```sh
+node scripts/npm-images.mjs fetch --data ./data @codesweep-ai/ui
+```
+
+Point `overrides` at the tarballs with `file:` specs. A direct dependency needs
+the `file:` spec itself, because npm refuses to override one. The script is
+shared with lint and ledger, so change all three together.
+
 A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
 push the tag; `release.yml` runs the gate, publishes to `latest`, and opens a
 GitHub release. Neither workflow stores a credential: each package names its

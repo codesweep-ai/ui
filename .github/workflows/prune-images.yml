@@ -1,0 +1,104 @@
+# Expire the npm images. npm-images.yml publishes one per commit on main and per
+# push to a pull request, so without this the package list grows without bound
+# and the useful entries sink out of sight.
+#
+# The rule and the schedule are the sandbox repository's for its dev images: the
+# five most recent versions survive whatever their age, and everything else goes
+# ten days after it was last touched. One more survives at any age: main's latest
+# image, which the next build on main carries forward. Deleting it breaks no
+# fetch, but that build would start a new chain holding only its own packages.
+name: prune-images
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List what would be deleted without deleting it"
+        type: boolean
+        default: true
+
+permissions:
+  actions: read # main's latest successful run names the image to keep
+  packages: write
+
+jobs:
+  prune:
+    name: prune images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # A scheduled run prunes; a hand-started one asks first.
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+      KEEP_RECENT: "5"
+      MAX_AGE_DAYS: "10"
+      # The image npm-images.yml publishes, named for the package it holds.
+      PACKAGE: npm/ui
+    steps:
+      - name: prune
+        run: |
+          set -euo pipefail
+          owner='${{ github.repository_owner }}'
+          cutoff=$(date -u -d "-${MAX_AGE_DAYS} days" +%s)
+          # The API takes a nested package name with its slash encoded.
+          pkg=${PACKAGE//\//%2F}
+
+          # A failed lookup stops the job here, deleting nothing, rather than
+          # reading as "no image to keep". Push runs only: a pull request from a
+          # fork's own main is recorded against a branch of that name too, and
+          # publishes nothing.
+          main=$(gh api "/repos/$GITHUB_REPOSITORY" --jq .default_branch)
+          pinned=$(gh api "/repos/$GITHUB_REPOSITORY/actions/workflows/npm-images.yml/runs?branch=$main&event=push&status=success&per_page=1" \
+            --jq '.workflow_runs[0].head_sha // empty')
+          echo "pinned: ${pinned:-<none>} (the latest commit on $main with an image)"
+
+          # A version's last identifier is its commit's abbreviated sha, so this
+          # is how a tag is recognised as that commit's.
+          of_pinned() {
+            local t sha
+            for t in ${1//,/ }; do
+              sha=${t##*[.-]}
+              [[ ${#sha} -ge 7 && $sha =~ ^[0-9a-f]+$ && -n $pinned && $pinned == "$sha"* ]] && return 0
+            done
+            return 1
+          }
+
+          # An owner that is a user rather than an organisation answers on a
+          # different path. Try the org one and say which failed, rather than
+          # letting a 404 read as "nothing to prune".
+          if ! versions=$(gh api --paginate \
+                "/orgs/$owner/packages/container/$pkg/versions" 2>/dev/null); then
+            versions=$(gh api --paginate "/users/$owner/packages/container/$pkg/versions")
+          fi
+
+          echo "== $PACKAGE"
+          # Newest first, so the index is the rank the keep-recent rule uses.
+          echo "$versions" | jq -c 'sort_by(.updated_at) | reverse | to_entries[]' | \
+          while read -r entry; do
+            rank=$(jq -r '.key' <<<"$entry")
+            id=$(jq -r '.value.id' <<<"$entry")
+            updated=$(jq -r '.value.updated_at' <<<"$entry")
+            tags=$(jq -r '.value.metadata.container.tags // [] | join(",")' <<<"$entry")
+
+            if [ "$rank" -lt "$KEEP_RECENT" ]; then
+              echo "  keep  ${tags:-<untagged>} (one of the $KEEP_RECENT most recent)"
+              continue
+            fi
+            if of_pinned "$tags"; then
+              echo "  keep  $tags (the latest image on $main)"
+              continue
+            fi
+            if [ "$(date -u -d "$updated" +%s)" -ge "$cutoff" ]; then
+              echo "  keep  ${tags:-<untagged>} ($updated, under $MAX_AGE_DAYS days)"
+              continue
+            fi
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "  WOULD DELETE ${tags:-<untagged>} ($updated)"
+              continue
+            fi
+            echo "  delete ${tags:-<untagged>} ($updated)"
+            gh api -X DELETE "/orgs/$owner/packages/container/$pkg/versions/$id" \
+              || gh api -X DELETE "/users/$owner/packages/container/$pkg/versions/$id"
+          done
