@@ -115,5 +115,8 @@ jobs:
       #
       # `--tag dev` keeps `latest` where the last release left it, and a caret
       # range never resolves to a prerelease, so nobody gets one without asking.
+      #
+      # Through publish-staged.mjs, which skips a version this commit already
+      # published, so re-running ci on a published commit does not fail here.
       - name: publish
-        run: npm publish .package --tag dev --provenance --access public ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: node scripts/publish-staged.mjs --tag dev --provenance --access public ${{ inputs.dry_run && '--dry-run' || '' }}

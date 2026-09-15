@@ -351,8 +351,11 @@ shared with lint and ledger, so change all three together.
 
 A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
 push the tag. `release.yml` waits for `ci` to pass on the tagged commit, runs the
-gate, publishes to `latest`, and opens a GitHub release. Neither workflow stores a credential: each package names its
-workflow as a trusted publisher.
+gate, publishes to `latest`, and opens a GitHub release. Neither workflow stores
+a credential: each package names its workflow as a trusted publisher. Both
+publish through `scripts/publish-staged.mjs`, so re-running either is safe: it
+skips a version the registry already has from this commit, and stops on one it
+has from another commit.
 
 ## Docs
 

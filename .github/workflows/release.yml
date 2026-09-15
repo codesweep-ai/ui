@@ -70,7 +70,10 @@ jobs:
       # length of the publish.
       - run: npm run stage
 
-      - run: npm publish .package --provenance --access public
+      # Through publish-staged.mjs, which skips a version this commit already
+      # published, so a re-run after the GitHub release step failed gets as far
+      # as that step again.
+      - run: node scripts/publish-staged.mjs --provenance --access public
 
       # The tag is what a reader finds first, so it gets a page of its own with
       # the changes since the last one.
