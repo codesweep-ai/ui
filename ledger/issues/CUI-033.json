@@ -24,7 +24,7 @@
     },
     {
       "date": "2026-09-06",
-      "text": "`important` now escalates the live region on its own, alongside the warning and error variants. The auto-dismiss half of the option already worked. The test that existed paired `important` with `error`, which is already an alert, so it could not have caught this."
+      "text": "`important` now escalates the live region on its own, alongside the warning and error variants. The auto-dismiss half of the option already works. The test that existed paired `important` with `error`, which is already an alert, so it could not have caught this."
     }
   ],
   "links": []

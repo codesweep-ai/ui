@@ -13,7 +13,7 @@
       "6ec7a39"
     ],
     "integrated": [],
-    "verified": "`grep -rn cs-skeleton src/styles/` returns only `src/styles/components/skeleton.css`, which `src/styles/components.css:29` imports, and `src/styles/base.css` imports `./reset.css` and nothing else. Both claims in the specification now name that file. `npm run check` exits 0."
+    "verified": "`grep -rn cs-skeleton src/styles/` returns only `src/styles/components/skeleton.css`, which `src/styles/components.css:29` imports, and `src/styles/base.css` imports `./reset.css` and nothing else. Both claims in the specification now name that file. `npm run check` returns exit code 0."
   },
   "resolution": null,
   "details": "`components/Skeleton.md:73` says the `cs-skeleton` class is defined in `src/styles/base.css`, and `:51` says no separate import is needed when `base.css` is already imported.\n\nThe class is defined at `src/styles/components/skeleton.css:1` and reaches a consumer through `src/styles/components.css:29`. `src/styles/base.css` imports `reset.css` and nothing else.\n\nA consumer who follows the specification and imports `base.css` alone gets an unstyled, unanimated `<span>`, with no error and no warning.\n\nThat is the failure mode recorded in CUI-006, arriving through the documentation rather than through a guess.",

@@ -24,7 +24,7 @@
     },
     {
       "date": "2026-09-06",
-      "text": "Guarded by class rather than by `:disabled`, because the rule is on the wrapper div and the native attribute sits on the control inside it. The test asserts the rule's reach rather than the painted colour: a real `:hover` needs a real cursor, and neither the provider pointer nor a synthetic event moves the computed border in a headless browser, so a colour assertion would have passed with or without the fix. That was caught by writing the enabled case as a control first."
+      "text": "Guarded by class rather than by `:disabled`, because the rule is on the wrapper div and the native attribute sits on the control inside it. The test asserts the rule's reach rather than the painted colour. A real `:hover` needs a real cursor, and neither the provider pointer nor a synthetic event moves the computed border in a headless browser. So a colour assertion would have passed with or without the fix. That was caught by writing the enabled case as a control first."
     }
   ],
   "links": []

@@ -20,7 +20,7 @@
   "notes": [
     {
       "date": "2026-09-06",
-      "text": "Measured both ways. With the emphasis branch and with it reverted, the lightweight parser produces <strong>*both</strong>* for ***both***, so the divergence is pre-existing."
+      "text": "This was measured both ways. With the emphasis branch and with it reverted, the lightweight parser produces <strong>*both</strong>* for ***both***, so the divergence is pre-existing."
     },
     {
       "date": "2026-09-06",

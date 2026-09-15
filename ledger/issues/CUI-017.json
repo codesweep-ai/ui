@@ -13,14 +13,14 @@
       "08190f8"
     ],
     "integrated": [],
-    "verified": "npm run visual:capture: 35 components, 9 patterns and 3 interaction states per theme, taking the gate from 76 screenshots to 94. Two consecutive compares both reported 94/94 with 0 differing pixels, so the pattern captures are deterministic. Reapplying the Tree flex regression fails the run by name: FAIL light/pattern-explorer.png at 1034 pixels and FAIL dark at 1050. npm run check exit 0, axe violations 0 in both themes."
+    "verified": "npm run visual:capture: 35 listed components, 9 listed patterns and 3 interaction states per theme, taking the gate from 76 screenshots to 94. Two consecutive compares both reported 94/94 with 0 differing pixels, so the pattern captures are deterministic. Reapplying the Tree flex regression fails the run by name: FAIL light/pattern-explorer.png at 1034 pixels and FAIL dark at 1050. `npm run check` returns exit code 0, and axe violations are 0 in both themes."
   },
   "resolution": null,
-  "details": "`visual:capture` records 35 components and 3 interaction states per theme. It records no patterns. A pattern composes several components, which is exactly where a change that is right for one component in isolation goes wrong, and nothing looks at them.\n\nThis is not theoretical. A `flex: 1 1 auto` added to Tree's label for CUI-008 made the label fill its row. In a flipped tree, which lays its row out with `row-reverse`, that pinned every label to the far edge instead of beside its icon. The label measured 231px wide at an 8px gap from the row's left edge, where it should have been 20px wide at a 219px gap. `visual:compare` passed 76 of 76 screenshots throughout, because the Explorer pattern is not among them. The repository owner found it by opening the page.\n\nThe capture list is also fixed rather than derived: it stayed at 35 components while the catalog went to 37, so the Tooltip added in CUI-016 is not captured either. A new component joins the gate only if somebody remembers to add it.\n\nTwo things worth separating. Adding the nine pattern tabs to the baseline closes most of the hole. Deriving the list from the catalog stops it reopening.",
+  "details": "`visual:capture` records every component on its list, 35 of them, and 3 interaction states per theme. It records no patterns. A pattern composes several components, which is exactly where a change that is right for one component in isolation goes wrong, and nothing looks at them.\n\nThis is not theoretical. A `flex: 1 1 auto` added to Tree's label for CUI-008 made the label fill its row. In a flipped tree, which lays its row out with `row-reverse`, that pinned every label to the far edge instead of beside its icon. The label measured 231px wide at an 8px gap from the row's left edge, where it should have been 20px wide at a 219px gap. `visual:compare` passed 76 of 76 screenshots throughout, because the Explorer pattern is not among them. The repository owner found it by opening the page.\n\nThe capture list is also fixed rather than derived: it stayed at 35 entries while the catalog went to 37, so the Tooltip added in CUI-016 is not captured either. A new component joins the gate only if somebody remembers to add it.\n\nTwo things are worth separating. Adding the nine pattern tabs to the baseline closes most of the hole. Deriving the list from the catalog stops it reopening.",
   "notes": [
     {
       "date": "2026-09-06",
-      "text": "Found by sweeping all nine pattern tabs in both themes against a build of main, which is what the gate should have been doing. After fixing the flex, every pattern matched except two that differ for good reasons: the markdown viewer demo prints bundle sizes, which grew from 166,136 to 167,230 bytes, and the agent activity demo captures a streaming cursor mid-animation."
+      "text": "Found by sweeping all nine pattern tabs in both themes against a build of main, which is what the gate should have been doing. After fixing the flex, every pattern matched except two that differ for good reasons. The markdown viewer demo prints bundle sizes, which grew from 166,136 to 167,230 bytes, and the agent activity demo captures a streaming cursor mid-animation."
     },
     {
       "date": "2026-09-06",
@@ -40,7 +40,7 @@
     },
     {
       "date": "2026-09-06",
-      "text": "The list is still explicit rather than derived, because several catalogued components cannot be captured at rest: Tooltip renders only while open, and Chip, Legend, RadioGroup and SegmentedControl have no section of their own. A check now fails when the catalog names a component this file neither captures nor excuses, which is what stops it falling behind again."
+      "text": "The list is still explicit rather than derived, because several catalogued components cannot be captured at rest. Tooltip renders only while open, and Chip, Legend, RadioGroup and SegmentedControl have no section of their own. A check now fails when the catalog names a component this file neither captures nor excuses, which is what stops it falling behind again."
     }
   ],
   "links": [

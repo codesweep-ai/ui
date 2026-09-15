@@ -13,7 +13,7 @@
       "5cd8a4d"
     ],
     "integrated": [],
-    "verified": "Reverting the fix fails exactly the new test: `npx vitest run src/components/StreamingText.test.tsx` exits 1 with `expected \"vi.fn()\" to be called 2 times, but got 1 times`, and exits 0 with the fix, 11 tests passing. `npm run check` exits 0."
+    "verified": "Reverting the fix fails exactly the new test: `npx vitest run src/components/StreamingText.test.tsx` exits 1 with `expected \"vi.fn()\" to be called 2 times, but got 1 times`, and exits 0 with the fix, 11 tests passing. `npm run check` returns exit code 0."
   },
   "resolution": null,
   "details": "`components/StreamingText.md:75` says `onDone` fires exactly once per `text` value, after the last character is revealed.\n\n`src/components/StreamingText.tsx:55` returns from the effect early when `done` is set or `prefersReducedMotion()` is true. The reset of `firedDoneRef` sits below that return, at `:61`. The ref therefore stays true after the first message, and no later `text` value fires the callback again.\n\nA consumer chaining messages off `onDone` stalls after the first one, for every user who has asked for reduced motion.\n\n`:83` also guards on `text.length > 0`, so an empty `text` never fires it at all.",
@@ -24,7 +24,7 @@
     },
     {
       "date": "2026-09-06",
-      "text": "The reset of the ref moved above the early return, so a new `text` starts un-fired whether or not it animates. The empty-text half of the report was closed in the specification rather than the code: an empty `text` reveals no characters, so there is no last character to fire after, and the document now says so."
+      "text": "The reset of the ref moved above the early return, so a new `text` starts un-fired whether or not it animates. The empty-text half of the report was closed in the specification rather than the code. An empty `text` reveals no characters, so there is no last character to fire after, and the document now says so."
     }
   ],
   "links": []

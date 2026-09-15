@@ -13,14 +13,14 @@
       "9f57f18"
     ],
     "integrated": [],
-    "verified": "`npx vitest run --project browser src/components/AppShell.nav.test.tsx`: 6 tests pass, one of them tabbing to a nav link with the browser's own keyboard and reading `outline-style: solid` with an `outline-color` equal to a `var(--color-accent)` probe. Removing the rule fails that test with `expected 'auto' to be 'solid'`, which is the browser default the table used to promise. Against `--color-header-bg` the ring measures 10.73:1 in the dark theme and 3.28:1 in the light one, where `--color-accent` is the darker `#0f766e`, so both clear the 3:1 WCAG 2.2 asks of a focus indicator. `npm run ci` exits 0 with every gate run, and the rule reaches the published build at `dist/styles/components/app-shell.css:191`."
+    "verified": "`npx vitest run --project browser src/components/AppShell.nav.test.tsx`: 6 tests pass, one of them tabbing to a nav link with the browser's own keyboard and reading `outline-style: solid` with an `outline-color` equal to a `var(--color-accent)` probe. Removing the rule fails that test with `expected 'auto' to be 'solid'`, which is the browser default the table used to promise. Against `--color-header-bg` the ring measures 10.73:1 in the dark theme and 3.28:1 in the light one, where `--color-accent` is the darker `#0f766e`. So both clear the 3:1 WCAG 2.2 asks of a focus indicator. `npm run ci` exits 0 with every gate run, and the rule reaches the published build at `dist/styles/components/app-shell.css:191`."
   },
   "resolution": null,
-  "details": "`components/AppShell.md:127` gives a hovered nav link `color: var(--color-text-inverse)` over `background: var(--color-nav-hover)`, and `:128` gives an active one `color: var(--color-accent)` over the same background.\n\n`src/styles/components/app-shell.css:97` paints the active background with `color-mix(in srgb, var(--color-accent) 22%, transparent)`, and `:159` gives idle links `var(--color-header-text-muted)`. The tokens named in the States table have no effect on nav links.\n\nThe same document states the real values at `:149`, so it contradicts itself and a reader cannot tell which half is current. A brand layer re-theming the header from the States table changes tokens that do nothing, and misses the ones that do.\n\nThe table also promises a focus ring at `:129`. `app-shell.css` contains no `:focus` or `:focus-visible` rule at all, so a keyboard user gets the browser's default outline rather than the documented treatment.",
+  "details": "`components/AppShell.md:127` gives a hovered nav link `color: var(--color-text-inverse)` over `background: var(--color-nav-hover)`, and `:128` gives an active one `color: var(--color-accent)` over the same background.\n\n`src/styles/components/app-shell.css:97` paints the active background with `color-mix(in srgb, var(--color-accent) 22%, transparent)`, and `:159` gives idle links `var(--color-header-text-muted)`. The tokens named in the States table have no effect on nav links.\n\nThe same document states the real values at `:149`, so it contradicts itself and a reader cannot tell which half is current. A brand layer re-theming the header from the States table changes tokens that do nothing, and misses the ones that do.\n\nThe table also documents a focus ring at `:129`. `app-shell.css` contains no `:focus` or `:focus-visible` rule at all, so a keyboard user gets the browser's default outline rather than the documented treatment.",
   "notes": [
     {
       "date": "2026-09-06",
-      "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation against the tree at 0ef7ea4."
+      "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation in this record against the tree at 0ef7ea4."
     },
     {
       "date": "2026-09-06",
@@ -28,7 +28,7 @@
     },
     {
       "date": "2026-09-07",
-      "text": "Closed. Nav links now take the focus ring six other component sheets already use, `outline: .125rem solid var(--color-accent)` at `.125rem` offset, so the header stops being the one place a keyboard user gets the browser default.\n\nThe accent was chosen over `--color-header-text` because it is the house ring and the header already paints its title in the accent. The light theme is the tight case at 3.28:1, since the header background stays dark in both themes while the accent darkens."
+      "text": "Closed. Nav links now take the focus ring six other component sheets already use, `outline: .125rem solid var(--color-accent)` at `.125rem` offset. So the header stops being the one place a keyboard user gets the browser default.\n\nThe accent was chosen over `--color-header-text` because it is the house ring and the header already paints its title in the accent. The light theme is the tight case at 3.28:1, since the header background stays dark in both themes while the accent darkens."
     }
   ],
   "links": [

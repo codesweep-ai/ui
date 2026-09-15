@@ -24,7 +24,7 @@
     },
     {
       "date": "2026-09-07",
-      "text": "Fixed by removing the length guard rather than by adding one on the other side. `every` on an empty list is true, which is already what disables None when the filter matches nothing, so dropping the guard makes the pair behave the same way for the same reason."
+      "text": "Fixed by removing the length guard rather than by adding one on the other side. `every` on an empty list is true, which is already what disables None when the filter matches nothing. So dropping the guard makes the pair behave the same way for the same reason."
     }
   ],
   "links": []

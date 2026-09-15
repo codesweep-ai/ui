@@ -20,11 +20,11 @@
   "notes": [
     {
       "date": "2026-09-06",
-      "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation against the tree at 0ef7ea4."
+      "text": "Found by the same review that produced CUI-032 through CUI-047, and missed when those records were written. Filed here so the review's findings are complete. Session agent confirmed every citation in this record against the tree at 0ef7ea4."
     },
     {
       "date": "2026-09-06",
-      "text": "The owner chose to fix the code rather than retract the promise, because the promise is the escape hatch for a trigger that cannot take a ref and the workaround it saves is a conditional render at every call site. A ref forwarded to the Tooltip itself is not attached while disabled either, since nothing is cloned to attach it to, and the specification now says so."
+      "text": "The owner chose to fix the code rather than retract the promise, because the promise is the escape hatch for a trigger that cannot take a ref. Without that escape hatch, the workaround is a conditional render at every call site. A ref forwarded to the Tooltip itself is not attached while disabled either, since nothing is cloned to attach it to, and the specification now says so."
     }
   ],
   "links": [

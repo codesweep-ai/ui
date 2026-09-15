@@ -16,7 +16,7 @@
     "verified": "The new integrity check names both lines when run against the sheets as they stood one commit earlier: `dropdown.css:91` and `input.css:102`, exit 1. It passes on the corrected tree. The corrected declarations change 0 of 94 captures in visual:compare, which is what shows `font-family: var(--font-family-sans)` matches the family `reset.css` was already supplying through `font-family: inherit`. `npm run ci` exits 0 with every gate run and 628 tests."
   },
   "resolution": null,
-  "details": "`src/styles/components/input.css:102` and `src/styles/components/dropdown.css:91` both declare `font-weight: var(--font-family-sans)`. A font stack is not a valid `font-weight`, so a browser drops the declaration.\n\nNeither sheet sets `font-family` anywhere else. The rendered result still matches `components/Input.md:96` and `components/Dropdown.md:98`, because `src/styles/reset.css:97` gives form controls `font-family: inherit`.\n\nNothing looks wrong today. The rule written to assert the family is dead, and a change to the reset would take the family with it silently.",
+  "details": "`src/styles/components/input.css:102` and `src/styles/components/dropdown.css:91` both declare `font-weight: var(--font-family-sans)`. A font stack is not a valid `font-weight`, so a browser drops the declaration.\n\nNeither sheet sets `font-family` anywhere else. The rendered result still matches `components/Input.md:96` and `components/Dropdown.md:98`, because `src/styles/reset.css:97` gives form controls `font-family: inherit`.\n\nNothing appears wrong today. The rule written to assert the family is dead, and a change to the reset would take the family with it silently.",
   "notes": [
     {
       "date": "2026-09-06",
