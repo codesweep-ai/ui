@@ -3,17 +3,19 @@
   "title": "The CI status reports workflows as running long after they finish",
   "type": "defect",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "repository owner, reading the CI dashboard: \"The ledger, ui, lint, and sandbox projects all show their CI status as running, even though they completed.\"",
   "opened": "2026-09-15",
-  "resolved": null,
+  "resolved": "2026-09-15",
   "stint": "2026-09-15 CI status reported as running",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "9d2e8c5"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "After 9d2e8c5 reached main, ci finished at 21:49:43, and pages, npm and publish images started at 21:49:44. The publish images run ended at 21:50:23, and the npm run at 21:51:49. The pages workflow ran again at 21:50:25 and 21:51:51, once after each. The status file published at 21:52:36 reports ci, npm, publish images and pages as success on 9d2e8c5, with no run in flight.\n\nThe prune-images trigger has not fired yet, because its first scheduled run after the push is at 04:17 UTC. actionlint accepted the workflow."
   },
-  "resolution": null,
+  "resolution": "`pages.yml` now also runs after npm, publish images and prune-images finish. The last deploy of a push therefore follows its last workflow, so the status file reports finished runs as finished.",
   "details": "`pages.yml` writes `ci-status.json` when ci finishes, and npm and publish images start at that same moment. The file is written within half a minute, so it records both runs as in progress. Nothing rewrites it until the next push, so the dashboard at codesweep.ai/dashboards/ci shows this repository as running from then on.\n\nOn 4337b2a, ci finished at 18:16:30 and all three workflows started at 18:16:32. The file was generated at 18:16:56. publish images finished at 18:17:16 and npm at 18:18:12. The status action leaves out only the run writing the file, so the other two are reported as unfinished.\n\nIt began when npm and publish images moved to start on ci's completion, in e745c6a and cb5fb40. The comment in `pages.yml` expected such a run to be a few minutes behind. It is reported as running instead, until the next push repeats the same race.",
   "notes": [],
   "links": []
