@@ -1,0 +1,25 @@
+{
+  "id": "CUI-096",
+  "title": "The ledger gate checks that a cited commit exists, not that it is still reachable",
+  "type": "defect",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "rebasing the branch onto a moved main, which rewrote every commit the ledger cites",
+  "opened": "2026-09-15",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`cs-ledger check` validates `evidence.commits` by asking whether the sha is a commit object in the repository. It does not ask whether anything still points at it. A rebase rewrites every commit it replays, so every record citing one of them is left pointing at an object that no branch contains, and the gate stays green.\n\nMeasured on the cs-ledger the lockfile pins, v0.0.0-20260910164917, with a record's `evidence.commits` set by hand and `ledger.html` re-rendered each time so staleness was not the thing being tested:\n\n- a sha that is not an object at all fails: `evidence.commits[0] deadbee is not a commit in this repository`\n- a sha that is an object but is reachable from no branch passes: `check OK`\n\nThe second is the case a rebase produces, and it is the one that matters, because the old commits survive as unreferenced objects until git garbage-collects them. So the check answers correctly about a repository nobody has swept and incorrectly about the history that actually exists.\n\nThis happened here, twice, and neither rebase was noticed by the gate. Seventeen citations across fourteen records pointed into rewritten history: the first rebase left CUI-080 through CUI-087 wrong and the gate passed on every run afterwards, including the full `npm run ci` that preceded each commit. They were found by asking git directly, not by any check this project runs.\n\nThe failure is worse than a silent pass, because it is deferred. The day someone runs `git gc`, or clones fresh, every one of those records starts failing at once — and by then the mapping from the old sha to the new one is gone with the objects, so the evidence cannot be repaired, only deleted.",
+  "notes": [
+    {
+      "date": "2026-09-15",
+      "text": "The fix belongs in `cs-ledger`, which is a dependency rather than this repository: it ships as `@codesweep-ai/cs-ledger` and the check runs as `npx cs-ledger check`. The rule it wants is that a cited commit be an ancestor of some ref, not merely an object, which is one `git merge-base --is-ancestor` per citation.\n\nUntil then the exposure is specific and known: any rebase of unpushed work invalidates every citation to a replayed commit. The repair is mechanical while the old objects are still there, because the rebase preserves subjects, so old and new can be matched on the subject line. That is how the seventeen here were fixed. It stops being possible after a `git gc`.\n\nWhoever picks this up should decide whether this project also wants its own check rather than waiting on the tool. `scripts/ci.mjs` already runs the ledger step, and the same `--is-ancestor` question could be asked there against the records it just validated."
+    }
+  ],
+  "links": []
+}
