@@ -9,9 +9,11 @@
 //   node scripts/local-registry.mjs         # start, publish, print the URL
 //   node scripts/local-registry.mjs stop    # stop it again
 //
-// Nothing here touches ~/.npmrc or the real registry. The credential is a
-// throwaway token in the state directory, passed through NPM_CONFIG_USERCONFIG
-// so that no npm command below can reach npmjs.com by accident.
+// Nothing here touches ~/.npmrc or the real registry. The npm config is a file
+// in the state directory, passed through NPM_CONFIG_USERCONFIG, that sends this
+// package's scope here and leaves every other package on npmjs.com. Its only
+// credential is a throwaway token for localhost, so nothing this script
+// publishes can land anywhere else.
 
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from "node:fs";
@@ -38,8 +40,9 @@ function quiet(command, args, options = {}) {
   return spawnSync(command, args, { cwd: ROOT, stdio: "ignore", ...options });
 }
 
-// Every npm call below gets this, so none of them can resolve the real registry
-// even if the shell has credentials for it.
+// Every npm call below gets this. Each names this package, so each goes to the
+// registry started here, and none sees credentials the shell has for the real
+// one.
 const npmEnv = { ...process.env, NPM_CONFIG_USERCONFIG: NPMRC };
 
 async function reachable() {
@@ -86,40 +89,34 @@ if (!existsSync(verdaccio)) {
 // Anonymous publish, because the only client is this script. A registry holding
 // one package and answering on localhost has nothing to authenticate.
 //
-// The uplink is what makes the test worth running. This package depends on React
-// and a dozen others, so a registry that proxies nothing cannot install it: npm
-// resolves the tree, finds no react, and fails before it reads a single export.
-// Locally published versions still win, so the copy under test is the one that
-// gets installed.
+// No uplink. This package depends on React and a dozen others, and the npmrc
+// below sends only this package's scope here, so an install takes those from
+// npmjs.com directly. An uplink on the scope would do harm: verdaccio takes an
+// uplink's dist-tag over its own when that is newer, so a dev build CI
+// published to npmjs.com would stand in for the one built here.
 //
 // The name is the one the staged package gets, whose scope follows the checkout's
-// owner, so the rule below has to name that scope rather than this project's.
+// owner, so the rule and the npmrc below name that scope rather than this
+// project's.
 const manifest = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const name = publishedName(manifest.name);
+const scope = name.split("/")[0];
 const { version } = manifest;
 writeFileSync(CONFIG, `storage: ./storage
 auth:
   htpasswd:
     file: ./htpasswd
-uplinks:
-  npmjs:
-    url: https://registry.npmjs.org/
-    cache: true
+uplinks: {}
 packages:
-  '${name.split("/")[0]}/*':
+  '${scope}/*':
     access: $anonymous
     publish: $anonymous
     unpublish: $anonymous
-    proxy: npmjs
-  '**':
-    access: $anonymous
-    publish: $anonymous
-    proxy: npmjs
 log: { type: stdout, format: pretty, level: warn }
 `);
 
 // npm sends credentials even where none are wanted, so it is given some.
-writeFileSync(NPMRC, `registry=${URL}/\n//localhost:${PORT}/:_authToken=local-only\n`);
+writeFileSync(NPMRC, `${scope}:registry=${URL}/\n//localhost:${PORT}/:_authToken=local-only\n`);
 
 if (await reachable()) {
   console.log(`==> registry already up at ${URL}`);

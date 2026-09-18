@@ -320,9 +320,9 @@ node scripts/local-registry.mjs stop        # stop it again
 ```
 
 It replaces the version it published last time, so it can be run after every
-change. It reaches no registry but the one it started, apart from proxying the
-dependencies a consumer would install. Set `CS_UI_REGISTRY_PORT` where 4873 is
-already taken.
+change. It publishes to no registry but the one it started, and an install
+through it takes every dependency but this package from npmjs.com. Set
+`CS_UI_REGISTRY_PORT` where 4873 is already taken.
 
 ## Releasing
 
