@@ -194,8 +194,8 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@codesweep-ai/ledger": "0.0.0-20260915074254-129b17f78d58",
-    "@codesweep-ai/lint": "0.0.0-20260915074254-271c4a39b67b",
+    "@codesweep-ai/ledger": "0.0.0-20260918043804-bbe29a48e449",
+    "@codesweep-ai/lint": " 0.0.0-20260918041056-8bdc0656c767",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
