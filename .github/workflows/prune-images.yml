@@ -1,12 +1,11 @@
-# Expire the npm images. npm-images.yml publishes one for every commit on main
-# that passes ci, so without this the package list grows without bound and the
-# useful entries sink out of sight.
+# Expire the npm images. npm-images.yml publishes one image per package version
+# for every commit on main that passes ci, so without this each package's list
+# grows without bound.
 #
-# The rule and the schedule are the sandbox repository's for its dev images: the
-# five most recent versions survive whatever their age, and everything else goes
-# ten days after it was last touched. One more survives at any age: main's latest
-# image, which the next build on main carries forward. Deleting it breaks no
-# fetch, but that build would start a new chain holding only its own packages.
+# Each package keeps its newest 20 versions. A version is a tag that is never
+# moved, so deleting an old one breaks nothing but a lockfile that still pins
+# it. Untagged manifests are deleted whatever their age, because nothing can
+# name them.
 name: prune-images
 
 on:
@@ -20,7 +19,6 @@ on:
         default: true
 
 permissions:
-  actions: read # main's passing ci runs name the image to keep
   packages: write
 
 jobs:
@@ -32,82 +30,53 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # A scheduled run prunes; a hand-started one asks first.
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-      KEEP_RECENT: "5"
-      MAX_AGE_DAYS: "10"
-      # The image npm-images.yml publishes, named for the package it holds.
-      PACKAGE: npm/ui
+      KEEP: "20"
+      # The image repository npm-images.yml publishes.
+      PACKAGES: >-
+        npm/ui
     steps:
       - name: prune
         run: |
           set -euo pipefail
           owner='${{ github.repository_owner }}'
-          cutoff=$(date -u -d "-${MAX_AGE_DAYS} days" +%s)
-          # The API takes a nested package name with its slash encoded.
-          pkg=${PACKAGE//\//%2F}
-
-          # An owner that is a user rather than an organisation answers on a
-          # different path. Try the org one and say which failed, rather than
-          # letting a 404 read as "nothing to prune".
-          if ! versions=$(gh api --paginate \
-                "/orgs/$owner/packages/container/$pkg/versions" 2>/dev/null); then
-            versions=$(gh api --paginate "/users/$owner/packages/container/$pkg/versions")
-          fi
-
-          # A version's last identifier is its commit's abbreviated sha, so this
-          # is how a tag among those listed (split on commas or whitespace) is
-          # recognised as a given commit's.
-          of_commit() {
-            local t sha
-            for t in ${1//,/ }; do
-              sha=${t##*[.-]}
-              [[ ${#sha} -ge 7 && $sha =~ ^[0-9a-f]+$ && $2 == "$sha"* ]] && return 0
+          for package in $PACKAGES; do
+            # The API takes a nested package name with its slash encoded.
+            pkg=${package//\//%2F}
+            # An owner that is a user rather than an organisation answers on a
+            # different path. A package not published yet answers 404 on both,
+            # and has nothing to prune. Any other failure stops the job, rather
+            # than reading as nothing to prune.
+            if ! versions=$(gh api --paginate "/orgs/$owner/packages/container/$pkg/versions" 2>"$RUNNER_TEMP/org.err"); then
+              if ! versions=$(gh api --paginate "/users/$owner/packages/container/$pkg/versions" 2>"$RUNNER_TEMP/user.err"); then
+                if grep -q "HTTP 404" "$RUNNER_TEMP/org.err" && grep -q "HTTP 404" "$RUNNER_TEMP/user.err"; then
+                  echo "== $package: not published yet"
+                  continue
+                fi
+                cat "$RUNNER_TEMP/org.err" "$RUNNER_TEMP/user.err" >&2
+                exit 1
+              fi
+            fi
+            echo "== $package"
+            # Newest first, so the index is the rank the keep rule uses. Untagged
+            # manifests sort last and are never kept.
+            echo "$versions" | jq -c '
+              (map(select((.metadata.container.tags // []) | length > 0)) | sort_by(.created_at) | reverse)
+              + map(select((.metadata.container.tags // []) | length == 0))
+              | to_entries[]' |
+            while read -r entry; do
+              rank=$(jq -r '.key' <<<"$entry")
+              id=$(jq -r '.value.id' <<<"$entry")
+              tags=$(jq -r '.value.metadata.container.tags // [] | join(",")' <<<"$entry")
+              if [ -n "$tags" ] && [ "$rank" -lt "$KEEP" ]; then
+                echo "  keep   $tags"
+                continue
+              fi
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "  WOULD DELETE ${tags:-<untagged>}"
+                continue
+              fi
+              echo "  delete ${tags:-<untagged>}"
+              gh api -X DELETE "/orgs/$owner/packages/container/$pkg/versions/$id" \
+                || gh api -X DELETE "/users/$owner/packages/container/$pkg/versions/$id"
             done
-            return 1
-          }
-
-          # The newest commit on main that has an image. An image is published
-          # after its ci run passes, so main's latest passing commit may not
-          # have one yet, or ever: the walk goes back to the first that does.
-          # A failed lookup stops the job here, deleting nothing, rather than
-          # reading as "no image to keep". Push runs only: a pull request from a
-          # fork's own main is recorded against a branch of that name too, and
-          # publishes nothing.
-          main=$(gh api "/repos/$GITHUB_REPOSITORY" --jq .default_branch)
-          passed=$(gh api "/repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?branch=$main&event=push&status=success&per_page=30" \
-            --jq '.workflow_runs[].head_sha')
-          every_tag=$(jq -r '.[] | .metadata.container.tags // [] | .[]' <<<"$versions")
-          pinned=
-          for sha in $passed; do
-            if of_commit "$every_tag" "$sha"; then pinned=$sha; break; fi
-          done
-          echo "pinned: ${pinned:-<none>} (the latest commit on $main with an image)"
-
-          echo "== $PACKAGE"
-          # Newest first, so the index is the rank the keep-recent rule uses.
-          echo "$versions" | jq -c 'sort_by(.updated_at) | reverse | to_entries[]' | \
-          while read -r entry; do
-            rank=$(jq -r '.key' <<<"$entry")
-            id=$(jq -r '.value.id' <<<"$entry")
-            updated=$(jq -r '.value.updated_at' <<<"$entry")
-            tags=$(jq -r '.value.metadata.container.tags // [] | join(",")' <<<"$entry")
-
-            if [ "$rank" -lt "$KEEP_RECENT" ]; then
-              echo "  keep  ${tags:-<untagged>} (one of the $KEEP_RECENT most recent)"
-              continue
-            fi
-            if [ -n "$pinned" ] && of_commit "$tags" "$pinned"; then
-              echo "  keep  $tags (the latest image on $main)"
-              continue
-            fi
-            if [ "$(date -u -d "$updated" +%s)" -ge "$cutoff" ]; then
-              echo "  keep  ${tags:-<untagged>} ($updated, under $MAX_AGE_DAYS days)"
-              continue
-            fi
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "  WOULD DELETE ${tags:-<untagged>} ($updated)"
-              continue
-            fi
-            echo "  delete ${tags:-<untagged>} ($updated)"
-            gh api -X DELETE "/orgs/$owner/packages/container/$pkg/versions/$id" \
-              || gh api -X DELETE "/users/$owner/packages/container/$pkg/versions/$id"
           done

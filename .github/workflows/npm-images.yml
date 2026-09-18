@@ -1,18 +1,17 @@
 name: publish images
 
-# Publish a commit's npm package as a container image named like it:
-# ghcr.io/<owner>/npm/ui:<version>. It holds this version's tarball, and carries
-# the last 20 versions forward from main's previous image. A client copies the
-# tarballs out with `node scripts/npm-images.mjs fetch`, and prune-images.yml
-# expires the old images.
+# Publish a commit's npm package as a container image of its own:
+# ghcr.io/<owner>/npm/ui:<version>, holding this version's tarball and nothing
+# else. scripts/publish-images.sh builds it with cs-npmrevs
+# (https://github.com/codesweep-ai/npmrevs) and pushes it with podman.
+# prune-images.yml expires the old ones.
 #
 # Nothing here reaches npm. It is a workflow of its own, so its token cannot
 # publish to npm, and its builds show on the CI dashboard as a row of their own.
 #
 # It starts when ci finishes, and publishes only a push to main whose ci run
 # passed, so no image comes from a commit that fails any ci job. Pull requests
-# get none: `fetch` takes the newest image whatever branch built it, so an image
-# of a pull request would stand in for main's.
+# get none.
 on:
   workflow_run:
     workflows: [ci]
@@ -20,22 +19,25 @@ on:
 
 permissions:
   contents: read
-  actions: read # ci's earlier runs on main name the image to carry forward
   packages: write # push the image
 
-# One build at a time, so each finds the one before it finished. Not cancelled,
-# because a superseded build still carries its package forward.
+# One build at a time. Not cancelled: every build publishes its own version, and
+# a superseded one still has it to publish.
 concurrency:
   group: npm-images
   cancel-in-progress: false
+
+env:
+  # The cs-npmrevs that builds the image. It moves by hand, like the pins in
+  # package.json, and becomes a devDependency once it is published to npm.
+  NPMREVS_VERSION: v0.0.0-20260920013245-e20d253a40d8
 
 jobs:
   publish:
     name: publish images
     # A run started by ci finishing holds a token that can write packages even
     # when ci ran for a fork's pull request. Asking for a push to main is what
-    # keeps unreviewed code away from that token, as well as what keeps pull
-    # requests out of the images.
+    # keeps unreviewed code away from that token.
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
@@ -55,6 +57,13 @@ jobs:
           node-version: "24"
           cache: npm
 
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27"
+
+      - name: install the pinned cs-npmrevs
+        run: go install "github.com/codesweep-ai/npmrevs/cmd/cs-npmrevs@$NPMREVS_VERSION"
+
       - run: npm ci
 
       # Versioned as the npm workflow versions a dev build. Not gated on `npm run
@@ -73,6 +82,4 @@ jobs:
         run: echo "$GHCR_TOKEN" | podman login ghcr.io -u '${{ github.actor }}' --password-stdin
 
       - name: publish
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/npm-images.mjs publish .package
+        run: NPMREVS="$(go env GOPATH)/bin/cs-npmrevs" ./scripts/publish-images.sh .package

@@ -324,6 +324,22 @@ change. It publishes to no registry but the one it started, and an install
 through it takes every dependency but this package from npmjs.com. Set
 `CS_UI_REGISTRY_PORT` where 4873 is already taken.
 
+`npm run registry:npmrevs` serves the same build with
+[cs-npmrevs](https://github.com/codesweep-ai/npmrevs), which makes every revision
+of an npm package installable without publishing it. It is taking over from
+`registry:local`, and prints the install command with the exact version it
+built:
+
+```sh
+npm run registry:npmrevs                       # build, stage, serve, print how to install
+node scripts/npmrevs-registry.mjs stop         # stop it again
+```
+
+It stages with `--inspect`, so an unpushed commit can be tried too. Set `NPMREVS`
+to choose the cs-npmrevs it runs. It serves on `localhost:4873` as well, so an
+npmrc that sends `@codesweep-ai` there works with either registry. Only one of
+the two runs at a time, and `CS_UI_REGISTRY_PORT` moves both.
+
 ## Releasing
 
 Every commit on main that passes `ci` publishes to the `dev` channel on npm,
@@ -335,19 +351,15 @@ and skips a commit that is no longer main's head by then. No tag is cut and
 npm install --save-dev @codesweep-ai/ui@dev
 ```
 
-The `publish images` workflow pushes each commit on main that passes `ci` to
-`ghcr.io/codesweep-ai/npm/ui:<version>`, starting when `ci` finishes. Pull
-requests get no image. Each image carries the last 20 versions of the package.
-`fetch` copies every tarball in the newest one into a directory, using podman or
-docker:
-
-```sh
-node scripts/npm-images.mjs fetch --data ./data @codesweep-ai/ui
-```
-
-Point `overrides` at the tarballs with `file:` specs. A direct dependency needs
-the `file:` spec itself, because npm refuses to override one. The script is
-shared with lint and ledger, so change all three together.
+The `publish images` workflow pushes each commit on main that passes `ci` as an
+image of its own, `ghcr.io/codesweep-ai/npm/ui:<version>`, starting when `ci`
+finishes. Pull requests get no image, and the `prune-images` workflow keeps the
+newest 20 versions. Those images let a team of AI coding agents install builds
+that are not yet meant for people:
+[cs-npmrevs](https://github.com/codesweep-ai/npmrevs) serves them to npm, or
+copies them into a directory. `scripts/publish-images.sh` builds the image with
+cs-npmrevs and pushes it with podman. The workflow is what runs it. The script
+is shared with npmrevs, lint and ledger, so change all four together.
 
 A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
 push the tag. `release.yml` waits for `ci` to pass on the tagged commit, runs the

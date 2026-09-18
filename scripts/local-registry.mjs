@@ -54,6 +54,17 @@ async function reachable() {
   }
 }
 
+// Whether the registry answering on the port is cs-npmrevs rather than the
+// verdaccio this script starts.
+async function servedByNpmrevs() {
+  try {
+    const response = await fetch(`${URL}/-/npmrevs`, { signal: AbortSignal.timeout(1000) });
+    return (await response.json()).server === "cs-npmrevs";
+  } catch {
+    return false;
+  }
+}
+
 function stop() {
   if (!existsSync(PIDFILE)) {
     console.log("no registry started by this script is running");
@@ -117,6 +128,16 @@ log: { type: stdout, format: pretty, level: warn }
 
 // npm sends credentials even where none are wanted, so it is given some.
 writeFileSync(NPMRC, `${scope}:registry=${URL}/\n//localhost:${PORT}/:_authToken=local-only\n`);
+
+// The other script serves this port too, and refuses to start while verdaccio
+// has it. This is the same refusal the other way round, because publishing to
+// cs-npmrevs fails with a 405 a reader would have to decode.
+if (await servedByNpmrevs()) {
+  console.error(`port ${PORT} is served by \`npm run registry:npmrevs\`.`);
+  console.error("Stop it with `node scripts/npmrevs-registry.mjs stop`, or set");
+  console.error("CS_UI_REGISTRY_PORT to a free port.");
+  process.exit(1);
+}
 
 if (await reachable()) {
   console.log(`==> registry already up at ${URL}`);
