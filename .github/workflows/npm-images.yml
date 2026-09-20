@@ -27,11 +27,6 @@ concurrency:
   group: npm-images
   cancel-in-progress: false
 
-env:
-  # The cs-npmrevs that builds the image. It moves by hand, like the pins in
-  # package.json, and becomes a devDependency once it is published to npm.
-  NPMREVS_VERSION: v0.0.0-20260920013245-e20d253a40d8
-
 jobs:
   publish:
     name: publish images
@@ -57,13 +52,8 @@ jobs:
           node-version: "24"
           cache: npm
 
-      - uses: actions/setup-go@v7
-        with:
-          go-version: "1.27"
-
-      - name: install the pinned cs-npmrevs
-        run: go install "github.com/codesweep-ai/npmrevs/cmd/cs-npmrevs@$NPMREVS_VERSION"
-
+      # cs-npmrevs is a devDependency, so this is what installs the version
+      # package.json pins, beside every other tool this build runs.
       - run: npm ci
 
       # Versioned as the npm workflow versions a dev build. Not gated on `npm run
@@ -82,4 +72,4 @@ jobs:
         run: echo "$GHCR_TOKEN" | podman login ghcr.io -u '${{ github.actor }}' --password-stdin
 
       - name: publish
-        run: NPMREVS="$(go env GOPATH)/bin/cs-npmrevs" ./scripts/publish-images.sh .package
+        run: NPMREVS=node_modules/.bin/cs-npmrevs ./scripts/publish-images.sh .package

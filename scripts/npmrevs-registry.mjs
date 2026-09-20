@@ -42,9 +42,9 @@ function run(command, args, options = {}) {
   return spawnSync(command, args, { cwd: ROOT, stdio: "inherit", ...options });
 }
 
-// The command that runs cs-npmrevs: $NPMREVS when it is set, else the copy an npm
-// install of @codesweep-ai/npmrevs put in node_modules, else the one on the PATH.
-// `shown` is how the closing message names it.
+// The command that runs cs-npmrevs: $NPMREVS when it is set, else the copy
+// `npm ci` installs from the @codesweep-ai/npmrevs devDependency, else the one
+// on the PATH. `shown` is how the closing message names it.
 function npmrevs() {
   if (process.env.NPMREVS) return { argv: process.env.NPMREVS.split(" ").filter(Boolean), shown: process.env.NPMREVS };
   const installed = join(ROOT, "node_modules", ".bin", "cs-npmrevs");
@@ -52,12 +52,12 @@ function npmrevs() {
   return { argv: ["cs-npmrevs"], shown: "cs-npmrevs" };
 }
 
-// The cs-npmrevs version the images workflow pins, so the one installed here can
-// match it.
+// The cs-npmrevs version package.json pins, so a message about installing it
+// names the version this project runs.
 function pinnedVersion() {
   try {
-    const workflow = readFileSync(join(ROOT, ".github", "workflows", "npm-images.yml"), "utf8");
-    return /^\s*NPMREVS_VERSION:\s*(\S+)/m.exec(workflow)?.[1] ?? "latest";
+    const manifest = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
+    return manifest.devDependencies?.["@codesweep-ai/npmrevs"] ?? "latest";
   } catch {
     return "latest";
   }
@@ -135,9 +135,9 @@ if (process.argv[2] === "stop") {
 const { argv: [command, ...prefix], shown } = npmrevs();
 if (spawnSync(command, [...prefix, "version"], { stdio: "ignore" }).status !== 0) {
   console.error(
-    "cs-npmrevs is not installed, and it is the registry this script runs. Install it with\n" +
-      `  go install github.com/codesweep-ai/npmrevs/cmd/cs-npmrevs@${pinnedVersion()}\n` +
-      "or set NPMREVS to the command that runs it.",
+    "cs-npmrevs is not installed, and it is the registry this script runs.\n" +
+      `It is a devDependency, so \`npm ci\` installs the @codesweep-ai/npmrevs@${pinnedVersion()}\n` +
+      "this package pins. Or set NPMREVS to the command that runs it.",
   );
   process.exit(1);
 }

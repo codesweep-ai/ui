@@ -194,8 +194,9 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@codesweep-ai/ledger": "0.0.0-20260918043804-bbe29a48e449",
-    "@codesweep-ai/lint": " 0.0.0-20260918041056-8bdc0656c767",
+    "@codesweep-ai/ledger": "0.0.0-20260920230337-e974225af350",
+    "@codesweep-ai/lint": "0.0.0-20260920225222-bf7ecaaea067",
+    "@codesweep-ai/npmrevs": "0.0.0-20260920020255-40937e144093",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

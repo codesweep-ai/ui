@@ -335,10 +335,12 @@ npm run registry:npmrevs                       # build, stage, serve, print how 
 node scripts/npmrevs-registry.mjs stop         # stop it again
 ```
 
-It stages with `--inspect`, so an unpushed commit can be tried too. Set `NPMREVS`
-to choose the cs-npmrevs it runs. It serves on `localhost:4873` as well, so an
-npmrc that sends `@codesweep-ai` there works with either registry. Only one of
-the two runs at a time, and `CS_UI_REGISTRY_PORT` moves both.
+It stages with `--inspect`, so an unpushed commit can be tried too. The
+`@codesweep-ai/npmrevs` package holds cs-npmrevs, pinned to an exact version in
+`package.json`, so `npm ci` installs it with everything else. Set `NPMREVS` to
+run a different one. It serves on `localhost:4873` as well, so an npmrc that
+sends `@codesweep-ai` there works with either registry. Only one of the two runs
+at a time, and `CS_UI_REGISTRY_PORT` moves both.
 
 ## Releasing
 
@@ -358,8 +360,9 @@ newest 20 versions. Those images let a team of AI coding agents install builds
 that are not yet meant for people:
 [cs-npmrevs](https://github.com/codesweep-ai/npmrevs) serves them to npm, or
 copies them into a directory. `scripts/publish-images.sh` builds the image with
-cs-npmrevs and pushes it with podman. The workflow is what runs it. The script
-is shared with npmrevs, lint and ledger, so change all four together.
+the cs-npmrevs `npm ci` installed, and pushes it with podman. The workflow is
+what runs it. The script is shared with npmrevs, lint and ledger, so change all
+four together.
 
 A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
 push the tag. `release.yml` waits for `ci` to pass on the tagged commit, runs the
