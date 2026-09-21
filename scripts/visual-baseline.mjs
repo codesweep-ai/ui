@@ -341,6 +341,10 @@ async function captureTheme(page, theme, outputDir) {
     eventLanesSection.locator('[data-event-lanes-fixture="multilane-73"]'),
     path.join(outputDir, theme, "event-lanes-multilane-73.png"),
   );
+  await screenshot(
+    eventLanesSection.locator('[data-event-lanes-fixture="bars-240"]'),
+    path.join(outputDir, theme, "event-lanes-bars-240.png"),
+  );
   for (const component of COMPONENTS) {
     if (alreadyCaptured.has(component)) continue;
     const componentRoot = ["Button", "Card", "Page"].includes(component)

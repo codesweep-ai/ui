@@ -125,3 +125,40 @@ export const multiLaneBlindKinds = new Set<CampaignEventKind>([
   "plan",
   "assessment",
 ]);
+
+export type BarEventKind = "message" | "tool" | "thinking" | "wait";
+
+/** Two rows sized for bars: work rises from its floor, waiting hangs from the
+ *  top on its own scale. Each event's index is unique across both rows, so a
+ *  wait sits in its own row at the index of the turn it closes. */
+export const barLanes: EventLane[] = [
+  { id: "work", label: "Work", description: "Bar length is the time a step took", height: 40, bars: "up" },
+  { id: "wait", label: "Wait", description: "Bar length is the time spent waiting", height: 16, bars: "down", barFloor: 2 },
+];
+
+export const barPalette: Record<BarEventKind, EventToken> = {
+  message: "--color-cat-1",
+  tool: "--color-cat-3",
+  thinking: "--color-cat-5",
+  wait: "--muted",
+};
+
+export const barEvents: EventLaneEvent<BarEventKind>[] = Array.from({ length: 240 }, (_, i) => {
+  if (i % 24 === 23) {
+    const magnitude = ((i * 53) % 100) / 100;
+    return { i, lane: "wait", kind: "wait", shape: "square", label: `Wait ${i}`, at: String(i), magnitude, clipped: magnitude > 0.9 };
+  }
+  const kind: BarEventKind = i % 5 === 0 ? "message" : i % 3 === 0 ? "thinking" : "tool";
+  const magnitude = kind === "message" ? undefined : ((i * 37) % 101) / 100;
+  return {
+    i,
+    lane: "work",
+    kind,
+    shape: "square",
+    label: `${kind} ${i}`,
+    at: String(i),
+    magnitude,
+    clipped: magnitude !== undefined && magnitude >= 1,
+    error: i === 41,
+  };
+});

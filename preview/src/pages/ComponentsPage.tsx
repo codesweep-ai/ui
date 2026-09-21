@@ -62,6 +62,9 @@ import {
   denseEvents,
   denseLanes,
   densePalette,
+  barEvents,
+  barLanes,
+  barPalette,
 } from "../data/eventLanesFixtures";
 import { classRecords, type ClassRecord, projectFilesTree, dependenciesTree, explorerTree } from "../data/patternFixtures";
 import { richMarkdownProps } from "../richMarkdown";
@@ -349,6 +352,7 @@ const previewToasts: ToastItem[] = [
 
 function EventLanesDemo() {
   const [denseSelected, setTracerSelected] = useState(0);
+  const [barSelected, setBarSelected] = useState(0);
   const [multiLaneSelected, setCampaignSelected] = useState(0);
   const [blindMode, setBlindMode] = useState(false);
   const linked = useMemo(
@@ -417,6 +421,26 @@ function EventLanesDemo() {
           renderTooltip={(event) => (
             <span>{event.label} · index {event.i} · {event.at}</span>
           )}
+        />
+      </div>
+
+      <div data-event-lanes-fixture="bars-240" className="cs-preview-event-lanes-fixture">
+        <div className="cs-preview-event-lanes-heading">
+          <h3>Bars · work and wait rows × 240 events</h3>
+          <output data-event-lanes-selection="bars">Selected index: {barSelected}</output>
+        </div>
+        <EventLanes
+          id="event-lanes-bars"
+          aria-label="Event timeline with bars"
+          lanes={barLanes}
+          events={barEvents}
+          palette={barPalette}
+          selected={barSelected}
+          onSelect={(event) => setBarSelected(event.i)}
+          overview="auto"
+          overviewHeight={14}
+          scrollbar="overview"
+          cellWidth={13}
         />
       </div>
     </div>
