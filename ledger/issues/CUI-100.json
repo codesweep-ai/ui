@@ -3,19 +3,27 @@
   "title": "EventLanes places every mark by its index, so a timeline cannot show how long anything took",
   "type": "improvement",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "repository owner, redrawing a multi-agent timeline on a time axis",
   "opened": "2026-09-21",
-  "resolved": null,
+  "resolved": "2026-09-21",
   "stint": "2026-09-21 positioned lanes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "ec3263b",
+      "24e0f31"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run ci` passes. It adds 21 geometry tests and 11 in a browser, and the 42 EventLanes cases before them pass unchanged. `npm run visual:compare` passes 116 of 116 captures with no differing pixel and no new axe finding. With the component change alone, all 114 captures that existed before are identical.\n\nA synthetic run of 2,952 marks, and one of 32,542, each finish a zoom step and a scroll step within two animation frames. Before the census was memoised, the larger run took about 500 milliseconds a zoom step.\n\nThe build was served through `npm run registry:npmrevs` and installed into a consuming viewer by version. That viewer's full gate passes with no fixture check moved. Its pages are pixel-identical in both themes, apart from the footer line that prints the installed version."
   },
-  "resolution": null,
+  "resolution": "`layout=\"position\"` places each mark at its `position` on a scale the consumer chooses. A mark is as wide as the gap to the next one in its timeline, and lanes naming one `group` form that timeline. A `hidden` lane takes no room and still counts for widths, so hiding waiting never moves the work beside it. `view` and `onViewChange` set and report the visible range, and the wheel zooms about the pointer or scrolls sideways. Spans draw as boxes with a label, a selected state and a trailing segment, and report clicks. `links` join marks across lanes, the ruler receives the scale, and `overviewContent` chooses what the overview draws.\n\nThe index layout is unchanged. The preview shows the new layout on a seeded synthetic run, which is photographed on a page of its own.",
   "details": "Every mark sits in the column its `i` names, and every column is `cellWidth` wide. A job of thirty seconds and one of an hour take the same width when they hold as many events. The axis counts events rather than time. The ruler receives `xForIndex` and nothing else about the axis.\n\nThe component should offer a second layout in which each mark carries a position on a continuous scale the consumer chooses. Each mark should be as wide as the gap to the next one in its timeline, clamped between one pixel and the drawn size. The consumer should be able to set and read back the scale and visible range, zoom about the pointer, and scroll sideways with the wheel. Spans should draw as boxes with a label, a selected state and an optional trailing segment, and report clicks. Links should join marks across lanes. The ruler should receive the scale and the visible range, and drawing should stay windowed by position.\n\nSeveral lanes, such as work drawn up and waiting drawn down, can form one timeline. Hiding one of them must not move the marks in the others.\n\nThe index layout must not change, and every existing visual baseline must stay byte-identical.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-09-21",
+      "text": "Photographed on the shared preview page, the positioned fixture changed how Card, CardGroup and ChartFrame rasterised their rounded corners, by 10 to 68 pixels, though nothing on the page moved. The effect followed the capture itself, not the fixture's size. The gate now takes it on a page of its own, as it already did for the drag and the tooltip."
+    }
+  ],
   "links": [
     "CUI-099"
   ]
