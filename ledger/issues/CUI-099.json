@@ -1,0 +1,20 @@
+{
+  "id": "CUI-099",
+  "title": "EventLanes draws every mark at one size, so it cannot show how much of something an event carries",
+  "type": "improvement",
+  "severity": "med",
+  "status": "in-progress",
+  "foundBy": "repository owner, designing an event strip that shows how long each event took and how long the work waited between turns",
+  "opened": "2026-09-21",
+  "resolved": null,
+  "stint": "2026-09-21 event bars",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "An `EventLaneEvent` carries a kind, a shape and a few overlays, and no quantity. Every mark is drawn at the size `markSizeFor` gives the cell, so a two-second step and a two-minute one look the same. Colour is already spent on the kind, so a consumer has nowhere to put a magnitude.\n\nThe layout is fixed too. Every lane is 28 pixels high, and the overview is 40, which outweighs a strip of one or two lanes.\n\nThe component should accept an optional magnitude from 0 to 1 on an event. A lane option should draw its events as bars, rising from the lane's floor or hanging from its top. An event past the consumer's ceiling should carry the broken-bar notch. Lane height and overview height should be settable.\n\nEvery addition must be optional and default to today's drawing, so the existing visual baselines stay byte-identical.",
+  "notes": [],
+  "links": []
+}
