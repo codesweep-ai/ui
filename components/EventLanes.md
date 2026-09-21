@@ -2,13 +2,15 @@
 name: EventLanes
 status: experimental
 since: 0.3.0
-summary: Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.
+summary: Canvas-rendered events on a shared axis, placed by global index or by position on a continuous scale, with lanes, spans, links, zoom, overview navigation, token palettes, and an accessible virtual listbox.
 keywords: [event lanes, event timeline, event strip, canvas timeline, trace events,
-           agent events, multi-agent timeline, spans, overview, virtual listbox]
+           agent events, multi-agent timeline, spans, overview, virtual listbox,
+           time axis, zoom, positioned layout, links]
 use_when:
   - Showing an ordered event stream on one or more named lanes
   - A dense trace needs thousands of selectable events without thousands of laid-out DOM marks
   - Related events need spans, linked highlighting, markers, or a shared ruler
+  - A timeline on a time axis must show how long each step and each span took
 avoid_when:
   - Showing chronological step details with expandable text → AgentTrace
   - Showing continuous numeric data → ChartFrame
@@ -22,7 +24,7 @@ note: >
 
 # EventLanes
 
-> Canvas-rendered categorical events on a shared global-index axis. One lane with 1,366 events and seven lanes with 73 events use the same renderer and interaction model.
+> Canvas-rendered categorical events on a shared axis. One lane with 1,366 events and seven lanes with 73 events use the same renderer and interaction model. The positioned layout places the same events on a continuous scale instead, such as time.
 
 `EventLanes` owns the event canvas, horizontal scrolling, optional overview, selection and linked-state drawing, hit-testing, keyboard navigation, and tooltip shell. Consumers own the data, token mapping, selected index, ruler content, and tooltip body.
 
@@ -55,6 +57,10 @@ interface EventLane {
   barFloor?: number;
   /** false leaves this lane out of the overview. Default true. */
   overview?: boolean;
+  /** Positioned layout: lanes naming one group form one timeline. */
+  group?: string;
+  /** No height, no drawing, no keyboard stop; still counts for its timeline's widths. */
+  hidden?: boolean;
 }
 
 interface EventLaneEvent<K extends string = string> {
@@ -81,14 +87,60 @@ interface EventLaneEvent<K extends string = string> {
   magnitude?: number;
   /** The value ran past the consumer's ceiling: draw the broken-bar notch. */
   clipped?: boolean;
+  /** Positioned layout: where the mark begins, in the consumer's axis units. */
+  position?: number;
+  /** Positioned layout: the mark's length in axis units, drawn at its true width. */
+  extent?: number;
 }
 
 interface EventLaneSpan {
-  /** Lane containing the connector. */
+  /** Lane containing the connector; in the positioned layout, the timeline boxed. */
   lane: string;
-  /** Inclusive global-index endpoints. */
+  /** Inclusive global-index endpoints, or axis units in the positioned layout. */
   from: number;
   to: number;
+  /** Positioned layout: identity for selectedSpan and onSelectSpan. */
+  id?: string;
+  /** Positioned layout: text drawn inside the box's top edge. */
+  label?: string;
+  /** Positioned layout: a trailing segment from `to` to this position. */
+  trail?: number;
+  /** The trailing segment's token. Default --color-warning. */
+  trailToken?: EventToken;
+}
+
+interface EventLaneLink {
+  /** Global indices of the two marks joined, in any lanes. */
+  from: number;
+  to: number;
+  /** Default "solid". */
+  style?: "solid" | "dashed";
+  /** Heavier, in --color-link. */
+  emphasized?: boolean;
+}
+
+interface EventLanesPositionContext {
+  /** CSS pixels per axis unit. */
+  scale: number;
+  /** Smallest position in the data: the axis begins here. */
+  origin: number;
+  /** Largest position, extent end or span end in the data. */
+  end: number;
+  /** Axis units at the viewport's left and right edges. */
+  visibleStart: number;
+  visibleEnd: number;
+  xForPosition: (position: number) => number;
+  positionForX: (x: number) => number;
+}
+
+interface EventLanesView {
+  start: number;
+  end: number;
+}
+
+interface EventLanesViewState extends EventLanesView {
+  /** CSS pixels per axis unit. */
+  scale: number;
 }
 
 interface EventLanesRulerContext {
@@ -102,6 +154,8 @@ interface EventLanesRulerContext {
   width: number;
   /** Center x-coordinate for a global index in the scrolling content. */
   xForIndex: (i: number) => number;
+  /** Present in the positioned layout only. */
+  position?: EventLanesPositionContext;
 }
 
 interface EventLanesProps<K extends string = string> {
@@ -121,8 +175,22 @@ interface EventLanesProps<K extends string = string> {
   /** Indices to keep at full strength; all other visible events are dimmed. */
   emphasis?: ReadonlySet<number>;
 
-  /** Horizontal cell pitch in CSS pixels. Default 10. */
+  /** Horizontal cell pitch in CSS pixels. Default 10. Also sets the mark size. */
   cellWidth?: number;
+  /** Default "index". "position" places each mark at its position. */
+  layout?: "index" | "position";
+  /** Positioned layout: the range to show, applied each time a new object is passed. */
+  view?: EventLanesView;
+  /** Positioned layout: fires whenever the scale or the visible range changes. */
+  onViewChange?: (view: EventLanesViewState) => void;
+  /** Lines joining pairs of marks, beneath the marks. */
+  links?: readonly EventLaneLink[];
+  /** Positioned layout: the id of the span drawn as selected. */
+  selectedSpan?: string | null;
+  /** Positioned layout: a click on a span's box where no mark is hit. */
+  onSelectSpan?: (span: EventLaneSpan) => void;
+  /** What the overview draws. Default "marks". */
+  overviewContent?: "marks" | "spans" | "both";
   /** Default "auto": show only when the global axis overflows. */
   overview?: "auto" | boolean;
   /** Overview height in CSS pixels. Default 40. */
@@ -290,6 +358,64 @@ With `scrollbar="overview"`, the lanes' native scrollbar is hidden whenever the 
 
 Clicking the overview recenters the main viewport. Dragging its window scrolls continuously and clamps at both ends. These actions scroll only; they never select an event. The overview is `aria-hidden` and not a Tab stop because the primary listbox exposes the complete keyboard path.
 
+## Positioned layout
+
+With `layout="position"`, each mark sits at its `position` on a continuous scale rather than in the column its `i` names. The consumer chooses the unit and the zero, for example seconds since a run began. `i` stays the mark's identity for selection, focus, `linked`, `emphasis` and every callback, and it must still be unique across the component.
+
+The axis begins at the smallest position in the data, its origin, after the same boundary padding the index layout reserves for halos. A position becomes a pixel through the scale, in CSS pixels per unit. The layout is chosen for the whole component: a mark without a finite `position` is left out and reported in development, as an invalid span is.
+
+### Timelines
+
+Lanes that name the same `group` form one timeline. A lane with no `group` is a timeline of its own, which is how every lane behaves in the index layout. A timeline is typically a pair: work drawn with `bars: "up"`, and waiting drawn with `bars: "down"` in the lane below it.
+
+Its marks share one order, by position and then by `i`, and that order sets their widths, their boxes and the arrow keys. Keep a timeline's lanes next to each other, because a box encloses every row from the timeline's first lane to its last.
+
+### Width
+
+A mark begins at its position and is as wide as the gap to the next mark anywhere in its timeline, less a one-pixel gutter. The width is clamped between one pixel and the mark size that `cellWidth` gives. Dense runs therefore read as hairlines, and sparse runs stay readable. The last mark in a timeline draws at the mark size. A mark with an `extent` draws at its true length instead, with no upper clamp.
+
+Widths read every valid mark in the timeline, including hidden kinds and hidden lanes. Filtering a kind, or hiding a lane, never moves or resizes the marks that remain.
+
+Every shape draws as a rectangle of that width, as in a bar lane, and both hollow shapes draw as a token outline. A lane without `bars` centres a rectangle of the mark size's height in its row.
+
+### Hidden lanes
+
+A lane with `hidden` takes no height, draws nothing, has no label, and adds no options, so the keyboard never reaches its events. Its marks still count for their timeline's widths. A page can therefore offer a switch that shows or hides waiting without the work bars jumping. `hidden` behaves the same way in the index layout, where it has no widths to keep.
+
+### Spans as boxes
+
+In the positioned layout a span runs from one position to another and draws as a box behind the marks of the timeline its `lane` belongs to. The box fills with `var(--color-bg-subtle)` inside a `var(--border)` outline. A `label` is drawn inside its top edge when the box is wide enough to hold a few characters.
+
+`trail` adds a trailing segment from `to` to that position, drawn along the box's bottom edge in `trailToken`, `var(--color-warning)` by default. It shows time that belongs to the span without being part of it, such as a reply waiting to be taken up.
+
+The span whose `id` equals `selectedSpan` fills with `var(--color-accent-bg)` inside a `var(--color-link)` outline. A pointer press on a box or its trailing segment, where no mark is hit, calls `onSelectSpan` with the span. Spans are not keyboard targets. Instead, each mark's option names the labelled spans it falls inside, for example "in Task 3".
+
+### Links
+
+`links` joins pairs of marks by `i`, in either layout and across lanes. A link leaves and enters each row through the edges that face each other, as a curve beneath the marks. It is drawn in `var(--muted)`, or heavier in `var(--color-link)` when `emphasized`, and `style: "dashed"` breaks the line. A link is drawn only while both of its marks are visible, and one naming an index that is not drawn is skipped with a development warning. `linked` is unrelated: it rings marks and draws no line.
+
+### Scale, zoom and scroll
+
+Until something asks for a scale, the whole extent fits the viewport, and it keeps fitting as the viewport resizes. The deepest zoom puts the two closest marks in any timeline four mark sizes apart, and it never grows the axis past eight million pixels.
+
+`view` asks for a range in axis units. It is applied each time the page passes a new object, so a page can restore a view from its URL, offer presets, or return to a range it showed before. A range narrower or wider than the zoom allows is clamped. `onViewChange` reports the start, end and scale whenever the view changes, from a scroll, a zoom, a resize or a request. A page that writes each report back into `view` hands over the view already shown, and nothing moves.
+
+In the positioned layout only:
+
+- Ctrl or Cmd with the wheel zooms about the pointer, and so does a trackpad pinch, which the browser delivers as a wheel event with `ctrlKey`.
+- The plain vertical wheel scrolls the axis sideways. Where the axis cannot move any further, the wheel is left to scroll the page.
+- A horizontal wheel or trackpad swipe scrolls the axis as it always has.
+
+`selected` still reveals the selected mark, scrolling the smallest distance that shows it whole.
+
+### Ruler, overview and drawing
+
+The ruler function receives `position` in its context: the scale, the origin and end, the visible range in axis units, and `xForPosition` with its inverse `positionForX`. That is enough for the ruler to choose and place its own ticks for the visible range. Labels remain the consumer's, because only the consumer knows what the unit means. `xForIndex` returns a mark's centre in either layout.
+
+The overview maps the whole positioned extent, and its window shows the visible range. Dragging or clicking it scrolls, exactly as in the index layout. `overviewContent` chooses what it draws: `"marks"`, the default, draws each mark in its lane's band, `"spans"` draws each span and its trailing segment, and `"both"` draws both.
+
+Drawing stays windowed. Each lane keeps its marks sorted by position, and a paint binary-searches the visible range, reaching left by the longest `extent` in the lane. Hit-testing searches the same way, and a mark narrower than six pixels answers from three pixels either side of it.
+
 ## Keyboard and accessibility
 
 ### Listbox model
@@ -317,6 +443,17 @@ The visually hidden census is stable consumer contract. An event in `linked` car
 | `Enter` / `Space` | Select the active event by calling `onSelect` |
 | `Escape` | Dismiss the narration tooltip. Not consumed — see below |
 | `Tab` / `Shift+Tab` | Leave the component normally; events are not separate Tab stops |
+
+In the positioned layout the keys follow the focused mark's timeline instead of the global index:
+
+| Key | Action |
+|-----|--------|
+| `ArrowRight` / `ArrowLeft` | Move to the next or previous mark in the timeline by position, stopping at its ends |
+| `Home` / `End` | Move to the timeline's first or last visible mark |
+| `ArrowDown` / `ArrowUp` | Move to the nearest mark by position in the next or previous timeline, in lane order |
+| `Enter` / `Space` | Select the active event, as in the index layout |
+
+`ArrowDown` and `ArrowUp` are handled only when there is a timeline to move to, and otherwise propagate. The census keeps its order by `i` in both layouts.
 
 `EventLanes` deliberately does not **consume** Escape. It dismisses the narration tooltip (below)
 and then lets the event keep propagating to document and application handlers, so consumers may
@@ -365,6 +502,14 @@ When no events are visible, the listbox remains one labelled focus stop with `ar
 - `overview="auto"` appears only if the 1,606-pixel axis exceeds its viewport; if it appears, all seven miniature lanes and the viewport window remain usable. It is not forced merely because there are multiple lanes.
 - Blind mode passes log kinds in `hiddenKinds`. An 80-step ArrowRight walk selects zero hidden events; the virtual set size and position count only visible events.
 
+### Positioned profile: a synthetic run of about 3,000 marks
+
+- A coordinator and six workers, each a timeline of a work lane and a waiting lane, placed in seconds over about five hours.
+- Every task is a box with a label and a trailing segment, joined to the coordinator by a solid link for the hand-off and a dashed link for the reply.
+- At the whole-run scale, dense bursts read as hairlines and sparse steps at the mark size. Hiding the waiting lanes leaves every work bar where it was.
+- Ctrl or Cmd with the wheel zooms about the pointer, and the plain wheel scrolls sideways. The overview draws the boxes and moves the view.
+- A zoom step and a scroll step each finish inside two animation frames at this size, and at ten times it.
+
 ## Consumer differences resolved by this contract
 
 | Difference | Contract decision |
@@ -394,6 +539,10 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - **Resize:** Recompute the visible range and overview window; keep the selected visible event visible when possible.
 - **Unusable heights:** A lane `height` or an `overviewHeight` below 8 pixels, or not finite, falls back to its default.
 - **A floor taller than the row:** The floor is capped at the row's room, so the bar can still be drawn.
+- **Positioned mark without a position:** Leave it out and warn in development. An `extent` that is negative or not finite is treated the same way.
+- **Positioned span:** Its endpoints must be finite and in order, and a `trail` must not end before `to`. Otherwise it is skipped with a warning.
+- **Requested view beyond the zoom:** Clamp the scale, and report the view actually shown through `onViewChange`.
+- **Every lane of a timeline hidden:** Its boxes are not drawn, and the keyboard cannot reach it.
 
 ## Traceability
 
@@ -404,7 +553,9 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - Main drawing surface: `data-event-lanes-canvas`, `aria-hidden="true"`.
 - Overview caption: `data-event-lanes-overview-label`. Overview canvas: `data-event-lanes-overview`, `aria-hidden="true"`.
 - DOM census: `data-event-lanes-census`; every visible `role="option"` carries `data-event-index`, `data-event-kind`, and `data-event-lane`, with `data-event-linked` and `data-event-emphasized` following the stable census contract above.
-- Span census: `data-span-lane`, `data-span-from`, and `data-span-to`.
+- Span census: `data-span-lane`, `data-span-from`, and `data-span-to`, plus `data-span-id`, `data-span-label`, `data-span-trail` and `data-span-selected="true"` when those apply.
+- Link census: `data-link-from`, `data-link-to`, `data-link-style`, and `data-link-emphasized="true"` for an emphasised link.
+- The listbox scroller carries `data-layout="position"` in the positioned layout.
 
 ## Compiling usage example
 
@@ -412,6 +563,6 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 <!-- docs-compile -->
 ```tsx
 import { EventLanes } from "@codesweep-ai/ui";
-export function Example() { return <EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent", height: 40, bars: "up" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00", magnitude: 0.5 }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview overviewHeight={14} scrollbar="overview" />; }
+export function Example() { return <>{/* The index layout. */}<EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent", height: 40, bars: "up" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00", magnitude: 0.5 }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview overviewHeight={14} scrollbar="overview" />{/* The positioned layout. */}<EventLanes layout="position" lanes={[{ id: "work", label: "Worker", group: "worker", bars: "up", height: 32 }, { id: "wait", label: "", group: "worker", bars: "down", height: 16 }]} events={[{ i: 0, lane: "work", kind: "step", shape: "square", label: "Read", at: "0:00", position: 0, magnitude: 0.4 }, { i: 1, lane: "wait", kind: "wait", shape: "square", label: "Waits", at: "0:03", position: 3 }, { i: 2, lane: "work", kind: "step", shape: "square", label: "Write", at: "0:40", position: 40 }]} spans={[{ lane: "work", from: 0, to: 45, id: "task", label: "Task", trail: 50 }]} links={[{ from: 0, to: 2, style: "dashed", emphasized: true }]} selectedSpan="task" palette={{ step: "--color-cat-3", wait: "--color-structural" }} view={{ start: 0, end: 60 }} onViewChange={(view) => view.scale} overview overviewContent="spans" /></>; }
 ```
 {% endraw %}

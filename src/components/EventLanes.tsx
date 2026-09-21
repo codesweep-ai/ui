@@ -18,6 +18,19 @@ import { cn } from "../lib/cn";
 import { Tooltip } from "./Tooltip";
 import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 import { ChartTooltip } from "./ChartTooltip";
+import {
+  clampScale,
+  lowerBound,
+  markWidth,
+  nextPositions,
+  positionForX,
+  scaleLimits,
+  upperBound,
+  visibleSlice,
+  xForPosition,
+  zoomAbout,
+  type TimelineMark,
+} from "../lib/eventLanesPosition";
 
 export type EventShape = "square" | "circle" | "hollow" | "hollow-circle";
 export type EventToken = `--${string}`;
@@ -44,6 +57,14 @@ export interface EventLane {
   /** false leaves this lane out of the overview, and the lanes that remain
    *  share its height. Default true. */
   overview?: boolean;
+  /** Lanes naming the same group form one timeline in the positioned layout:
+   *  their marks share one order for width and arrow keys, and a span on any of
+   *  them boxes them all. A lane with no group is a timeline of its own. */
+  group?: string;
+  /** Takes no height and draws nothing, and the keyboard skips its events. In
+   *  the positioned layout its marks still count for their timeline's widths,
+   *  so hiding a lane never moves the marks in the others. */
+  hidden?: boolean;
 }
 
 export interface EventLaneEvent<K extends string = string> {
@@ -65,12 +86,53 @@ export interface EventLaneEvent<K extends string = string> {
   /** The value ran past the consumer's ceiling: the bar carries a broken-bar
    *  notch at its far end. Read only in a lane with `bars`. */
   clipped?: boolean;
+  /** Where the mark begins, in the consumer's axis units. Required in the
+   *  positioned layout and ignored in the index layout. */
+  position?: number;
+  /** The mark's length in axis units. Absent, the mark fills the gap to the
+   *  next mark in its timeline, clamped to the mark size. */
+  extent?: number;
 }
 
 export interface EventLaneSpan {
   lane: string;
+  /** Global indices in the index layout; axis units in the positioned one. */
   from: number;
   to: number;
+  /** Identity for `selectedSpan` and `onSelectSpan`. Positioned layout. */
+  id?: string;
+  /** Short text drawn inside the box's top edge. Positioned layout. */
+  label?: string;
+  /** A trailing segment from `to` to here, in axis units. Positioned layout. */
+  trail?: number;
+  /** The trailing segment's token. Default --color-warning. */
+  trailToken?: EventToken;
+}
+
+/** A line joining two marks, which may sit in different lanes. */
+export interface EventLaneLink {
+  from: number;
+  to: number;
+  /** Default "solid". */
+  style?: "solid" | "dashed";
+  /** Drawn heavier, in the link colour. */
+  emphasized?: boolean;
+}
+
+/** The positioned layout's axis, as the ruler needs it to draw its own ticks. */
+export interface EventLanesPositionContext {
+  /** CSS pixels per axis unit. */
+  scale: number;
+  /** The smallest position in the data, where the axis begins. */
+  origin: number;
+  /** The largest position or span end in the data. */
+  end: number;
+  /** The axis units at the viewport's left and right edges. */
+  visibleStart: number;
+  visibleEnd: number;
+  /** A position's x-coordinate in the scrolling content, and back. */
+  xForPosition: (position: number) => number;
+  positionForX: (x: number) => number;
 }
 
 export interface EventLanesRulerContext {
@@ -79,6 +141,19 @@ export interface EventLanesRulerContext {
   cellWidth: number;
   width: number;
   xForIndex: (i: number) => number;
+  /** Present in the positioned layout. */
+  position?: EventLanesPositionContext;
+}
+
+/** A visible range in axis units, as a consumer requests it. */
+export interface EventLanesView {
+  start: number;
+  end: number;
+}
+
+/** The visible range and the scale that shows it, as the component reports it. */
+export interface EventLanesViewState extends EventLanesView {
+  scale: number;
 }
 
 export interface EventLanesProps<K extends string = string> {
@@ -91,6 +166,22 @@ export interface EventLanesProps<K extends string = string> {
   hiddenKinds?: ReadonlySet<K>;
   emphasis?: ReadonlySet<number>;
   cellWidth?: number;
+  /** "position" places each mark at its `position` on a continuous scale.
+   *  Default "index": one `cellWidth` column per global index. */
+  layout?: "index" | "position";
+  /** Positioned layout: the range to show, in axis units. Applied whenever its
+   *  value changes, so a page can restore a view or zoom to a preset. */
+  view?: EventLanesView;
+  /** Positioned layout: fires when the scale or the visible range changes. */
+  onViewChange?: (view: EventLanesViewState) => void;
+  /** Lines joining pairs of marks, drawn beneath the marks. */
+  links?: readonly EventLaneLink[];
+  /** Positioned layout: the `id` of the span drawn as selected. */
+  selectedSpan?: string | null;
+  /** Positioned layout: a click on a span's box, where no mark is hit. */
+  onSelectSpan?: (span: EventLaneSpan) => void;
+  /** What the overview draws. Default "marks". */
+  overviewContent?: "marks" | "spans" | "both";
   overview?: "auto" | boolean;
   /** Overview height in CSS pixels. Default 40. */
   overviewHeight?: number;
@@ -136,12 +227,13 @@ function validHeight(value: number | undefined, minimum: number, fallback: numbe
 /** Each lane's top and height, in lane order, and the canvas height they sum
  *  to. Exported for its test (not public API). With no heights supplied this
  *  is exactly the fixed 28px grid every consumer had before. */
-export function laneLayout(lanes: readonly Pick<EventLane, "height">[]) {
+export function laneLayout(lanes: readonly Pick<EventLane, "height" | "hidden">[]) {
   const tops: number[] = [];
   const heights: number[] = [];
   let total = 0;
   for (const lane of lanes) {
-    const height = validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT);
+    // A hidden lane keeps its place in the order and takes no height.
+    const height = lane.hidden ? 0 : validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT);
     tops.push(total);
     heights.push(height);
     total += height;
@@ -225,12 +317,34 @@ export function overviewLaneGeometry(laneCount: number, overviewHeight = OVERVIE
   };
 }
 const OVERSCAN_CELLS = 4;
+/** Pixels either side of a hairline mark that still count as hitting it. */
+const HIT_SLACK = 3;
+/** A span label's size in CSS pixels: small enough to sit inside a box's top
+ *  edge above the bars. */
+const SPAN_LABEL_SIZE = 11;
+/** How strongly one wheel step zooms: a typical notch of 100 changes the scale
+ *  by about a fifth. */
+const ZOOM_RATE = 0.0025;
+
+/** Two views are the same view when they agree to about a millionth of their
+ *  width, which absorbs the floating-point drift of a round trip. */
+function viewKey(view: { start: number; end: number }) {
+  const width = Math.abs(view.end - view.start) || 1;
+  const step = width / 1e6;
+  return `${Math.round(view.start / step)}:${Math.round(view.end / step)}:${step.toPrecision(3)}`;
+}
 const EMPTY_SPANS: readonly EventLaneSpan[] = [];
+const EMPTY_LINKS: readonly EventLaneLink[] = [];
 
 interface ValidatedData<K extends string> {
   events: EventLaneEvent<K>[];
   spans: EventLaneSpan[];
+  links: EventLaneLink[];
   warnings: string[];
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
 }
 
 function isValidIndex(value: number) {
@@ -242,6 +356,8 @@ function validateData<K extends string>(
   events: readonly EventLaneEvent<K>[],
   spans: readonly EventLaneSpan[],
   palette: Record<K, EventToken>,
+  positioned = false,
+  links: readonly EventLaneLink[] = EMPTY_LINKS,
 ): ValidatedData<K> {
   const warnings: string[] = [];
   const laneIds = new Set<string>();
@@ -265,6 +381,14 @@ function validateData<K extends string>(
       warnings.push(`duplicate global event index ${event.i}`);
       continue;
     }
+    if (positioned && !isFiniteNumber(event.position)) {
+      warnings.push(`event ${event.i} has no position, which the positioned layout needs`);
+      continue;
+    }
+    if (positioned && event.extent !== undefined && !(isFiniteNumber(event.extent) && event.extent >= 0)) {
+      warnings.push(`event ${event.i} has an extent that is not a non-negative number`);
+      continue;
+    }
     if (!palette[event.kind]) warnings.push(`event kind "${event.kind}" has no palette token`);
     indices.add(event.i);
     validEvents.push(event);
@@ -273,19 +397,27 @@ function validateData<K extends string>(
 
   const validSpans: EventLaneSpan[] = [];
   for (const span of spans) {
-    if (
-      !laneIds.has(span.lane) ||
-      !isValidIndex(span.from) ||
-      !isValidIndex(span.to) ||
-      span.from > span.to
-    ) {
+    const endpoints = positioned
+      ? isFiniteNumber(span.from) && isFiniteNumber(span.to) &&
+        (span.trail === undefined || (isFiniteNumber(span.trail) && span.trail >= span.to))
+      : isValidIndex(span.from) && isValidIndex(span.to);
+    if (!laneIds.has(span.lane) || !endpoints || span.from > span.to) {
       warnings.push(`invalid span ${span.lane}:${span.from}-${span.to}`);
       continue;
     }
     validSpans.push(span);
   }
 
-  return { events: validEvents, spans: validSpans, warnings };
+  const validLinks: EventLaneLink[] = [];
+  for (const link of links) {
+    if (!indices.has(link.from) || !indices.has(link.to)) {
+      warnings.push(`link ${link.from}-${link.to} names an event that is not drawn`);
+      continue;
+    }
+    validLinks.push(link);
+  }
+
+  return { events: validEvents, spans: validSpans, links: validLinks, warnings };
 }
 
 function resolveToken(styles: CSSStyleDeclaration, token: EventToken | undefined, fallback: string) {
@@ -388,10 +520,76 @@ function drawHalo(
   context.stroke();
 }
 
+/** A span in the positioned layout: a box behind its timeline's marks, with a
+ *  trailing segment along its bottom edge and a label inside its top edge. */
+function drawSpanBox(
+  context: CanvasRenderingContext2D,
+  box: { x0: number; x1: number; trailEnd: number; top: number; bottom: number },
+  selected: boolean,
+  label: string | undefined,
+  colors: { fill: string; selectedFill: string; border: string; link: string; trail: string; text: string; muted: string; font: string },
+) {
+  const width = Math.max(2, box.x1 - box.x0);
+  const height = Math.max(2, box.bottom - box.top - 2);
+  context.beginPath();
+  context.roundRect(box.x0, box.top + 1, width, height, 3);
+  context.fillStyle = selected ? colors.selectedFill : colors.fill;
+  context.fill();
+  context.strokeStyle = selected ? colors.link : colors.border;
+  context.lineWidth = selected ? 2 : 1;
+  context.stroke();
+  if (box.trailEnd > box.x1) {
+    context.fillStyle = colors.trail;
+    context.fillRect(box.x1, box.bottom - 4, box.trailEnd - box.x1, 3);
+  }
+  // A label needs room for a few characters, or it is noise.
+  if (label && width > 24) {
+    context.save();
+    context.beginPath();
+    context.rect(box.x0 + 1, box.top + 1, width - 2, height);
+    context.clip();
+    context.font = colors.font;
+    context.textBaseline = "top";
+    context.fillStyle = selected ? colors.text : colors.muted;
+    context.fillText(label, Math.max(box.x0, 0) + 4, box.top + 3);
+    context.restore();
+  }
+}
+
+/** Where a link leaves and enters its rows: the edges that face each other, or
+ *  the top edge when both marks share a row. */
+function linkEnds(fromRow: number, toRow: number, rows: { tops: number[]; heights: number[] }) {
+  if (fromRow === toRow) return { from: rows.tops[fromRow], to: rows.tops[toRow] };
+  return fromRow < toRow
+    ? { from: rows.tops[fromRow] + rows.heights[fromRow], to: rows.tops[toRow] }
+    : { from: rows.tops[fromRow], to: rows.tops[toRow] + rows.heights[toRow] };
+}
+
+/** A link between two marks, leaving and entering each row vertically. */
+function drawLink(
+  context: CanvasRenderingContext2D,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  style: "solid" | "dashed",
+  emphasized: boolean,
+  colors: { muted: string; link: string },
+) {
+  const middle = (from.y + to.y) / 2;
+  context.beginPath();
+  context.moveTo(from.x, from.y);
+  context.bezierCurveTo(from.x, middle, to.x, middle, to.x, to.y);
+  context.setLineDash(style === "dashed" ? [4, 3] : []);
+  context.strokeStyle = emphasized ? colors.link : colors.muted;
+  context.lineWidth = emphasized ? 2 : 1;
+  context.stroke();
+  context.setLineDash([]);
+}
+
 function optionText<K extends string>(
   event: EventLaneEvent<K>,
   lane: EventLane | undefined,
   spans: readonly EventLaneSpan[],
+  within: readonly EventLaneSpan[] = EMPTY_SPANS,
 ) {
   const details = [
     lane?.label ?? event.lane,
@@ -409,6 +607,9 @@ function optionText<K extends string>(
       details.push(`span from ${span.from} to ${span.to}`);
     }
   }
+  // Positioned spans have no keyboard path of their own, so a mark names the
+  // labelled spans it falls inside.
+  for (const span of within) details.push(`in ${span.label}`);
   return details.join(", ");
 }
 
@@ -422,6 +623,13 @@ function EventLanesImpl<K extends string = string>({
   hiddenKinds,
   emphasis,
   cellWidth: requestedCellWidth = DEFAULT_CELL_WIDTH,
+  layout: axisLayout = "index",
+  view,
+  onViewChange,
+  links = EMPTY_LINKS,
+  selectedSpan = null,
+  onSelectSpan,
+  overviewContent = "marks",
   overview = "auto",
   overviewHeight: requestedOverviewHeight,
   scrollbar = "native",
@@ -469,9 +677,24 @@ function EventLanesImpl<K extends string = string>({
   const cellWidth = Number.isFinite(requestedCellWidth) && requestedCellWidth > 0
     ? requestedCellWidth
     : DEFAULT_CELL_WIDTH;
+  const positioned = axisLayout === "position";
   const validated = useMemo(
-    () => validateData(lanes, events, spans, palette),
-    [events, lanes, palette, spans],
+    () => validateData(lanes, events, spans, palette, positioned, links),
+    [events, lanes, links, palette, positioned, spans],
+  );
+  const hiddenLanes = useMemo(
+    () => new Set(lanes.filter((lane) => lane.hidden).map((lane) => lane.id)),
+    [lanes],
+  );
+  // A lane with no group is a timeline of its own. The prefix keeps a lane id
+  // from colliding with a group name a consumer happens to share with it.
+  const timelineOf = useMemo(() => {
+    const groups = new Map(lanes.map((lane) => [lane.id, lane.group ?? `lane:${lane.id}`]));
+    return (laneId: string) => groups.get(laneId) ?? `lane:${laneId}`;
+  }, [lanes]);
+  const eventByIndex = useMemo(
+    () => new Map(validated.events.map((event) => [event.i, event])),
+    [validated.events],
   );
   const laneIndex = useMemo(
     () => new Map(lanes.map((lane, index) => [lane.id, index])),
@@ -482,8 +705,8 @@ function EventLanesImpl<K extends string = string>({
     [lanes],
   );
   const visibleEvents = useMemo(
-    () => validated.events.filter((event) => !hiddenKinds?.has(event.kind)),
-    [hiddenKinds, validated.events],
+    () => validated.events.filter((event) => !hiddenKinds?.has(event.kind) && !hiddenLanes.has(event.lane)),
+    [hiddenKinds, hiddenLanes, validated.events],
   );
   const visibleByIndex = useMemo(
     () => new Map(visibleEvents.map((event) => [event.i, event])),
@@ -500,8 +723,106 @@ function EventLanesImpl<K extends string = string>({
     return extent;
   }, [validated.events, validated.spans]);
   const axisPadding = axisPaddingFor(cellWidth);
-  const axisWidth = end < 0 ? 0 : (end + 1) * cellWidth + axisPadding * 2;
+  const markSize = markSizeFor(cellWidth);
+
+  // The positioned layout's model. Widths read every valid mark, hidden or not,
+  // so filtering a kind or hiding a lane never moves the marks that remain.
+  const positionModel = useMemo(() => {
+    if (!positioned) return null;
+    let origin = Infinity;
+    let finish = -Infinity;
+    const timelines = new Map<string, TimelineMark[]>();
+    for (const event of validated.events) {
+      const position = event.position as number;
+      origin = Math.min(origin, position);
+      finish = Math.max(finish, position + (event.extent ?? 0));
+      const timeline = timelineOf(event.lane);
+      const marks = timelines.get(timeline);
+      if (marks) marks.push({ i: event.i, position });
+      else timelines.set(timeline, [{ i: event.i, position }]);
+    }
+    for (const span of validated.spans) {
+      origin = Math.min(origin, span.from);
+      finish = Math.max(finish, span.trail ?? span.to);
+    }
+    if (!Number.isFinite(origin)) return { origin: 0, finish: 0, empty: true, next: new Map<number, number>(), smallestGap: undefined };
+    return { origin, finish, empty: false, ...nextPositions(timelines.values()) };
+  }, [positioned, timelineOf, validated.events, validated.spans]);
+
+  // What the positioned layout draws and walks: each lane's visible marks in
+  // position order, and each timeline's, for the arrow keys.
+  const positionIndex = useMemo(() => {
+    if (!positioned) return null;
+    const byLane = new Map<string, { events: EventLaneEvent<K>[]; positions: Float64Array; reach: number }>();
+    const byTimeline = new Map<string, EventLaneEvent<K>[]>();
+    const inOrder = [...visibleEvents].sort(
+      (a, b) => (a.position as number) - (b.position as number) || a.i - b.i,
+    );
+    const laneEvents = new Map<string, EventLaneEvent<K>[]>();
+    for (const event of inOrder) {
+      const list = laneEvents.get(event.lane);
+      if (list) list.push(event);
+      else laneEvents.set(event.lane, [event]);
+      const timeline = timelineOf(event.lane);
+      const walk = byTimeline.get(timeline);
+      if (walk) walk.push(event);
+      else byTimeline.set(timeline, [event]);
+    }
+    for (const [lane, list] of laneEvents) {
+      let reach = 0;
+      for (const event of list) reach = Math.max(reach, event.extent ?? 0);
+      byLane.set(lane, { events: list, positions: Float64Array.from(list, (event) => event.position as number), reach });
+    }
+    const stepOf = new Map<number, number>();
+    for (const walk of byTimeline.values()) walk.forEach((event, step) => stepOf.set(event.i, step));
+    // Timelines in the order their first visible lane appears.
+    const timelineOrder: string[] = [];
+    for (const lane of lanes) {
+      const timeline = timelineOf(lane.id);
+      if (!lane.hidden && byTimeline.has(timeline) && !timelineOrder.includes(timeline)) timelineOrder.push(timeline);
+    }
+    return { byLane, byTimeline, stepOf, timelineOrder };
+  }, [lanes, positioned, timelineOf, visibleEvents]);
+
+  const [requestedScale, setRequestedScale] = useState<number | null>(null);
+  const extentUnits = positionModel ? positionModel.finish - positionModel.origin : 0;
+  const limits = positionModel
+    ? scaleLimits(extentUnits, viewportWidth, axisPadding, positionModel.smallestGap, markSize)
+    : null;
+  // Until a page or a zoom asks for a scale, the whole extent fits.
+  const scale = limits ? clampScale(requestedScale ?? limits.min, limits) : 1;
+  const origin = positionModel?.origin ?? 0;
+  const xOf = useCallback(
+    (position: number) => xForPosition(position, origin, scale, axisPadding),
+    [axisPadding, origin, scale],
+  );
+  const widthOf = useCallback(
+    (event: EventLaneEvent<K>) => markWidth(
+      event.position as number,
+      positionModel?.next.get(event.i),
+      event.extent,
+      scale,
+      markSize,
+    ),
+    [markSize, positionModel, scale],
+  );
+  const axisWidth = positioned
+    ? (positionModel && !positionModel.empty ? extentUnits * scale + axisPadding * 2 : 0)
+    : end < 0 ? 0 : (end + 1) * cellWidth + axisPadding * 2;
   const layout = useMemo(() => laneLayout(lanes), [lanes]);
+  // Each timeline's vertical extent over its visible lanes: where its boxes go.
+  const timelineRows = useMemo(() => {
+    const rows = new Map<string, { top: number; bottom: number }>();
+    lanes.forEach((lane, row) => {
+      if (lane.hidden) return;
+      const top = layout.tops[row];
+      const bottom = top + layout.heights[row];
+      const timeline = timelineOf(lane.id);
+      const current = rows.get(timeline);
+      rows.set(timeline, current ? { top: Math.min(current.top, top), bottom: Math.max(current.bottom, bottom) } : { top, bottom });
+    });
+    return rows;
+  }, [lanes, layout, timelineOf]);
   const canvasHeight = layout.total;
   const overviewHeight = validHeight(requestedOverviewHeight, MIN_OVERVIEW_HEIGHT, OVERVIEW_HEIGHT);
   const hasRuler = ruler != null;
@@ -538,8 +859,14 @@ function EventLanesImpl<K extends string = string>({
   const revealIndex = useCallback((index: number) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const start = index === 0 ? 0 : axisPadding + index * cellWidth;
-    const finish = index === end ? axisWidth : axisPadding + (index + 1) * cellWidth;
+    const placed = positioned ? eventByIndex.get(index) : undefined;
+    if (positioned && !placed) return;
+    const start = placed
+      ? xOf(placed.position as number)
+      : index === 0 ? 0 : axisPadding + index * cellWidth;
+    const finish = placed
+      ? xOf(placed.position as number) + widthOf(placed)
+      : index === end ? axisWidth : axisPadding + (index + 1) * cellWidth;
     let next = scroller.scrollLeft;
     if (start < next) next = start;
     else if (finish > next + scroller.clientWidth) next = finish - scroller.clientWidth;
@@ -547,7 +874,109 @@ function EventLanesImpl<K extends string = string>({
     next = Math.max(0, Math.min(maximum, next));
     if (next !== scroller.scrollLeft) scroller.scrollLeft = next;
     setScrollLeft(next);
-  }, [axisPadding, axisWidth, cellWidth, end, viewportWidth]);
+  }, [axisPadding, axisWidth, cellWidth, end, eventByIndex, positioned, viewportWidth, widthOf, xOf]);
+
+  // A zoom changes the axis width, and the scroll offset that holds the
+  // anchored position still can only be applied once the new width is laid
+  // out. The wheel and the view prop leave it here for the layout effect.
+  const pendingScrollRef = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    const scroller = scrollerRef.current;
+    const pending = pendingScrollRef.current;
+    if (!scroller || pending == null) return;
+    pendingScrollRef.current = null;
+    const next = Math.max(0, Math.min(Math.max(0, axisWidth - scroller.clientWidth), pending));
+    scroller.scrollLeft = next;
+    setScrollLeft(next);
+  }, [axisWidth, scale]);
+
+  // The latest scale for the wheel handler, which is registered once and can
+  // fire several times between renders.
+  const liveScaleRef = useRef(scale);
+  liveScaleRef.current = scale;
+  const zoomStateRef = useRef({ limits, origin, axisPadding });
+  zoomStateRef.current = { limits, origin, axisPadding };
+
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller || !positioned) return;
+    const handleWheel = (wheel: WheelEvent) => {
+      const { limits: bounds, origin: start, axisPadding: padding } = zoomStateRef.current;
+      if (!bounds) return;
+      const unit = wheel.deltaMode === 1 ? 16 : wheel.deltaMode === 2 ? scroller.clientWidth : 1;
+      if (wheel.ctrlKey || wheel.metaKey) {
+        // A trackpad pinch arrives as a wheel with ctrlKey set.
+        wheel.preventDefault();
+        const current = liveScaleRef.current;
+        const next = clampScale(current * Math.exp(-wheel.deltaY * unit * ZOOM_RATE), bounds);
+        if (next === current) return;
+        const anchor = wheel.clientX - scroller.getBoundingClientRect().left;
+        const from = pendingScrollRef.current ?? scroller.scrollLeft;
+        pendingScrollRef.current = zoomAbout(current, next, anchor, from, start, padding);
+        liveScaleRef.current = next;
+        setRequestedScale(next);
+        return;
+      }
+      if (wheel.shiftKey || Math.abs(wheel.deltaY) <= Math.abs(wheel.deltaX)) return;
+      // The vertical wheel scrolls the axis. Where the axis cannot move any
+      // further the wheel is let through, so the page can still scroll past
+      // the timeline. Whether it moved is read back rather than predicted:
+      // scrollWidth less clientWidth can overstate how far it scrolls.
+      const before = scroller.scrollLeft;
+      scroller.scrollLeft = before + wheel.deltaY * unit;
+      if (scroller.scrollLeft !== before) wheel.preventDefault();
+    };
+    scroller.addEventListener("wheel", handleWheel, { passive: false });
+    return () => scroller.removeEventListener("wheel", handleWheel);
+  }, [positioned]);
+
+  // A requested view is applied each time the page passes a new one, once the
+  // viewport has a width to fit it to. A page that writes every reported view
+  // back into the prop hands over the view already shown, which is left alone.
+  const reportedViewRef = useRef<string | null>(null);
+  const requestedViewRef = useRef<EventLanesView | null>(null);
+  useLayoutEffect(() => {
+    if (view) requestedViewRef.current = view;
+  }, [view]);
+  useLayoutEffect(() => {
+    const wanted = requestedViewRef.current;
+    if (!positioned || !wanted || !limits || viewportWidth <= 0) return;
+    requestedViewRef.current = null;
+    if (viewKey(wanted) === reportedViewRef.current) return;
+    const span = wanted.end - wanted.start;
+    if (!(span > 0) || !Number.isFinite(span)) return;
+    const next = clampScale(viewportWidth / span, limits);
+    const target = xForPosition(wanted.start, origin, next, axisPadding);
+    liveScaleRef.current = next;
+    if (next !== scale) {
+      pendingScrollRef.current = target;
+      setRequestedScale(next);
+      return;
+    }
+    // An unchanged scale lays out nothing new, so the scroll is applied here.
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const clamped = Math.max(0, Math.min(Math.max(0, axisWidth - scroller.clientWidth), target));
+    scroller.scrollLeft = clamped;
+    setScrollLeft(clamped);
+  }, [axisPadding, axisWidth, limits, origin, positioned, scale, view, viewportWidth]);
+
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!positioned || !onViewChange || !scroller || viewportWidth <= 0 || pendingScrollRef.current != null) return;
+    // Read from the scroller: during a zoom the state can trail the scroll the
+    // layout effect has just applied.
+    const left = scroller.scrollLeft;
+    const state = {
+      start: positionForX(left, origin, scale, axisPadding),
+      end: positionForX(left + viewportWidth, origin, scale, axisPadding),
+      scale,
+    };
+    const key = viewKey(state);
+    if (key === reportedViewRef.current) return;
+    reportedViewRef.current = key;
+    onViewChange(state);
+  }, [axisPadding, onViewChange, origin, positioned, scale, scrollLeft, viewportWidth]);
 
   useEffect(() => {
     if (selected != null && visibleByIndex.has(selected)) {
@@ -589,8 +1018,129 @@ function EventLanesImpl<K extends string = string>({
     const foreground = styles.getPropertyValue("--fg").trim() || "currentColor";
     const muted = styles.getPropertyValue("--muted").trim() || foreground;
     const link = styles.getPropertyValue("--color-link").trim() || foreground;
+    const linkColor = link;
     const error = styles.getPropertyValue("--color-error").trim() || foreground;
     const accent = styles.getPropertyValue("--color-accent").trim() || foreground;
+
+    if (positioned && positionIndex) {
+      const from = positionForX(scrollLeft, origin, scale, axisPadding);
+      const to = positionForX(scrollLeft + width, origin, scale, axisPadding);
+      canvas.dataset.windowStart = String(from);
+      canvas.dataset.windowEnd = String(to);
+      const colors = {
+        fill: styles.getPropertyValue("--color-bg-subtle").trim() || background,
+        selectedFill: styles.getPropertyValue("--color-accent-bg").trim() || background,
+        border: styles.getPropertyValue("--border").trim() || muted,
+        link,
+        trail: styles.getPropertyValue("--color-warning").trim() || accent,
+        text: foreground,
+        muted,
+        font: `${SPAN_LABEL_SIZE}px ${styles.getPropertyValue("--font-family-sans").trim() || "sans-serif"}`,
+      };
+
+      for (const span of validated.spans) {
+        const x0 = xOf(span.from) - scrollLeft;
+        const x1 = xOf(span.to) - scrollLeft;
+        const trailEnd = span.trail === undefined ? x1 : xOf(span.trail) - scrollLeft;
+        if (Math.max(x1, trailEnd) < 0 || x0 > width) continue;
+        const rows = timelineRows.get(timelineOf(span.lane));
+        if (!rows) continue;
+        const trailColor = span.trailToken ? resolveToken(styles, span.trailToken, colors.trail) : colors.trail;
+        drawSpanBox(
+          context,
+          { x0, x1, trailEnd, top: rows.top, bottom: rows.bottom },
+          selectedSpan != null && span.id === selectedSpan,
+          span.label,
+          { ...colors, trail: trailColor },
+        );
+      }
+
+      const centreOf = (event: EventLaneEvent<K>) => xOf(event.position as number) + widthOf(event) / 2 - scrollLeft;
+      for (const connection of validated.links) {
+        const start = visibleByIndex.get(connection.from);
+        const finish = visibleByIndex.get(connection.to);
+        const fromRow = start ? laneIndex.get(start.lane) : undefined;
+        const toRow = finish ? laneIndex.get(finish.lane) : undefined;
+        if (!start || !finish || fromRow == null || toRow == null) continue;
+        const fromX = centreOf(start);
+        const toX = centreOf(finish);
+        if (Math.max(fromX, toX) < 0 || Math.min(fromX, toX) > width) continue;
+        const ends = linkEnds(fromRow, toRow, layout);
+        drawLink(context, { x: fromX, y: ends.from }, { x: toX, y: ends.to }, connection.style ?? "solid", connection.emphasized ?? false, { muted, link });
+      }
+
+      lanes.forEach((lane, row) => {
+        const entry = positionIndex.byLane.get(lane.id);
+        if (lane.hidden || !entry) return;
+        const top = layout.tops[row];
+        const laneHeight = layout.heights[row];
+        const [first, last] = visibleSlice(entry.positions, from - markSize / scale, to, entry.reach);
+        for (let index = first; index < last; index += 1) {
+          const event = entry.events[index];
+          const markWidthPx = widthOf(event);
+          const left = xOf(event.position as number) - scrollLeft;
+          const centre = left + markWidthPx / 2;
+          const rect = lane.bars
+            ? barRect(top, laneHeight, lane.bars, centre, markWidthPx, lane.barFloor ?? markSize, event.magnitude)
+            : { x: left, y: top + laneHeight / 2 - markSize / 2, width: markWidthPx, height: markSize };
+          const isSelected = selected === event.i;
+          const isLinked = linked?.has(event.i) ?? false;
+          const isEmphasized = emphasis === undefined || emphasis.has(event.i) || isSelected || isLinked;
+          context.globalAlpha = isEmphasized ? 1 : 0.3;
+          const fill = resolveToken(styles, palette[event.kind], muted);
+          if (event.halo) drawRectHalo(context, rect, 3, resolveToken(styles, event.halo, muted), 2);
+          if (isLinked) {
+            drawRectHalo(context, rect, 5, link, 3);
+            drawRectHalo(context, rect, 2, background, 2);
+          }
+          if (isSelected) {
+            drawRectHalo(context, rect, 7, foreground, 3);
+            drawRectHalo(context, rect, 3, background, 2);
+          }
+          drawBar(context, event.shape, rect, fill, background);
+          if (event.clipped && lane.bars) drawNotch(context, rect, lane.bars, background, foreground);
+          const centreY = rect.y + rect.height / 2;
+          if (isSelected && isLinked) {
+            context.beginPath();
+            context.arc(centre, centreY, Math.max(1.5, markSize / 5), 0, Math.PI * 2);
+            context.fillStyle = link;
+            context.fill();
+          }
+          if (event.error) {
+            const offset = markSize / 2 + 2;
+            context.beginPath();
+            context.moveTo(centre - offset, centreY - offset);
+            context.lineTo(centre + offset, centreY + offset);
+            context.moveTo(centre + offset, centreY - offset);
+            context.lineTo(centre - offset, centreY + offset);
+            context.strokeStyle = error;
+            context.lineWidth = 2;
+            context.stroke();
+          }
+          if (event.tick) {
+            const tickX = left + markWidthPx;
+            context.beginPath();
+            context.moveTo(tickX, top + laneHeight / 6);
+            context.lineTo(tickX, top + (laneHeight * 5) / 6);
+            context.strokeStyle = foreground;
+            context.lineWidth = 2;
+            context.stroke();
+          }
+          if (event.marker) {
+            const markerY = lane.bars === "down"
+              ? Math.min(top + laneHeight - 2, rect.y + rect.height + 4)
+              : Math.max(top + 2, rect.y - 4);
+            context.beginPath();
+            context.arc(centre, markerY, 2, 0, Math.PI * 2);
+            context.fillStyle = accent;
+            context.fill();
+          }
+        }
+      });
+      context.globalAlpha = 1;
+      return;
+    }
+
     const visibleStart = Math.max(0, Math.floor((scrollLeft - axisPadding) / cellWidth) - OVERSCAN_CELLS);
     const visibleEnd = Math.min(end, Math.ceil((scrollLeft + width - axisPadding) / cellWidth) + OVERSCAN_CELLS);
     canvas.dataset.windowStart = String(visibleStart);
@@ -613,6 +1163,19 @@ function EventLanesImpl<K extends string = string>({
       context.strokeStyle = foreground;
       context.lineWidth = 2;
       context.stroke();
+    }
+
+    for (const link of validated.links) {
+      const from = visibleByIndex.get(link.from);
+      const to = visibleByIndex.get(link.to);
+      const fromRow = from ? laneIndex.get(from.lane) : undefined;
+      const toRow = to ? laneIndex.get(to.lane) : undefined;
+      if (!from || !to || fromRow == null || toRow == null) continue;
+      const fromX = axisPadding + (from.i + 0.5) * cellWidth - scrollLeft;
+      const toX = axisPadding + (to.i + 0.5) * cellWidth - scrollLeft;
+      if (Math.max(fromX, toX) < 0 || Math.min(fromX, toX) > width) continue;
+      const ends = linkEnds(fromRow, toRow, layout);
+      drawLink(context, { x: fromX, y: ends.from }, { x: toX, y: ends.to }, link.style ?? "solid", link.emphasized ?? false, { muted, link: linkColor });
     }
 
     for (let index = visibleStart; index <= visibleEnd; index += 1) {
@@ -765,6 +1328,17 @@ function EventLanesImpl<K extends string = string>({
     validated.spans,
     viewportWidth,
     visibleByIndex,
+    markSize,
+    origin,
+    positionIndex,
+    positioned,
+    scale,
+    selectedSpan,
+    timelineOf,
+    timelineRows,
+    validated.links,
+    widthOf,
+    xOf,
   ]);
 
   useEffect(() => {
@@ -787,23 +1361,55 @@ function EventLanesImpl<K extends string = string>({
     const link = styles.getPropertyValue("--color-link").trim() || foreground;
     // Only the lanes the overview draws divide its height between them.
     const overviewRows = new Map<string, number>();
-    for (const lane of lanes) if (lane.overview !== false) overviewRows.set(lane.id, overviewRows.size);
+    for (const lane of lanes) if (lane.overview !== false && !lane.hidden) overviewRows.set(lane.id, overviewRows.size);
     const overview = overviewLaneGeometry(overviewRows.size, overviewHeight);
     const scale = width / Math.max(axisWidth, 1);
 
-    for (const event of visibleEvents) {
-      const row = overviewRows.get(event.lane);
-      if (row == null) continue;
-      const isSelected = selected === event.i;
-      const isLinked = linked?.has(event.i) ?? false;
-      context.globalAlpha = emphasis === undefined || emphasis.has(event.i) || isSelected || isLinked ? 1 : 0.3;
-      context.fillStyle = resolveToken(styles, palette[event.kind], muted);
-      context.fillRect(
-        (axisPadding + event.i * cellWidth) * scale,
-        overview.markTop(row),
-        Math.max(1, cellWidth * scale),
-        overview.markHeight,
-      );
+    if (overviewContent !== "marks") {
+      // A span sits in its own lane's band, or in the first band its timeline
+      // keeps when that lane is left out of the overview.
+      const bandOf = (laneId: string) => {
+        const own = overviewRows.get(laneId);
+        if (own != null) return own;
+        const timeline = timelineOf(laneId);
+        for (const lane of lanes) {
+          const row = overviewRows.get(lane.id);
+          if (row != null && timelineOf(lane.id) === timeline) return row;
+        }
+        return undefined;
+      };
+      const structural = styles.getPropertyValue("--color-structural").trim() || muted;
+      const warning = styles.getPropertyValue("--color-warning").trim() || foreground;
+      for (const span of validated.spans) {
+        const row = bandOf(span.lane);
+        if (row == null) continue;
+        const from = positioned ? xOf(span.from) : axisPadding + (span.from + 0.5) * cellWidth;
+        const to = positioned ? xOf(span.to) : axisPadding + (span.to + 0.5) * cellWidth;
+        const isSelected = selectedSpan != null && span.id === selectedSpan;
+        context.fillStyle = isSelected ? link : structural;
+        context.fillRect(from * scale, overview.markTop(row), Math.max(1, (to - from) * scale), overview.markHeight);
+        if (positioned && span.trail !== undefined && span.trail > span.to) {
+          context.fillStyle = span.trailToken ? resolveToken(styles, span.trailToken, warning) : warning;
+          context.fillRect(to * scale, overview.markTop(row), Math.max(1, (xOf(span.trail) - to) * scale), overview.markHeight);
+        }
+      }
+    }
+
+    if (overviewContent !== "spans") {
+      for (const event of visibleEvents) {
+        const row = overviewRows.get(event.lane);
+        if (row == null) continue;
+        const isSelected = selected === event.i;
+        const isLinked = linked?.has(event.i) ?? false;
+        context.globalAlpha = emphasis === undefined || emphasis.has(event.i) || isSelected || isLinked ? 1 : 0.3;
+        context.fillStyle = resolveToken(styles, palette[event.kind], muted);
+        context.fillRect(
+          positioned ? xOf(event.position as number) * scale : (axisPadding + event.i * cellWidth) * scale,
+          overview.markTop(row),
+          Math.max(1, (positioned ? widthOf(event) : cellWidth) * scale),
+          overview.markHeight,
+        );
+      }
     }
     context.globalAlpha = 1;
     const windowX = scrollLeft * scale;
@@ -836,6 +1442,13 @@ function EventLanesImpl<K extends string = string>({
     themeRevision,
     viewportWidth,
     visibleEvents,
+    overviewContent,
+    positioned,
+    selectedSpan,
+    timelineOf,
+    validated.spans,
+    widthOf,
+    xOf,
   ]);
 
   const updateHover = useCallback((event: EventLaneEvent<K> | null) => {
@@ -855,11 +1468,56 @@ function EventLanesImpl<K extends string = string>({
     const x = pointer.clientX - bounds.left + scroller.scrollLeft - axisPadding;
     const y = pointer.clientY - bounds.top;
     let row = -1;
-    for (let index = 0; index < layout.tops.length; index += 1) if (y >= layout.tops[index]) row = index;
+    for (let index = 0; index < layout.tops.length; index += 1) {
+      if (!lanes[index]?.hidden && y >= layout.tops[index]) row = index;
+    }
     const lane = lanes[row];
+    if (positioned) {
+      const entry = lane ? positionIndex?.byLane.get(lane.id) : undefined;
+      if (!entry) return null;
+      // A hairline is hard to hit, so a mark narrower than the slack answers
+      // from a little either side of it.
+      const pointerX = x + axisPadding;
+      const slack = HIT_SLACK / scale;
+      const at = positionForX(pointerX, origin, scale, axisPadding);
+      let best: EventLaneEvent<K> | null = null;
+      let bestDistance = Infinity;
+      const first = lowerBound(entry.positions, at - entry.reach - markSize / scale - slack);
+      const last = upperBound(entry.positions, at + slack);
+      for (let index = first; index < last; index += 1) {
+        const event = entry.events[index];
+        const left = xOf(event.position as number);
+        const markWidthPx = widthOf(event);
+        const tolerance = markWidthPx < HIT_SLACK * 2 ? HIT_SLACK : 0;
+        if (pointerX < left - tolerance || pointerX > left + markWidthPx + tolerance) continue;
+        const distance = Math.abs(pointerX - (left + markWidthPx / 2));
+        if (distance < bestDistance) {
+          best = event;
+          bestDistance = distance;
+        }
+      }
+      return best;
+    }
     const index = Math.floor(x / cellWidth);
     return lane ? visibleByCell.get(`${lane.id}:${index}`) ?? null : null;
-  }, [axisPadding, cellWidth, lanes, layout, visibleByCell]);
+  }, [axisPadding, cellWidth, lanes, layout, markSize, origin, positionIndex, positioned, scale, visibleByCell, widthOf, xOf]);
+
+  /** The span whose box or trailing segment lies under the pointer, topmost first. */
+  const spanHit = useCallback((pointer: ReactPointerEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    const scroller = scrollerRef.current;
+    if (!canvas || !scroller || !positioned) return null;
+    const bounds = canvas.getBoundingClientRect();
+    const x = pointer.clientX - bounds.left + scroller.scrollLeft;
+    const y = pointer.clientY - bounds.top;
+    for (let index = validated.spans.length - 1; index >= 0; index -= 1) {
+      const span = validated.spans[index];
+      const rows = timelineRows.get(timelineOf(span.lane));
+      if (!rows || y < rows.top || y > rows.bottom) continue;
+      if (x >= xOf(span.from) && x <= xOf(Math.max(span.to, span.trail ?? span.to))) return span;
+    }
+    return null;
+  }, [positioned, timelineOf, timelineRows, validated.spans, xOf]);
 
   const handlePointerMove = (pointer: ReactPointerEvent<HTMLCanvasElement>) => {
     updateHover(hitTest(pointer));
@@ -871,7 +1529,11 @@ function EventLanesImpl<K extends string = string>({
     // onPointerDown, so a pointer-driven focus would otherwise read as keyboard.
     notePointerInteraction();
     const event = hitTest(pointer);
-    if (!event) return;
+    if (!event) {
+      const span = onSelectSpan ? spanHit(pointer) : null;
+      if (span) onSelectSpan?.(span);
+      return;
+    }
     scrollerRef.current?.focus();
     setActiveIndex(event.i);
     updateHover(event);
@@ -886,8 +1548,61 @@ function EventLanesImpl<K extends string = string>({
     onSelect?.(next);
   }, [onSelect, revealIndex, visibleEvents]);
 
+  const moveToEvent = useCallback((next: EventLaneEvent<K>) => {
+    setActiveIndex(next.i);
+    revealIndex(next.i);
+    onSelect?.(next);
+  }, [onSelect, revealIndex]);
+
+  /** The positioned layout's walk: along the focused mark's timeline by
+   *  position, stopping at its ends, and to the nearest mark in the timeline
+   *  above or below. Returns the next mark, or null for a key it leaves alone. */
+  const positionedStep = (key: string, active: EventLaneEvent<K>) => {
+    if (!positionIndex) return null;
+    const timeline = timelineOf(active.lane);
+    const walk = positionIndex.byTimeline.get(timeline) ?? [active];
+    const step = positionIndex.stepOf.get(active.i) ?? 0;
+    if (key === "ArrowRight") return walk[Math.min(walk.length - 1, step + 1)];
+    if (key === "ArrowLeft") return walk[Math.max(0, step - 1)];
+    if (key === "Home") return walk[0];
+    if (key === "End") return walk[walk.length - 1];
+    if (key !== "ArrowUp" && key !== "ArrowDown") return null;
+    const order = positionIndex.timelineOrder;
+    const direction = key === "ArrowDown" ? 1 : -1;
+    const target = order[order.indexOf(timeline) + direction];
+    const candidates = target ? positionIndex.byTimeline.get(target) : undefined;
+    if (!candidates?.length) return null;
+    const here = active.position as number;
+    let nearest = candidates[0];
+    for (const candidate of candidates) {
+      if (Math.abs((candidate.position as number) - here) < Math.abs((nearest.position as number) - here)) nearest = candidate;
+    }
+    return nearest;
+  };
+
   const handleKeyDown = (keyboardEvent: KeyboardEvent<HTMLDivElement>) => {
     if (visibleEvents.length === 0) return;
+    if (positioned) {
+      const key = keyboardEvent.key;
+      if (["ArrowRight", "ArrowLeft", "Home", "End", "ArrowUp", "ArrowDown"].includes(key)) setKeyboardFocus(true);
+      if (key === "Escape") {
+        setKeyboardFocus(false);
+        return;
+      }
+      const active = (activeIndex == null ? undefined : visibleByIndex.get(activeIndex)) ?? visibleEvents[0];
+      if (key === "Enter" || key === " ") {
+        keyboardEvent.preventDefault();
+        keyboardEvent.stopPropagation();
+        onSelect?.(active);
+        return;
+      }
+      const next = positionedStep(key, active);
+      if (!next) return;
+      keyboardEvent.preventDefault();
+      keyboardEvent.stopPropagation();
+      if (next.i !== active.i || key === "Home" || key === "End") moveToEvent(next);
+      return;
+    }
     // Navigating by key makes this a keyboard interaction even if focus
     // originally arrived by click.
     if (["ArrowRight", "ArrowLeft", "Home", "End"].includes(keyboardEvent.key)) {
@@ -962,7 +1677,11 @@ function EventLanesImpl<K extends string = string>({
       ))
     : null;
   const tooltipRow = tooltipEvent ? laneIndex.get(tooltipEvent.lane) ?? 0 : 0;
-  const rawTooltipX = tooltipEvent ? axisPadding + (tooltipEvent.i + 0.5) * cellWidth - scrollLeft : 0;
+  const rawTooltipX = tooltipEvent
+    ? (positioned
+      ? xOf(tooltipEvent.position as number) + widthOf(tooltipEvent) / 2 - scrollLeft
+      : axisPadding + (tooltipEvent.i + 0.5) * cellWidth - scrollLeft)
+    : 0;
   const tooltipX = Math.max(48, Math.min(Math.max(48, viewportWidth - 48), rawTooltipX));
   const tooltipRowTop = (hasRuler ? RULER_HEIGHT : 0) + (layout.tops[tooltipRow] ?? 0);
   const tooltipRowBottom = tooltipRowTop + (layout.heights[tooltipRow] ?? LANE_HEIGHT);
@@ -1018,8 +1737,60 @@ function EventLanesImpl<K extends string = string>({
     end,
     cellWidth,
     width: axisWidth,
-    xForIndex: (index) => axisPadding + (index + 0.5) * cellWidth,
+    xForIndex: (index) => {
+      const placed = positioned ? eventByIndex.get(index) : undefined;
+      return placed ? xOf(placed.position as number) + widthOf(placed) / 2 : axisPadding + (index + 0.5) * cellWidth;
+    },
+    ...(positioned && positionModel
+      ? {
+        position: {
+          scale,
+          origin,
+          end: positionModel.finish,
+          visibleStart: positionForX(scrollLeft, origin, scale, axisPadding),
+          visibleEnd: positionForX(scrollLeft + viewportWidth, origin, scale, axisPadding),
+          xForPosition: xOf,
+          positionForX: (x: number) => positionForX(x, origin, scale, axisPadding),
+        },
+      }
+      : {}),
   };
+  // One hidden option per visible event. Nothing in it depends on the scroll
+  // or the scale, so the list is rebuilt only when what it states changes:
+  // re-rendering tens of thousands of options on every scroll step is what
+  // limited a large timeline, not the drawing.
+  const describedIndex = tooltipEvent && tooltipContent != null ? tooltipEvent.i : undefined;
+  const censusOptions = useMemo(() => visibleEvents.map((event, position) => (
+                  <div
+                    key={event.i}
+                    id={`${optionIdBase}-${event.i}`}
+                    role="option"
+                    aria-label={positioned
+                      ? optionText(
+                        event,
+                        laneById.get(event.lane),
+                        EMPTY_SPANS,
+                        validated.spans.filter((span) => span.label
+                          && timelineOf(span.lane) === timelineOf(event.lane)
+                          && span.from <= (event.position as number)
+                          && (event.position as number) <= span.to),
+                      )
+                      : optionText(
+                        event,
+                        laneById.get(event.lane),
+                        validated.spans.filter((span) => span.lane === event.lane),
+                      )}
+                    aria-posinset={position + 1}
+                    aria-setsize={visibleEvents.length}
+                    aria-selected={selected === event.i}
+                    aria-describedby={describedIndex === event.i ? tooltipId : undefined}
+                    data-event-index={event.i}
+                    data-event-kind={event.kind}
+                    data-event-lane={event.lane}
+                    data-event-linked={linked?.has(event.i) ? "true" : undefined}
+                    data-event-emphasized={emphasis === undefined ? undefined : String(emphasis.has(event.i))}
+                  />
+                )), [describedIndex, emphasis, laneById, linked, optionIdBase, positioned, selected, timelineOf, tooltipId, validated.spans, visibleEvents]);
   const activeOptionId = activeEvent ? `${optionIdBase}-${activeEvent.i}` : undefined;
   const componentStyle = {
     "--event-lanes-ruler-height": `${RULER_HEIGHT / 16}rem`,
@@ -1039,7 +1810,7 @@ function EventLanesImpl<K extends string = string>({
       <div className="cs-component-event-lanes-main">
         <div data-event-lanes-labels="" className="cs-component-event-lanes-labels" aria-hidden="true">
           {hasRuler && <div className="cs-component-event-lanes-ruler-label">{rulerLabel}</div>}
-          {(lanes.length > 0 ? lanes : [{ id: "empty", label: "Events" }]).map((lane) => (
+          {(lanes.length > 0 ? lanes : [{ id: "empty", label: "Events" }]).filter((lane) => !("hidden" in lane && lane.hidden)).map((lane) => (
             <Tooltip key={lane.id} content={lane.title ?? ""} disabled={!lane.title}>
               <div
                 data-event-lane-label={lane.id}
@@ -1066,6 +1837,7 @@ function EventLanesImpl<K extends string = string>({
             data-scrollbar={scrollbar === "overview" && showOverview ? "overview" : undefined}
             data-event-count={visibleEvents.length}
             data-span-count={validated.spans.length}
+            data-layout={positioned ? "position" : undefined}
             className="cs-component-event-lanes-scroller"
             onKeyDown={handleKeyDown}
             onPointerDown={notePointerInteraction}
@@ -1105,33 +1877,26 @@ function EventLanesImpl<K extends string = string>({
                 />
               </div>
               <div role="presentation" data-event-lanes-census="" className="cs-component-event-lanes-census">
-                {visibleEvents.map((event, position) => (
-                  <div
-                    key={event.i}
-                    id={`${optionIdBase}-${event.i}`}
-                    role="option"
-                    aria-label={optionText(
-                      event,
-                      laneById.get(event.lane),
-                      validated.spans.filter((span) => span.lane === event.lane),
-                    )}
-                    aria-posinset={position + 1}
-                    aria-setsize={visibleEvents.length}
-                    aria-selected={selected === event.i}
-                    aria-describedby={tooltipEvent?.i === event.i && tooltipContent != null ? tooltipId : undefined}
-                    data-event-index={event.i}
-                    data-event-kind={event.kind}
-                    data-event-lane={event.lane}
-                    data-event-linked={linked?.has(event.i) ? "true" : undefined}
-                    data-event-emphasized={emphasis === undefined ? undefined : String(emphasis.has(event.i))}
-                  />
-                ))}
+                {censusOptions}
                 {validated.spans.map((span, index) => (
                   <span
                     key={`${span.lane}-${span.from}-${span.to}-${index}`}
                     data-span-lane={span.lane}
                     data-span-from={span.from}
                     data-span-to={span.to}
+                    data-span-id={span.id}
+                    data-span-label={span.label}
+                    data-span-trail={span.trail}
+                    data-span-selected={span.id != null && span.id === selectedSpan ? "true" : undefined}
+                  />
+                ))}
+                {validated.links.map((link, index) => (
+                  <span
+                    key={`link-${link.from}-${link.to}-${index}`}
+                    data-link-from={link.from}
+                    data-link-to={link.to}
+                    data-link-style={link.style ?? "solid"}
+                    data-link-emphasized={link.emphasized ? "true" : undefined}
                   />
                 ))}
                 {visibleEvents.length === 0 && <span role="status">No visible events.</span>}

@@ -147,12 +147,13 @@ Styled native select element for choosing a single value from a list of options,
 - spec: [components/Dropdown.md](components/Dropdown.md)
 
 ### EventLanes  ·  since 0.3.0  ·  experimental
-Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.
+Canvas-rendered events on a shared axis, placed by global index or by position on a continuous scale, with lanes, spans, links, zoom, overview navigation, token palettes, and an accessible virtual listbox.
 - import: `@codesweep-ai/ui`
-- intents: `event lanes`, `event timeline`, `event strip`, `canvas timeline`, `trace events`, `agent events`, `multi-agent timeline`, `spans`, `overview`, `virtual listbox`
+- intents: `event lanes`, `event timeline`, `event strip`, `canvas timeline`, `trace events`, `agent events`, `multi-agent timeline`, `spans`, `overview`, `virtual listbox`, `time axis`, `zoom`, `positioned layout`, `links`
 - use when: Showing an ordered event stream on one or more named lanes
 - use when: A dense trace needs thousands of selectable events without thousands of laid-out DOM marks
 - use when: Related events need spans, linked highlighting, markers, or a shared ruler
+- use when: A timeline on a time axis must show how long each step and each span took
 - avoid when: Showing chronological step details with expandable text → AgentTrace
 - avoid when: Showing continuous numeric data → ChartFrame
 - ⚠ The palette accepts CSS custom-property names such as --color-cat-1, never resolved colors or hex values. EventLanes is canvas-rendered but exposes every visible event and span through a stable DOM census.

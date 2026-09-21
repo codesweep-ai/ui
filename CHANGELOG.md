@@ -93,6 +93,15 @@ holds today.
 
 ### Added
 
+- `EventLanes` has a positioned layout. With `layout="position"`, each event
+  sits at its `position` on a scale the consumer chooses, such as seconds, so a
+  long step takes a long stretch of the axis. A mark is as wide as the gap to
+  the next one in its timeline, and lanes naming one `group` share that
+  timeline. `view` and `onViewChange` set and report the visible range, and the
+  wheel zooms and scrolls. Spans draw as boxes with a label and a trailing
+  segment, `links` join marks across lanes, and the ruler receives the scale.
+  A lane can be `hidden` without moving the marks beside it. The index layout
+  is unchanged, and a timeline that sets none of this draws exactly as before.
 - `EventLanes` can draw a lane's events as bars sized by a `magnitude` from 0
   to 1, rising from the row's floor or hanging from its top, with a notch for a
   value past the consumer's ceiling. Lanes can set their own `height`, the

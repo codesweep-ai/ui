@@ -526,7 +526,7 @@
       "import": [
         "@codesweep-ai/ui"
       ],
-      "summary": "Canvas-rendered events on a shared global-index axis, with lanes, spans, overview navigation, token palettes, and an accessible virtual listbox.",
+      "summary": "Canvas-rendered events on a shared axis, placed by global index or by position on a continuous scale, with lanes, spans, links, zoom, overview navigation, token palettes, and an accessible virtual listbox.",
       "keywords": [
         "event lanes",
         "event timeline",
@@ -537,14 +537,19 @@
         "multi-agent timeline",
         "spans",
         "overview",
-        "virtual listbox"
+        "virtual listbox",
+        "time axis",
+        "zoom",
+        "positioned layout",
+        "links"
       ],
       "since": "0.3.0",
       "status": "experimental",
       "use_when": [
         "Showing an ordered event stream on one or more named lanes",
         "A dense trace needs thousands of selectable events without thousands of laid-out DOM marks",
-        "Related events need spans, linked highlighting, markers, or a shared ruler"
+        "Related events need spans, linked highlighting, markers, or a shared ruler",
+        "A timeline on a time axis must show how long each step and each span took"
       ],
       "avoid_when": [
         "Showing chronological step details with expandable text → AgentTrace",

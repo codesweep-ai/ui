@@ -14,9 +14,13 @@ export { EventLanes } from "./components/EventLanes";
 export type {
   EventLane,
   EventLaneEvent,
+  EventLaneLink,
   EventLaneSpan,
+  EventLanesPositionContext,
   EventLanesProps,
   EventLanesRulerContext,
+  EventLanesView,
+  EventLanesViewState,
   EventShape,
   EventToken,
 } from "./components/EventLanes";
