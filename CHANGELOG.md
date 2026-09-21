@@ -54,6 +54,12 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` no longer lets its tooltip be cut off or squeezed. It was
+  placed inside the component, so an ancestor that hides its overflow, such as
+  a `Card`, clipped it, and near the right edge it wrapped word by word into a
+  narrow column. It is now portalled to the body and placed in the window, as
+  `Tooltip` is. A consumer styling the tooltip through the component's own
+  subtree should know it now renders outside it.
 - `catalog.json` can be imported. It has always shipped, and the README has
   always sent a reader to it, but it was missing from the `exports` map, so
   `@codesweep-ai/ui/catalog.json` answered `ERR_PACKAGE_PATH_NOT_EXPORTED` and

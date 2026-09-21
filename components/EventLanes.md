@@ -262,7 +262,7 @@ also focuses the scroller, and treating that as keyboard left the highlighted ev
 on screen for the rest of the page's life. Pressing **Escape** dismisses it; carrying
 on with the arrows brings it back.
 
-`EventLanes` always owns the shell: the returned body is rendered in `ChartTooltip`, positioned relative to the visible viewport and clamped to that viewport. Consumers do not position or restyle the tooltip. Returning `null` suppresses the visual tooltip for that event. The tooltip has `role="tooltip"`, and the active virtual option references it with `aria-describedby` while it is open.
+`EventLanes` always owns the shell: the returned body is rendered in `ChartTooltip`, portalled to `document.body` and fixed to the window, as [Tooltip](Tooltip.md) is. It sits above the event's row, moves below it when the window has no room above, and shifts sideways to stay 8 pixels inside the window at its own width. No ancestor that hides its overflow can cut it off. Consumers do not position or restyle the tooltip. Returning `null` suppresses the visual tooltip for that event. The tooltip has `role="tooltip"`, and the active virtual option references it with `aria-describedby` while it is open.
 
 `onHover` receives the newly hit-tested event and fires once when that event changes. It receives `null` when the pointer leaves an event, enters an empty/hidden cell, or leaves the component. Dimming does not suppress hover. Spans and the overview window do not call `onHover`.
 

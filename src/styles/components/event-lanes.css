@@ -127,11 +127,19 @@
     width: .0625rem
 }
 
+/* Portalled to the body and fixed to the window, so no ancestor that hides its
+   overflow can cut the tooltip off. */
 .cs-component-event-lanes-tooltip-layer {
     inset: 0;
     pointer-events: none;
-    position: absolute;
+    position: fixed;
     z-index: var(--z-tooltip)
+}
+
+/* Its own width, never the width left before the window's edge: the placement
+   shifts it back inside instead. */
+.cs-component-event-lanes-tooltip {
+    width: max-content
 }
 
 .cs-component-event-lanes-tooltip-content {

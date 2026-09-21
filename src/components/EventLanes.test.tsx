@@ -510,6 +510,7 @@ describe("bar lanes, lane heights and overview height (CUI-099)", () => {
     rerender(<EventLanes lanes={[lanes[0]]} events={wide} palette={palette} overview />);
     expect(scroller()).not.toHaveAttribute("data-scrollbar");
   });
+
   it("leaves a lane out of the overview when asked, giving its height to the rest", () => {
     const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect");
     const two: EventLane[] = [{ id: "work", label: "Work" }, { id: "wait", label: "Wait", overview: false }];
@@ -522,5 +523,25 @@ describe("bar lanes, lane heights and overview height (CUI-099)", () => {
     expect(at(band, 0)).toBe(true);
     expect(at(shared, 1)).toBe(false);
     fillRect.mockRestore();
+  });
+
+  it("keeps a tooltip whole inside a clipping ancestor and at the window's edge", () => {
+    const many = Array.from({ length: 30 }, (_, i): EventLaneEvent<Kind> => ({ i, lane: "main", kind: "tool", shape: "square", label: `A reasonably long label for event ${i}`, at: String(i) }));
+    const { container } = render(
+      <div style={{ overflow: "hidden", height: 30, marginLeft: window.innerWidth - 320, width: 300 }}>
+        <EventLanes lanes={[lanes[0]]} events={many} palette={palette} overview={false} />
+      </div>,
+    );
+    const canvas = container.querySelector("[data-event-lanes-canvas]")!;
+    const bounds = canvas.getBoundingClientRect();
+    fireEvent.pointerMove(canvas, { clientX: bounds.right - 6, clientY: bounds.top + 14 });
+    const tooltip = screen.getByRole("tooltip");
+    expect(container.contains(tooltip)).toBe(false);
+    const box = tooltip.getBoundingClientRect();
+    expect(box.left).toBeGreaterThanOrEqual(7.5);
+    expect(box.right).toBeLessThanOrEqual(window.innerWidth - 7.5);
+    expect(box.top).toBeGreaterThanOrEqual(0);
+    // A squeezed tooltip wrapped the label word by word into a narrow column.
+    expect(box.width).toBeGreaterThan(200);
   });
 });

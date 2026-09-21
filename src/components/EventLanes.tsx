@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -12,6 +13,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "../lib/cn";
 import { Tooltip } from "./Tooltip";
 import { forwardRefToRoot } from "../lib/forwardRefToRoot";
@@ -436,6 +438,8 @@ function EventLanesImpl<K extends string = string>({
   const optionIdBase = `${id ?? `event-lanes-${generatedId}`}-option`;
   const tooltipId = `${id ?? `event-lanes-${generatedId}`}-tooltip`;
   const rootRef = useRef<HTMLDivElement>(null);
+  const axisCellRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overviewRef = useRef<HTMLCanvasElement>(null);
@@ -960,7 +964,55 @@ function EventLanesImpl<K extends string = string>({
   const tooltipRow = tooltipEvent ? laneIndex.get(tooltipEvent.lane) ?? 0 : 0;
   const rawTooltipX = tooltipEvent ? axisPadding + (tooltipEvent.i + 0.5) * cellWidth - scrollLeft : 0;
   const tooltipX = Math.max(48, Math.min(Math.max(48, viewportWidth - 48), rawTooltipX));
-  const tooltipY = (hasRuler ? RULER_HEIGHT : 0) + (layout.tops[tooltipRow] ?? 0) + (layout.heights[tooltipRow] ?? LANE_HEIGHT) / 2;
+  const tooltipRowTop = (hasRuler ? RULER_HEIGHT : 0) + (layout.tops[tooltipRow] ?? 0);
+  const tooltipRowBottom = tooltipRowTop + (layout.heights[tooltipRow] ?? LANE_HEIGHT);
+  // The tooltip is portalled to the body and placed in viewport coordinates, as
+  // Tooltip is. Placed inside the component it was clipped by any ancestor that
+  // hides overflow, such as a Card, and a tooltip near the right edge had so
+  // little width left that it wrapped word by word into a column.
+  const tooltipIndex = tooltipEvent?.i;
+  const [tooltipPlace, setTooltipPlace] = useState<{ x: number; top: number; bottom: number } | null>(null);
+  const [tooltipShift, setTooltipShift] = useState(0);
+  const [tooltipBelow, setTooltipBelow] = useState(false);
+  const [placeRevision, setPlaceRevision] = useState(0);
+  useLayoutEffect(() => {
+    const cell = axisCellRef.current;
+    if (tooltipIndex == null || !cell) {
+      setTooltipPlace(null);
+      return;
+    }
+    const box = cell.getBoundingClientRect();
+    setTooltipPlace({ x: box.left + tooltipX, top: box.top + tooltipRowTop, bottom: box.top + tooltipRowBottom });
+    setTooltipShift(0);
+    setTooltipBelow(false);
+  }, [tooltipIndex, tooltipX, tooltipRowTop, tooltipRowBottom, placeRevision]);
+  // Measured after it renders: shifted sideways back inside the window, and
+  // moved below its row when there is no room above.
+  useLayoutEffect(() => {
+    const node = tooltipRef.current;
+    if (!node || !tooltipPlace) return;
+    const box = node.getBoundingClientRect();
+    if (box.width === 0 || box.height === 0) return;
+    const margin = 8;
+    const correction = box.left < margin
+      ? margin - box.left
+      : box.right > window.innerWidth - margin
+        ? window.innerWidth - margin - box.right
+        : 0;
+    if (Math.abs(correction) >= 0.5) setTooltipShift((current) => current + correction);
+    if (!tooltipBelow && box.top < margin) setTooltipBelow(true);
+  }, [tooltipPlace, tooltipShift, tooltipBelow]);
+  useEffect(() => {
+    if (tooltipIndex == null) return;
+    const replace = () => setPlaceRevision((revision) => revision + 1);
+    window.addEventListener("scroll", replace, true);
+    window.addEventListener("resize", replace);
+    return () => {
+      window.removeEventListener("scroll", replace, true);
+      window.removeEventListener("resize", replace);
+    };
+  }, [tooltipIndex]);
+
   const rulerContext: EventLanesRulerContext = {
     start: 0,
     end,
@@ -1001,7 +1053,7 @@ function EventLanesImpl<K extends string = string>({
             </Tooltip>
           ))}
         </div>
-        <div className="cs-component-event-lanes-axis-cell">
+        <div ref={axisCellRef} className="cs-component-event-lanes-axis-cell">
           <div
             ref={scrollerRef}
             role="listbox"
@@ -1086,12 +1138,19 @@ function EventLanesImpl<K extends string = string>({
               </div>
             </div>
           </div>
-          {tooltipEvent && tooltipContent != null && (
+          {tooltipEvent && tooltipContent != null && tooltipPlace && typeof document !== "undefined" && createPortal(
             <div id={tooltipId} className="cs-component-event-lanes-tooltip-layer">
-              <ChartTooltip x={tooltipX} y={tooltipY} anchor={tooltipY < 64 ? "bottom" : "top"}>
+              <ChartTooltip
+                ref={tooltipRef}
+                className="cs-component-event-lanes-tooltip"
+                x={tooltipPlace.x + tooltipShift}
+                y={tooltipBelow ? tooltipPlace.bottom : tooltipPlace.top}
+                anchor={tooltipBelow ? "bottom" : "top"}
+              >
                 {tooltipContent}
               </ChartTooltip>
-            </div>
+            </div>,
+            document.body,
           )}
         </div>
       </div>
