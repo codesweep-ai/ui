@@ -5,7 +5,11 @@ import { describe, expect, it, vi } from "vitest";
 import {
   EventLanes,
   axisPaddingFor,
+  barRect,
+  drawBar,
   drawMark,
+  drawNotch,
+  laneLayout,
   type EventLane,
   type EventLaneEvent,
   type EventLaneSpan,
@@ -411,5 +415,87 @@ describe("mark size is a visual-encoding budget (T4-03 regression)", () => {
     for (const cellWidth of [8, 10, 12, 14]) {
       expect(markSizeFor(cellWidth) / cellWidth).toBeGreaterThanOrEqual(0.85);
     }
+  });
+});
+
+describe("bar lanes, lane heights and overview height (CUI-099)", () => {
+  function recorder() {
+    return {
+      beginPath: vi.fn(),
+      roundRect: vi.fn(),
+      fill: vi.fn(),
+      stroke: vi.fn(),
+      fillRect: vi.fn(),
+      fillStyle: "",
+      strokeStyle: "",
+      lineWidth: 1,
+    } as unknown as CanvasRenderingContext2D & { fillRect: ReturnType<typeof vi.fn>; roundRect: ReturnType<typeof vi.fn> };
+  }
+
+  it("keeps the fixed 28px grid when no lane asks for a height", () => {
+    expect(laneLayout([{}, {}, {}])).toEqual({ tops: [0, 28, 56], heights: [28, 28, 28], total: 84 });
+    expect(laneLayout([])).toEqual({ tops: [], heights: [], total: 28 });
+  });
+
+  it("stacks lanes of their own heights, and ignores a height too small to draw", () => {
+    expect(laneLayout([{ height: 40 }, { height: 16 }])).toEqual({ tops: [0, 40], heights: [40, 16], total: 56 });
+    expect(laneLayout([{ height: 2 }, { height: Number.NaN }]).heights).toEqual([28, 28]);
+  });
+
+  it("grows a bar from its floor toward the far edge, clamping the magnitude", () => {
+    // 40px row, 3px inset each end: 34px of room above a 12px floor.
+    expect(barRect(0, 40, "up", 10, 12, 12, undefined)).toEqual({ x: 4, y: 25, width: 12, height: 12 });
+    expect(barRect(0, 40, "up", 10, 12, 12, 1)).toEqual({ x: 4, y: 3, width: 12, height: 34 });
+    expect(barRect(0, 40, "up", 10, 12, 12, 0.5).height).toBe(23);
+    expect(barRect(0, 40, "up", 10, 12, 12, 7).height).toBe(34);
+    expect(barRect(0, 40, "up", 10, 12, 12, -1).height).toBe(12);
+  });
+
+  it("hangs a bar from the top of its row, and keeps a floor inside a short row", () => {
+    expect(barRect(40, 16, "down", 10, 12, 2, 0)).toEqual({ x: 4, y: 43, width: 12, height: 2 });
+    expect(barRect(40, 16, "down", 10, 12, 2, 1)).toEqual({ x: 4, y: 43, width: 12, height: 10 });
+    expect(barRect(40, 16, "down", 10, 12, 12, 0).height).toBe(10);
+  });
+
+  it("draws a hollow bar as an outline and notches a clipped bar at its far end", () => {
+    const context = recorder();
+    const rect = { x: 4, y: 3, width: 12, height: 34 };
+    drawBar(context, "hollow", rect, "red", "white");
+    expect(context.roundRect).toHaveBeenCalledWith(4, 3, 12, 34, 2);
+    expect(context.stroke).toHaveBeenCalledOnce();
+    drawNotch(context, rect, "up", "white", "black");
+    expect(context.fillRect.mock.calls).toEqual([[4, 5.5, 12, 1.5], [4, 0.5, 12, 1.5]]);
+    const hanging = recorder();
+    drawNotch(hanging, { x: 4, y: 43, width: 12, height: 10 }, "down", "white", "black");
+    expect(hanging.fillRect.mock.calls).toEqual([[4, 49, 12, 1.5], [4, 54, 12, 1.5]]);
+  });
+
+  it("sizes rows and the overview as asked, and leaves the default DOM untouched", () => {
+    const tall: EventLane[] = [{ id: "work", label: "Work", height: 40, bars: "up" }, { id: "wait", label: "Wait", height: 16, bars: "down", barFloor: 2 }];
+    const { container, rerender } = render(<EventLanes lanes={tall} events={[{ i: 0, lane: "work", kind: "tool", shape: "square", label: "Run", at: "0", magnitude: 1, clipped: true }]} palette={palette} overview overviewHeight={14} />);
+    expect(container.querySelector('[data-event-lane-label="work"]')).toHaveStyle({ height: "40px" });
+    expect(container.querySelector('[data-event-lane-label="wait"]')).toHaveStyle({ height: "16px" });
+    expect((container.querySelector("[data-event-lanes-canvas]") as HTMLCanvasElement).style.height).toBe("56px");
+    expect((container.querySelector("[data-event-lanes-overview]") as HTMLCanvasElement).style.height).toBe("14px");
+    rerender(<EventLanes lanes={lanes} events={events} palette={palette} overview />);
+    expect(container.querySelector('[data-event-lane-label="main"]')).not.toHaveAttribute("style");
+    expect((container.querySelector("[data-event-lanes-overview]") as HTMLCanvasElement).style.height).toBe("40px");
+  });
+
+  it("hit-tests a pointer against the row it lands in when rows differ in height", () => {
+    const onSelect = vi.fn();
+    const tall: EventLane[] = [{ id: "work", label: "Work", height: 40, bars: "up" }, { id: "wait", label: "Wait", height: 16, bars: "down" }];
+    const work: EventLaneEvent<Kind> = { i: 0, lane: "work", kind: "tool", shape: "square", label: "Run", at: "0" };
+    const wait: EventLaneEvent<Kind> = { i: 1, lane: "wait", kind: "message", shape: "square", label: "Idle", at: "1" };
+    const { container } = render(<EventLanes lanes={tall} events={[work, wait]} palette={palette} onSelect={onSelect} />);
+    const canvas = container.querySelector("[data-event-lanes-canvas]")!;
+    const bounds = canvas.getBoundingClientRect();
+    const x = (i: number) => bounds.left + axisPaddingFor(10) + i * 10 + 5;
+    fireEvent.pointerDown(canvas, { clientX: x(0), clientY: bounds.top + 35, pointerId: 1 });
+    expect(onSelect).toHaveBeenLastCalledWith(work);
+    fireEvent.pointerDown(canvas, { clientX: x(1), clientY: bounds.top + 45, pointerId: 1 });
+    expect(onSelect).toHaveBeenLastCalledWith(wait);
+    fireEvent.pointerDown(canvas, { clientX: x(1), clientY: bounds.top + 35, pointerId: 1 });
+    expect(onSelect).toHaveBeenCalledTimes(2);
   });
 });

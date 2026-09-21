@@ -47,6 +47,12 @@ interface EventLane {
   description?: string;
   /** Optional presentation hook for the visible lane label. */
   className?: string;
+  /** Row height in CSS pixels. Default 28. */
+  height?: number;
+  /** Draw this lane's events as bars rising from the floor or hanging from the top. */
+  bars?: "up" | "down";
+  /** A bar's length at magnitude 0, in CSS pixels. Default: the mark size. */
+  barFloor?: number;
 }
 
 interface EventLaneEvent<K extends string = string> {
@@ -69,6 +75,10 @@ interface EventLaneEvent<K extends string = string> {
   marker?: string;
   /** Permanent token-coloured ring, below linked and selected halos. */
   halo?: EventToken;
+  /** 0 to 1: how far a bar reaches from its floor. Read only in a bars lane. */
+  magnitude?: number;
+  /** The value ran past the consumer's ceiling: draw the broken-bar notch. */
+  clipped?: boolean;
 }
 
 interface EventLaneSpan {
@@ -113,6 +123,8 @@ interface EventLanesProps<K extends string = string> {
   cellWidth?: number;
   /** Default "auto": show only when the global axis overflows. */
   overview?: "auto" | boolean;
+  /** Overview height in CSS pixels. Default 40. */
+  overviewHeight?: number;
 
   /** Content aligned to the same global axis and horizontal scroll position. */
   ruler?: ReactNode | ((context: EventLanesRulerContext) => ReactNode);
@@ -152,6 +164,8 @@ This choice matches the multi-lane profile directly. The dense profile treats ar
 ### Lanes
 
 `lanes` defines visible row order. Lane IDs are unique. Events and spans whose `lane` does not match a declared lane are invalid and are not painted or exposed as options. A lane with no events still renders its label and empty row so multi-agent layouts do not jump when filtering.
+
+A lane is 28 pixels high unless it sets `height`, and lanes of different heights stack in order. The label beside a lane takes the same height, and hit-testing reads the row from the stacked heights.
 
 Lane labels are DOM text, not canvas pixels. They remain visible in a sticky leading gutter while the global axis scrolls horizontally. `title` supplies a [Tooltip](Tooltip.md) on hover or focus; `description` adds context to every event option announcement for that lane. The canvas rows, ruler, and overview begin after the same gutter and share the same x-coordinate system.
 
@@ -195,6 +209,19 @@ But if a legend then **lists those kinds separately**, it promises a distinction
 - `marker`: draws a small `var(--color-accent)` marker above the base shape. The string is its accessible/tooltip label; dense canvases do not paint the marker text.
 
 Marks are centered in their `cellWidth` column and lane row. `cellWidth` is a finite positive number in CSS pixels; invalid values fall back to 10. Ten pixels is the dense profile's default. The multi-lane profile supplies 22 to preserve its ruler pitch and larger hit cells.
+
+### Bar lanes
+
+A lane with `bars` draws each of its events as a bar rather than a centred mark. The bar is the mark's width and grows along the row: from its bottom edge for `"up"`, from its top edge for `"down"`. Its length runs linearly from `barFloor` at `magnitude` 0 to the row's height less a 3-pixel inset at each end at `magnitude` 1. The consumer chooses the scale, such as a logarithm of a duration, and passes the fraction.
+
+`barFloor` defaults to the mark size, so an event with no `magnitude` draws the square it would draw in any other lane, aligned to the lane's edge. A row sized for waiting might set it to 2, so a short value reads as a sliver rather than a square.
+
+- `magnitude` is clamped to 0 through 1. An absent or non-finite value is 0.
+- `clipped` draws the broken-bar notch at the bar's far end: a `var(--bg)` stripe just inside it and a `var(--fg)` cap just past it. It marks a value the consumer's ceiling cut short, and the tooltip is where the true value belongs.
+- Every shape draws as a rectangle, and both hollow shapes draw as a token outline on `var(--bg)`.
+- Halos, the error cross, the tick and the marker keep their meaning. Halos follow the bar's outline, the cross and the linked centre mark sit at its middle, and the marker sits past its far end.
+
+A lane without `bars` ignores `magnitude` and `clipped`, and draws exactly as it did before they existed.
 
 ### State precedence
 
@@ -252,6 +279,8 @@ Pointer hit-testing derives lane from y and global index from x, then looks up t
 | `false` | Never render it |
 
 The overview is a compact lane-preserving map: each lane becomes a miniature row, hidden kinds are absent, emphasis dimming is reflected, and selected/linked positions remain visible. Spans and text labels are omitted at overview scale. A single stroked rectangle shows the visible axis range.
+
+`overviewHeight` sets the overview's height, 40 pixels by default. Its lane bands share whatever height it has, inside the outline's reserved chrome.
 
 Clicking the overview recenters the main viewport. Dragging its window scrolls continuously and clamps at both ends. These actions scroll only; they never select an event. The overview is `aria-hidden` and not a Tab stop because the primary listbox exposes the complete keyboard path.
 
@@ -357,6 +386,8 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - **All kinds hidden:** Same accessible behavior as no visible events; spans may remain visual but are not interactive.
 - **Theme change:** Re-resolve palette tokens and repaint marks, spans, halos, overview, and tooltip chrome without losing scroll, hover, or selection.
 - **Resize:** Recompute the visible range and overview window; keep the selected visible event visible when possible.
+- **Unusable heights:** A lane `height` or an `overviewHeight` below 8 pixels, or not finite, falls back to its default.
+- **A floor taller than the row:** The floor is capped at the row's room, so the bar can still be drawn.
 
 ## Traceability
 
@@ -375,6 +406,6 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 <!-- docs-compile -->
 ```tsx
 import { EventLanes } from "@codesweep-ai/ui";
-export function Example() { return <EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00" }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview />; }
+export function Example() { return <EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent", height: 40, bars: "up" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00", magnitude: 0.5 }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview overviewHeight={14} />; }
 ```
 {% endraw %}

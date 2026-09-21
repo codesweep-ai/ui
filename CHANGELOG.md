@@ -87,6 +87,11 @@ holds today.
 
 ### Added
 
+- `EventLanes` can draw a lane's events as bars sized by a `magnitude` from 0
+  to 1, rising from the row's floor or hanging from its top, with a notch for a
+  value past the consumer's ceiling. Lanes can set their own `height`, and the
+  overview its `overviewHeight`. Every addition is optional, and a timeline
+  that sets none draws exactly as before.
 - A development warning when a chart's colour tokens resolve to nothing. An
   undefined custom property is not an error: `getPropertyValue` answers with an
   empty string, a mark drawn with `fill=""` is invalid, and the browser paints

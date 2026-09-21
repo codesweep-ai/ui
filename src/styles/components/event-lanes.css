@@ -91,7 +91,7 @@
    viewport in JS, so `fit-content` is the correct width and no minimum is
    needed. */
 .cs-component-event-lanes-canvas-window {
-    height: calc(var(--event-lanes-lane-height) * var(--event-lanes-lane-count, 1));
+    height: var(--event-lanes-canvas-height, calc(var(--event-lanes-lane-height) * var(--event-lanes-lane-count, 1)));
     min-width: 0;
     position: sticky;
     left: 0;

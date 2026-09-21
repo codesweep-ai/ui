@@ -31,6 +31,14 @@ export interface EventLane {
   description?: string;
   /** Optional presentation hook for this lane's visible label. */
   className?: string;
+  /** Row height in CSS pixels. Default 28. */
+  height?: number;
+  /** Draw this lane's events as bars rising from the row's floor ("up") or
+   *  hanging from its top ("down"), sized by each event's `magnitude`. */
+  bars?: "up" | "down";
+  /** A bar's length at magnitude 0, in CSS pixels. Default: the mark size, so
+   *  an event with no magnitude reads as the square it would otherwise be. */
+  barFloor?: number;
 }
 
 export interface EventLaneEvent<K extends string = string> {
@@ -46,6 +54,12 @@ export interface EventLaneEvent<K extends string = string> {
   marker?: string;
   /** Permanent token-coloured ring, painted below linked and selected halos. */
   halo?: EventToken;
+  /** 0 to 1: how far the bar reaches from its floor toward the row's far edge.
+   *  Read only in a lane with `bars`; clamped, and 0 when absent. */
+  magnitude?: number;
+  /** The value ran past the consumer's ceiling: the bar carries a broken-bar
+   *  notch at its far end. Read only in a lane with `bars`. */
+  clipped?: boolean;
 }
 
 export interface EventLaneSpan {
@@ -73,6 +87,8 @@ export interface EventLanesProps<K extends string = string> {
   emphasis?: ReadonlySet<number>;
   cellWidth?: number;
   overview?: "auto" | boolean;
+  /** Overview height in CSS pixels. Default 40. */
+  overviewHeight?: number;
   ruler?: ReactNode | ((context: EventLanesRulerContext) => ReactNode);
   /** Sticky label for the ruler row. Default: "Index". */
   rulerLabel?: string;
@@ -96,6 +112,63 @@ const OVERVIEW_HEIGHT = 40;
  *  two lanes appeared empty while showing ink outside it. Lane bands are laid
  *  out inside this inset so the outline can never erase them. */
 const OVERVIEW_CHROME = 2;
+
+/** The smallest row or overview a consumer may ask for. Below it the chrome
+ *  and the one-pixel lane bands no longer fit. */
+const MIN_LANE_HEIGHT = 8;
+const MIN_OVERVIEW_HEIGHT = 8;
+/** Space kept between a bar and its row's edges, so a clipped bar's notch cap
+ *  stays inside the row it belongs to. */
+const BAR_INSET = 3;
+
+function validHeight(value: number | undefined, minimum: number, fallback: number) {
+  return typeof value === "number" && Number.isFinite(value) && value >= minimum ? value : fallback;
+}
+
+/** Each lane's top and height, in lane order, and the canvas height they sum
+ *  to. Exported for its test (not public API). With no heights supplied this
+ *  is exactly the fixed 28px grid every consumer had before. */
+export function laneLayout(lanes: readonly Pick<EventLane, "height">[]) {
+  const tops: number[] = [];
+  const heights: number[] = [];
+  let total = 0;
+  for (const lane of lanes) {
+    const height = validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT);
+    tops.push(total);
+    heights.push(height);
+    total += height;
+  }
+  return { tops, heights, total: Math.max(LANE_HEIGHT, total) };
+}
+
+/** The rectangle a bar occupies in a lane with `bars`. Exported for its test
+ *  (not public API).
+ *
+ *  Length runs from `floor` at magnitude 0 to the row's height less the inset at
+ *  each end at magnitude 1, linearly: the consumer chooses the scale (a
+ *  logarithm of a duration, say) and hands over the fraction. The floor
+ *  defaults to the mark size so a bar lane with no magnitudes draws the same
+ *  squares as any other lane, only aligned to one edge. */
+export function barRect(
+  top: number,
+  height: number,
+  direction: "up" | "down",
+  x: number,
+  size: number,
+  floor: number,
+  magnitude: number | undefined,
+) {
+  const room = Math.max(1, height - BAR_INSET * 2);
+  const base = Math.max(1, Math.min(floor, room));
+  const fraction = typeof magnitude === "number" && Number.isFinite(magnitude)
+    ? Math.max(0, Math.min(1, magnitude))
+    : 0;
+  const length = base + (room - base) * fraction;
+  const y = direction === "up" ? top + height - BAR_INSET - length : top + BAR_INSET;
+  return { x: x - size / 2, y, width: size, height: length };
+}
+
+type Rect = ReturnType<typeof barRect>;
 
 /** The mark's drawn size for a given cell, exported for its budget test (not
  *  public API — not re-exported from the package index).
@@ -125,9 +198,9 @@ export function axisPaddingFor(cellWidth: number) {
  *  [OVERVIEW_CHROME, OVERVIEW_HEIGHT - OVERVIEW_CHROME], the region the
  *  viewport-window outline never paints. Violating it is invisible in a unit
  *  test and shows up as whole lanes missing from the overview. */
-export function overviewLaneGeometry(laneCount: number) {
+export function overviewLaneGeometry(laneCount: number, overviewHeight = OVERVIEW_HEIGHT) {
   const chromeTop = OVERVIEW_CHROME;
-  const chromeBottom = OVERVIEW_HEIGHT - OVERVIEW_CHROME;
+  const chromeBottom = overviewHeight - OVERVIEW_CHROME;
   const band = (chromeBottom - chromeTop) / Math.max(1, laneCount);
   // Padding scales with the band so it cannot invert it, and the 1px floor on
   // height is absorbed by clamping the top — otherwise a large lane count
@@ -238,6 +311,57 @@ export function drawMark(
   }
 }
 
+/** A bar, drawn as the lane's mark would be: filled, or a token outline on the
+ *  background for either hollow shape. */
+export function drawBar(
+  context: CanvasRenderingContext2D,
+  shape: EventShape,
+  rect: Rect,
+  fill: string,
+  background: string,
+) {
+  context.beginPath();
+  context.roundRect(rect.x, rect.y, rect.width, rect.height, 2);
+  if (shape === "hollow" || shape === "hollow-circle") {
+    context.fillStyle = background;
+    context.fill();
+    context.strokeStyle = fill;
+    context.lineWidth = 2;
+    context.stroke();
+  } else {
+    context.fillStyle = fill;
+    context.fill();
+  }
+}
+
+/** The broken-bar notch: a background stripe cuts the bar just inside its far
+ *  end, and a foreground cap sits just past it. It marks a value the axis
+ *  stopped short of, the convention for a truncated scale. */
+export function drawNotch(
+  context: CanvasRenderingContext2D,
+  rect: Rect,
+  direction: "up" | "down",
+  background: string,
+  foreground: string,
+) {
+  const far = direction === "up" ? rect.y : rect.y + rect.height;
+  const cut = direction === "up" ? far + 2.5 : far - 4;
+  const cap = direction === "up" ? far - 2.5 : far + 1;
+  context.fillStyle = background;
+  context.fillRect(rect.x, cut, rect.width, 1.5);
+  context.fillStyle = foreground;
+  context.fillRect(rect.x, cap, rect.width, 1.5);
+}
+
+function drawRectHalo(context: CanvasRenderingContext2D, rect: Rect, grow: number, color: string, width: number) {
+  const out = grow / 2 + width;
+  context.beginPath();
+  context.roundRect(rect.x - out, rect.y - out, rect.width + out * 2, rect.height + out * 2, 3);
+  context.strokeStyle = color;
+  context.lineWidth = width;
+  context.stroke();
+}
+
 function drawHalo(
   context: CanvasRenderingContext2D,
   shape: EventShape,
@@ -291,6 +415,7 @@ function EventLanesImpl<K extends string = string>({
   emphasis,
   cellWidth: requestedCellWidth = DEFAULT_CELL_WIDTH,
   overview = "auto",
+  overviewHeight: requestedOverviewHeight,
   ruler,
   rulerLabel = "Index",
   renderTooltip,
@@ -365,7 +490,9 @@ function EventLanesImpl<K extends string = string>({
   }, [validated.events, validated.spans]);
   const axisPadding = axisPaddingFor(cellWidth);
   const axisWidth = end < 0 ? 0 : (end + 1) * cellWidth + axisPadding * 2;
-  const canvasHeight = Math.max(LANE_HEIGHT, lanes.length * LANE_HEIGHT);
+  const layout = useMemo(() => laneLayout(lanes), [lanes]);
+  const canvasHeight = layout.total;
+  const overviewHeight = validHeight(requestedOverviewHeight, MIN_OVERVIEW_HEIGHT, OVERVIEW_HEIGHT);
   const hasRuler = ruler != null;
   const showOverview = overview === true || (overview === "auto" && axisWidth > viewportWidth + 1);
 
@@ -463,7 +590,7 @@ function EventLanesImpl<K extends string = string>({
       if (span.to < visibleStart || span.from > visibleEnd) continue;
       const row = laneIndex.get(span.lane);
       if (row == null) continue;
-      const y = row * LANE_HEIGHT + LANE_HEIGHT / 2;
+      const y = layout.tops[row] + layout.heights[row] / 2;
       const fromX = axisPadding + (span.from + 0.5) * cellWidth - scrollLeft;
       const toX = axisPadding + (span.to + 0.5) * cellWidth - scrollLeft;
       context.beginPath();
@@ -483,7 +610,8 @@ function EventLanesImpl<K extends string = string>({
       const row = laneIndex.get(event.lane);
       if (row == null) continue;
       const rawX = axisPadding + (event.i + 0.5) * cellWidth - scrollLeft;
-      const y = row * LANE_HEIGHT + LANE_HEIGHT / 2;
+      const laneHeight = layout.heights[row];
+      const y = layout.tops[row] + laneHeight / 2;
       const size = markSizeFor(cellWidth);
       const boundaryRadius = (size + 7) / 2 + 3;
       const x = event.i === 0
@@ -495,6 +623,62 @@ function EventLanesImpl<K extends string = string>({
       const isLinked = linked?.has(event.i) ?? false;
       const isEmphasized = emphasis === undefined || emphasis.has(event.i) || isSelected || isLinked;
       context.globalAlpha = isEmphasized ? 1 : 0.3;
+      const fill = resolveToken(styles, palette[event.kind], muted);
+      const lane = lanes[row];
+
+      if (lane.bars) {
+        // A bar lane draws the same states over a rectangle the magnitude sizes,
+        // anchored to one edge of the row.
+        const rect = barRect(layout.tops[row], laneHeight, lane.bars, x, size, lane.barFloor ?? size, event.magnitude);
+        if (event.halo) drawRectHalo(context, rect, 3, resolveToken(styles, event.halo, muted), 2);
+        if (isLinked) {
+          drawRectHalo(context, rect, 5, link, 3);
+          drawRectHalo(context, rect, 2, background, 2);
+        }
+        if (isSelected) {
+          drawRectHalo(context, rect, 7, foreground, 3);
+          drawRectHalo(context, rect, 3, background, 2);
+        }
+        drawBar(context, event.shape, rect, fill, background);
+        if (event.clipped) drawNotch(context, rect, lane.bars, background, foreground);
+        const centerY = rect.y + rect.height / 2;
+        if (isSelected && isLinked) {
+          context.beginPath();
+          context.arc(x, centerY, Math.max(1.5, size / 5), 0, Math.PI * 2);
+          context.fillStyle = link;
+          context.fill();
+        }
+        if (event.error) {
+          const offset = size / 2 + 2;
+          context.beginPath();
+          context.moveTo(x - offset, centerY - offset);
+          context.lineTo(x + offset, centerY + offset);
+          context.moveTo(x + offset, centerY - offset);
+          context.lineTo(x - offset, centerY + offset);
+          context.strokeStyle = error;
+          context.lineWidth = 2;
+          context.stroke();
+        }
+        if (event.tick) {
+          const tickX = axisPadding + (event.i + 1) * cellWidth - scrollLeft - 1;
+          context.beginPath();
+          context.moveTo(tickX, y - laneHeight / 3);
+          context.lineTo(tickX, y + laneHeight / 3);
+          context.strokeStyle = foreground;
+          context.lineWidth = 2;
+          context.stroke();
+        }
+        if (event.marker) {
+          const markerY = lane.bars === "up"
+            ? Math.max(layout.tops[row] + 2, rect.y - 4)
+            : Math.min(layout.tops[row] + laneHeight - 2, rect.y + rect.height + 4);
+          context.beginPath();
+          context.arc(x, markerY, 2, 0, Math.PI * 2);
+          context.fillStyle = accent;
+          context.fill();
+        }
+        continue;
+      }
 
       if (event.halo) {
         drawHalo(
@@ -516,7 +700,6 @@ function EventLanesImpl<K extends string = string>({
         drawHalo(context, event.shape, x, y, size + 3, background, 2);
       }
 
-      const fill = resolveToken(styles, palette[event.kind], muted);
       drawMark(context, event.shape, x, y, size, fill, background);
 
       if (isSelected && isLinked) {
@@ -539,8 +722,8 @@ function EventLanesImpl<K extends string = string>({
       if (event.tick) {
         const tickX = axisPadding + (event.i + 1) * cellWidth - scrollLeft - 1;
         context.beginPath();
-        context.moveTo(tickX, y - LANE_HEIGHT / 3);
-        context.lineTo(tickX, y + LANE_HEIGHT / 3);
+        context.moveTo(tickX, y - laneHeight / 3);
+        context.lineTo(tickX, y + laneHeight / 3);
         context.strokeStyle = foreground;
         context.lineWidth = 2;
         context.stroke();
@@ -561,6 +744,8 @@ function EventLanesImpl<K extends string = string>({
     emphasis,
     end,
     laneIndex,
+    lanes,
+    layout,
     linked,
     palette,
     scrollLeft,
@@ -578,18 +763,18 @@ function EventLanesImpl<K extends string = string>({
     const width = Math.max(1, viewportWidth);
     const ratio = window.devicePixelRatio || 1;
     canvas.width = Math.ceil(width * ratio);
-    canvas.height = Math.ceil(OVERVIEW_HEIGHT * ratio);
+    canvas.height = Math.ceil(overviewHeight * ratio);
     canvas.style.width = `${width}px`;
-    canvas.style.height = `${OVERVIEW_HEIGHT}px`;
+    canvas.style.height = `${overviewHeight}px`;
     const context = canvas.getContext("2d");
     if (!context) return;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    context.clearRect(0, 0, width, OVERVIEW_HEIGHT);
+    context.clearRect(0, 0, width, overviewHeight);
     const styles = getComputedStyle(root);
     const foreground = styles.getPropertyValue("--fg").trim() || "currentColor";
     const muted = styles.getPropertyValue("--muted").trim() || foreground;
     const link = styles.getPropertyValue("--color-link").trim() || foreground;
-    const overview = overviewLaneGeometry(lanes.length);
+    const overview = overviewLaneGeometry(lanes.length, overviewHeight);
     const scale = width / Math.max(axisWidth, 1);
 
     for (const event of visibleEvents) {
@@ -619,7 +804,7 @@ function EventLanesImpl<K extends string = string>({
       windowX,
       OVERVIEW_CHROME / 2,
       Math.max(2, windowWidth),
-      OVERVIEW_HEIGHT - OVERVIEW_CHROME,
+      overviewHeight - OVERVIEW_CHROME,
     );
   }, [
     axisWidth,
@@ -629,6 +814,7 @@ function EventLanesImpl<K extends string = string>({
     laneIndex,
     lanes.length,
     linked,
+    overviewHeight,
     palette,
     scrollLeft,
     selected,
@@ -654,11 +840,12 @@ function EventLanesImpl<K extends string = string>({
     const bounds = canvas.getBoundingClientRect();
     const x = pointer.clientX - bounds.left + scroller.scrollLeft - axisPadding;
     const y = pointer.clientY - bounds.top;
-    const row = Math.floor(y / LANE_HEIGHT);
+    let row = -1;
+    for (let index = 0; index < layout.tops.length; index += 1) if (y >= layout.tops[index]) row = index;
     const lane = lanes[row];
     const index = Math.floor(x / cellWidth);
     return lane ? visibleByCell.get(`${lane.id}:${index}`) ?? null : null;
-  }, [axisPadding, cellWidth, lanes, visibleByCell]);
+  }, [axisPadding, cellWidth, lanes, layout, visibleByCell]);
 
   const handlePointerMove = (pointer: ReactPointerEvent<HTMLCanvasElement>) => {
     updateHover(hitTest(pointer));
@@ -763,7 +950,7 @@ function EventLanesImpl<K extends string = string>({
   const tooltipRow = tooltipEvent ? laneIndex.get(tooltipEvent.lane) ?? 0 : 0;
   const rawTooltipX = tooltipEvent ? axisPadding + (tooltipEvent.i + 0.5) * cellWidth - scrollLeft : 0;
   const tooltipX = Math.max(48, Math.min(Math.max(48, viewportWidth - 48), rawTooltipX));
-  const tooltipY = (hasRuler ? RULER_HEIGHT : 0) + tooltipRow * LANE_HEIGHT + LANE_HEIGHT / 2;
+  const tooltipY = (hasRuler ? RULER_HEIGHT : 0) + (layout.tops[tooltipRow] ?? 0) + (layout.heights[tooltipRow] ?? LANE_HEIGHT) / 2;
   const rulerContext: EventLanesRulerContext = {
     start: 0,
     end,
@@ -775,6 +962,7 @@ function EventLanesImpl<K extends string = string>({
   const componentStyle = {
     "--event-lanes-ruler-height": `${RULER_HEIGHT / 16}rem`,
     "--event-lanes-lane-height": `${LANE_HEIGHT / 16}rem`,
+    "--event-lanes-canvas-height": `${canvasHeight / 16}rem`,
     "--event-lanes-lane-count": Math.max(1, lanes.length),
   } as CSSProperties;
 
@@ -796,6 +984,7 @@ function EventLanesImpl<K extends string = string>({
                 data-event-lane-title={lane.title}
                 data-event-lane-description={lane.description}
                 className={cn("cs-component-event-lanes-label", "className" in lane && lane.className)}
+                style={"height" in lane && lane.height !== undefined ? { height: `${validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT) / 16}rem` } : undefined}
               >
                 {lane.label}
               </div>
