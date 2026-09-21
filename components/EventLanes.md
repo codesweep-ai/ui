@@ -125,6 +125,8 @@ interface EventLanesProps<K extends string = string> {
   overview?: "auto" | boolean;
   /** Overview height in CSS pixels. Default 40. */
   overviewHeight?: number;
+  /** "overview" hides the lanes' scrollbar while the overview is shown. Default "native". */
+  scrollbar?: "native" | "overview";
 
   /** Content aligned to the same global axis and horizontal scroll position. */
   ruler?: ReactNode | ((context: EventLanesRulerContext) => ReactNode);
@@ -282,6 +284,8 @@ The overview is a compact lane-preserving map: each lane becomes a miniature row
 
 `overviewHeight` sets the overview's height, 40 pixels by default. Its lane bands share whatever height it has, inside the outline's reserved chrome.
 
+With `scrollbar="overview"`, the lanes' native scrollbar is hidden whenever the overview is shown, since the overview scrolls them. A wheel, a trackpad and the keyboard still scroll the lanes. When the overview is not shown the scrollbar returns, so the axis always has a visible way to scroll.
+
 Clicking the overview recenters the main viewport. Dragging its window scrolls continuously and clamps at both ends. These actions scroll only; they never select an event. The overview is `aria-hidden` and not a Tab stop because the primary listbox exposes the complete keyboard path.
 
 ## Keyboard and accessibility
@@ -394,7 +398,7 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - Root: the outer element carries the supplied `id` and `data-component="EventLanes"`.
 - Sticky labels container: `data-event-lanes-labels`.
 - Per-lane visible label: `data-event-lane-label="{lane.id}"`, plus `data-event-lane-title` and `data-event-lane-description` when those optional metadata fields are supplied.
-- Listbox scroller: the inner element carries `data-event-lanes-scroller`, `role="listbox"`, `tabIndex={0}`, `aria-label`, `aria-activedescendant`, `data-event-count`, and `data-span-count`. It is the horizontal scroll owner; read `scrollLeft` and `clientWidth` or observe its scroll/resize events through this hook. The sticky gutter, ruler, and overview are outside its accessible subtree.
+- Listbox scroller: the inner element carries `data-event-lanes-scroller`, `role="listbox"`, `tabIndex={0}`, `aria-label`, `aria-activedescendant`, `data-event-count`, and `data-span-count`. It is the horizontal scroll owner; read `scrollLeft` and `clientWidth` or observe its scroll/resize events through this hook. It carries `data-scrollbar="overview"` while `scrollbar="overview"` has hidden its scrollbar. The sticky gutter, ruler, and overview are outside its accessible subtree.
 - Main drawing surface: `data-event-lanes-canvas`, `aria-hidden="true"`.
 - Overview caption: `data-event-lanes-overview-label`. Overview canvas: `data-event-lanes-overview`, `aria-hidden="true"`.
 - DOM census: `data-event-lanes-census`; every visible `role="option"` carries `data-event-index`, `data-event-kind`, and `data-event-lane`, with `data-event-linked` and `data-event-emphasized` following the stable census contract above.
@@ -406,6 +410,6 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 <!-- docs-compile -->
 ```tsx
 import { EventLanes } from "@codesweep-ai/ui";
-export function Example() { return <EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent", height: 40, bars: "up" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00", magnitude: 0.5 }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview overviewHeight={14} />; }
+export function Example() { return <EventLanes lanes={[{ id: "agent", label: "Agent", title: "Agent lane", description: "Work performed by the agent", height: 40, bars: "up" }]} events={[{ i: 0, lane: "agent", kind: "tool", shape: "square", label: "Read file", at: "12:00", magnitude: 0.5 }]} spans={[{ lane: "agent", from: 0, to: 0 }]} palette={{ tool: "--color-cat-3" }} linked={new Set([0])} emphasis={new Set([0])} selected={0} overview overviewHeight={14} scrollbar="overview" />; }
 ```
 {% endraw %}

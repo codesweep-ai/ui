@@ -89,6 +89,9 @@ export interface EventLanesProps<K extends string = string> {
   overview?: "auto" | boolean;
   /** Overview height in CSS pixels. Default 40. */
   overviewHeight?: number;
+  /** "overview" hides the lanes' own scrollbar while the overview is shown,
+   *  since dragging or clicking the overview scrolls them. Default "native". */
+  scrollbar?: "native" | "overview";
   ruler?: ReactNode | ((context: EventLanesRulerContext) => ReactNode);
   /** Sticky label for the ruler row. Default: "Index". */
   rulerLabel?: string;
@@ -416,6 +419,7 @@ function EventLanesImpl<K extends string = string>({
   cellWidth: requestedCellWidth = DEFAULT_CELL_WIDTH,
   overview = "auto",
   overviewHeight: requestedOverviewHeight,
+  scrollbar = "native",
   ruler,
   rulerLabel = "Index",
   renderTooltip,
@@ -1001,6 +1005,7 @@ function EventLanesImpl<K extends string = string>({
             aria-activedescendant={activeOptionId}
             aria-disabled={visibleEvents.length === 0 ? "true" : undefined}
             data-event-lanes-scroller=""
+            data-scrollbar={scrollbar === "overview" && showOverview ? "overview" : undefined}
             data-event-count={visibleEvents.length}
             data-span-count={validated.spans.length}
             className="cs-component-event-lanes-scroller"

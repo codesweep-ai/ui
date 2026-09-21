@@ -65,6 +65,17 @@
     width: 100%
 }
 
+/* The overview scrolls the lanes, so a consumer may drop the native bar while
+   it is shown. Wheel, trackpad and keyboard scrolling are unaffected. */
+.cs-component-event-lanes-scroller[data-scrollbar="overview"] {
+    scrollbar-gutter: auto;
+    scrollbar-width: none
+}
+
+.cs-component-event-lanes-scroller[data-scrollbar="overview"]::-webkit-scrollbar {
+    display: none
+}
+
 .cs-component-event-lanes-scroller:focus-visible {
     box-shadow: 0 0 0 .125rem var(--bg), 0 0 0 .25rem var(--color-link);
     outline: 0;

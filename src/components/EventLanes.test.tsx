@@ -498,4 +498,16 @@ describe("bar lanes, lane heights and overview height (CUI-099)", () => {
     fireEvent.pointerDown(canvas, { clientX: x(1), clientY: bounds.top + 35, pointerId: 1 });
     expect(onSelect).toHaveBeenCalledTimes(2);
   });
+
+  it("drops the native scrollbar only while the overview is there to scroll with", () => {
+    const wide = Array.from({ length: 400 }, (_, i): EventLaneEvent<Kind> => ({ i, lane: "main", kind: "tool", shape: "square", label: `E${i}`, at: String(i) }));
+    const { container, rerender } = render(<EventLanes lanes={[lanes[0]]} events={wide} palette={palette} overview scrollbar="overview" />);
+    const scroller = () => container.querySelector("[data-event-lanes-scroller]") as HTMLElement;
+    expect(scroller()).toHaveAttribute("data-scrollbar", "overview");
+    expect(scroller().offsetHeight - scroller().clientHeight).toBeLessThanOrEqual(2);
+    rerender(<EventLanes lanes={[lanes[0]]} events={wide} palette={palette} overview={false} scrollbar="overview" />);
+    expect(scroller()).not.toHaveAttribute("data-scrollbar");
+    rerender(<EventLanes lanes={[lanes[0]]} events={wide} palette={palette} overview />);
+    expect(scroller()).not.toHaveAttribute("data-scrollbar");
+  });
 });
