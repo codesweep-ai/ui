@@ -3,17 +3,23 @@
   "title": "EventLanes draws every mark at one size, so it cannot show how much of something an event carries",
   "type": "improvement",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "repository owner, designing an event strip that shows how long each event took and how long the work waited between turns",
   "opened": "2026-09-21",
-  "resolved": null,
+  "resolved": "2026-09-21",
   "stint": "2026-09-21 event bars",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "5e02f08",
+      "a6a29e2",
+      "53939ad",
+      "40a0af5",
+      "e258061"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run check` passes, with eleven new EventLanes tests, each failing without its change. `npm run visual:compare` compares 114 of 114 captures with no differing pixel and no new axe finding. With the component change alone, all 112 captures that existed before are identical, including both EventLanes baselines.\n\nThe build was served through `npm run registry:npmrevs` and installed into a consuming viewer by version, through the export map. That viewer's type check, its 89 tests, its build and its two-transport parity check all pass."
   },
-  "resolution": null,
+  "resolution": "An event can carry a `magnitude` from 0 to 1 and a `clipped` flag. A lane can draw its events as bars with `bars`, set its own `height` and `barFloor`, and stay out of the overview with `overview: false`. The component gained `overviewHeight`, and `scrollbar=\"overview\"` hides the lanes' scrollbar while the overview is shown. The tooltip is now portalled to the body, so no clipping ancestor cuts it off and it never wraps into a column at the window's edge.\n\nEvery addition is optional, and a timeline that sets none draws exactly as before. The component document and the changelog describe each one.",
   "details": "An `EventLaneEvent` carries a kind, a shape and a few overlays, and no quantity. Every mark is drawn at the size `markSizeFor` gives the cell, so a two-second step and a two-minute one look the same. Colour is already spent on the kind, so a consumer has nowhere to put a magnitude.\n\nThe layout is fixed too. Every lane is 28 pixels high, and the overview is 40, which outweighs a strip of one or two lanes.\n\nThe component should accept an optional magnitude from 0 to 1 on an event. A lane option should draw its events as bars, rising from the lane's floor or hanging from its top. An event past the consumer's ceiling should carry the broken-bar notch. Lane height and overview height should be settable.\n\nEvery addition must be optional and default to today's drawing, so the existing visual baselines stay byte-identical.",
   "notes": [],
   "links": []
