@@ -53,6 +53,8 @@ interface EventLane {
   bars?: "up" | "down";
   /** A bar's length at magnitude 0, in CSS pixels. Default: the mark size. */
   barFloor?: number;
+  /** false leaves this lane out of the overview. Default true. */
+  overview?: boolean;
 }
 
 interface EventLaneEvent<K extends string = string> {
@@ -282,7 +284,7 @@ Pointer hit-testing derives lane from y and global index from x, then looks up t
 
 The overview is a compact lane-preserving map: each lane becomes a miniature row, hidden kinds are absent, emphasis dimming is reflected, and selected/linked positions remain visible. Spans and text labels are omitted at overview scale. A single stroked rectangle shows the visible axis range.
 
-`overviewHeight` sets the overview's height, 40 pixels by default. Its lane bands share whatever height it has, inside the outline's reserved chrome.
+`overviewHeight` sets the overview's height, 40 pixels by default. Its lane bands share whatever height it has, inside the outline's reserved chrome. A lane with `overview: false` is left out, and the lanes that remain share the height between them. A sparse lane drawn in a short overview otherwise leaves every band a line.
 
 With `scrollbar="overview"`, the lanes' native scrollbar is hidden whenever the overview is shown, since the overview scrolls them. A wheel, a trackpad and the keyboard still scroll the lanes. When the overview is not shown the scrollbar returns, so the axis always has a visible way to scroll.
 

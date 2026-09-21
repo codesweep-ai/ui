@@ -510,4 +510,17 @@ describe("bar lanes, lane heights and overview height (CUI-099)", () => {
     rerender(<EventLanes lanes={[lanes[0]]} events={wide} palette={palette} overview />);
     expect(scroller()).not.toHaveAttribute("data-scrollbar");
   });
+  it("leaves a lane out of the overview when asked, giving its height to the rest", () => {
+    const fillRect = vi.spyOn(CanvasRenderingContext2D.prototype, "fillRect");
+    const two: EventLane[] = [{ id: "work", label: "Work" }, { id: "wait", label: "Wait", overview: false }];
+    render(<EventLanes lanes={two} events={[{ i: 0, lane: "work", kind: "tool", shape: "square", label: "Run", at: "0" }, { i: 1, lane: "wait", kind: "message", shape: "square", label: "Idle", at: "1" }]} palette={palette} overview overviewHeight={14} />);
+    const band = overviewLaneGeometry(1, 14);
+    const shared = overviewLaneGeometry(2, 14);
+    const at = (geometry: typeof band, row: number) => fillRect.mock.calls.some(([, y, , height]) => y === geometry.markTop(row) && height === geometry.markHeight);
+    // The work lane takes the whole band, and nothing is drawn where a second
+    // band would have been.
+    expect(at(band, 0)).toBe(true);
+    expect(at(shared, 1)).toBe(false);
+    fillRect.mockRestore();
+  });
 });

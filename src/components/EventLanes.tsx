@@ -39,6 +39,9 @@ export interface EventLane {
   /** A bar's length at magnitude 0, in CSS pixels. Default: the mark size, so
    *  an event with no magnitude reads as the square it would otherwise be. */
   barFloor?: number;
+  /** false leaves this lane out of the overview, and the lanes that remain
+   *  share its height. Default true. */
+  overview?: boolean;
 }
 
 export interface EventLaneEvent<K extends string = string> {
@@ -778,11 +781,14 @@ function EventLanesImpl<K extends string = string>({
     const foreground = styles.getPropertyValue("--fg").trim() || "currentColor";
     const muted = styles.getPropertyValue("--muted").trim() || foreground;
     const link = styles.getPropertyValue("--color-link").trim() || foreground;
-    const overview = overviewLaneGeometry(lanes.length, overviewHeight);
+    // Only the lanes the overview draws divide its height between them.
+    const overviewRows = new Map<string, number>();
+    for (const lane of lanes) if (lane.overview !== false) overviewRows.set(lane.id, overviewRows.size);
+    const overview = overviewLaneGeometry(overviewRows.size, overviewHeight);
     const scale = width / Math.max(axisWidth, 1);
 
     for (const event of visibleEvents) {
-      const row = laneIndex.get(event.lane);
+      const row = overviewRows.get(event.lane);
       if (row == null) continue;
       const isSelected = selected === event.i;
       const isLinked = linked?.has(event.i) ?? false;
