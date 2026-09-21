@@ -38,6 +38,8 @@ import {
   toast,
   type ToastItem,
   Tooltip,
+  type EventLanesView,
+  type EventLanesViewState,
 } from "@codesweep-ai/ui";
 import { CodeBlock } from "@codesweep-ai/ui/code";
 import { MarkdownMinimap } from "@codesweep-ai/ui/minimap";
@@ -66,6 +68,7 @@ import {
   barLanes,
   barPalette,
 } from "../data/eventLanesFixtures";
+import { clock, positionPalette, positionRun } from "../data/eventLanesPositionFixture";
 import { classRecords, type ClassRecord, projectFilesTree, dependenciesTree, explorerTree } from "../data/patternFixtures";
 import { richMarkdownProps } from "../richMarkdown";
 
@@ -350,6 +353,138 @@ const previewToasts: ToastItem[] = [
   { id: "preview-info", variant: "info", message: "Analysis is still running", duration: null, important: false },
 ];
 
+/** Run sizes the demo offers: about 3,000 marks, and ten times that to try
+ *  scale and speed by hand. */
+const RUN_SIZES = [
+  { label: "3,000", steps: 2_600 },
+  { label: "30,000", steps: 26_000 },
+];
+const ZOOM_PRESETS = [
+  { label: "1 h", seconds: 3_600 },
+  { label: "15 min", seconds: 900 },
+  { label: "5 min", seconds: 300 },
+  { label: "1 min", seconds: 60 },
+];
+/** Tick steps in seconds; the ruler takes the first that leaves room for a label. */
+const TICK_STEPS = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1_800, 3_600, 7_200];
+
+function PositionedLanesDemo() {
+  const [size, setSize] = useState(RUN_SIZES[0].steps);
+  const positionedRun = useMemo(() => positionRun({ steps: size }), [size]);
+  const [view, setView] = useState<EventLanesView>({ start: 0, end: positionedRun.duration });
+  const [shown, setShown] = useState<EventLanesViewState | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [selectedSpan, setSelectedSpan] = useState<string | null>(null);
+  const [showWaiting, setShowWaiting] = useState(true);
+  const lanes = useMemo(
+    () => positionedRun.lanes.map((lane) => lane.bars === "down" ? { ...lane, hidden: !showWaiting } : lane),
+    [positionedRun, showWaiting],
+  );
+  const links = useMemo(
+    () => positionedRun.links.map((link) => ({
+      ...link,
+      emphasized: selected != null && (link.from === selected || link.to === selected),
+    })),
+    [positionedRun, selected],
+  );
+  const resize = (steps: number) => {
+    const run = positionRun({ steps });
+    setSize(steps);
+    setSelected(null);
+    setSelectedSpan(null);
+    setView({ start: 0, end: run.duration });
+  };
+  const zoomTo = (seconds: number) => {
+    const centre = shown ? (shown.start + shown.end) / 2 : positionedRun.duration / 2;
+    setView({ start: centre - seconds / 2, end: centre + seconds / 2 });
+  };
+
+  return (
+    <div data-event-lanes-fixture="positioned" className="cs-preview-event-lanes-fixture">
+      <div className="cs-preview-event-lanes-heading">
+        <h3>Positioned · a synthetic run of {positionedRun.events.length.toLocaleString("en")} marks on a time axis</h3>
+        <output data-event-lanes-view="positioned">
+          {shown ? `Showing ${clock(shown.start)} to ${clock(shown.end)}` : "Showing the whole run"}
+        </output>
+      </div>
+      <div className="cs-preview-event-lanes-controls">
+        <div className="cs-preview-event-lanes-zoom" role="group" aria-label="Zoom">
+          <Button size="sm" variant="ghost" onClick={() => setView({ start: 0, end: positionedRun.duration })}>Whole run</Button>
+          {ZOOM_PRESETS.map((preset) => (
+            <Button key={preset.label} size="sm" variant="ghost" onClick={() => zoomTo(preset.seconds)}>{preset.label}</Button>
+          ))}
+        </div>
+        <div className="cs-preview-event-lanes-zoom" role="group" aria-label="Run size">
+          {RUN_SIZES.map((option) => (
+            <Button
+              key={option.steps}
+              size="sm"
+              variant={size === option.steps ? "secondary" : "ghost"}
+              aria-pressed={size === option.steps}
+              onClick={() => resize(option.steps)}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+        <Button
+          size="sm"
+          variant={showWaiting ? "secondary" : "ghost"}
+          aria-pressed={showWaiting}
+          onClick={() => setShowWaiting((value) => !value)}
+        >
+          Show waiting
+        </Button>
+        <output data-event-lanes-selection="positioned">
+          {selectedSpan ? `Selected ${selectedSpan}` : selected != null ? `Selected index: ${selected}` : "Nothing selected"}
+        </output>
+      </div>
+      <EventLanes
+        id="event-lanes-positioned"
+        aria-label="Positioned event timeline"
+        layout="position"
+        lanes={lanes}
+        events={positionedRun.events}
+        spans={positionedRun.spans}
+        links={links}
+        palette={positionPalette}
+        selected={selected}
+        selectedSpan={selectedSpan}
+        onSelect={(event) => {
+          setSelected(event.i);
+          setSelectedSpan(null);
+        }}
+        onSelectSpan={(span) => {
+          setSelectedSpan(span.id ?? null);
+          setSelected(null);
+        }}
+        view={view}
+        onViewChange={setShown}
+        overview
+        overviewContent="spans"
+        cellWidth={10}
+        rulerLabel="Elapsed"
+        ruler={({ position }) => {
+          if (!position) return null;
+          const step = TICK_STEPS.find((candidate) => candidate * position.scale >= 72) ?? 7_200;
+          // A label is centred on its tick, so a tick too near either edge
+          // would be cut in half.
+          const margin = 32 / position.scale;
+          const first = Math.ceil((position.visibleStart + margin) / step) * step;
+          const ticks = [];
+          for (let at = first; at <= position.visibleEnd - margin; at += step) ticks.push(at);
+          return (
+            <div className="cs-preview-event-lanes-ruler">
+              {ticks.map((at) => <span key={at} style={{ left: position.xForPosition(at) }}>{clock(at)}</span>)}
+            </div>
+          );
+        }}
+        renderTooltip={(event) => <span>{event.label} · {event.at}</span>}
+      />
+    </div>
+  );
+}
+
 function EventLanesDemo() {
   const [denseSelected, setTracerSelected] = useState(0);
   const [barSelected, setBarSelected] = useState(0);
@@ -443,6 +578,8 @@ function EventLanesDemo() {
           cellWidth={13}
         />
       </div>
+
+      <PositionedLanesDemo />
     </div>
   );
 }

@@ -72,7 +72,7 @@ const PATTERNS = [
 // The coverage check below reads this, so a new component either gets captured
 // or gets a reason written here. Neither happens by forgetting.
 const UNCAPTURED = {
-  EventLanes: "captured through its two fixtures above, which pin the geometry",
+  EventLanes: "captured through its fixtures above, which pin the geometry",
   Chip: "no section of its own; it renders inside other sections",
   Legend: "same",
   RadioGroup: "same",
@@ -461,6 +461,19 @@ async function captureTheme(page, theme, outputDir) {
   await bubble.waitFor();
   await screenshot(bubble, path.join(outputDir, theme, "tooltip.png"));
   await tooltipPage.close();
+
+  // The positioned EventLanes fixture is photographed on a page of its own,
+  // for the same reason. Taken on the shared page, before the component
+  // captures, it changed how Card, CardGroup and ChartFrame rasterised their
+  // rounded corners by a few dozen pixels, with nothing on the page moving.
+  const positionedPage = await page.context().newPage();
+  await positionedPage.goto(`${PREVIEW_URL}&theme=${theme}`, { waitUntil: "networkidle" });
+  await positionedPage.locator('[data-component="AppShell"]').waitFor();
+  await screenshot(
+    section(positionedPage, "EventLanes").locator('[data-event-lanes-fixture="positioned"]'),
+    path.join(outputDir, theme, "event-lanes-positioned.png"),
+  );
+  await positionedPage.close();
 
   const axe = await new AxeBuilder({ page }).analyze();
   await writeFile(

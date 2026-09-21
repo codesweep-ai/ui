@@ -1292,6 +1292,11 @@ html, body { height: 100%; overflow: hidden; }
     justify-content: space-between
 }
 
+.cs-preview-event-lanes-zoom {
+    display: flex;
+    gap: var(--space-1)
+}
+
 .cs-preview-event-lanes-heading h3 {
     font-size: var(--font-size-md);
     margin: 0
