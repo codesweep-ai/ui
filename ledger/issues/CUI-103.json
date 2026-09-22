@@ -14,7 +14,7 @@
     "verified": null
   },
   "resolution": null,
-  "details": "A timeline of several lanes per member reads as one band when the member's rows share a shade, alternating from member to member, with a gap between members. The component offers neither.\n\nThe consuming page paints a vertical gradient behind the lanes and the gutter, with a stop at each edge of each rendered label row, and inserts empty 8-pixel lanes as gaps. The gradient has to be re-measured whenever the rows change, and a lane whose height the component silently replaced misaligned every band beneath it.\n\nA lane should be able to carry a shade token, drawn from the gutter to the end of the axis so the band is continuous through any space the page keeps before the axis, and a space before it. The selected member's band in the accent shade is the same option with another token.",
+  "details": "A member's rows read as one band when they share a shade, alternating from one to the next, with a gap between neighbours. The component offers neither.\n\nThe consuming page paints a vertical gradient behind the lanes and the gutter, with a stop at each edge of each rendered label row. The gaps are empty 8-pixel lanes the page inserts between members. The gradient has to be re-measured whenever the rows change, and a lane whose height the component silently replaced misaligned every band beneath it.\n\nA lane should be able to carry a shade token and a space before it. The band should run from the gutter to the end of the axis, so it stays continuous through any space the page keeps before the axis. The selected member's band in the accent shade is the same option with another token.",
   "notes": [],
   "links": [
     "CUI-104"

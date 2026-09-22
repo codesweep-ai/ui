@@ -14,7 +14,7 @@
     "verified": null
   },
   "resolution": null,
-  "details": "A press on a mark focuses the listbox by script. Chrome then matches `:focus-visible` on it, and the ring stays until something else takes focus, though the interaction was a pointer.\n\nThe component already knows the modality. It tracks keyboard focus apart from focus in general, so that a click does not pin the narration tooltip. The ring should follow the same knowledge: shown for a keyboard focus or a keyboard move, and not for a pointer. The consuming page tracks the last interaction on a wrapper and hides the ring after a pointer.",
+  "details": "A press on a mark focuses the listbox by script. Chrome then matches `:focus-visible` on it, and the ring stays until something else takes focus, though the interaction was a pointer.\n\nThe component already tracks the modality, keeping keyboard focus apart from focus in general so that a click does not pin the narration tooltip. The ring should follow the same knowledge: shown for a keyboard focus or a keyboard move, and not for a pointer. The consuming page tracks the last interaction on a wrapper and hides the ring after a pointer.",
   "notes": [],
   "links": []
 }

@@ -2,14 +2,41 @@
   "recommendedBy": "session agent, from a consuming timeline page's findings, in the order that page needs them",
   "updated": "2026-09-22",
   "items": [
-    { "id": "CUI-101", "why": "The whole-run view cuts off its last mark; every positioned consumer meets it." },
-    { "id": "CUI-102", "why": "One option retires a page's reach into the component's class names." },
-    { "id": "CUI-103", "why": "Bands and gaps retire a measured gradient and the empty lanes standing in for gaps." },
-    { "id": "CUI-104", "why": "A silent fallback misaligned a page; a warning is cheap." },
-    { "id": "CUI-105", "why": "Padding on the scroller misplaces the overview's zero." },
-    { "id": "CUI-106", "why": "A preset-only page needs to turn the wheel zoom off." },
-    { "id": "CUI-107", "why": "A click should not ring the listbox." },
-    { "id": "CUI-108", "why": "Waiting needs a hatch, and a failed step needs its marker in the error colour." },
-    { "id": "CUI-109", "why": "The cross should fit the column it marks." }
+    {
+      "id": "CUI-101",
+      "why": "The whole-run view cuts off its last mark; every positioned consumer meets it."
+    },
+    {
+      "id": "CUI-102",
+      "why": "One option retires a page's reach into the component's class names."
+    },
+    {
+      "id": "CUI-103",
+      "why": "Bands and gaps retire a measured gradient and the empty lanes standing in for gaps."
+    },
+    {
+      "id": "CUI-104",
+      "why": "A silent fallback misaligned a page; a warning is cheap."
+    },
+    {
+      "id": "CUI-105",
+      "why": "Padding on the scroller puts the overview's zero in the wrong place."
+    },
+    {
+      "id": "CUI-106",
+      "why": "A preset-only page needs to turn the wheel zoom off."
+    },
+    {
+      "id": "CUI-107",
+      "why": "A click should not ring the listbox."
+    },
+    {
+      "id": "CUI-108",
+      "why": "Waiting needs a hatch, and a failed step needs its marker in the error colour."
+    },
+    {
+      "id": "CUI-109",
+      "why": "The cross should fit the column it marks."
+    }
   ]
 }
