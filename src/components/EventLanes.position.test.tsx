@@ -294,6 +294,20 @@ describe("EventLanes positioned layout", () => {
     expect(listbox.scrollLeft).toBeGreaterThan(0);
   });
 
+  it("leaves the plain wheel to the page when wheel scroll is off, and still takes a swipe", async () => {
+    renderPositioned({ view: { start: 0, end: 10 }, wheelScroll: false });
+    await frame();
+    const listbox = screen.getByRole("listbox");
+    const vertical = new WheelEvent("wheel", { deltaY: 60, bubbles: true, cancelable: true });
+    listbox.dispatchEvent(vertical);
+    expect(vertical.defaultPrevented).toBe(false);
+    expect(listbox.scrollLeft).toBe(0);
+    // A horizontal wheel is the browser's own sideways scroll, and is left to it as before.
+    const sideways = new WheelEvent("wheel", { deltaX: 60, deltaY: 0, bubbles: true, cancelable: true });
+    listbox.dispatchEvent(sideways);
+    expect(sideways.defaultPrevented).toBe(false);
+  });
+
   it("reports a click on a span's box, and a click on a mark as a mark", async () => {
     const onSelect = vi.fn();
     const onSelectSpan = vi.fn();

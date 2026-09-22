@@ -187,6 +187,10 @@ export interface EventLanesProps<K extends string = string> {
    *  browser, so a page can zoom by preset alone. The plain wheel still
    *  scrolls. Default true. */
   wheelZoom?: boolean;
+  /** Positioned layout: false leaves a plain vertical wheel to the page, so a
+   *  tall timeline in a long document does not catch the reader's scroll. A
+   *  horizontal wheel or swipe still scrolls the axis. Default true. */
+  wheelScroll?: boolean;
   /** Lines joining pairs of marks, drawn beneath the marks. */
   links?: readonly EventLaneLink[];
   /** Positioned layout: the `id` of the span drawn as selected. */
@@ -707,6 +711,7 @@ function EventLanesImpl<K extends string = string>({
   view,
   onViewChange,
   wheelZoom = true,
+  wheelScroll = true,
   links = EMPTY_LINKS,
   selectedSpan = null,
   onSelectSpan,
@@ -1035,7 +1040,7 @@ function EventLanesImpl<K extends string = string>({
         setRequestedScale(next);
         return;
       }
-      if (wheel.shiftKey || Math.abs(wheel.deltaY) <= Math.abs(wheel.deltaX)) return;
+      if (!wheelScroll || wheel.shiftKey || Math.abs(wheel.deltaY) <= Math.abs(wheel.deltaX)) return;
       // The vertical wheel scrolls the axis. Where the axis cannot move any
       // further the wheel is let through, so the page can still scroll past
       // the timeline. Whether it moved is read back rather than predicted:
@@ -1046,7 +1051,7 @@ function EventLanesImpl<K extends string = string>({
     };
     scroller.addEventListener("wheel", handleWheel, { passive: false });
     return () => scroller.removeEventListener("wheel", handleWheel);
-  }, [positioned, wheelZoom]);
+  }, [positioned, wheelScroll, wheelZoom]);
 
   // A requested view is applied each time the page passes a new one, once the
   // viewport has a width to fit it to. The range lands between the boundary

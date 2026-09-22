@@ -191,6 +191,8 @@ interface EventLanesProps<K extends string = string> {
   onViewChange?: (view: EventLanesViewState) => void;
   /** Positioned layout: false leaves the Ctrl or Cmd wheel to the browser. Default true. */
   wheelZoom?: boolean;
+  /** Positioned layout: false leaves a plain vertical wheel to the page. Default true. */
+  wheelScroll?: boolean;
   /** Lines joining pairs of marks, beneath the marks. */
   links?: readonly EventLaneLink[];
   /** Positioned layout: the id of the span drawn as selected. */
@@ -424,7 +426,7 @@ Until something asks for a scale, the whole extent fits the viewport between the
 In the positioned layout only:
 
 - Ctrl or Cmd with the wheel zooms about the pointer, and so does a trackpad pinch, which the browser delivers as a wheel event with `ctrlKey`. `wheelZoom={false}` leaves both to the browser, for a page that zooms by preset alone so that every view it shows is one it can name.
-- The plain vertical wheel scrolls the axis sideways. Where the axis cannot move any further, the wheel is left to scroll the page.
+- The plain vertical wheel scrolls the axis sideways. Where the axis cannot move any further, the wheel is left to scroll the page. `wheelScroll={false}` leaves it to the page always, for a tall timeline inside a long document, where a reader scrolling down should not find the lanes sliding sideways instead.
 - A horizontal wheel or trackpad swipe scrolls the axis as it always has.
 
 `selected` still reveals the selected mark, scrolling the smallest distance that shows it whole.

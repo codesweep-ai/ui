@@ -118,6 +118,8 @@ holds today.
 
 ### Added
 
+- `EventLanes` takes `wheelScroll={false}` to leave a plain vertical wheel to
+  the page. A horizontal wheel or swipe still scrolls the axis.
 - `EventLanes` draws a `hatched` shape: a diagonal token-coloured hatch on the
   background, for a band of waiting that should read as absence rather than as
   work. An event's `markerToken` colours its marker, which used to be the
