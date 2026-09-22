@@ -96,10 +96,17 @@
     display: none
 }
 
+/* The ring shows for a keyboard focus and not for a pointer's: a press focuses
+   the scroller by script, which Chrome matches with :focus-visible, so the
+   component says which it was. */
 .cs-component-event-lanes-scroller:focus-visible {
     box-shadow: 0 0 0 .125rem var(--bg), 0 0 0 .25rem var(--color-link);
     outline: 0;
     z-index: 3
+}
+
+.cs-component-event-lanes-scroller[data-focus-source="pointer"]:focus-visible {
+    box-shadow: none
 }
 
 .cs-component-event-lanes-axis {

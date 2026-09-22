@@ -54,6 +54,10 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` no longer rings its listbox after a pointer press. A press
+  focuses the listbox by script, which Chrome matched with `:focus-visible`, so
+  the ring stayed until something else took focus. The ring now shows for a
+  keyboard focus, and again after any key press.
 - `EventLanes` reads padding on its scroller. The viewport used to be the
   scroller's `clientWidth`, padding included, so a padded scroller held an axis
   wider than its content box, which scrolled by the padding and let the canvas

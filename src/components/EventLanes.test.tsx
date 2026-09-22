@@ -262,6 +262,31 @@ describe("EventLanes", () => {
     expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   });
 
+  it("hides the focus ring after a pointer press, and shows it again for a key", () => {
+    const { container } = render(
+      <EventLanes lanes={[lanes[0]]} events={[events[0], events[3]]} palette={palette} onSelect={() => {}} />,
+    );
+    const canvas = container.querySelector("[data-event-lanes-canvas]")!;
+    const scroller = container.querySelector("[data-event-lanes-scroller]") as HTMLElement;
+    const bounds = canvas.getBoundingClientRect();
+    // Focus reached by keyboard rings.
+    scroller.focus();
+    expect(scroller.hasAttribute("data-focus-source")).toBe(false);
+    expect(getComputedStyle(scroller).boxShadow).not.toBe("none");
+    scroller.blur();
+
+    // A press on a mark focuses the scroller by script, and must not ring it.
+    fireEvent.pointerDown(canvas, { clientX: bounds.left + axisPaddingFor(10) + 5, clientY: bounds.top + 14, pointerId: 1 });
+    expect(scroller).toHaveFocus();
+    expect(scroller.getAttribute("data-focus-source")).toBe("pointer");
+    expect(getComputedStyle(scroller).boxShadow).toBe("none");
+
+    // The next key press is a keyboard interaction again.
+    fireEvent.keyDown(scroller, { key: "ArrowRight" });
+    expect(scroller.hasAttribute("data-focus-source")).toBe(false);
+    expect(getComputedStyle(scroller).boxShadow).not.toBe("none");
+  });
+
   // Reported as "it would be nice if an escape made it go away". Walking the
   // strip by key leaves the tooltip up deliberately — that is the keyboard
   // user's position readout — but before this there was no way to dismiss it

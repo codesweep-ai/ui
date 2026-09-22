@@ -698,6 +698,11 @@ function EventLanesImpl<K extends string = string>({
   // through :focus-visible so the behaviour is the same under jsdom.
   const [keyboardFocus, setKeyboardFocus] = useState(false);
   const pointerFocusRef = useRef(false);
+  // Whether the focus the scroller holds came from a pointer. A press focuses
+  // it by script, which Chrome then matches with :focus-visible, so the ring
+  // stayed after every click. The stylesheet hides it while this is set; the
+  // next key press clears it, and the ring returns.
+  const [pointerFocus, setPointerFocus] = useState(false);
   // Any press on the strip switches the modality to pointer. It cannot be left
   // to onFocus: a press on an already-focused scroller fires no focus event, so
   // a keyboard walk followed by a click would keep narrating the active event
@@ -705,6 +710,7 @@ function EventLanesImpl<K extends string = string>({
   const notePointerInteraction = useCallback(() => {
     pointerFocusRef.current = true;
     setKeyboardFocus(false);
+    setPointerFocus(true);
   }, []);
   const [themeRevision, setThemeRevision] = useState(0);
   const lastHoverRef = useRef<number | null>(null);
@@ -1648,6 +1654,7 @@ function EventLanesImpl<K extends string = string>({
   };
 
   const handleKeyDown = (keyboardEvent: KeyboardEvent<HTMLDivElement>) => {
+    setPointerFocus(false);
     if (visibleEvents.length === 0) return;
     if (positioned) {
       const key = keyboardEvent.key;
@@ -1940,16 +1947,19 @@ function EventLanesImpl<K extends string = string>({
             data-event-count={visibleEvents.length}
             data-span-count={validated.spans.length}
             data-layout={positioned ? "position" : undefined}
+            data-focus-source={pointerFocus ? "pointer" : undefined}
             className="cs-component-event-lanes-scroller"
             onKeyDown={handleKeyDown}
             onPointerDown={notePointerInteraction}
             onFocus={() => {
               setKeyboardFocus(!pointerFocusRef.current);
+              setPointerFocus(pointerFocusRef.current);
               pointerFocusRef.current = false;
             }}
             onBlur={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) {
                 setKeyboardFocus(false);
+                setPointerFocus(false);
                 pointerFocusRef.current = false;
               }
             }}

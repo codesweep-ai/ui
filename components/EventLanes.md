@@ -326,7 +326,7 @@ An event's optional `halo` is a permanent ring resolved from its token name. It 
 
 A linked event uses the same `var(--bg)` casing with a `var(--color-link)` outer ring. If an event is both selected and linked, the selected `--fg` halo wins and a small `--color-link` center mark preserves linked state.
 
-The listbox scroller has a persistent, visible `:focus-visible` ring using `var(--color-link)` with `var(--bg)` separation. Canvas focus is never communicated by color or opacity alone.
+The listbox scroller has a persistent, visible `:focus-visible` ring using `var(--color-link)` with `var(--bg)` separation. Canvas focus is never communicated by color or opacity alone. The ring shows for a focus that arrived by keyboard, or after any key press, and not for one a pointer press gave the scroller by script, which the browser would otherwise ring as well. While the focus is a pointer's the scroller carries `data-focus-source="pointer"`.
 
 ### Ruler
 
@@ -568,7 +568,7 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - Sticky labels container: `data-event-lanes-labels`.
 - Per-lane visible label: `data-event-lane-label="{lane.id}"`, plus `data-event-lane-title` and `data-event-lane-description` when those optional metadata fields are supplied.
 - Bands: one `data-event-lanes-band="{token}"` element per band, and `data-event-lanes-shaded` on the root while there is any.
-- Listbox scroller: the inner element carries `data-event-lanes-scroller`, `role="listbox"`, `tabIndex={0}`, `aria-label`, `aria-activedescendant`, `data-event-count`, and `data-span-count`. It is the horizontal scroll owner; read `scrollLeft` and `clientWidth` or observe its scroll/resize events through this hook. It carries `data-scrollbar="overview"` while `scrollbar="overview"` has hidden its scrollbar. The sticky gutter, ruler, and overview are outside its accessible subtree.
+- Listbox scroller: the inner element carries `data-event-lanes-scroller`, `role="listbox"`, `tabIndex={0}`, `aria-label`, `aria-activedescendant`, `data-event-count`, and `data-span-count`. It carries `data-focus-source="pointer"` while its focus came from a pointer press. It is the horizontal scroll owner; read `scrollLeft` and `clientWidth` or observe its scroll/resize events through this hook. It carries `data-scrollbar="overview"` while `scrollbar="overview"` has hidden its scrollbar. The sticky gutter, ruler, and overview are outside its accessible subtree.
 - Main drawing surface: `data-event-lanes-canvas`, `aria-hidden="true"`.
 - Overview caption: `data-event-lanes-overview-label`. Overview canvas: `data-event-lanes-overview`, `aria-hidden="true"`. The root carries `data-overview-placement="above"` when the overview sits above the lanes.
 - DOM census: `data-event-lanes-census`; every visible `role="option"` carries `data-event-index`, `data-event-kind`, and `data-event-lane`, with `data-event-linked` and `data-event-emphasized` following the stable census contract above.
