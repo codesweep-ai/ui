@@ -125,6 +125,8 @@ describe("EventLanes positioned layout", () => {
           lanes={[{ id: "c", label: "C" }]}
           events={[
             { i: 0, lane: "c", kind: "work", shape: "circle", label: "Opens", at: "20", position: 20, anchor: "end" },
+            // Close behind it: the gap it must not run into is the one before it, not this one.
+            { i: 2, lane: "c", kind: "work", shape: "square", label: "Soon", at: "20.3", position: 20.3, extent: 0.3 },
             { i: 1, lane: "c", kind: "work", shape: "square", label: "Later", at: "100", position: 100 },
           ]}
           palette={palette}
@@ -140,7 +142,8 @@ describe("EventLanes positioned layout", () => {
     const latest = contexts[contexts.length - 1];
     const size = markSizeFor(10);
     const at = latest.position!.xForPosition(20);
-    // Its centre is half a mark left of its moment, not right of it.
+    // Its centre is half a mark left of its moment, not right of it, and the
+    // mark close behind it does not narrow it.
     expect(latest.xForIndex(0)).toBeCloseTo(at - size / 2, 6);
     // The axis keeps a mark size before the first position, so a mark
     // anchored at its end at the origin is not clipped: its left edge is

@@ -854,7 +854,7 @@ function EventLanesImpl<K extends string = string>({
       origin = Math.min(origin, span.from);
       finish = Math.max(finish, span.trail ?? span.to);
     }
-    if (!Number.isFinite(origin)) return { origin: 0, finish: 0, empty: true, next: new Map<number, number>(), smallestGap: undefined };
+    if (!Number.isFinite(origin)) return { origin: 0, finish: 0, empty: true, next: new Map<number, number>(), previous: new Map<number, number>(), smallestGap: undefined };
     return { origin, finish, empty: false, ...nextPositions(timelines.values()) };
   }, [laneById, positioned, timelineOf, validated.events, validated.spans]);
 
@@ -912,14 +912,17 @@ function EventLanesImpl<K extends string = string>({
     (position: number) => xForPosition(position, origin, scale, leadingPadding),
     [leadingPadding, origin, scale],
   );
+  // A mark reaches to the next mark in its run, or, anchored at its end,
+  // back to the previous one: the gap on the side it draws into.
   const widthOf = useCallback(
-    (event: EventLaneEvent<K>) => markWidth(
-      event.position as number,
-      positionModel?.next.get(event.i),
-      event.extent,
-      scale,
-      markSize,
-    ),
+    (event: EventLaneEvent<K>) => {
+      const position = event.position as number;
+      if (event.anchor === "end") {
+        const previous = positionModel?.previous.get(event.i);
+        return markWidth(previous ?? position, previous === undefined ? undefined : position, event.extent, scale, markSize);
+      }
+      return markWidth(position, positionModel?.next.get(event.i), event.extent, scale, markSize);
+    },
     [markSize, positionModel, scale],
   );
   // Where a mark's left edge is in the scrolling content: at its position, or

@@ -126,20 +126,23 @@ export interface TimelineMark {
   position: number;
 }
 
-/** Each mark's next position in its timeline, keyed by index. Several lanes can
- *  form one timeline, so the order is taken across all of them: work drawn in
- *  one lane never stretches across waiting drawn in another. Marks sharing a
- *  position have no gap and draw as hairlines. */
+/** Each mark's next and previous position in its timeline, keyed by index.
+ *  Several lanes can form one timeline, so the order is taken across all of
+ *  them: work drawn in one lane never stretches across waiting drawn in
+ *  another. Marks sharing a position have no gap and draw as hairlines. A
+ *  mark anchored at its end reaches left, so its width reads `previous`. */
 export function nextPositions(timelines: Iterable<readonly TimelineMark[]>) {
   const next = new Map<number, number>();
+  const previous = new Map<number, number>();
   let smallestGap: number | undefined;
   for (const marks of timelines) {
     const ordered = [...marks].sort((a, b) => a.position - b.position || a.i - b.i);
     for (let index = 0; index + 1 < ordered.length; index += 1) {
       const gap = ordered[index + 1].position - ordered[index].position;
       next.set(ordered[index].i, ordered[index + 1].position);
+      previous.set(ordered[index + 1].i, ordered[index].position);
       if (gap > 0 && (smallestGap === undefined || gap < smallestGap)) smallestGap = gap;
     }
   }
-  return { next, smallestGap };
+  return { next, previous, smallestGap };
 }
