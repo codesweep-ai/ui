@@ -3,17 +3,19 @@
   "title": "A positioned mark at a box's start lands inside the box, over its label",
   "type": "improvement",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "repository owner, reading a consuming page at the one-hour zoom: \"the opening one ... gets swallowed up\"",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 end anchor",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "2f00fea"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that draws a mark anchored at its end fails on the parent commit and passes here. The mark's centre is half a mark size left of its position, and a press there selects it. `npm run ci` passes on 2f00fea with every gate run, and the visual gate passes 116 of 116 captures with no differing pixel."
   },
-  "resolution": null,
+  "resolution": "`anchor: \"end\"` on a positioned event draws the mark to the left of its position. The hit test, the tooltip, the ruler's centre, the overview and the reveal on selection all follow. The default is unchanged.",
   "details": "A positioned mark begins at its position and extends right. A consuming page draws each dispatch as a box from its opening to its reply. The opening and the reply are marks on the row the box's label sits in. The reply mark begins where the box ends, so it sits just outside. The opening mark begins where the box begins, so it sits just inside, on top of the label, and reads as swallowed.\n\nA mark should be able to end at its position instead, so an opening sits just before its box as a reply sits just after.",
   "notes": [],
   "links": [
