@@ -1,0 +1,20 @@
+{
+  "id": "CUI-117",
+  "title": "The segmented control's active option is invisible on a dark card",
+  "type": "defect",
+  "severity": "med",
+  "status": "in-progress",
+  "foundBy": "repository owner, reading a consuming page in dark mode: \"in dark mode, it's very hard to see what's selected\"",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "2026-09-22 selection legibility",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "The active option is drawn as a raised card: the card colour with a small shadow. On a dark card that colour is the card's own, and the shadow is black on near-black, so the only difference from the other options is the text weight. In light mode the white option on the grey track reads well, which is why it was not noticed.",
+  "notes": [],
+  "links": []
+}

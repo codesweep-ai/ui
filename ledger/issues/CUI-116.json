@@ -1,0 +1,20 @@
+{
+  "id": "CUI-116",
+  "title": "A selected mark's halo is painted under the mark beside it",
+  "type": "defect",
+  "severity": "low",
+  "status": "in-progress",
+  "foundBy": "repository owner, reading a consuming page: \"when selecting a circle, it gets cut off on the top and the rhs side ... on the rhs because the next circle covers it\"",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "2026-09-22 selection legibility",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "EventLanes paints marks in index order, in both layouts, and each mark paints its own halos first. A mark selected next to a close neighbour therefore has the right part of its halo covered by the neighbour, and the ring reads as cut off. On a consuming page a row of log claims spread twelve pixels apart showed it on every selection.",
+  "notes": [],
+  "links": []
+}
