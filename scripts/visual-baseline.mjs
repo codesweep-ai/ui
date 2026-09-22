@@ -11,7 +11,11 @@ import { MAX_DIFF_PIXELS, MAX_DIFF_RATIO, PIXEL_THRESHOLD, countDifferingPixels 
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const BASELINE_DIR = path.join(ROOT, "visual-baseline");
-const DIFF_DIR = path.join(ROOT, "visual-diff");
+// Each compare writes its failures into a directory of its own, and none deletes
+// another's. The run that confirms a difference is the next one, and when every
+// run began by clearing this directory, the confirming run destroyed the images
+// of the run it was confirming. `rm -rf visual-diff` clears them by hand.
+const DIFF_ROOT = path.join(ROOT, "visual-diff");
 const PREVIEW_URL = "http://127.0.0.1:4173/?page=components&brand=codesweep";
 const PATTERN_URL = "http://127.0.0.1:4173/?page=patterns&brand=codesweep";
 // An unset CHROME_BIN used to mean "whatever chromium playwright bundles",
@@ -580,8 +584,8 @@ async function readAxe(directory, theme) {
   return JSON.parse(await readFile(path.join(directory, `axe-${theme}.json`), "utf8"));
 }
 
-async function writeFailure(relative, expected, actual) {
-  const target = path.join(DIFF_DIR, relative).replace(/\.png$/, "");
+async function writeFailure(diffDir, relative, expected, actual) {
+  const target = path.join(diffDir, relative).replace(/\.png$/, "");
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(`${target}-current.png`, PNG.sync.write(actual));
   if (expected.width !== actual.width || expected.height !== actual.height) return;
@@ -594,7 +598,7 @@ async function compare() {
   const currentDir = await mkdtemp(path.join(tmpdir(), "cs-ui-visual-"));
   try {
     const summaries = await capture(currentDir);
-    await rm(DIFF_DIR, { recursive: true, force: true });
+    const diffDir = path.join(DIFF_ROOT, new Date().toISOString().replace(/[-:]|\.\d+/g, ""));
     const baselineFiles = await listPngs(BASELINE_DIR);
     const currentFiles = await listPngs(currentDir);
     if (JSON.stringify(baselineFiles) !== JSON.stringify(currentFiles)) {
@@ -609,7 +613,7 @@ async function compare() {
       if (expected.width !== actual.width || expected.height !== actual.height) {
         failed += 1;
         console.error(`FAIL ${relative}: ${expected.width}x${expected.height} != ${actual.width}x${actual.height}`);
-        await writeFailure(relative, expected, actual);
+        await writeFailure(diffDir, relative, expected, actual);
         continue;
       }
       const count = countDifferingPixels(expected, actual);
@@ -619,7 +623,7 @@ async function compare() {
         failed += 1;
         const why = MAX_DIFF_PIXELS === 0 && MAX_DIFF_RATIO === 0 ? "" : ` — over the ${MAX_DIFF_PIXELS} pixel floor`;
         console.error(`FAIL ${relative}: ${count} pixels (${(ratio * 100).toFixed(4)}%)${why}`);
-        await writeFailure(relative, expected, actual);
+        await writeFailure(diffDir, relative, expected, actual);
       }
     }
     let axeFailed = 0;
@@ -639,7 +643,7 @@ async function compare() {
     }
     console.log(`Axe compare: ${axeFailed} rule(s) matched more nodes than the baseline.`);
     if (failed > 0) {
-      console.log(`What rendered, and where it differs, is in ${path.relative(ROOT, DIFF_DIR)}/.`);
+      console.log(`What rendered, and where it differs, is in ${path.relative(ROOT, diffDir)}/.`);
     }
     if (failed > 0 || axeFailed > 0) process.exitCode = 1;
   } finally {

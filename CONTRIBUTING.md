@@ -111,6 +111,11 @@ It compares the axe report as well as the pixels. A rule that matches more nodes
 than the baseline fails the run, whether it sits under `violations` or under
 `incomplete`, so neither total can drift up unnoticed.
 
+A failing run writes what rendered, and where it differs, to a directory of its
+own under `visual-diff/`, and deletes no earlier run's. Rerun a failure before
+believing it: a difference that does not reproduce is noise, and nothing to
+approve.
+
 When a visual change is intended and reviewed, `npm run visual:capture` records a
 new baseline. Never run it to make a failing comparison pass.
 
