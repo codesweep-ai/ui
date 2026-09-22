@@ -13,7 +13,7 @@
       "cc02010"
     ],
     "integrated": [],
-    "verified": "The browser test that sizes a lane's marks by its own gaps fails on the parent commit and passes here. A protocol lane with `widthBy: \"lane\"` whose next mark in the timeline is a fifth of a unit away, a sliver at the fit, draws its first mark at the mark size, and the span on the timeline still names it. `npm run ci` passes on cc02010 with every gate run, and the visual gate passes 116 of 116 captures with no differing pixel."
+    "verified": "The browser test that sizes a lane's marks by its own gaps fails on the parent commit and passes here. The test gives a protocol lane `widthBy: \"lane\"` and puts the timeline's next mark a fifth of a unit away, a sliver at the fit. The first mark still draws at full size, and the span on the timeline still names it. `npm run ci` passes on cc02010 with every gate run, and the visual gate passes 116 of 116 captures with no differing pixel."
   },
   "resolution": "`widthBy: \"lane\"` on a lane measures its marks against the next mark in that lane alone, for widths only. The timeline still boxes and walks it.",
   "details": "In the positioned layout a mark is as wide as the gap to the next mark anywhere in its timeline. A consuming page keeps each member as one timeline of a protocol row and several step rows, so a box can frame them all. Every open and reply mark on the protocol row then drew one pixel wide, measured in headless Chromium, because a step follows each within seconds. With the step rows off the same marks drew nine pixels wide.\n\nA lane should be able to measure its marks against the next mark in that lane alone, while staying in its timeline for the box and the arrow keys.",
