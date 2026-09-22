@@ -897,17 +897,20 @@ function EventLanesImpl<K extends string = string>({
   const extentUnits = positionModel ? positionModel.finish - positionModel.origin : 0;
   // A positioned mark begins at its position and the last one in a timeline
   // draws a mark size to the right of it, so the axis keeps that much more
-  // room after the last position than before the first.
+  // room after the last position than before the first. A mark anchored at
+  // its end draws to the left instead, so when there is one the axis keeps
+  // a mark size before the first position too.
   const trailingPadding = axisPadding + markSize;
+  const leadingPadding = axisPadding + (positioned && validated.events.some((event) => event.anchor === "end") ? markSize : 0);
   const limits = positionModel
-    ? scaleLimits(extentUnits, viewportWidth, axisPadding + trailingPadding, positionModel.smallestGap, markSize)
+    ? scaleLimits(extentUnits, viewportWidth, leadingPadding + trailingPadding, positionModel.smallestGap, markSize)
     : null;
   // Until a page or a zoom asks for a scale, the whole extent fits.
   const scale = limits ? clampScale(requestedScale ?? limits.min, limits) : 1;
   const origin = positionModel?.origin ?? 0;
   const xOf = useCallback(
-    (position: number) => xForPosition(position, origin, scale, axisPadding),
-    [axisPadding, origin, scale],
+    (position: number) => xForPosition(position, origin, scale, leadingPadding),
+    [leadingPadding, origin, scale],
   );
   const widthOf = useCallback(
     (event: EventLaneEvent<K>) => markWidth(
@@ -926,7 +929,7 @@ function EventLanesImpl<K extends string = string>({
     [widthOf, xOf],
   );
   const axisWidth = positioned
-    ? (positionModel && !positionModel.empty ? extentUnits * scale + axisPadding + trailingPadding : 0)
+    ? (positionModel && !positionModel.empty ? extentUnits * scale + leadingPadding + trailingPadding : 0)
     : end < 0 ? 0 : (end + 1) * cellWidth + axisPadding * 2;
   const layout = useMemo(() => laneLayout(lanes), [lanes]);
   // Each timeline's vertical extent over its visible lanes: where its boxes go.
@@ -1033,8 +1036,8 @@ function EventLanesImpl<K extends string = string>({
   // fire several times between renders.
   const liveScaleRef = useRef(scale);
   liveScaleRef.current = scale;
-  const zoomStateRef = useRef({ limits, origin, axisPadding, inset: axisInset.left });
-  zoomStateRef.current = { limits, origin, axisPadding, inset: axisInset.left };
+  const zoomStateRef = useRef({ limits, origin, axisPadding: leadingPadding, inset: axisInset.left });
+  zoomStateRef.current = { limits, origin, axisPadding: leadingPadding, inset: axisInset.left };
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -1089,8 +1092,8 @@ function EventLanesImpl<K extends string = string>({
     if (viewKey(wanted) === reportedViewRef.current) return;
     const span = wanted.end - wanted.start;
     if (!(span > 0) || !Number.isFinite(span)) return;
-    const next = clampScale(Math.max(1, viewportWidth - axisPadding - trailingPadding) / span, limits);
-    const target = xForPosition(wanted.start, origin, next, axisPadding) - axisPadding;
+    const next = clampScale(Math.max(1, viewportWidth - leadingPadding - trailingPadding) / span, limits);
+    const target = xForPosition(wanted.start, origin, next, leadingPadding) - leadingPadding;
     liveScaleRef.current = next;
     if (next !== scale) {
       pendingScrollRef.current = target;
@@ -1103,7 +1106,7 @@ function EventLanesImpl<K extends string = string>({
     const clamped = Math.max(0, Math.min(Math.max(0, axisWidth - scroller.clientWidth), target));
     scroller.scrollLeft = clamped;
     setScrollLeft(clamped);
-  }, [axisPadding, axisWidth, limits, origin, positioned, scale, trailingPadding, view, viewportWidth]);
+  }, [axisWidth, leadingPadding, limits, origin, positioned, scale, trailingPadding, view, viewportWidth]);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
@@ -1114,15 +1117,15 @@ function EventLanesImpl<K extends string = string>({
     // as a request asks for what is already shown.
     const left = scroller.scrollLeft;
     const state = {
-      start: positionForX(left + axisPadding, origin, scale, axisPadding),
-      end: positionForX(left + viewportWidth - trailingPadding, origin, scale, axisPadding),
+      start: positionForX(left + leadingPadding, origin, scale, leadingPadding),
+      end: positionForX(left + viewportWidth - trailingPadding, origin, scale, leadingPadding),
       scale,
     };
     const key = viewKey(state);
     if (key === reportedViewRef.current) return;
     reportedViewRef.current = key;
     onViewChange(state);
-  }, [axisPadding, onViewChange, origin, positioned, scale, scrollLeft, trailingPadding, viewportWidth]);
+  }, [leadingPadding, onViewChange, origin, positioned, scale, scrollLeft, trailingPadding, viewportWidth]);
 
   useEffect(() => {
     if (selected != null && visibleByIndex.has(selected)) {
@@ -1180,8 +1183,8 @@ function EventLanesImpl<K extends string = string>({
     const markerColor = (event: EventLaneEvent<K>) => event.markerToken ? resolveToken(styles, event.markerToken, accent) : accent;
 
     if (positioned && positionIndex) {
-      const from = positionForX(scrollLeft, origin, scale, axisPadding);
-      const to = positionForX(scrollLeft + width, origin, scale, axisPadding);
+      const from = positionForX(scrollLeft, origin, scale, leadingPadding);
+      const to = positionForX(scrollLeft + width, origin, scale, leadingPadding);
       canvas.dataset.windowStart = String(from);
       canvas.dataset.windowEnd = String(to);
       const colors = {
@@ -1477,6 +1480,7 @@ function EventLanesImpl<K extends string = string>({
   }, [
     axisWidth,
     axisPadding,
+    leadingPadding,
     canvasHeight,
     cellWidth,
     emphasis,
@@ -1646,7 +1650,7 @@ function EventLanesImpl<K extends string = string>({
       // from a little either side of it.
       const pointerX = x + axisPadding;
       const slack = HIT_SLACK / scale;
-      const at = positionForX(pointerX, origin, scale, axisPadding);
+      const at = positionForX(pointerX, origin, scale, leadingPadding);
       let best: EventLaneEvent<K> | null = null;
       let bestDistance = Infinity;
       const first = lowerBound(entry.positions, at - entry.reach - markSize / scale - slack);
@@ -1667,7 +1671,7 @@ function EventLanesImpl<K extends string = string>({
     }
     const index = Math.floor(x / cellWidth);
     return lane ? visibleByCell.get(`${lane.id}:${index}`) ?? null : null;
-  }, [axisPadding, cellWidth, lanes, layout, leftOf, markSize, origin, positionIndex, positioned, scale, visibleByCell, widthOf]);
+  }, [axisPadding, cellWidth, lanes, layout, leadingPadding, leftOf, markSize, origin, positionIndex, positioned, scale, visibleByCell, widthOf]);
 
   /** The span whose box or trailing segment lies under the pointer, topmost first. */
   const spanHit = useCallback((pointer: ReactPointerEvent<HTMLCanvasElement>) => {
@@ -1915,10 +1919,10 @@ function EventLanesImpl<K extends string = string>({
           scale,
           origin,
           end: positionModel.finish,
-          visibleStart: positionForX(scrollLeft, origin, scale, axisPadding),
-          visibleEnd: positionForX(scrollLeft + viewportWidth, origin, scale, axisPadding),
+          visibleStart: positionForX(scrollLeft, origin, scale, leadingPadding),
+          visibleEnd: positionForX(scrollLeft + viewportWidth, origin, scale, leadingPadding),
           xForPosition: xOf,
-          positionForX: (x: number) => positionForX(x, origin, scale, axisPadding),
+          positionForX: (x: number) => positionForX(x, origin, scale, leadingPadding),
         },
       }
       : {}),

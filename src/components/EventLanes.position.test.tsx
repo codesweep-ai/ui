@@ -142,6 +142,10 @@ describe("EventLanes positioned layout", () => {
     const at = latest.position!.xForPosition(20);
     // Its centre is half a mark left of its moment, not right of it.
     expect(latest.xForIndex(0)).toBeCloseTo(at - size / 2, 6);
+    // The axis keeps a mark size before the first position, so a mark
+    // anchored at its end at the origin is not clipped: its left edge is
+    // inside the axis, at the halo padding.
+    expect(at - size).toBeCloseTo(axisPaddingFor(10), 6);
     const canvas = container.querySelector("[data-event-lanes-canvas]")!;
     const bounds = canvas.getBoundingClientRect();
     fireEvent.pointerDown(canvas, { clientX: bounds.left + at - size / 2, clientY: bounds.top + 14, pointerId: 1 });
