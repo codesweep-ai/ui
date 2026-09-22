@@ -181,6 +181,10 @@ export interface EventLanesProps<K extends string = string> {
   view?: EventLanesView;
   /** Positioned layout: fires when the scale or the visible range changes. */
   onViewChange?: (view: EventLanesViewState) => void;
+  /** Positioned layout: false leaves a Ctrl or Cmd wheel, and a pinch, to the
+   *  browser, so a page can zoom by preset alone. The plain wheel still
+   *  scrolls. Default true. */
+  wheelZoom?: boolean;
   /** Lines joining pairs of marks, drawn beneath the marks. */
   links?: readonly EventLaneLink[];
   /** Positioned layout: the `id` of the span drawn as selected. */
@@ -651,6 +655,7 @@ function EventLanesImpl<K extends string = string>({
   layout: axisLayout = "index",
   view,
   onViewChange,
+  wheelZoom = true,
   links = EMPTY_LINKS,
   selectedSpan = null,
   onSelectSpan,
@@ -960,6 +965,7 @@ function EventLanesImpl<K extends string = string>({
       const unit = wheel.deltaMode === 1 ? 16 : wheel.deltaMode === 2 ? scroller.clientWidth : 1;
       if (wheel.ctrlKey || wheel.metaKey) {
         // A trackpad pinch arrives as a wheel with ctrlKey set.
+        if (!wheelZoom) return;
         wheel.preventDefault();
         const current = liveScaleRef.current;
         const next = clampScale(current * Math.exp(-wheel.deltaY * unit * ZOOM_RATE), bounds);
@@ -983,7 +989,7 @@ function EventLanesImpl<K extends string = string>({
     };
     scroller.addEventListener("wheel", handleWheel, { passive: false });
     return () => scroller.removeEventListener("wheel", handleWheel);
-  }, [positioned]);
+  }, [positioned, wheelZoom]);
 
   // A requested view is applied each time the page passes a new one, once the
   // viewport has a width to fit it to. The range lands between the boundary

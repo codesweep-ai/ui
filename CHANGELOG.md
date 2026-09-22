@@ -111,6 +111,8 @@ holds today.
 
 ### Added
 
+- `EventLanes` takes `wheelZoom={false}` to leave a Ctrl or Cmd wheel, and a
+  pinch, to the browser. The plain wheel still scrolls the axis sideways.
 - An `EventLanes` lane can carry a `shade` token and a `gapBefore`. The shade
   is a band behind the lane from the gutter to the end of the axis, and
   neighbouring lanes with the same token form one band. The gap is empty space

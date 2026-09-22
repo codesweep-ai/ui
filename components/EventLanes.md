@@ -187,6 +187,8 @@ interface EventLanesProps<K extends string = string> {
   view?: EventLanesView;
   /** Positioned layout: fires whenever the scale or the visible range changes. */
   onViewChange?: (view: EventLanesViewState) => void;
+  /** Positioned layout: false leaves the Ctrl or Cmd wheel to the browser. Default true. */
+  wheelZoom?: boolean;
   /** Lines joining pairs of marks, beneath the marks. */
   links?: readonly EventLaneLink[];
   /** Positioned layout: the id of the span drawn as selected. */
@@ -418,7 +420,7 @@ Until something asks for a scale, the whole extent fits the viewport between the
 
 In the positioned layout only:
 
-- Ctrl or Cmd with the wheel zooms about the pointer, and so does a trackpad pinch, which the browser delivers as a wheel event with `ctrlKey`.
+- Ctrl or Cmd with the wheel zooms about the pointer, and so does a trackpad pinch, which the browser delivers as a wheel event with `ctrlKey`. `wheelZoom={false}` leaves both to the browser, for a page that zooms by preset alone so that every view it shows is one it can name.
 - The plain vertical wheel scrolls the axis sideways. Where the axis cannot move any further, the wheel is left to scroll the page.
 - A horizontal wheel or trackpad swipe scrolls the axis as it always has.
 

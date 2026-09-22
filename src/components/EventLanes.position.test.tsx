@@ -277,6 +277,23 @@ describe("EventLanes positioned layout", () => {
     expect(past.defaultPrevented).toBe(false);
   });
 
+  it("leaves the ctrl wheel to the browser when wheel zoom is off, and still scrolls", async () => {
+    const { latest } = renderPositioned({ view: { start: 0, end: 10 }, wheelZoom: false });
+    await frame();
+    const listbox = screen.getByRole("listbox");
+    const before = latest().position!.scale;
+    const zoom = new WheelEvent("wheel", { deltaY: -200, ctrlKey: true, clientX: listbox.getBoundingClientRect().left + 200, bubbles: true, cancelable: true });
+    listbox.dispatchEvent(zoom);
+    await frame();
+    expect(zoom.defaultPrevented).toBe(false);
+    expect(latest().position!.scale).toBe(before);
+    // Zoomed in by a view instead, the plain wheel still scrolls.
+    const scroll = new WheelEvent("wheel", { deltaY: 60, bubbles: true, cancelable: true });
+    listbox.dispatchEvent(scroll);
+    expect(scroll.defaultPrevented).toBe(true);
+    expect(listbox.scrollLeft).toBeGreaterThan(0);
+  });
+
   it("reports a click on a span's box, and a click on a mark as a mark", async () => {
     const onSelect = vi.fn();
     const onSelectSpan = vi.fn();
