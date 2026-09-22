@@ -1,0 +1,22 @@
+{
+  "id": "CUI-111",
+  "title": "A sparse lane sharing a timeline with dense rows draws every mark as a hairline",
+  "type": "improvement",
+  "severity": "med",
+  "status": "in-progress",
+  "foundBy": "repository owner, looking at a consuming page's protocol row with traces shown: \"they are too squished\"",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "2026-09-22 protocol row widths",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "In the positioned layout a mark is as wide as the gap to the next mark anywhere in its timeline. A consuming page keeps each member as one timeline of a protocol row and several step rows, so a box can frame them all. Every open and reply mark on the protocol row then drew one pixel wide, measured in headless Chromium, because a step follows each within seconds. With the step rows off the same marks drew nine pixels wide.\n\nA lane should be able to measure its marks against the next mark in that lane alone, while staying in its timeline for the box and the arrow keys.",
+  "notes": [],
+  "links": [
+    "CUI-100"
+  ]
+}

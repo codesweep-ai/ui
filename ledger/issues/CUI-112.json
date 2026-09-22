@@ -1,0 +1,22 @@
+{
+  "id": "CUI-112",
+  "title": "The positioned layout draws circles as rectangles",
+  "type": "defect",
+  "severity": "low",
+  "status": "in-progress",
+  "foundBy": "session agent, answering the repository owner's question whether a consuming page's protocol marks should be dots",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "2026-09-22 protocol row widths",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "In the positioned layout every shape draws as a rectangle of the mark's width, hollow or filled. A consuming page's legend shows the orchestrator's log claims as circles, to keep them apart from the channel's squares, and the timeline never drew a circle. A circle with room for the mark size should draw round; a hairline cannot.",
+  "notes": [],
+  "links": [
+    "CUI-100"
+  ]
+}
