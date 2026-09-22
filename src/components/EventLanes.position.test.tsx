@@ -197,6 +197,55 @@ describe("EventLanes positioned layout", () => {
     await waitFor(() => expect(reports[reports.length - 1].start).toBeCloseTo(10, 3));
   });
 
+  it("keeps the canvas and the overview under the axis when the scroller is padded", async () => {
+    const style = document.createElement("style");
+    style.textContent = "#padded [data-event-lanes-scroller] { padding-left: 12px; padding-right: 4px; }";
+    document.head.append(style);
+    try {
+      const contexts: EventLanesRulerContext[] = [];
+      const { container } = render(
+        <div id="padded" style={{ width: 640 }}>
+          <EventLanes
+            layout="position"
+            lanes={lanes}
+            events={events}
+            palette={palette}
+            overview
+            ruler={(context) => {
+              contexts.push(context);
+              return null;
+            }}
+          />
+        </div>,
+      );
+      await frame();
+      const scroller = container.querySelector("[data-event-lanes-scroller]") as HTMLElement;
+      const canvas = container.querySelector("[data-event-lanes-canvas]")!;
+      const overview = container.querySelector("[data-event-lanes-overview]") as HTMLElement;
+      const contentLeft = scroller.getBoundingClientRect().left + scroller.clientLeft + 12;
+      const contentWidth = scroller.clientWidth - 16;
+      // The whole extent fits the content box, so there is nothing to scroll.
+      expect(contexts[contexts.length - 1].width).toBeCloseTo(contentWidth, 0);
+      expect(scroller.scrollWidth).toBe(scroller.clientWidth);
+      // The overview's drawing begins under the axis's zero and is as wide as the content box.
+      expect(overview.getBoundingClientRect().left + overview.clientLeft).toBeCloseTo(contentLeft, 0);
+      expect(overview.getBoundingClientRect().width).toBeCloseTo(contentWidth, 0);
+      // Zoomed in and scrolled, the canvas stays at the content edge rather than riding along.
+      const listbox = screen.getByRole("listbox");
+      fireEvent.keyDown(listbox, { key: "End" });
+      const zoom = new WheelEvent("wheel", { deltaY: -600, ctrlKey: true, clientX: contentLeft + 100, bubbles: true, cancelable: true });
+      listbox.dispatchEvent(zoom);
+      await frame();
+      scroller.scrollLeft = 30;
+      fireEvent.scroll(scroller);
+      await frame();
+      expect(scroller.scrollLeft).toBe(30);
+      expect(canvas.getBoundingClientRect().left).toBeCloseTo(contentLeft, 0);
+    } finally {
+      style.remove();
+    }
+  });
+
   it("zooms about the pointer with a ctrl or cmd wheel, and scrolls sideways with a plain one", async () => {
     const { latest } = renderPositioned({ view: { start: 0, end: 30 } });
     await frame();

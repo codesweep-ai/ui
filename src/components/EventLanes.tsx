@@ -678,6 +678,10 @@ function EventLanesImpl<K extends string = string>({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overviewRef = useRef<HTMLCanvasElement>(null);
   const [viewportWidth, setViewportWidth] = useState(0);
+  // The scroller's own padding, which a consumer may add for room before the
+  // axis. The viewport is the content box inside it, where the canvas already
+  // sticks, and the overview begins under it.
+  const [axisInset, setAxisInset] = useState({ left: 0, right: 0 });
   const [scrollLeft, setScrollLeft] = useState(0);
   const [activeIndex, setActiveIndex] = useState<number | null>(selected);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -886,7 +890,13 @@ function EventLanesImpl<K extends string = string>({
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const measure = () => setViewportWidth(scroller.clientWidth);
+    const measure = () => {
+      const style = getComputedStyle(scroller);
+      const left = parseFloat(style.paddingLeft) || 0;
+      const right = parseFloat(style.paddingRight) || 0;
+      setAxisInset((current) => current.left === left && current.right === right ? current : { left, right });
+      setViewportWidth(Math.max(0, scroller.clientWidth - left - right));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(scroller);
@@ -938,14 +948,14 @@ function EventLanesImpl<K extends string = string>({
   // fire several times between renders.
   const liveScaleRef = useRef(scale);
   liveScaleRef.current = scale;
-  const zoomStateRef = useRef({ limits, origin, axisPadding });
-  zoomStateRef.current = { limits, origin, axisPadding };
+  const zoomStateRef = useRef({ limits, origin, axisPadding, inset: axisInset.left });
+  zoomStateRef.current = { limits, origin, axisPadding, inset: axisInset.left };
 
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller || !positioned) return;
     const handleWheel = (wheel: WheelEvent) => {
-      const { limits: bounds, origin: start, axisPadding: padding } = zoomStateRef.current;
+      const { limits: bounds, origin: start, axisPadding: padding, inset } = zoomStateRef.current;
       if (!bounds) return;
       const unit = wheel.deltaMode === 1 ? 16 : wheel.deltaMode === 2 ? scroller.clientWidth : 1;
       if (wheel.ctrlKey || wheel.metaKey) {
@@ -954,7 +964,8 @@ function EventLanesImpl<K extends string = string>({
         const current = liveScaleRef.current;
         const next = clampScale(current * Math.exp(-wheel.deltaY * unit * ZOOM_RATE), bounds);
         if (next === current) return;
-        const anchor = wheel.clientX - scroller.getBoundingClientRect().left;
+        // The anchor is measured from the content edge: inside the border and the padding.
+        const anchor = wheel.clientX - scroller.getBoundingClientRect().left - scroller.clientLeft - inset;
         const from = pendingScrollRef.current ?? scroller.scrollLeft;
         pendingScrollRef.current = zoomAbout(current, next, anchor, from, start, padding);
         liveScaleRef.current = next;
@@ -1857,6 +1868,7 @@ function EventLanesImpl<K extends string = string>({
         data-event-lanes-overview=""
         aria-hidden="true"
         className="cs-component-event-lanes-overview"
+        style={axisInset.left ? { marginLeft: axisInset.left } : undefined}
         onPointerDown={handleOverviewPointerDown}
         onPointerMove={handleOverviewPointerMove}
       />

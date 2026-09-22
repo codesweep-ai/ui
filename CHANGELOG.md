@@ -54,6 +54,12 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` reads padding on its scroller. The viewport used to be the
+  scroller's `clientWidth`, padding included, so a padded scroller held an axis
+  wider than its content box, which scrolled by the padding and let the canvas
+  ride along with it, and the overview's zero sat left of the ruler's by the
+  same amount. A page that kept the two aligned with a margin on each can keep
+  the margin or move to a padding.
 - `EventLanes` warns in development when a lane's `height` is under 8 pixels,
   the least a row can draw, and names the floor in the prop's TSDoc. The row
   used to fall back to 28 pixels with nothing said, and a page that had asked

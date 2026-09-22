@@ -350,6 +350,8 @@ on with the arrows brings it back.
 
 The lane viewport is the single horizontal scroll owner. Selecting an off-screen visible event scrolls the smallest distance needed to reveal its full cell; it does not center an already-visible event or scroll an ancestor page.
 
+A consumer may pad the scroller for room before the axis. The viewport is the content box inside that padding: the axis is fitted to it, the canvas sticks at its edge, and the overview begins under it, so the two keep one zero and one width.
+
 Event marks and spans are canvas-rendered in both acceptance fixtures. Rendering is windowed to the visible global-index range plus a small overscan; a 1,366-event trace does not allocate a laid-out mark or full-size backing canvas for every event. Its census nodes are visually hidden and do not participate in layout or hit-testing. Canvas dimensions account for `devicePixelRatio` while all public geometry remains in CSS pixels.
 
 Pointer hit-testing derives lane from y and global index from x, then looks up the unique event at `(lane, i)`. It tests only visible, non-hidden events. Empty columns, spans, and hidden events resolve to no hit. The selected and linked halos do not enlarge or change the hit target.
