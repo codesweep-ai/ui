@@ -454,6 +454,13 @@ describe("bar lanes, lane heights and overview height (CUI-099)", () => {
     expect(laneLayout([{ height: 2 }, { height: Number.NaN }]).heights).toEqual([28, 28]);
   });
 
+  it("says in development when a lane's height is too small to draw", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(<EventLanes lanes={[{ id: "thin", label: "Thin", height: 6 }]} events={[]} palette={palette} />);
+    expect(warn.mock.calls.some(([message]) => String(message).includes('lane "thin" has a height under 8 pixels'))).toBe(true);
+    warn.mockRestore();
+  });
+
   it("keeps a gap above a lane, and none above a hidden one", () => {
     expect(laneLayout([{ height: 20 }, { height: 20, gapBefore: 8 }, { height: 20, gapBefore: 8, hidden: true }, { height: 20 }]))
       .toEqual({ tops: [0, 28, 48, 48], heights: [20, 20, 0, 20], gaps: [0, 8, 0, 0], total: 68 });

@@ -46,7 +46,8 @@ export interface EventLane {
   description?: string;
   /** Optional presentation hook for this lane's visible label. */
   className?: string;
-  /** Row height in CSS pixels. Default 28. */
+  /** Row height in CSS pixels, at least 8. Default 28, which a height under 8
+   *  or not finite also gets, with a development warning. */
   height?: number;
   /** Draw this lane's events as bars rising from the row's floor ("up") or
    *  hanging from its top ("down"), sized by each event's `magnitude`. */
@@ -382,6 +383,9 @@ function validateData<K extends string>(
   for (const lane of lanes) {
     if (laneIds.has(lane.id)) warnings.push(`duplicate lane id "${lane.id}"`);
     laneIds.add(lane.id);
+    if (lane.height !== undefined && !(isFiniteNumber(lane.height) && lane.height >= MIN_LANE_HEIGHT)) {
+      warnings.push(`lane "${lane.id}" has a height under ${MIN_LANE_HEIGHT} pixels, the least a row can draw, and gets the default ${LANE_HEIGHT}`);
+    }
     if (lane.gapBefore !== undefined && !(isFiniteNumber(lane.gapBefore) && lane.gapBefore >= 0)) {
       warnings.push(`lane "${lane.id}" has a gapBefore that is not a non-negative number, and gets none`);
     }

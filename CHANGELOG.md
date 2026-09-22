@@ -54,6 +54,11 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` warns in development when a lane's `height` is under 8 pixels,
+  the least a row can draw, and names the floor in the prop's TSDoc. The row
+  used to fall back to 28 pixels with nothing said, and a page that had asked
+  for a 6-pixel row found everything below it 22 pixels lower than it had
+  measured.
 - `EventLanes` fits a requested `view` between its boundary paddings, and keeps
   a mark size of room after the last position. A view of the whole extent used
   to be fitted to the full viewport with the padding added on top, so the axis

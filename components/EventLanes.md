@@ -551,7 +551,7 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - **All kinds hidden:** Same accessible behavior as no visible events; spans may remain visual but are not interactive.
 - **Theme change:** Re-resolve palette tokens and repaint marks, spans, halos, overview, and tooltip chrome without losing scroll, hover, or selection.
 - **Resize:** Recompute the visible range and overview window; keep the selected visible event visible when possible.
-- **Unusable heights:** A lane `height` or an `overviewHeight` below 8 pixels, or not finite, falls back to its default.
+- **Unusable heights:** A lane `height` or an `overviewHeight` below 8 pixels, or not finite, falls back to its default. A lane's is reported in development, since a row silently four times taller than asked misplaces everything below it.
 - **A floor taller than the row:** The floor is capped at the row's room, so the bar can still be drawn.
 - **Positioned mark without a position:** Leave it out and warn in development. An `extent` that is negative or not finite is treated the same way.
 - **Positioned span:** Its endpoints must be finite and in order, and a `trail` must not end before `to`. Otherwise it is skipped with a warning.
