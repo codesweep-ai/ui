@@ -54,6 +54,10 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` draws a `circle` or `hollow-circle` round in the positioned
+  layout when the mark has room for its full size. Every shape used to draw as
+  a rectangle there, so a legend showing circles promised a shape the timeline
+  never drew.
 - `EventLanes` sizes the error cross to the column it marks in the positioned
   layout. It was always the mark size, so at a whole-run view it dwarfed the
   hairline it sat on.
@@ -118,6 +122,10 @@ holds today.
 
 ### Added
 
+- An `EventLanes` lane can take `widthBy: "lane"` in the positioned layout, so
+  its marks are as wide as the gap to the next mark in that lane rather than
+  anywhere in its timeline. A sparse row sharing a timeline with dense ones no
+  longer draws hairlines.
 - `EventLanes` takes `wheelScroll={false}` to leave a plain vertical wheel to
   the page. A horizontal wheel or swipe still scrolls the axis.
 - `EventLanes` draws a `hatched` shape: a diagonal token-coloured hatch on the

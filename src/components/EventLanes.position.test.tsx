@@ -73,6 +73,79 @@ describe("EventLanes positioned layout", () => {
     expect(centre - latest().position!.xForPosition(0)).toBeCloseTo(expected / 2, 6);
   });
 
+  it("sizes a lane's marks by its own gaps when asked, and still boxes it with its timeline", async () => {
+    const own: EventLane[] = [
+      { id: "a", label: "A", group: "a", bars: "up", height: 32, widthBy: "lane" },
+      { id: "a-wait", label: "A waiting", group: "a", bars: "down", height: 16 },
+      { id: "b", label: "B" },
+    ];
+    // The wait follows the first work mark by a fifth of a unit: a sliver at any zoom.
+    const close: EventLaneEvent<Kind>[] = [
+      { i: 0, lane: "a", kind: "work", shape: "square", label: "A first", at: "0", position: 0 },
+      { i: 3, lane: "a-wait", kind: "wait", shape: "square", label: "A waits", at: "0.2", position: 0.2 },
+      { i: 1, lane: "a", kind: "work", shape: "square", label: "A second", at: "10", position: 10 },
+      { i: 2, lane: "a", kind: "work", shape: "square", label: "A third", at: "30", position: 30 },
+      { i: 4, lane: "b", kind: "work", shape: "square", label: "B first", at: "11", position: 11 },
+    ];
+    const contexts: EventLanesRulerContext[] = [];
+    render(
+      <div style={{ width: 640 }}>
+        <EventLanes
+          layout="position"
+          lanes={own}
+          events={close}
+          palette={palette}
+          spans={[{ lane: "a", from: 0, to: 30, id: "run", label: "Run" }]}
+          view={{ start: 0, end: 30 }}
+          ruler={(context) => {
+            contexts.push(context);
+            return null;
+          }}
+        />
+      </div>,
+    );
+    await frame();
+    const latest = contexts[contexts.length - 1];
+    // Measured against the timeline the first mark would be a sliver; by the
+    // lane alone, the next mark is at 10 and it draws at the mark size.
+    expect(0.2 * latest.position!.scale).toBeLessThan(markSizeFor(10));
+    const size = markSizeFor(10);
+    expect(latest.xForIndex(0) - latest.position!.xForPosition(0)).toBeCloseTo(size / 2, 6);
+    // The span still names the timeline, so a mark in the lane is "in Run".
+    expect(document.querySelector('[data-event-index="0"]')!.getAttribute("aria-label")).toContain("in Run");
+  });
+
+  it("draws a circle round when it has room, and as a column when it has not", async () => {
+    const { container } = render(
+      <div style={{ width: 640 }}>
+        <EventLanes
+          layout="position"
+          lanes={[{ id: "c", label: "C" }]}
+          events={[
+            { i: 0, lane: "c", kind: "work", shape: "circle", label: "Round", at: "0", position: 0 },
+            { i: 1, lane: "c", kind: "work", shape: "circle", label: "Thin", at: "50", position: 50 },
+            { i: 2, lane: "c", kind: "work", shape: "circle", label: "Next", at: "50.001", position: 50.001, extent: 0.001 },
+            { i: 3, lane: "c", kind: "work", shape: "square", label: "Last", at: "100", position: 100 },
+          ]}
+          palette={palette}
+          ruler={() => null}
+        />
+      </div>,
+    );
+    await frame();
+    const canvas = container.querySelector("[data-event-lanes-canvas]") as HTMLCanvasElement;
+    const context = canvas.getContext("2d")!;
+    const ratio = canvas.width / canvas.getBoundingClientRect().width;
+    const painted = (x: number, y: number) => context.getImageData(Math.round(x * ratio), Math.round(y * ratio), 1, 1).data[3] > 100;
+    const size = markSizeFor(10);
+    const left = axisPaddingFor(10);
+    const middle = 14;
+    // The first mark has room: its centre is painted and the corners of its square are not.
+    expect(painted(left + size / 2, middle)).toBe(true);
+    expect(painted(left, middle - size / 2)).toBe(false);
+    expect(painted(left + size - 1, middle - size / 2)).toBe(false);
+  });
+
   it("keeps a timeline's marks where they were when one of its lanes is hidden", async () => {
     const { latest, rerender } = renderPositioned({ view: { start: 0, end: 4 } });
     await frame();

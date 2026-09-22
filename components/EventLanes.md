@@ -65,6 +65,8 @@ interface EventLane {
   shade?: EventToken;
   /** Empty space above the lane, in CSS pixels. */
   gapBefore?: number;
+  /** Positioned layout: measure a mark's width against the next mark in the timeline (default) or in this lane. */
+  widthBy?: "timeline" | "lane";
 }
 
 interface EventLaneEvent<K extends string = string> {
@@ -399,7 +401,9 @@ A mark begins at its position and is as wide as the gap to the next mark anywher
 
 Widths read every valid mark in the timeline, including hidden kinds and hidden lanes. Filtering a kind, or hiding a lane, never moves or resizes the marks that remain.
 
-Every shape draws as a rectangle of that width, as in a bar lane, and both hollow shapes draw as a token outline. A lane without `bars` centres a rectangle of the mark size's height in its row. The error cross is sized to the column it marks, and is at least six pixels across, so a hairline is not lost under a cross the mark size wide.
+A lane with `widthBy: "lane"` measures its marks against the next mark in that lane alone. A sparse row of protocol marks that shares a timeline with dense step rows would otherwise draw every mark as a hairline, since a step follows each protocol mark within seconds. The timeline still boxes the lane and the arrow keys still walk it.
+
+Every shape draws as a rectangle of that width, as in a bar lane, and both hollow shapes draw as a token outline. A lane without `bars` centres a rectangle of the mark size's height in its row, except that a `circle` or `hollow-circle` with room for the mark size draws round, as the legend shows it. Narrower, it is a column like any other mark. The error cross is sized to the column it marks, and is at least six pixels across, so a hairline is not lost under a cross the mark size wide.
 
 ### Hidden lanes
 

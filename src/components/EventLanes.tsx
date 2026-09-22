@@ -66,6 +66,12 @@ export interface EventLane {
    *  the positioned layout its marks still count for their timeline's widths,
    *  so hiding a lane never moves the marks in the others. */
   hidden?: boolean;
+  /** Positioned layout: what a mark's width is measured against. "timeline",
+   *  the default, is the gap to the next mark anywhere in the lane's
+   *  timeline. "lane" is the gap to the next mark in this lane alone, for a
+   *  sparse row that shares a timeline with dense ones and would otherwise
+   *  draw hairlines. The timeline still boxes and walks the lane. */
+  widthBy?: "timeline" | "lane";
   /** A band behind the lane in this token, from the gutter to the end of the
    *  axis. Neighbouring lanes carrying the same token form one band. */
   shade?: EventToken;
@@ -833,7 +839,8 @@ function EventLanesImpl<K extends string = string>({
       const position = event.position as number;
       origin = Math.min(origin, position);
       finish = Math.max(finish, position + (event.extent ?? 0));
-      const timeline = timelineOf(event.lane);
+      // A lane sized by its own gaps is its own run for widths, and nothing else.
+      const timeline = laneById.get(event.lane)?.widthBy === "lane" ? `width:${event.lane}` : timelineOf(event.lane);
       const marks = timelines.get(timeline);
       if (marks) marks.push({ i: event.i, position });
       else timelines.set(timeline, [{ i: event.i, position }]);
@@ -844,7 +851,7 @@ function EventLanesImpl<K extends string = string>({
     }
     if (!Number.isFinite(origin)) return { origin: 0, finish: 0, empty: true, next: new Map<number, number>(), smallestGap: undefined };
     return { origin, finish, empty: false, ...nextPositions(timelines.values()) };
-  }, [positioned, timelineOf, validated.events, validated.spans]);
+  }, [laneById, positioned, timelineOf, validated.events, validated.spans]);
 
   // What the positioned layout draws and walks: each lane's visible marks in
   // position order, and each timeline's, for the arrow keys.
@@ -1236,7 +1243,11 @@ function EventLanesImpl<K extends string = string>({
             drawRectHalo(context, rect, 7, foreground, 3);
             drawRectHalo(context, rect, 3, background, 2);
           }
-          drawBar(context, event.shape, rect, fill, background, event.shape === "hatched" ? hatchFor(fill) : undefined);
+          // A circle with room for its full size draws round, as the legend
+          // shows it; narrower, it is a column like any other mark.
+          const round = !lane.bars && (event.shape === "circle" || event.shape === "hollow-circle") && markWidthPx >= markSize;
+          if (round) drawMark(context, event.shape, centre, rect.y + rect.height / 2, markSize, fill, background);
+          else drawBar(context, event.shape, rect, fill, background, event.shape === "hatched" ? hatchFor(fill) : undefined);
           if (event.clipped && lane.bars) drawNotch(context, rect, lane.bars, background, foreground);
           const centreY = rect.y + rect.height / 2;
           if (isSelected && isLinked) {
