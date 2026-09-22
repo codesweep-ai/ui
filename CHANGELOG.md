@@ -54,6 +54,12 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` paints the selected mark after its neighbours, in both layouts,
+  so its halo is whole beside a close mark. It was painted in index order, and
+  the next mark covered the right of the ring.
+- `SegmentedControl` tints and rings its active option in the accent, as a
+  selected `Chip` is. It was drawn as a raised card, which on a dark card is
+  the card's own colour with a shadow nothing shows.
 - `EventLanes` draws a `circle` or `hollow-circle` round in the positioned
   layout when the mark has room for its full size. Every shape used to draw as
   a rectangle there, so a legend showing circles promised a shape the timeline

@@ -186,6 +186,33 @@ describe("EventLanes positioned layout", () => {
     expect(painted(left + size - 1, middle - size / 2)).toBe(false);
   });
 
+  it("paints the selected mark's halo over the mark beside it", async () => {
+    // At this view B's two marks are nine pixels apart, so the second sits
+    // on the first's selection halo and, painted after it, would cover it.
+    const { container, latest } = renderPositioned({ view: { start: 0, end: 16 }, selected: 4 });
+    await frame();
+    const canvas = container.querySelector("[data-event-lanes-canvas]") as HTMLCanvasElement;
+    const context = canvas.getContext("2d")!;
+    const canvasRect = canvas.getBoundingClientRect();
+    const ratio = canvas.width / canvasRect.width;
+    const probe = document.createElement("span");
+    probe.style.color = "var(--fg)";
+    document.body.append(probe);
+    const [r, g, b] = getComputedStyle(probe).color.match(/[\d.]+/g)!.map(Number);
+    probe.remove();
+    const foreground = (x: number, y: number) => {
+      const pixel = context.getImageData(Math.round(x * ratio), Math.round(y * ratio), 1, 1).data;
+      return Math.abs(pixel[0] - r) + Math.abs(pixel[1] - g) + Math.abs(pixel[2] - b) < 60 && pixel[3] > 150;
+    };
+    const label = screen.getByText("B").getBoundingClientRect();
+    const middle = label.top + label.height / 2 - canvasRect.top;
+    const size = markSizeFor(10);
+    const centre = latest().position!.xForPosition(11) + size / 2;
+    // The ring is a mark size plus seven across and three thick, so a pixel
+    // seven past the centre is on it, and inside the next mark.
+    expect(foreground(centre + 7, middle)).toBe(true);
+  });
+
   it("keeps a timeline's marks where they were when one of its lanes is hidden", async () => {
     const { latest, rerender } = renderPositioned({ view: { start: 0, end: 4 } });
     await frame();

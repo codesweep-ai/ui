@@ -1239,8 +1239,11 @@ function EventLanesImpl<K extends string = string>({
         const laneHeight = layout.heights[row];
         // A mark anchored at its end reaches a mark size left of its position, so the window reaches that far right.
         const [first, last] = visibleSlice(entry.positions, from - markSize / scale, to + markSize / scale, entry.reach);
-        for (let index = first; index < last; index += 1) {
+        // Two passes: every other mark, then the selected one, so its halo
+        // is painted over its neighbours rather than under the next mark.
+        for (let pass = 0; pass < 2; pass += 1) for (let index = first; index < last; index += 1) {
           const event = entry.events[index];
+          if ((event.i === selected) !== (pass === 1)) continue;
           const markWidthPx = widthOf(event);
           const left = leftOf(event) - scrollLeft;
           const centre = left + markWidthPx / 2;
@@ -1348,9 +1351,12 @@ function EventLanesImpl<K extends string = string>({
       drawLink(context, { x: fromX, y: ends.from }, { x: toX, y: ends.to }, link.style ?? "solid", link.emphasized ?? false, { muted, link: linkColor });
     }
 
-    for (let index = visibleStart; index <= visibleEnd; index += 1) {
+    // Two passes: every other mark, then the selected one, so its halo is
+    // painted over its neighbours rather than under the next mark.
+    for (let pass = 0; pass < 2; pass += 1) for (let index = visibleStart; index <= visibleEnd; index += 1) {
       const event = visibleByIndex.get(index);
       if (!event) continue;
+      if ((event.i === selected) !== (pass === 1)) continue;
       const row = laneIndex.get(event.lane);
       if (row == null) continue;
       const rawX = axisPadding + (event.i + 0.5) * cellWidth - scrollLeft;
