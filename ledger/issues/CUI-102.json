@@ -3,17 +3,19 @@
   "title": "The overview can only sit below the lanes",
   "type": "improvement",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "4217baf"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that puts the overview above the lanes passes. With `overviewPlacement=\"above\"` the root carries `data-overview-placement=\"above\"`. The overview precedes the scroller in the document, and its bottom edge is at or above the scroller's top. On the consuming page the overview sits between the zoom row and the ruler, with no page CSS on the component's classes. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "`overviewPlacement=\"above\"` renders the overview row before the lanes, with its margin below rather than above. The default is unchanged.",
   "details": "The overview row always renders after the lanes. A page that keeps its zoom controls above the timeline wants the overview between them and the lanes. Then the thing that moves the view sits next to what sets it.\n\nThe consuming page sets `display: flex` on the root and `order: -1` on the overview row, which reaches into the component's class names. Those are not contract. An option to place the overview above the lanes is wanted.",
   "notes": [],
   "links": []

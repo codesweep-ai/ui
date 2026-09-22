@@ -3,17 +3,19 @@
   "title": "Marks have no hatch fill, and the marker's colour cannot be set",
   "type": "improvement",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "b7fdd53"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that hatches a mark and colours a marker fails on the parent commit and passes here. Inside a hatched mark's inner 7 by 7 pixels, at least 5 are the fill and at least 5 the background. The marker of an event with `markerToken: \"--color-error\"` is the error colour, and one with no token is the accent. On the consuming page, the bands of waiting under each member are hatched. With errors only on, each failed step's marker dot is drawn in the error colour. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "`shape: \"hatched\"` draws a diagonal token-coloured hatch on the background inside a one-pixel outline. The tile is six pixels, drawn in device pixels so it stays crisp at any ratio, and the overview draws the mark filled. An event's `markerToken` colours its marker, which is the accent when there is none.",
   "details": "One page ran into two gaps.\n\nWaiting drawn as a band should read as absence rather than as work, and the convention for that is a hatch. There is no hatched shape, so the page draws waiting as a light filled band, and it competes with the work bars beside it.\n\nThe marker dot above a mark is always `--color-accent`. A page that marks failed steps with a marker, so they are found at any zoom, wants it in `--color-error`, and cannot have it.\n\nA hatched shape and a per-event marker token are wanted.",
   "notes": [],
   "links": []

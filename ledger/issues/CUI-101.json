@@ -3,17 +3,19 @@
   "title": "A requested view is fitted to the whole viewport, so the last mark hangs over its edge",
   "type": "defect",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "b8f1d22"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that fits a requested view between the boundary paddings fails on the parent commit and passes here. After a view of the whole extent, the scroller's scrollWidth equals its clientWidth. The last mark's right edge and its halo sit inside the viewport. The reported view equals the request to three decimals. On the consuming page the axis element is 709 pixels in a 709-pixel content box, with nothing to scroll. It was 720 in 709. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "A requested view is fitted to the viewport less the boundary paddings. The positioned axis keeps a mark size of room after the last position, so the last mark and its halo draw whole. `onViewChange` reports the range between the paddings, so a report handed back as a request asks for what is shown. The ruler's visible range is still the viewport's edges.",
   "details": "In the positioned layout, `view` fits the requested range to the full viewport width, and the boundary padding is added on top. A page asking for the whole run gets an axis wider than its viewport. Measured on a consuming page rendered in headless Chromium at 1500 by 1000, the axis was 720 pixels in a 709-pixel viewport. The last mark, which draws at the mark size to the right of its position, hangs over the right edge, and so does its selection halo.\n\nThe default fit, before any view is asked for, subtracts the padding and lands on the viewport width, so the two fits disagree. The page works around it by asking for a run view two percent longer than its data.\n\nThe fit should also leave room for the last mark's width. A positioned mark begins at its position, so the trailing padding needs the mark size that the index layout's centred marks never needed.",
   "notes": [],
   "links": [

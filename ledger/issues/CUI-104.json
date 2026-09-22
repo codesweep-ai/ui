@@ -3,17 +3,19 @@
   "title": "A lane height under 8 pixels silently renders at the default 28",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "fdc187e"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that warns for a lane too short to draw passes. A lane of height 6 produces the warning naming the lane, the 8-pixel floor and the default 28. The TSDoc on `height` names the floor. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "A finite `height` under 8 still falls back to 28, and now says so in development, as an invalid span does. The prop's TSDoc names the floor.",
   "details": "A finite `height` under 8 is replaced with 28, and nothing says so at the point of use. The TSDoc on `height` says only that the default is 28, and no development warning fires. The component document names the floor under its edge cases, and that document does not ship.\n\nA consuming page asked for a 6-pixel gap lane, got a 28-pixel one, and the bands it had measured from its rows landed 22 pixels off. A height the component will not draw should be reported in development, as an invalid span is, and the floor should be named where the prop is declared.",
   "notes": [],
   "links": []

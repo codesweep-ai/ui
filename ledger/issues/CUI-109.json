@@ -3,17 +3,19 @@
   "title": "The error cross draws at the mark size on a hairline column",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "01b231e"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that sizes the error cross to its column fails on the parent commit and passes here. On a hairline mark, at least 8 pixels within 3 of the centre are the error colour, and none 5 or more away. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "In the positioned layout the cross reaches the smaller of the mark size and the column's width, plus two pixels, and at least three. A hairline keeps a six-pixel cross.",
   "details": "In the positioned layout a dense run draws its marks as columns a pixel or two wide. An `error` event draws a cross whose arms reach the mark size plus two pixels each way, whatever the column's width. At a whole-run view the cross dwarfed the hairline it sat on, measured on a consuming page in headless Chromium at 1500 by 1000.\n\nThe cross should be sized to the column it marks, with a floor so that it is still a cross on a hairline.",
   "notes": [],
   "links": [

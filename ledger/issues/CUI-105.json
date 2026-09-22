@@ -3,17 +3,19 @@
   "title": "The overview ignores padding on the scroller",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "a243a52"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that keeps the canvas and the overview under a padded axis fails on the parent commit and passes here. It pads the scroller by 12 pixels on the left and 4 on the right. The axis is fitted to the content box, and scrollWidth equals clientWidth. The overview's drawing begins under the axis's zero and is as wide as the content box. After a zoom and a scroll of 30 the canvas stays at the content edge. The consuming page's scroller is now padded by 12 pixels. Its overview's inner left edge and its ruler's left edge are both at 221 pixels. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "The viewport is the scroller's content box: its clientWidth less the padding its computed style reports. The axis and the overview are fitted to it, and the overview's canvas begins after the left padding. The wheel's zoom anchor is measured from the content edge.",
   "details": "The viewport width is the scroller's `clientWidth`, which includes its padding, and the overview canvas starts at the edge of its grid cell. With `padding-left: 12px` on the scroller, the overview's zero sat 12 pixels left of the ruler's zero, measured on a consuming page in headless Chromium at 1500 by 1000.\n\nThe page keeps the two aligned with a margin on the scroller and the same margin on the overview. The component should read the scroller's padding and keep the overview's zero under the axis's zero.",
   "notes": [],
   "links": []

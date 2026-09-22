@@ -3,17 +3,19 @@
   "title": "A pointer click leaves the listbox ringed as if it were focused by keyboard",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 consuming page fixes",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "141dd75"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that hides the ring after a pointer press fails on the parent commit and passes here. A focus by script shows the ring. A pointer press on a mark focuses the scroller with `data-focus-source=\"pointer\"` and a computed box-shadow of none. An ArrowRight removes the attribute and restores the ring. On the consuming page a click on a mark leaves the focused listbox with box-shadow none, and an ArrowRight brings it back. `npm run ci` passes on 791cdaa, with every gate run. The visual gate passes 116 of 116 captures with no differing pixel and no new axe finding. The positioned fixture was re-recorded in 8566fe8. The dense, multi-lane and bar fixtures of the index layout are byte-identical to the baseline before this work. The build was served through `npm run registry:npmrevs` as 0.3.1-dev.20260922083722.8566fe8 and installed into the consuming dispatch viewer. That viewer's run14-1 render was measured in headless Chromium at 1500 by 1000."
   },
-  "resolution": null,
+  "resolution": "The scroller carries `data-focus-source=\"pointer\"` while its focus came from a pointer press. That is the modality the component already tracked for the tooltip. The stylesheet hides the `:focus-visible` ring under the attribute, and any key press clears it.",
   "details": "A press on a mark focuses the listbox by script. Chrome then matches `:focus-visible` on it, and the ring stays until something else takes focus, though the interaction was a pointer.\n\nThe component already tracks the modality, keeping keyboard focus apart from focus in general so that a click does not pin the narration tooltip. The ring should follow the same knowledge: shown for a keyboard focus or a keyboard move, and not for a pointer. The consuming page tracks the last interaction on a wrapper and hides the ring after a pointer.",
   "notes": [],
   "links": []
