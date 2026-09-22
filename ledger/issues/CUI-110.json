@@ -1,0 +1,22 @@
+{
+  "id": "CUI-110",
+  "title": "The plain vertical wheel always scrolls the positioned axis sideways",
+  "type": "improvement",
+  "severity": "low",
+  "status": "in-progress",
+  "foundBy": "repository owner, using a consuming timeline page: \"swiping left/right or up/down both scroll the lanes left/right. I thought up/down would scroll the page?\"",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "2026-09-22 wheel scroll option",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "In the positioned layout a plain vertical wheel scrolls the axis sideways, and only where the axis can move no further is the wheel left to the page. A page with a tall timeline inside a longer document met it as a trap. A reader scrolling down the page finds the lanes sliding sideways instead, until the axis hits its end. A horizontal swipe already scrolls the axis, so the vertical wheel is not the only way to move it.\n\nA page should be able to leave the vertical wheel to the page, as `wheelZoom` lets it leave the Ctrl wheel to the browser. The default stays as it is, since the preview and the tracer's strip rely on it.",
+  "notes": [],
+  "links": [
+    "CUI-106"
+  ]
+}
