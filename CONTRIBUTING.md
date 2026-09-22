@@ -117,7 +117,9 @@ believing it: a difference that does not reproduce is noise, and nothing to
 approve.
 
 When a visual change is intended and reviewed, `npm run visual:capture` records a
-new baseline. Never run it to make a failing comparison pass.
+new baseline. Never run it to make a failing comparison pass. It is also the only
+way to re-record: copying a `-current.png` into `visual-baseline/` skips the
+record of the image that drew it.
 
 Bumping the Playwright image fails every capture, because the browser that drew
 the baseline is gone. That is the moment to re-record, and the reason the

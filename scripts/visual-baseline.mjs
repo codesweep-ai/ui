@@ -1,3 +1,13 @@
+// The visual gate. `capture` photographs every component and pattern page in
+// both themes into visual-baseline/, and `compare` photographs them again and
+// measures each against its baseline. Run both through `npm run visual:capture`
+// and `npm run visual:compare`, which render in the pinned Playwright image.
+//
+// Re-record only with `npm run visual:capture`, and only for a change somebody
+// reviewed. It writes every capture as the browser encoded it, and records the
+// image that drew them. Copying a `-current.png` out of visual-diff/ into the
+// baseline skips that record. And rerun a comparison before believing it: a
+// difference that does not reproduce is noise, and nothing to approve.
 import { spawn } from "node:child_process";
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -584,10 +594,13 @@ async function readAxe(directory, theme) {
   return JSON.parse(await readFile(path.join(directory, `axe-${theme}.json`), "utf8"));
 }
 
-async function writeFailure(diffDir, relative, expected, actual) {
+// The render is written as the browser encoded it. A pngjs re-encode is
+// pixel-identical and about a third larger, so one copied into the baseline sat
+// there encoded unlike its siblings, and no pixel comparison could notice.
+async function writeFailure(diffDir, relative, expected, actual, rendered) {
   const target = path.join(diffDir, relative).replace(/\.png$/, "");
   await mkdir(path.dirname(target), { recursive: true });
-  await writeFile(`${target}-current.png`, PNG.sync.write(actual));
+  await writeFile(`${target}-current.png`, rendered);
   if (expected.width !== actual.width || expected.height !== actual.height) return;
   const diff = new PNG({ width: expected.width, height: expected.height });
   countDifferingPixels(expected, actual, diff.data);
@@ -609,11 +622,12 @@ async function compare() {
     let differingPixels = 0;
     for (const relative of baselineFiles) {
       const expected = PNG.sync.read(await readFile(path.join(BASELINE_DIR, relative)));
-      const actual = PNG.sync.read(await readFile(path.join(currentDir, relative)));
+      const rendered = await readFile(path.join(currentDir, relative));
+      const actual = PNG.sync.read(rendered);
       if (expected.width !== actual.width || expected.height !== actual.height) {
         failed += 1;
         console.error(`FAIL ${relative}: ${expected.width}x${expected.height} != ${actual.width}x${actual.height}`);
-        await writeFailure(diffDir, relative, expected, actual);
+        await writeFailure(diffDir, relative, expected, actual, rendered);
         continue;
       }
       const count = countDifferingPixels(expected, actual);
@@ -623,7 +637,7 @@ async function compare() {
         failed += 1;
         const why = MAX_DIFF_PIXELS === 0 && MAX_DIFF_RATIO === 0 ? "" : ` — over the ${MAX_DIFF_PIXELS} pixel floor`;
         console.error(`FAIL ${relative}: ${count} pixels (${(ratio * 100).toFixed(4)}%)${why}`);
-        await writeFailure(diffDir, relative, expected, actual);
+        await writeFailure(diffDir, relative, expected, actual, rendered);
       }
     }
     let axeFailed = 0;
