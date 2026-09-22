@@ -3,17 +3,19 @@
   "title": "The positioned layout draws circles as rectangles",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent, answering the repository owner's question whether a consuming page's protocol marks should be dots",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 protocol row widths",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "cc02010"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that draws a circle round fails on the parent commit and passes here. A circle with room for the mark size paints its centre and leaves the corners of its square unpainted. `npm run ci` passes on cc02010 with every gate run, and the visual gate passes 116 of 116 captures with no differing pixel; no existing capture holds a positioned circle."
   },
-  "resolution": null,
+  "resolution": "In the positioned layout a `circle` or `hollow-circle` in a lane without bars draws round when its width reaches the mark size. Narrower, it stays a column.",
   "details": "In the positioned layout every shape draws as a rectangle of the mark's width, hollow or filled. A consuming page's legend shows the orchestrator's log claims as circles, to keep them apart from the channel's squares, and the timeline never drew a circle. A circle with room for the mark size should draw round; a hairline cannot.",
   "notes": [],
   "links": [
