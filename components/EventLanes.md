@@ -195,6 +195,8 @@ interface EventLanesProps<K extends string = string> {
   overview?: "auto" | boolean;
   /** Overview height in CSS pixels. Default 40. */
   overviewHeight?: number;
+  /** Default "below" the lanes. "above" puts it above the ruler. */
+  overviewPlacement?: "below" | "above";
   /** "overview" hides the lanes' scrollbar while the overview is shown. Default "native". */
   scrollbar?: "native" | "overview";
 
@@ -351,6 +353,8 @@ Pointer hit-testing derives lane from y and global index from x, then looks up t
 | `false` | Never render it |
 
 The overview is a compact lane-preserving map: each lane becomes a miniature row, hidden kinds are absent, emphasis dimming is reflected, and selected/linked positions remain visible. Spans and text labels are omitted at overview scale. A single stroked rectangle shows the visible axis range.
+
+`overviewPlacement` puts the overview `"above"` the ruler and the lanes rather than `"below"` them, its default. A page whose zoom controls sit above the timeline can keep the thing that moves the view next to the controls that set it.
 
 `overviewHeight` sets the overview's height, 40 pixels by default. Its lane bands share whatever height it has, inside the outline's reserved chrome. A lane with `overview: false` is left out, and the lanes that remain share the height between them. A sparse lane drawn in a short overview otherwise leaves every band a line.
 
@@ -551,7 +555,7 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - Per-lane visible label: `data-event-lane-label="{lane.id}"`, plus `data-event-lane-title` and `data-event-lane-description` when those optional metadata fields are supplied.
 - Listbox scroller: the inner element carries `data-event-lanes-scroller`, `role="listbox"`, `tabIndex={0}`, `aria-label`, `aria-activedescendant`, `data-event-count`, and `data-span-count`. It is the horizontal scroll owner; read `scrollLeft` and `clientWidth` or observe its scroll/resize events through this hook. It carries `data-scrollbar="overview"` while `scrollbar="overview"` has hidden its scrollbar. The sticky gutter, ruler, and overview are outside its accessible subtree.
 - Main drawing surface: `data-event-lanes-canvas`, `aria-hidden="true"`.
-- Overview caption: `data-event-lanes-overview-label`. Overview canvas: `data-event-lanes-overview`, `aria-hidden="true"`.
+- Overview caption: `data-event-lanes-overview-label`. Overview canvas: `data-event-lanes-overview`, `aria-hidden="true"`. The root carries `data-overview-placement="above"` when the overview sits above the lanes.
 - DOM census: `data-event-lanes-census`; every visible `role="option"` carries `data-event-index`, `data-event-kind`, and `data-event-lane`, with `data-event-linked` and `data-event-emphasized` following the stable census contract above.
 - Span census: `data-span-lane`, `data-span-from`, and `data-span-to`, plus `data-span-id`, `data-span-label`, `data-span-trail` and `data-span-selected="true"` when those apply.
 - Link census: `data-link-from`, `data-link-to`, `data-link-style`, and `data-link-emphasized="true"` for an emphasised link.

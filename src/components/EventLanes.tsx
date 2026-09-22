@@ -185,6 +185,9 @@ export interface EventLanesProps<K extends string = string> {
   overview?: "auto" | boolean;
   /** Overview height in CSS pixels. Default 40. */
   overviewHeight?: number;
+  /** Where the overview sits. Default "below" the lanes; "above" puts it
+   *  between whatever precedes the component and the ruler. */
+  overviewPlacement?: "below" | "above";
   /** "overview" hides the lanes' own scrollbar while the overview is shown,
    *  since dragging or clicking the overview scrolls them. Default "native". */
   scrollbar?: "native" | "overview";
@@ -632,6 +635,7 @@ function EventLanesImpl<K extends string = string>({
   overviewContent = "marks",
   overview = "auto",
   overviewHeight: requestedOverviewHeight,
+  overviewPlacement = "below",
   scrollbar = "native",
   ruler,
   rulerLabel = "Index",
@@ -1808,14 +1812,31 @@ function EventLanesImpl<K extends string = string>({
     "--event-lanes-lane-count": Math.max(1, lanes.length),
   } as CSSProperties;
 
+  const overviewRow = showOverview && (
+    <div className="cs-component-event-lanes-overview-row">
+      <div data-event-lanes-overview-label="" className="cs-component-event-lanes-overview-label" aria-hidden="true">Overview</div>
+      <canvas
+        ref={overviewRef}
+        data-event-lanes-overview=""
+        aria-hidden="true"
+        className="cs-component-event-lanes-overview"
+        onPointerDown={handleOverviewPointerDown}
+        onPointerMove={handleOverviewPointerMove}
+      />
+    </div>
+  );
+  const above = overviewPlacement === "above";
+
   return (
     <div
       ref={rootRef}
       id={id}
       data-component="EventLanes"
+      data-overview-placement={above ? "above" : undefined}
       className={cn("cs-component-event-lanes-root", className)}
       style={componentStyle}
     >
+      {above && overviewRow}
       <div className="cs-component-event-lanes-main">
         <div data-event-lanes-labels="" className="cs-component-event-lanes-labels" aria-hidden="true">
           {hasRuler && <div className="cs-component-event-lanes-ruler-label">{rulerLabel}</div>}
@@ -1928,19 +1949,7 @@ function EventLanesImpl<K extends string = string>({
           )}
         </div>
       </div>
-      {showOverview && (
-        <div className="cs-component-event-lanes-overview-row">
-          <div data-event-lanes-overview-label="" className="cs-component-event-lanes-overview-label" aria-hidden="true">Overview</div>
-          <canvas
-            ref={overviewRef}
-            data-event-lanes-overview=""
-            aria-hidden="true"
-            className="cs-component-event-lanes-overview"
-            onPointerDown={handleOverviewPointerDown}
-            onPointerMove={handleOverviewPointerMove}
-          />
-        </div>
-      )}
+      {!above && overviewRow}
     </div>
   );
 }

@@ -100,6 +100,8 @@ holds today.
 
 ### Added
 
+- `EventLanes` takes `overviewPlacement="above"` to put the overview above the
+  ruler and the lanes. It sits below them by default, as before.
 - `EventLanes` has a positioned layout. With `layout="position"`, each event
   sits at its `position` on a scale the consumer chooses, such as seconds, so a
   long step takes a long stretch of the axis. A mark is as wide as the gap to

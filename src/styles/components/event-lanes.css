@@ -157,6 +157,11 @@
     margin-top: var(--space-1)
 }
 
+.cs-component-event-lanes-root[data-overview-placement="above"] .cs-component-event-lanes-overview-row {
+    margin-bottom: var(--space-1);
+    margin-top: 0
+}
+
 .cs-component-event-lanes-overview-label {
     align-items: center;
     color: var(--muted);

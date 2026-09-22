@@ -75,6 +75,18 @@ describe("EventLanes", () => {
     expect(container.querySelector("[data-event-lanes-overview-label]")).toHaveTextContent("Overview");
   });
 
+  it("puts the overview above the lanes when asked", () => {
+    const { container } = render(
+      <EventLanes lanes={lanes} events={events} palette={palette} overview overviewPlacement="above" />,
+    );
+    const root = container.querySelector('[data-component="EventLanes"]')!;
+    const overview = container.querySelector("[data-event-lanes-overview]")!;
+    const scroller = container.querySelector("[data-event-lanes-scroller]")!;
+    expect(root.getAttribute("data-overview-placement")).toBe("above");
+    expect(overview.compareDocumentPosition(scroller) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(overview.getBoundingClientRect().bottom).toBeLessThanOrEqual(scroller.getBoundingClientRect().top);
+  });
+
   it("skips hidden kinds in census, set metadata, and arrow navigation", async () => {
     const onSelect = vi.fn();
     const documentKey = vi.fn();
