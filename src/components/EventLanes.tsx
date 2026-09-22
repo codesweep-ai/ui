@@ -65,6 +65,12 @@ export interface EventLane {
    *  the positioned layout its marks still count for their timeline's widths,
    *  so hiding a lane never moves the marks in the others. */
   hidden?: boolean;
+  /** A band behind the lane in this token, from the gutter to the end of the
+   *  axis. Neighbouring lanes carrying the same token form one band. */
+  shade?: EventToken;
+  /** Empty space above the lane, in CSS pixels, which no band covers. A hidden
+   *  lane keeps none. */
+  gapBefore?: number;
 }
 
 export interface EventLaneEvent<K extends string = string> {
@@ -227,21 +233,30 @@ function validHeight(value: number | undefined, minimum: number, fallback: numbe
   return typeof value === "number" && Number.isFinite(value) && value >= minimum ? value : fallback;
 }
 
-/** Each lane's top and height, in lane order, and the canvas height they sum
- *  to. Exported for its test (not public API). With no heights supplied this
- *  is exactly the fixed 28px grid every consumer had before. */
-export function laneLayout(lanes: readonly Pick<EventLane, "height" | "hidden">[]) {
+function validGap(value: number | undefined) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+/** Each lane's top, height and the gap above it, in lane order, and the canvas
+ *  height they sum to. Exported for its test (not public API). With no heights
+ *  and no gaps supplied this is exactly the fixed 28px grid every consumer had
+ *  before. */
+export function laneLayout(lanes: readonly Pick<EventLane, "height" | "hidden" | "gapBefore">[]) {
   const tops: number[] = [];
   const heights: number[] = [];
+  const gaps: number[] = [];
   let total = 0;
   for (const lane of lanes) {
-    // A hidden lane keeps its place in the order and takes no height.
+    // A hidden lane keeps its place in the order and takes no height, and no gap.
     const height = lane.hidden ? 0 : validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT);
+    const gap = lane.hidden ? 0 : validGap(lane.gapBefore);
+    total += gap;
     tops.push(total);
     heights.push(height);
+    gaps.push(gap);
     total += height;
   }
-  return { tops, heights, total: Math.max(LANE_HEIGHT, total) };
+  return { tops, heights, gaps, total: Math.max(LANE_HEIGHT, total) };
 }
 
 /** The rectangle a bar occupies in a lane with `bars`. Exported for its test
@@ -367,6 +382,9 @@ function validateData<K extends string>(
   for (const lane of lanes) {
     if (laneIds.has(lane.id)) warnings.push(`duplicate lane id "${lane.id}"`);
     laneIds.add(lane.id);
+    if (lane.gapBefore !== undefined && !(isFiniteNumber(lane.gapBefore) && lane.gapBefore >= 0)) {
+      warnings.push(`lane "${lane.id}" has a gapBefore that is not a non-negative number, and gets none`);
+    }
   }
 
   const indices = new Set<number>();
@@ -834,6 +852,20 @@ function EventLanesImpl<K extends string = string>({
   const canvasHeight = layout.total;
   const overviewHeight = validHeight(requestedOverviewHeight, MIN_OVERVIEW_HEIGHT, OVERVIEW_HEIGHT);
   const hasRuler = ruler != null;
+  // The bands: one per run of neighbouring visible lanes that share a shade
+  // with no gap between them, measured from the top of the rows.
+  const bands = useMemo(() => {
+    const runs: { top: number; bottom: number; token: EventToken }[] = [];
+    lanes.forEach((lane, row) => {
+      if (lane.hidden || !lane.shade) return;
+      const top = layout.tops[row];
+      const bottom = top + layout.heights[row];
+      const last = runs[runs.length - 1];
+      if (last && last.token === lane.shade && last.bottom === top) last.bottom = bottom;
+      else runs.push({ top, bottom, token: lane.shade });
+    });
+    return runs;
+  }, [lanes, layout]);
   const showOverview = overview === true || (overview === "auto" && axisWidth > viewportWidth + 1);
 
   const activeEvent = activeIndex == null ? undefined : visibleByIndex.get(activeIndex);
@@ -1480,9 +1512,10 @@ function EventLanesImpl<K extends string = string>({
     const bounds = canvas.getBoundingClientRect();
     const x = pointer.clientX - bounds.left + scroller.scrollLeft - axisPadding;
     const y = pointer.clientY - bounds.top;
+    // The row whose own height holds y: a gap between lanes hits nothing.
     let row = -1;
     for (let index = 0; index < layout.tops.length; index += 1) {
-      if (!lanes[index]?.hidden && y >= layout.tops[index]) row = index;
+      if (!lanes[index]?.hidden && y >= layout.tops[index] && y < layout.tops[index] + layout.heights[index]) row = index;
     }
     const lane = lanes[row];
     if (positioned) {
@@ -1833,11 +1866,25 @@ function EventLanesImpl<K extends string = string>({
       id={id}
       data-component="EventLanes"
       data-overview-placement={above ? "above" : undefined}
+      data-event-lanes-shaded={bands.length > 0 ? "" : undefined}
       className={cn("cs-component-event-lanes-root", className)}
       style={componentStyle}
     >
       {above && overviewRow}
       <div className="cs-component-event-lanes-main">
+        {bands.map((band) => (
+          <div
+            key={`${band.top}-${band.token}`}
+            data-event-lanes-band={band.token}
+            className="cs-component-event-lanes-band"
+            aria-hidden="true"
+            style={{
+              top: `calc(var(--event-lanes-band-inset, 0rem) + ${((hasRuler ? RULER_HEIGHT : 0) + band.top) / 16}rem)`,
+              height: `${(band.bottom - band.top) / 16}rem`,
+              background: `var(${band.token})`,
+            }}
+          />
+        ))}
         <div data-event-lanes-labels="" className="cs-component-event-lanes-labels" aria-hidden="true">
           {hasRuler && <div className="cs-component-event-lanes-ruler-label">{rulerLabel}</div>}
           {(lanes.length > 0 ? lanes : [{ id: "empty", label: "Events" }]).filter((lane) => !("hidden" in lane && lane.hidden)).map((lane) => (
@@ -1847,7 +1894,10 @@ function EventLanesImpl<K extends string = string>({
                 data-event-lane-title={lane.title}
                 data-event-lane-description={lane.description}
                 className={cn("cs-component-event-lanes-label", "className" in lane && lane.className)}
-                style={"height" in lane && lane.height !== undefined ? { height: `${validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT) / 16}rem` } : undefined}
+                style={{
+                  ...("height" in lane && lane.height !== undefined ? { height: `${validHeight(lane.height, MIN_LANE_HEIGHT, LANE_HEIGHT) / 16}rem` } : {}),
+                  ...("gapBefore" in lane && validGap(lane.gapBefore) > 0 ? { marginTop: `${validGap(lane.gapBefore) / 16}rem` } : {}),
+                }}
               >
                 {lane.label}
               </div>

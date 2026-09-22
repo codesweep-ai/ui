@@ -61,6 +61,10 @@ interface EventLane {
   group?: string;
   /** No height, no drawing, no keyboard stop; still counts for its timeline's widths. */
   hidden?: boolean;
+  /** A band behind the lane in this token, from the gutter to the axis end. */
+  shade?: EventToken;
+  /** Empty space above the lane, in CSS pixels. */
+  gapBefore?: number;
 }
 
 interface EventLaneEvent<K extends string = string> {
@@ -239,7 +243,13 @@ This choice matches the multi-lane profile directly. The dense profile treats ar
 
 `lanes` defines visible row order. Lane IDs are unique. Events and spans whose `lane` does not match a declared lane are invalid and are not painted or exposed as options. A lane with no events still renders its label and empty row so multi-agent layouts do not jump when filtering.
 
-A lane is 28 pixels high unless it sets `height`, and lanes of different heights stack in order. The label beside a lane takes the same height, and hit-testing reads the row from the stacked heights.
+A lane is 28 pixels high unless it sets `height`, and lanes of different heights stack in order. The label beside a lane takes the same height, and hit-testing reads the row from the stacked heights. A lane with `gapBefore` sits that many pixels below the lane above it. The gap is empty: nothing is drawn in it, and a pointer in it hits nothing. A hidden lane keeps no gap.
+
+### Bands
+
+A lane with `shade` has a band behind it in that token, drawn from the left edge of the gutter to the right edge of the axis, so it runs under the lane's label, through whatever a page keeps between the gutter and the axis, and to the end of the row. Neighbouring lanes carrying the same token form one band, and a gap between them is left unshaded. Several lanes per member can therefore read as one band each, alternating from member to member, with the selected member's band in another token.
+
+While any lane is shaded the gutter's own background is transparent, so the band shows through it. The band's top edge sits below the rows' top border. A page that changes that border's width sets `--event-lanes-band-inset` on `.cs-component-event-lanes-main` to match.
 
 Lane labels are DOM text, not canvas pixels. They remain visible in a sticky leading gutter while the global axis scrolls horizontally. `title` supplies a [Tooltip](Tooltip.md) on hover or focus; `description` adds context to every event option announcement for that lane. The canvas rows, ruler, and overview begin after the same gutter and share the same x-coordinate system.
 
@@ -553,6 +563,7 @@ These choices cover CP-01/19/25 and TR-20/24/28 without preserving either consum
 - Root: the outer element carries the supplied `id` and `data-component="EventLanes"`.
 - Sticky labels container: `data-event-lanes-labels`.
 - Per-lane visible label: `data-event-lane-label="{lane.id}"`, plus `data-event-lane-title` and `data-event-lane-description` when those optional metadata fields are supplied.
+- Bands: one `data-event-lanes-band="{token}"` element per band, and `data-event-lanes-shaded` on the root while there is any.
 - Listbox scroller: the inner element carries `data-event-lanes-scroller`, `role="listbox"`, `tabIndex={0}`, `aria-label`, `aria-activedescendant`, `data-event-count`, and `data-span-count`. It is the horizontal scroll owner; read `scrollLeft` and `clientWidth` or observe its scroll/resize events through this hook. It carries `data-scrollbar="overview"` while `scrollbar="overview"` has hidden its scrollbar. The sticky gutter, ruler, and overview are outside its accessible subtree.
 - Main drawing surface: `data-event-lanes-canvas`, `aria-hidden="true"`.
 - Overview caption: `data-event-lanes-overview-label`. Overview canvas: `data-event-lanes-overview`, `aria-hidden="true"`. The root carries `data-overview-placement="above"` when the overview sits above the lanes.

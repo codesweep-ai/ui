@@ -445,13 +445,55 @@ describe("bar lanes, lane heights and overview height (CUI-099)", () => {
   }
 
   it("keeps the fixed 28px grid when no lane asks for a height", () => {
-    expect(laneLayout([{}, {}, {}])).toEqual({ tops: [0, 28, 56], heights: [28, 28, 28], total: 84 });
-    expect(laneLayout([])).toEqual({ tops: [], heights: [], total: 28 });
+    expect(laneLayout([{}, {}, {}])).toEqual({ tops: [0, 28, 56], heights: [28, 28, 28], gaps: [0, 0, 0], total: 84 });
+    expect(laneLayout([])).toEqual({ tops: [], heights: [], gaps: [], total: 28 });
   });
 
   it("stacks lanes of their own heights, and ignores a height too small to draw", () => {
-    expect(laneLayout([{ height: 40 }, { height: 16 }])).toEqual({ tops: [0, 40], heights: [40, 16], total: 56 });
+    expect(laneLayout([{ height: 40 }, { height: 16 }])).toEqual({ tops: [0, 40], heights: [40, 16], gaps: [0, 0], total: 56 });
     expect(laneLayout([{ height: 2 }, { height: Number.NaN }]).heights).toEqual([28, 28]);
+  });
+
+  it("keeps a gap above a lane, and none above a hidden one", () => {
+    expect(laneLayout([{ height: 20 }, { height: 20, gapBefore: 8 }, { height: 20, gapBefore: 8, hidden: true }, { height: 20 }]))
+      .toEqual({ tops: [0, 28, 48, 48], heights: [20, 20, 0, 20], gaps: [0, 8, 0, 0], total: 68 });
+    expect(laneLayout([{ gapBefore: -4 }, { gapBefore: Number.NaN }]).gaps).toEqual([0, 0]);
+  });
+
+  it("shades neighbouring lanes as one band from the gutter to the axis end, and leaves a gap unshaded", async () => {
+    const { container } = render(
+      <div style={{ width: 600 }}>
+        <EventLanes
+          lanes={[
+            { id: "a", label: "A", height: 20, shade: "--color-bg-muted" },
+            { id: "b", label: "B", height: 20, shade: "--color-bg-muted" },
+            { id: "c", label: "C", height: 20, gapBefore: 8, shade: "--color-accent-bg" },
+          ]}
+          events={[]}
+          palette={palette}
+          ruler={() => null}
+        />
+      </div>,
+    );
+    const root = container.querySelector('[data-component="EventLanes"]')!;
+    expect(root.hasAttribute("data-event-lanes-shaded")).toBe(true);
+    const bands = container.querySelectorAll("[data-event-lanes-band]");
+    expect(bands).toHaveLength(2);
+    const labels = container.querySelector("[data-event-lanes-labels]")!.getBoundingClientRect();
+    const scroller = container.querySelector("[data-event-lanes-scroller]")!.getBoundingClientRect();
+    const a = container.querySelector('[data-event-lane-label="a"]')!.getBoundingClientRect();
+    const b = container.querySelector('[data-event-lane-label="b"]')!.getBoundingClientRect();
+    const c = container.querySelector('[data-event-lane-label="c"]')!.getBoundingClientRect();
+    const first = bands[0].getBoundingClientRect();
+    const second = bands[1].getBoundingClientRect();
+    expect(first.top).toBeCloseTo(a.top, 0);
+    expect(first.bottom).toBeCloseTo(b.bottom, 0);
+    expect(first.left).toBeCloseTo(labels.left, 0);
+    expect(first.right).toBeCloseTo(scroller.right, 0);
+    expect(c.top - b.bottom).toBeCloseTo(8, 0);
+    expect(second.top).toBeCloseTo(c.top, 0);
+    expect(second.bottom).toBeCloseTo(c.bottom, 0);
+    expect(getComputedStyle(container.querySelector("[data-event-lanes-labels]")!).backgroundColor).toBe("rgba(0, 0, 0, 0)");
   });
 
   it("grows a bar from its floor toward the far edge, clamping the magnitude", () => {

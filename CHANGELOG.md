@@ -100,6 +100,12 @@ holds today.
 
 ### Added
 
+- An `EventLanes` lane can carry a `shade` token and a `gapBefore`. The shade
+  is a band behind the lane from the gutter to the end of the axis, and
+  neighbouring lanes with the same token form one band. The gap is empty space
+  above the lane. Together they let a member's rows read as one band, with a
+  gap before the next member. While any lane is shaded the gutter's background
+  is transparent, so the band shows through it.
 - `EventLanes` takes `overviewPlacement="above"` to put the overview above the
   ruler and the lanes. It sits below them by default, as before.
 - `EventLanes` has a positioned layout. With `layout="position"`, each event
