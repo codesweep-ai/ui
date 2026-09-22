@@ -96,9 +96,12 @@ asks before running those, so `npx puppeteer browsers install chrome` is worth
 having run once.
 
 `visual:compare` renders in the Playwright image the installed `playwright`
-version names, so it needs Docker or podman, and allows no difference at all.
-Runs in that image are deterministic to the pixel, so a capture that moved is a
-change somebody made rather than noise to absorb. Fonts and Chromium both come
+version names, so it needs Docker or podman, and allows no visible difference.
+Runs in that image are deterministic to the pixel but for one rounded corner in
+the dark theme, whose antialiasing lands a step in 255 low at random. So the
+comparison ignores a pixel moving one step in every channel, and counts one
+moving two steps in grey. `scripts/pixel-diff.mjs` holds the measurements that
+set it, and a test holds both ends. Fonts and Chromium both come
 from that image: the same commit measures differently on two hosts, so a
 baseline is only comparable to a run that rendered where it did. `visual:compare:host` skips the image and needs
 you to name a browser in `CHROME_BIN`; its pixels answer no question the gate is
@@ -108,8 +111,15 @@ It compares the axe report as well as the pixels. A rule that matches more nodes
 than the baseline fails the run, whether it sits under `violations` or under
 `incomplete`, so neither total can drift up unnoticed.
 
+A failing run writes what rendered, and where it differs, to a directory of its
+own under `visual-diff/`, and deletes no earlier run's. Rerun a failure before
+believing it: a difference that does not reproduce is noise, and nothing to
+approve.
+
 When a visual change is intended and reviewed, `npm run visual:capture` records a
-new baseline. Never run it to make a failing comparison pass.
+new baseline. Never run it to make a failing comparison pass. It is also the only
+way to re-record: copying a `-current.png` into `visual-baseline/` skips the
+record of the image that drew it.
 
 Bumping the Playwright image fails every capture, because the browser that drew
 the baseline is gone. That is the moment to re-record, and the reason the

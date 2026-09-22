@@ -1,5 +1,5 @@
 // The visual baseline is a set of pixels drawn by the Chromium and the fonts
-// inside one container image, and the comparison allows no difference at all.
+// inside one container image, and the comparison allows no visible difference.
 // The tag naming that image is mutable: a vendor rebuilding v1.62.1-noble on a
 // newer base publishes different bytes under the same name, and different font
 // packages rasterise text differently. Every capture then fails at once, with

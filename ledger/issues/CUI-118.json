@@ -1,24 +1,25 @@
 {
   "id": "CUI-118",
-  "title": "A reply and the next opening both fill the gap between them, and the opening covers the reply",
+  "title": "The visual gate fails on a one-bit antialiasing flake, and a rerun deletes the evidence",
   "type": "defect",
-  "severity": "low",
+  "severity": "high",
   "status": "closed",
-  "foundBy": "repository owner, reading a consuming page at the whole-run zoom: \"the dots seem to get cut off ... maybe the dots aren't always on top like d002 of the surveyor-behaviour row?\"",
+  "foundBy": "deps-maintenance pilot2 campaign, orchestrator/output/findings.md item 4, from frontend's d008 flake note",
   "opened": "2026-09-22",
   "resolved": "2026-09-22",
-  "stint": "2026-09-22 shared gap",
+  "stint": "pilot2-tier1",
   "evidence": {
     "commits": [
-      "fab2c4f"
+      "38d3ecf",
+      "27c892c",
+      "fcf609c",
+      "14204bf"
     ],
     "integrated": [],
-    "verified": "The browser test places a mark and an end-anchored mark ten pixels apart and reads a pixel inside each half of the gap. It fails on the parent commit, where the second mark's colour covers both, and passes here. The unit tests cover the shared width and the neighbour indices. `npm run ci` passes on fab2c4f with every gate run, and the visual baseline is unchanged at 116 of 116."
+    "verified": "At 14204bf, `npm run ci` passed with every gate run, and its `test:pixel-diff` passed 3 of 3. `npm run visual:compare` passed 5 of 5 runs on an unchanged tree, each 116/116 with 0 differing pixels. With the flake's three deltas written into both dark markdown baselines, the gate at 14204bf passes 116/116, and the gate at 7d44127 fails that tree 114/116 on 6 pixels. With lucide-react 1.47.0 installed, 14204bf fails the four captures the campaign saw fail, at 16, 64, 17 and 68 pixels, in two runs. Those runs left two directories under `visual-diff/`, and their `dark/app-shell-current.png` files are byte-identical at 93,619 bytes, beside a 93,607-byte baseline. Three measurements predate replaying these commits onto the selection-legibility work, which changed no script. Without antialiasing counted, the four lucide captures failed at the campaign's counts of 4, 16, 4 and 16. Ten captures of an unchanged tree were byte-identical to the baseline and to each other. The regression test fails at thresholds of 0, 0.003 and 0.006, and with antialiasing set aside."
   },
-  "resolution": "A mark and the end-anchored one after it both reach into the gap between them. When that gap is too small for both, each takes half of it, less the gutter, up to the mark size. With room for both nothing changes. The neighbour maps now carry indices as well as positions, so such a pair can be told apart from any other neighbours.",
-  "details": "A positioned mark is as wide as the gap to the next one in its run. One anchored at its end is as wide as the gap before it (CUI-115). When a start-anchored one is followed by an end-anchored one closer than a mark size, both rules pick the same gap, and each fills it. They are painted in position order, so the later one covers the earlier one whole. On a consuming page at the whole-run zoom, a dispatch's reply and the next dispatch's opening were 246 seconds apart at 0.03 px per second. That is seven pixels, which the opening took, and the reply's colour was gone from the row.",
+  "resolution": "The gate counts a pixel only past a pixelmatch threshold of 0.005. That is inside the measured window where the flake reads 0 and the smallest real change still counts in full. The pixel and ratio allowances stay at 0. It counts antialiased pixels too, which it used to set aside, so a change that moves only antialiasing no longer reads as zero. Each compare writes its failures to a directory of its own and deletes none, and writes each render with the browser's own bytes. A test holds the threshold from both sides.",
+  "details": "`npm run visual:compare` failed once in nine runs on trees with nothing changed. Each time it was six pixels, three on each of `dark/markdown-minimap.png` and `dark/markdown-viewer.png`. Both captures differ at the same three offsets from their bottom-right corner, (-1,-4), (-1,-3) and (-2,-2), by one least significant bit in one or two channels. It is one rounded corner whose antialiasing blend lands a bit low, in dark only. At `PIXEL_THRESHOLD = 0` any non-zero delta is counted, so the flake reads as a small real regression. The route from a red gate is a review and a re-record, which moves a frozen baseline to silence noise.\n\nTwo more defects sit on that route. `compare()` deletes `visual-diff/` before it runs, so the confirming rerun destroys the images of the run that found the difference. The campaign lost a red run's images that way. And `writeFailure` writes `<name>-current.png` as a pngjs re-encode, which is pixel-identical and about 34% larger. Copying one into `visual-baseline/` leaves an approved capture encoded unlike its siblings, which no pixel comparison notices.",
   "notes": [],
-  "links": [
-    "CUI-115"
-  ]
+  "links": []
 }

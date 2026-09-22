@@ -1,0 +1,29 @@
+{
+  "id": "CUI-119",
+  "title": "A reply and the next opening both fill the gap between them, and the opening covers the reply",
+  "type": "defect",
+  "severity": "low",
+  "status": "closed",
+  "foundBy": "repository owner, reading a consuming page at the whole-run zoom: \"the dots seem to get cut off ... maybe the dots aren't always on top like d002 of the surveyor-behaviour row?\"",
+  "opened": "2026-09-22",
+  "resolved": "2026-09-22",
+  "stint": "2026-09-22 shared gap",
+  "evidence": {
+    "commits": [
+      "fab2c4f"
+    ],
+    "integrated": [],
+    "verified": "The browser test places a mark and an end-anchored mark ten pixels apart and reads a pixel inside each half of the gap. It fails on the parent commit, where the second mark's colour covers both, and passes here. The unit tests cover the shared width and the neighbour indices. `npm run ci` passes on fab2c4f with every gate run, and the visual baseline is unchanged at 116 of 116."
+  },
+  "resolution": "A mark and the end-anchored one after it both reach into the gap between them. When that gap is too small for both, each takes half of it, less the gutter, up to the mark size. With room for both nothing changes. The neighbour maps now carry indices as well as positions, so such a pair can be told apart from any other neighbours.",
+  "details": "A positioned mark is as wide as the gap to the next one in its run. One anchored at its end is as wide as the gap before it (CUI-115). When a start-anchored one is followed by an end-anchored one closer than a mark size, both rules pick the same gap, and each fills it. They are painted in position order, so the later one covers the earlier one whole. On a consuming page at the whole-run zoom, a dispatch's reply and the next dispatch's opening were 246 seconds apart at 0.03 px per second. That is seven pixels, which the opening took, and the reply's colour was gone from the row.",
+  "notes": [
+    {
+      "date": "2026-09-22",
+      "text": "Filed and closed as CUI-118 while main gained a different CUI-118 for the visual gate; renumbered at the merge, since main's record was on the remote first. The commits it cites still say CUI-118 in their messages."
+    }
+  ],
+  "links": [
+    "CUI-115"
+  ]
+}

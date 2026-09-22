@@ -1,16 +1,31 @@
+// The visual gate. `capture` photographs every component and pattern page in
+// both themes into visual-baseline/, and `compare` photographs them again and
+// measures each against its baseline. Run both through `npm run visual:capture`
+// and `npm run visual:compare`, which render in the pinned Playwright image.
+//
+// Re-record only with `npm run visual:capture`, and only for a change somebody
+// reviewed. It writes every capture as the browser encoded it, and records the
+// image that drew them. Copying a `-current.png` out of visual-diff/ into the
+// baseline skips that record. And rerun a comparison before believing it: a
+// difference that does not reproduce is noise, and nothing to approve.
 import { spawn } from "node:child_process";
 import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 import AxeBuilder from "@axe-core/playwright";
-import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { chromium } from "playwright";
 
+import { MAX_DIFF_PIXELS, MAX_DIFF_RATIO, PIXEL_THRESHOLD, countDifferingPixels } from "./pixel-diff.mjs";
+
 const ROOT = path.resolve(import.meta.dirname, "..");
 const BASELINE_DIR = path.join(ROOT, "visual-baseline");
-const DIFF_DIR = path.join(ROOT, "visual-diff");
+// Each compare writes its failures into a directory of its own, and none deletes
+// another's. The run that confirms a difference is the next one, and when every
+// run began by clearing this directory, the confirming run destroyed the images
+// of the run it was confirming. `rm -rf visual-diff` clears them by hand.
+const DIFF_ROOT = path.join(ROOT, "visual-diff");
 const PREVIEW_URL = "http://127.0.0.1:4173/?page=components&brand=codesweep";
 const PATTERN_URL = "http://127.0.0.1:4173/?page=patterns&brand=codesweep";
 // An unset CHROME_BIN used to mean "whatever chromium playwright bundles",
@@ -25,26 +40,6 @@ if (!CHROME_BIN) {
   );
 }
 
-// Any difference at all is a difference. Runs in the pinned image are
-// deterministic to the pixel: 104 captures compared byte for byte across two
-// runs of the same commit, and a third against the committed baseline, all at
-// zero. There is no noise here to absorb, so absorbing any is a decision to
-// look away.
-//
-// pixelmatch weighs a perceptual distance, and at its old threshold of 0.1 it
-// ignored a shift of up to 26 in 255 however many pixels carried it. That is
-// not a rounding allowance, it is most of the way to a different colour: a
-// table repainting from the page grey to its own card background moved 358109
-// of 371856 pixels and was reported as zero. Geometry survived the threshold
-// because moving an element puts dark text where light background was, and
-// colour did not, which is a poor trade for a design system.
-//
-// The cost is that a Playwright image bump fails every capture rather than
-// quietly changing them. That is the correct moment to re-record, and the
-// wrong one to be told nothing.
-const PIXEL_THRESHOLD = 0;
-const MAX_DIFF_RATIO = 0;
-const MAX_DIFF_PIXELS = 0;
 const THEMES = ["light", "dark"];
 const COMPONENTS = [
   "AgentStatus", "AgentTrace", "AppShell",
@@ -599,15 +594,16 @@ async function readAxe(directory, theme) {
   return JSON.parse(await readFile(path.join(directory, `axe-${theme}.json`), "utf8"));
 }
 
-async function writeFailure(relative, expected, actual) {
-  const target = path.join(DIFF_DIR, relative).replace(/\.png$/, "");
+// The render is written as the browser encoded it. A pngjs re-encode is
+// pixel-identical and about a third larger, so one copied into the baseline sat
+// there encoded unlike its siblings, and no pixel comparison could notice.
+async function writeFailure(diffDir, relative, expected, actual, rendered) {
+  const target = path.join(diffDir, relative).replace(/\.png$/, "");
   await mkdir(path.dirname(target), { recursive: true });
-  await writeFile(`${target}-current.png`, PNG.sync.write(actual));
+  await writeFile(`${target}-current.png`, rendered);
   if (expected.width !== actual.width || expected.height !== actual.height) return;
   const diff = new PNG({ width: expected.width, height: expected.height });
-  pixelmatch(expected.data, actual.data, diff.data, expected.width, expected.height, {
-    threshold: PIXEL_THRESHOLD,
-  });
+  countDifferingPixels(expected, actual, diff.data);
   await writeFile(`${target}-diff.png`, PNG.sync.write(diff));
 }
 
@@ -615,7 +611,7 @@ async function compare() {
   const currentDir = await mkdtemp(path.join(tmpdir(), "cs-ui-visual-"));
   try {
     const summaries = await capture(currentDir);
-    await rm(DIFF_DIR, { recursive: true, force: true });
+    const diffDir = path.join(DIFF_ROOT, new Date().toISOString().replace(/[-:]|\.\d+/g, ""));
     const baselineFiles = await listPngs(BASELINE_DIR);
     const currentFiles = await listPngs(currentDir);
     if (JSON.stringify(baselineFiles) !== JSON.stringify(currentFiles)) {
@@ -626,23 +622,22 @@ async function compare() {
     let differingPixels = 0;
     for (const relative of baselineFiles) {
       const expected = PNG.sync.read(await readFile(path.join(BASELINE_DIR, relative)));
-      const actual = PNG.sync.read(await readFile(path.join(currentDir, relative)));
+      const rendered = await readFile(path.join(currentDir, relative));
+      const actual = PNG.sync.read(rendered);
       if (expected.width !== actual.width || expected.height !== actual.height) {
         failed += 1;
         console.error(`FAIL ${relative}: ${expected.width}x${expected.height} != ${actual.width}x${actual.height}`);
-        await writeFailure(relative, expected, actual);
+        await writeFailure(diffDir, relative, expected, actual, rendered);
         continue;
       }
-      const count = pixelmatch(expected.data, actual.data, null, expected.width, expected.height, {
-        threshold: PIXEL_THRESHOLD,
-      });
+      const count = countDifferingPixels(expected, actual);
       const ratio = count / (expected.width * expected.height);
       differingPixels += count;
       if (ratio > MAX_DIFF_RATIO || count > MAX_DIFF_PIXELS) {
         failed += 1;
         const why = MAX_DIFF_PIXELS === 0 && MAX_DIFF_RATIO === 0 ? "" : ` — over the ${MAX_DIFF_PIXELS} pixel floor`;
         console.error(`FAIL ${relative}: ${count} pixels (${(ratio * 100).toFixed(4)}%)${why}`);
-        await writeFailure(relative, expected, actual);
+        await writeFailure(diffDir, relative, expected, actual, rendered);
       }
     }
     let axeFailed = 0;
@@ -662,7 +657,7 @@ async function compare() {
     }
     console.log(`Axe compare: ${axeFailed} rule(s) matched more nodes than the baseline.`);
     if (failed > 0) {
-      console.log(`What rendered, and where it differs, is in ${path.relative(ROOT, DIFF_DIR)}/.`);
+      console.log(`What rendered, and where it differs, is in ${path.relative(ROOT, diffDir)}/.`);
     }
     if (failed > 0 || axeFailed > 0) process.exitCode = 1;
   } finally {
