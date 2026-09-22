@@ -3,17 +3,19 @@
   "title": "A selected mark's halo is painted under the mark beside it",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "repository owner, reading a consuming page: \"when selecting a circle, it gets cut off on the top and the rhs side ... on the rhs because the next circle covers it\"",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 selection legibility",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "6648d20"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test selects the first of two marks nine pixels apart and reads a pixel of its halo inside the second mark. It fails on the parent commit and passes here. `npm run ci` passes on 6648d20 with every gate run. The visual baseline is re-recorded: the two EventLanes captures with a selection differ only at the selected mark's halo, now on top."
   },
-  "resolution": null,
+  "resolution": "Both layouts paint in two passes: every mark but the selected one, then the selected one, so its halos and its shape land over its neighbours.",
   "details": "EventLanes paints marks in index order, in both layouts, and each mark paints its own halos first. A mark selected next to a close neighbour therefore has the right part of its halo covered by the neighbour, and the ring reads as cut off. On a consuming page a row of log claims spread twelve pixels apart showed it on every selection.",
   "notes": [],
   "links": []
