@@ -44,13 +44,14 @@ test("the dark rounded corner's rounding flake is not a difference", () => {
 });
 
 // The 14×13 of {theme}/app-shell.png around the CheckCircle2 icon, as the
-// baseline has it and as lucide-react 1.47 redraws it. The gate counted 4 pixels
-// in each, and a threshold that counts fewer has started to hide real changes.
-test("lucide-react 1.47's redrawn check mark still counts every pixel", () => {
-  for (const theme of ["dark", "light"]) {
+// baseline has it and as lucide-react 1.47 redraws it. 19 pixels move in each.
+// Setting antialiasing aside counted 4 of them, and a threshold that counts
+// fewer than these has started to hide real changes.
+test("lucide-react 1.47's redrawn check mark counts its antialiased edge", () => {
+  for (const [theme, counted] of [["dark", 16], ["light", 17]]) {
     const before = read(`check-mark-${theme}-lucide-0.563.png`);
     const after = read(`check-mark-${theme}-lucide-1.47.png`);
-    assert.equal(countDifferingPixels(before, after), 4, theme);
+    assert.equal(countDifferingPixels(before, after), counted, theme);
   }
 });
 

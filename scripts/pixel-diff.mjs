@@ -18,8 +18,15 @@
 // shift of two steps still counts. The window is narrow, and both ends are
 // measured. The corner counts 3 pixels at 0 and none from 0.004 upward.
 // lucide-react 1.47's redrawn check mark, the smallest real change on record,
-// counts 4 pixels in each theme up to 0.006 and erodes from 0.007.
-// scripts/pixel-diff.test.mjs holds both ends.
+// moves 19 pixels in each theme. It counts 16 in dark and 17 in light at 0.005,
+// and starts losing them at 0.006. scripts/pixel-diff.test.mjs holds both ends.
+//
+// Antialiased pixels count like any other. pixelmatch sets aside a pixel it
+// classifies as antialiasing unless told not to, and under that default the gate
+// counted 4 of the check mark's 19. A change that moved only antialiasing could
+// rewrite a committed capture and be reported as zero. Counting them counts
+// exactly what a renderer jitters, so it was measured first: ten captures of an
+// unchanged tree, 116 files each, all byte-identical to the baseline.
 //
 // The threshold was once pixelmatch's default of 0.1, which ignored a shift of
 // up to 26 in 255 however many pixels carried it. A table repainting from the
@@ -42,5 +49,6 @@ export const MAX_DIFF_PIXELS = 0;
 export function countDifferingPixels(expected, actual, output = null) {
   return pixelmatch(expected.data, actual.data, output, expected.width, expected.height, {
     threshold: PIXEL_THRESHOLD,
+    includeAA: true,
   });
 }
