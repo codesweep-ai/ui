@@ -4,6 +4,7 @@ import {
   MAX_AXIS_PIXELS,
   clampScale,
   markWidth,
+  sharedWidth,
   nextPositions,
   positionForX,
   scaleLimits,
@@ -151,5 +152,23 @@ describe("scale limits", () => {
     expect(clampScale(4, limits)).toBe(4);
     expect(clampScale(Number.NaN, limits)).toBe(1);
     expect(clampScale(-3, limits)).toBe(1);
+  });
+});
+
+describe("sharedWidth", () => {
+  it("gives each of two marks half the gap, less the gutter, up to the mark size", () => {
+    const size = 8;
+    expect(sharedWidth(0, 7, 1, size)).toBe(3);
+    expect(sharedWidth(0, 100, 1, size)).toBe(size);
+    expect(sharedWidth(0, 0, 1, size)).toBe(1);
+  });
+});
+
+describe("nextPositions indices", () => {
+  it("names each mark's neighbours by index as well as by position", () => {
+    const { nextIndex, previousIndex } = nextPositions([[{ i: 5, position: 10 }, { i: 2, position: 3 }]]);
+    expect(nextIndex.get(2)).toBe(5);
+    expect(previousIndex.get(5)).toBe(2);
+    expect(nextIndex.has(5)).toBe(false);
   });
 });

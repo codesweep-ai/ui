@@ -44,6 +44,14 @@ export function markWidth(
   return Math.max(1, Math.min(markSize, (next - position) * scale - MARK_GUTTER));
 }
 
+/** The width of each of two marks that draw into the same gap: one at
+ *  `start` reaching right, and one anchored at its end at `finish` reaching
+ *  left. Each takes half the gap, less the gutter, up to the mark size, so a
+ *  gap too small for both still shows both. */
+export function sharedWidth(start: number, finish: number, scale: number, markSize: number) {
+  return Math.max(1, Math.min(markSize, ((finish - start) * scale - MARK_GUTTER) / 2));
+}
+
 /** The half-open range [start, end) of a sorted position array that can paint
  *  inside [from, to]. A mark begins at its position and reaches at most `reach`
  *  units right of it, so the search starts that far left of the window. */
@@ -134,6 +142,8 @@ export interface TimelineMark {
 export function nextPositions(timelines: Iterable<readonly TimelineMark[]>) {
   const next = new Map<number, number>();
   const previous = new Map<number, number>();
+  const nextIndex = new Map<number, number>();
+  const previousIndex = new Map<number, number>();
   let smallestGap: number | undefined;
   for (const marks of timelines) {
     const ordered = [...marks].sort((a, b) => a.position - b.position || a.i - b.i);
@@ -141,8 +151,10 @@ export function nextPositions(timelines: Iterable<readonly TimelineMark[]>) {
       const gap = ordered[index + 1].position - ordered[index].position;
       next.set(ordered[index].i, ordered[index + 1].position);
       previous.set(ordered[index + 1].i, ordered[index].position);
+      nextIndex.set(ordered[index].i, ordered[index + 1].i);
+      previousIndex.set(ordered[index + 1].i, ordered[index].i);
       if (gap > 0 && (smallestGap === undefined || gap < smallestGap)) smallestGap = gap;
     }
   }
-  return { next, previous, smallestGap };
+  return { next, previous, nextIndex, previousIndex, smallestGap };
 }

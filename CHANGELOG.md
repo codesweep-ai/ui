@@ -54,6 +54,9 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` shares a gap between a mark and the end-anchored mark after it
+  when the gap is too small for both: each takes half, so both stay visible.
+  Each used to fill the whole gap, and the later one covered the earlier.
 - `EventLanes` paints the selected mark after its neighbours, in both layouts,
   so its halo is whole beside a close mark. It was painted in index order, and
   the next mark covered the right of the ring.

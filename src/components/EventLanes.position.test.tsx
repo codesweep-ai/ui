@@ -155,6 +155,55 @@ describe("EventLanes positioned layout", () => {
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ i: 0 }));
   });
 
+  it("shares a gap too small for both between a mark and the end-anchored mark after it", async () => {
+    const contexts: EventLanesRulerContext[] = [];
+    const { container } = render(
+      <div style={{ width: 640 }}>
+        <EventLanes
+          layout="position"
+          lanes={[{ id: "c", label: "C" }]}
+          view={{ start: 19, end: 22 }}
+          events={[
+            { i: 0, lane: "c", kind: "work", shape: "circle", label: "Reply", at: "20", position: 20 },
+            // Ten pixels behind the reply at this view, closer than two mark
+            // sizes, and anchored at its end, so both would fill the gap.
+            { i: 1, lane: "c", kind: "wait", shape: "circle", label: "Opens", at: "20.05", position: 20.05, anchor: "end" },
+            { i: 2, lane: "c", kind: "work", shape: "square", label: "Later", at: "100", position: 100 },
+          ]}
+          palette={palette}
+          ruler={(context) => {
+            contexts.push(context);
+            return null;
+          }}
+        />
+      </div>,
+    );
+    await frame();
+    const latest = contexts[contexts.length - 1];
+    const canvas = container.querySelector("[data-event-lanes-canvas]") as HTMLCanvasElement;
+    const context = canvas.getContext("2d")!;
+    const ratio = canvas.width / canvas.getBoundingClientRect().width;
+    const tokenColor = (token: string) => {
+      const probe = document.createElement("span");
+      probe.style.color = `var(${token})`;
+      document.body.append(probe);
+      const rgb = getComputedStyle(probe).color.match(/[\d.]+/g)!.map(Number);
+      probe.remove();
+      return rgb;
+    };
+    const isColor = (x: number, y: number, [r, g, b]: number[]) => {
+      const pixel = context.getImageData(Math.round(x * ratio), Math.round(y * ratio), 1, 1).data;
+      return Math.abs(pixel[0] - r) + Math.abs(pixel[1] - g) + Math.abs(pixel[2] - b) < 60 && pixel[3] > 150;
+    };
+    const from = latest.position!.xForPosition(20);
+    const to = latest.position!.xForPosition(20.05);
+    expect(to - from).toBeGreaterThan(6);
+    expect(to - from).toBeLessThan(markSizeFor(10) * 2);
+    // The reply keeps the first half of the gap, the opening the second.
+    expect(isColor(from + 2, 14, tokenColor(palette.work))).toBe(true);
+    expect(isColor(to - 2, 14, tokenColor(palette.wait))).toBe(true);
+  });
+
   it("draws a circle round when it has room, and as a column when it has not", async () => {
     const { container } = render(
       <div style={{ width: 640 }}>

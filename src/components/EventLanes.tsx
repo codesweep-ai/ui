@@ -23,6 +23,7 @@ import {
   lowerBound,
   markWidth,
   nextPositions,
+  sharedWidth,
   positionForX,
   scaleLimits,
   upperBound,
@@ -854,7 +855,7 @@ function EventLanesImpl<K extends string = string>({
       origin = Math.min(origin, span.from);
       finish = Math.max(finish, span.trail ?? span.to);
     }
-    if (!Number.isFinite(origin)) return { origin: 0, finish: 0, empty: true, next: new Map<number, number>(), previous: new Map<number, number>(), smallestGap: undefined };
+    if (!Number.isFinite(origin)) return { origin: 0, finish: 0, empty: true, next: new Map<number, number>(), previous: new Map<number, number>(), nextIndex: new Map<number, number>(), previousIndex: new Map<number, number>(), smallestGap: undefined };
     return { origin, finish, empty: false, ...nextPositions(timelines.values()) };
   }, [laneById, positioned, timelineOf, validated.events, validated.spans]);
 
@@ -913,17 +914,26 @@ function EventLanesImpl<K extends string = string>({
     [leadingPadding, origin, scale],
   );
   // A mark reaches to the next mark in its run, or, anchored at its end,
-  // back to the previous one: the gap on the side it draws into.
+  // back to the previous one: the gap on the side it draws into. A mark and
+  // the end-anchored mark after it draw into the same gap, so when it is
+  // too small for both they share it, half each, rather than the later one
+  // covering the earlier.
   const widthOf = useCallback(
     (event: EventLaneEvent<K>) => {
       const position = event.position as number;
+      const sizedByGap = (other: EventLaneEvent<K> | undefined) => other !== undefined && other.extent === undefined && event.extent === undefined;
       if (event.anchor === "end") {
         const previous = positionModel?.previous.get(event.i);
+        const before = positionModel ? eventByIndex.get(positionModel.previousIndex.get(event.i) ?? -1) : undefined;
+        if (previous !== undefined && sizedByGap(before) && before!.anchor !== "end") return sharedWidth(previous, position, scale, markSize);
         return markWidth(previous ?? position, previous === undefined ? undefined : position, event.extent, scale, markSize);
       }
-      return markWidth(position, positionModel?.next.get(event.i), event.extent, scale, markSize);
+      const next = positionModel?.next.get(event.i);
+      const after = positionModel ? eventByIndex.get(positionModel.nextIndex.get(event.i) ?? -1) : undefined;
+      if (next !== undefined && sizedByGap(after) && after!.anchor === "end") return sharedWidth(position, next, scale, markSize);
+      return markWidth(position, next, event.extent, scale, markSize);
     },
-    [markSize, positionModel, scale],
+    [eventByIndex, markSize, positionModel, scale],
   );
   // Where a mark's left edge is in the scrolling content: at its position, or
   // a width before it for a mark anchored at its end.
