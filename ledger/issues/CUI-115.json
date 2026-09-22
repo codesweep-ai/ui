@@ -1,0 +1,22 @@
+{
+  "id": "CUI-115",
+  "title": "An end-anchored mark is sized by the gap behind it, not the gap it draws into",
+  "type": "defect",
+  "severity": "low",
+  "status": "in-progress",
+  "foundBy": "session agent, measuring a consuming page after the repository owner reported the first dot as clipped",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "2026-09-22 end anchor",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "A mark's width is the gap to the next mark in its run, so two marks never overlap. One anchored at its end draws to the left, so the next one is behind it, and the gap that matters is the one before it. On a consuming page a dispatch opened and answered within seconds drew its opening five pixels wide at the one-hour zoom. A reply it does not reach narrowed it, and it was drawn as a column rather than a dot.",
+  "notes": [],
+  "links": [
+    "CUI-113"
+  ]
+}
