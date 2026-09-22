@@ -253,7 +253,7 @@ A lane is 28 pixels high unless it sets `height`, and lanes of different heights
 
 A lane with `shade` has a band behind it in that token, drawn from the left edge of the gutter to the right edge of the axis, so it runs under the lane's label, through whatever a page keeps between the gutter and the axis, and to the end of the row. Neighbouring lanes carrying the same token form one band, and a gap between them is left unshaded. Several lanes per member can therefore read as one band each, alternating from member to member, with the selected member's band in another token.
 
-While any lane is shaded the gutter's own background is transparent, so the band shows through it. The band's top edge sits below the rows' top border. A page that changes that border's width sets `--event-lanes-band-inset` on `.cs-component-event-lanes-main` to match.
+While any lane is shaded the gutter's own background is transparent, so the band shows through it. The band's top edge sits below the rows' top border. A page that changes that border's width sets `--event-lanes-band-inset` on `.cs-component-event-lanes-main` to match, as a length: `0rem` for no border, since a unitless zero is not one.
 
 Lane labels are DOM text, not canvas pixels. They remain visible in a sticky leading gutter while the global axis scrolls horizontally. `title` supplies a [Tooltip](Tooltip.md) on hover or focus; `description` adds context to every event option announcement for that lane. The canvas rows, ruler, and overview begin after the same gutter and share the same x-coordinate system.
 
