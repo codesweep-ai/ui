@@ -3,14 +3,20 @@
   "title": "A requested view is fitted to the whole viewport, so the last mark hangs over its edge",
   "type": "defect",
   "severity": "med",
-  "status": "open",
+  "status": "in-progress",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
   "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "stint": "2026-09-22 consuming page fixes",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
   "resolution": null,
   "details": "In the positioned layout, `view` fits the requested range to the full viewport width, and the boundary padding is added on top. A page asking for the whole run gets an axis wider than its viewport: 720 pixels of axis in a 709-pixel viewport, measured on a consuming page rendered in headless Chromium at 1500 by 1000. The last mark, which draws at the mark size to the right of its position, hangs over the right edge, and so does its selection halo.\n\nThe default fit, before any view is asked for, subtracts the padding and lands on the viewport width, so the two fits disagree. The page works around it by asking for a run view two percent longer than its data.\n\nThe fit should also leave room for the last mark's width. A positioned mark begins at its position, so the trailing padding needs the mark size that the index layout's centred marks never needed.",
   "notes": [],
-  "links": ["CUI-100"]
+  "links": [
+    "CUI-100"
+  ]
 }

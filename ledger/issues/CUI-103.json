@@ -3,14 +3,20 @@
   "title": "Lanes cannot be shaded as bands or separated by a gap",
   "type": "improvement",
   "severity": "med",
-  "status": "open",
+  "status": "in-progress",
   "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
   "opened": "2026-09-22",
   "resolved": null,
-  "stint": null,
-  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "stint": "2026-09-22 consuming page fixes",
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
   "resolution": null,
   "details": "A timeline of several lanes per member reads as one band when the member's rows share a shade, alternating from member to member, with a gap between members. The component offers neither.\n\nThe consuming page paints a vertical gradient behind the lanes and the gutter, with a stop at each edge of each rendered label row, and inserts empty 8-pixel lanes as gaps. The gradient has to be re-measured whenever the rows change, and a lane whose height the component silently replaced misaligned every band beneath it.\n\nA lane should be able to carry a shade token, drawn from the gutter to the end of the axis so the band is continuous through any space the page keeps before the axis, and a space before it. The selected member's band in the accent shade is the same option with another token.",
   "notes": [],
-  "links": ["CUI-104"]
+  "links": [
+    "CUI-104"
+  ]
 }
