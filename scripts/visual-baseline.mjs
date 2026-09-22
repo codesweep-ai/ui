@@ -4,9 +4,10 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 import AxeBuilder from "@axe-core/playwright";
-import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
 import { chromium } from "playwright";
+
+import { MAX_DIFF_PIXELS, MAX_DIFF_RATIO, PIXEL_THRESHOLD, countDifferingPixels } from "./pixel-diff.mjs";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
 const BASELINE_DIR = path.join(ROOT, "visual-baseline");
@@ -25,26 +26,6 @@ if (!CHROME_BIN) {
   );
 }
 
-// Any difference at all is a difference. Runs in the pinned image are
-// deterministic to the pixel: 104 captures compared byte for byte across two
-// runs of the same commit, and a third against the committed baseline, all at
-// zero. There is no noise here to absorb, so absorbing any is a decision to
-// look away.
-//
-// pixelmatch weighs a perceptual distance, and at its old threshold of 0.1 it
-// ignored a shift of up to 26 in 255 however many pixels carried it. That is
-// not a rounding allowance, it is most of the way to a different colour: a
-// table repainting from the page grey to its own card background moved 358109
-// of 371856 pixels and was reported as zero. Geometry survived the threshold
-// because moving an element puts dark text where light background was, and
-// colour did not, which is a poor trade for a design system.
-//
-// The cost is that a Playwright image bump fails every capture rather than
-// quietly changing them. That is the correct moment to re-record, and the
-// wrong one to be told nothing.
-const PIXEL_THRESHOLD = 0;
-const MAX_DIFF_RATIO = 0;
-const MAX_DIFF_PIXELS = 0;
 const THEMES = ["light", "dark"];
 const COMPONENTS = [
   "AgentStatus", "AgentTrace", "AppShell",
@@ -605,9 +586,7 @@ async function writeFailure(relative, expected, actual) {
   await writeFile(`${target}-current.png`, PNG.sync.write(actual));
   if (expected.width !== actual.width || expected.height !== actual.height) return;
   const diff = new PNG({ width: expected.width, height: expected.height });
-  pixelmatch(expected.data, actual.data, diff.data, expected.width, expected.height, {
-    threshold: PIXEL_THRESHOLD,
-  });
+  countDifferingPixels(expected, actual, diff.data);
   await writeFile(`${target}-diff.png`, PNG.sync.write(diff));
 }
 
@@ -633,9 +612,7 @@ async function compare() {
         await writeFailure(relative, expected, actual);
         continue;
       }
-      const count = pixelmatch(expected.data, actual.data, null, expected.width, expected.height, {
-        threshold: PIXEL_THRESHOLD,
-      });
+      const count = countDifferingPixels(expected, actual);
       const ratio = count / (expected.width * expected.height);
       differingPixels += count;
       if (ratio > MAX_DIFF_RATIO || count > MAX_DIFF_PIXELS) {

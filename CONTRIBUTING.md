@@ -96,9 +96,12 @@ asks before running those, so `npx puppeteer browsers install chrome` is worth
 having run once.
 
 `visual:compare` renders in the Playwright image the installed `playwright`
-version names, so it needs Docker or podman, and allows no difference at all.
-Runs in that image are deterministic to the pixel, so a capture that moved is a
-change somebody made rather than noise to absorb. Fonts and Chromium both come
+version names, so it needs Docker or podman, and allows no visible difference.
+Runs in that image are deterministic to the pixel but for one rounded corner in
+the dark theme, whose antialiasing lands a step in 255 low at random. So the
+comparison ignores a pixel moving one step in every channel, and counts one
+moving two steps in grey. `scripts/pixel-diff.mjs` holds the measurements that
+set it, and a test holds both ends. Fonts and Chromium both come
 from that image: the same commit measures differently on two hosts, so a
 baseline is only comparable to a run that rendered where it did. `visual:compare:host` skips the image and needs
 you to name a browser in `CHROME_BIN`; its pixels answer no question the gate is
