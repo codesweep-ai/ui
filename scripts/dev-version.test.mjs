@@ -42,8 +42,8 @@ async function fixture(version = "0.2.0") {
   return root;
 }
 
-function run(root, tz) {
-  return spawnSync(process.execPath, [path.join(root, "scripts", "dev-version.mjs")], {
+function run(root, tz, ...args) {
+  return spawnSync(process.execPath, [path.join(root, "scripts", "dev-version.mjs"), ...args], {
     cwd: root,
     encoding: "utf8",
     env: { ...process.env, TZ: tz },
@@ -83,6 +83,17 @@ test("a dirty tree describes no commit, so it refuses to name one", async (t) =>
   const result = run(root, "UTC");
   assert.equal(result.status, 1);
   assert.match(result.stderr, /uncommitted changes/);
+});
+
+test("--dirty names a dirty tree after its commit, marked as dirty", async (t) => {
+  const root = await fixture();
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await writeFile(path.join(root, "stray.txt"), "uncommitted\n");
+
+  const short = git(root, "rev-parse", "--short=7", "HEAD");
+  const result = run(root, "UTC", "--dirty");
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.trim(), `0.2.1-dev.${STAMP_UTC}.${short}-dirty`);
 });
 
 test("a version that is not a plain release is refused", async (t) => {

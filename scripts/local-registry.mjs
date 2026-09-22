@@ -129,13 +129,11 @@ log: { type: stdout, format: pretty, level: warn }
 // npm sends credentials even where none are wanted, so it is given some.
 writeFileSync(NPMRC, `${scope}:registry=${URL}/\n//localhost:${PORT}/:_authToken=local-only\n`);
 
-// The other script serves this port too, and refuses to start while verdaccio
-// has it. This is the same refusal the other way round, because publishing to
-// cs-npmrevs fails with a 405 a reader would have to decode.
+// cs-npmrevs is on 4875 unless told otherwise, but CS_UI_REGISTRY_PORT can name
+// its port, and publishing to cs-npmrevs fails with a 405 a reader would have
+// to decode.
 if (await servedByNpmrevs()) {
-  console.error(`port ${PORT} is served by \`npm run registry:npmrevs\`.`);
-  console.error("Stop it with `node scripts/npmrevs-registry.mjs stop`, or set");
-  console.error("CS_UI_REGISTRY_PORT to a free port.");
+  console.error(`port ${PORT} is served by cs-npmrevs. Set CS_UI_REGISTRY_PORT to a free port.`);
   process.exit(1);
 }
 

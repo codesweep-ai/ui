@@ -18,6 +18,9 @@
 // The timestamp is the commit's, not the clock's, so the same commit always
 // produces the same version and a rebuild is idempotent. The short hash makes
 // two commits sharing a second distinct.
+//
+// --dirty names a tree with uncommitted changes too, as the commit's version
+// with -dirty after the hash, for a build that stays on this machine.
 
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -60,8 +63,12 @@ try {
 
 // A tree with uncommitted changes describes no commit, and the version would
 // claim one. CI always has a clean checkout; a laptop may not.
+let suffix = "";
 if (git("status", "--porcelain")) {
-  fail("the working tree has uncommitted changes, so no commit describes it.");
+  if (!process.argv.includes("--dirty")) {
+    fail("the working tree has uncommitted changes, so no commit describes it.");
+  }
+  suffix = "-dirty";
 }
 
-process.stdout.write(`${major}.${minor}.${Number(patch) + 1}-dev.${stamp}.${hash}\n`);
+process.stdout.write(`${major}.${minor}.${Number(patch) + 1}-dev.${stamp}.${hash}${suffix}\n`);

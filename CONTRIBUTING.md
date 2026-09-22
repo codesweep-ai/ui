@@ -332,15 +332,21 @@ built:
 
 ```sh
 npm run registry:npmrevs                       # build, stage, serve, print how to install
+npm run registry:pack                          # build and stage only, for a later build
 node scripts/npmrevs-registry.mjs stop         # stop it again
 ```
 
-It stages with `--inspect`, so an unpushed commit can be tried too. The
+It stages with `--inspect`, so an unpushed commit can be tried too, under the
+dev version of the commit, `-dirty` when the tree has changes. The
 `@codesweep-ai/npmrevs` package holds cs-npmrevs, pinned to an exact version in
 `package.json`, so `npm ci` installs it with everything else. Set `NPMREVS` to
-run a different one. It serves on `localhost:4873` as well, so an npmrc that
-sends `@codesweep-ai` there works with either registry. Only one of the two runs
-at a time, and `CS_UI_REGISTRY_PORT` moves both.
+run a different one. It serves on `localhost:4875`, beside verdaccio's 4873, and
+`CS_NPMREVS_PORT` moves it.
+
+The tarball goes into cs-npmrevs's default data directory,
+`~/.local/share/cs-npmrevs/data`, which every project's build shares. A build
+in ledger, tracer or campaign installs through cs-npmrevs on that port, so it
+finds the version packed here without anything being pushed.
 
 ## Releasing
 
