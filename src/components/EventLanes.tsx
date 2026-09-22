@@ -32,7 +32,7 @@ import {
   type TimelineMark,
 } from "../lib/eventLanesPosition";
 
-export type EventShape = "square" | "circle" | "hollow" | "hollow-circle";
+export type EventShape = "square" | "circle" | "hollow" | "hollow-circle" | "hatched";
 export type EventToken = `--${string}`;
 
 export interface EventLane {
@@ -85,6 +85,8 @@ export interface EventLaneEvent<K extends string = string> {
   error?: boolean;
   tick?: boolean;
   marker?: string;
+  /** The marker's token. Default --color-accent. */
+  markerToken?: EventToken;
   /** Permanent token-coloured ring, painted below linked and selected halos. */
   halo?: EventToken;
   /** 0 to 1: how far the bar reaches from its floor toward the row's far edge.
@@ -454,6 +456,72 @@ function resolveToken(styles: CSSStyleDeclaration, token: EventToken | undefined
   return styles.getPropertyValue(token).trim() || fallback;
 }
 
+/** The tile a hatched mark repeats: a diagonal line in the fill on the
+ *  background, six CSS pixels on a side. It is drawn in device pixels and the
+ *  pattern scaled back, so it stays crisp at any ratio. */
+const HATCH_TILE = 6;
+
+export function hatchPattern(
+  context: CanvasRenderingContext2D,
+  fill: string,
+  background: string,
+  ratio: number,
+): CanvasPattern | null {
+  if (typeof document === "undefined" || typeof context.createPattern !== "function") return null;
+  const tile = document.createElement("canvas");
+  tile.width = tile.height = Math.ceil(HATCH_TILE * ratio);
+  const brush = tile.getContext("2d");
+  if (!brush) return null;
+  brush.scale(ratio, ratio);
+  brush.fillStyle = background;
+  brush.fillRect(0, 0, HATCH_TILE, HATCH_TILE);
+  brush.strokeStyle = fill;
+  brush.lineWidth = 1.5;
+  brush.beginPath();
+  // One line corner to corner, and its two halves at the opposite corners, so
+  // the tiles join without a break.
+  brush.moveTo(0, HATCH_TILE);
+  brush.lineTo(HATCH_TILE, 0);
+  brush.moveTo(-HATCH_TILE / 2, HATCH_TILE / 2);
+  brush.lineTo(HATCH_TILE / 2, -HATCH_TILE / 2);
+  brush.moveTo(HATCH_TILE / 2, HATCH_TILE * 1.5);
+  brush.lineTo(HATCH_TILE * 1.5, HATCH_TILE / 2);
+  brush.stroke();
+  const pattern = context.createPattern(tile, "repeat");
+  if (pattern && ratio !== 1 && typeof pattern.setTransform === "function" && typeof DOMMatrix !== "undefined") {
+    pattern.setTransform(new DOMMatrix().scale(1 / ratio));
+  }
+  return pattern;
+}
+
+/** Fill and outline the current path as the shape asks: solid, a token
+ *  outline on the background for either hollow shape, or the hatch inside a
+ *  one-pixel outline. */
+function paintShape(
+  context: CanvasRenderingContext2D,
+  shape: EventShape,
+  fill: string,
+  background: string,
+  hatch: CanvasPattern | null | undefined,
+) {
+  if (shape === "hollow" || shape === "hollow-circle") {
+    context.fillStyle = background;
+    context.fill();
+    context.strokeStyle = fill;
+    context.lineWidth = 2;
+    context.stroke();
+  } else if (shape === "hatched") {
+    context.fillStyle = hatch ?? fill;
+    context.fill();
+    context.strokeStyle = fill;
+    context.lineWidth = 1;
+    context.stroke();
+  } else {
+    context.fillStyle = fill;
+    context.fill();
+  }
+}
+
 export function drawMark(
   context: CanvasRenderingContext2D,
   shape: EventShape,
@@ -462,45 +530,28 @@ export function drawMark(
   size: number,
   fill: string,
   background: string,
+  hatch?: CanvasPattern | null,
 ) {
   const half = size / 2;
   context.beginPath();
   if (shape === "circle" || shape === "hollow-circle") context.arc(x, y, half, 0, Math.PI * 2);
   else context.roundRect(x - half, y - half, size, size, 2);
-
-  if (shape === "hollow" || shape === "hollow-circle") {
-    context.fillStyle = background;
-    context.fill();
-    context.strokeStyle = fill;
-    context.lineWidth = 2;
-    context.stroke();
-  } else {
-    context.fillStyle = fill;
-    context.fill();
-  }
+  paintShape(context, shape, fill, background, hatch);
 }
 
-/** A bar, drawn as the lane's mark would be: filled, or a token outline on the
- *  background for either hollow shape. */
+/** A bar, drawn as the lane's mark would be: filled, a token outline on the
+ *  background for either hollow shape, or hatched. */
 export function drawBar(
   context: CanvasRenderingContext2D,
   shape: EventShape,
   rect: Rect,
   fill: string,
   background: string,
+  hatch?: CanvasPattern | null,
 ) {
   context.beginPath();
   context.roundRect(rect.x, rect.y, rect.width, rect.height, 2);
-  if (shape === "hollow" || shape === "hollow-circle") {
-    context.fillStyle = background;
-    context.fill();
-    context.strokeStyle = fill;
-    context.lineWidth = 2;
-    context.stroke();
-  } else {
-    context.fillStyle = fill;
-    context.fill();
-  }
+  paintShape(context, shape, fill, background, hatch);
 }
 
 /** The broken-bar notch: a background stripe cuts the bar just inside its far
@@ -1093,6 +1144,17 @@ function EventLanesImpl<K extends string = string>({
     const linkColor = link;
     const error = styles.getPropertyValue("--color-error").trim() || foreground;
     const accent = styles.getPropertyValue("--color-accent").trim() || foreground;
+    // One hatch per fill colour per paint, made the first time a hatched mark asks.
+    const hatches = new Map<string, CanvasPattern | null>();
+    const hatchFor = (fill: string) => {
+      let pattern = hatches.get(fill);
+      if (pattern === undefined) {
+        pattern = hatchPattern(context, fill, background, ratio);
+        hatches.set(fill, pattern);
+      }
+      return pattern;
+    };
+    const markerColor = (event: EventLaneEvent<K>) => event.markerToken ? resolveToken(styles, event.markerToken, accent) : accent;
 
     if (positioned && positionIndex) {
       const from = positionForX(scrollLeft, origin, scale, axisPadding);
@@ -1169,7 +1231,7 @@ function EventLanesImpl<K extends string = string>({
             drawRectHalo(context, rect, 7, foreground, 3);
             drawRectHalo(context, rect, 3, background, 2);
           }
-          drawBar(context, event.shape, rect, fill, background);
+          drawBar(context, event.shape, rect, fill, background, event.shape === "hatched" ? hatchFor(fill) : undefined);
           if (event.clipped && lane.bars) drawNotch(context, rect, lane.bars, background, foreground);
           const centreY = rect.y + rect.height / 2;
           if (isSelected && isLinked) {
@@ -1204,7 +1266,7 @@ function EventLanesImpl<K extends string = string>({
               : Math.max(top + 2, rect.y - 4);
             context.beginPath();
             context.arc(centre, markerY, 2, 0, Math.PI * 2);
-            context.fillStyle = accent;
+            context.fillStyle = markerColor(event);
             context.fill();
           }
         }
@@ -1285,7 +1347,7 @@ function EventLanesImpl<K extends string = string>({
           drawRectHalo(context, rect, 7, foreground, 3);
           drawRectHalo(context, rect, 3, background, 2);
         }
-        drawBar(context, event.shape, rect, fill, background);
+        drawBar(context, event.shape, rect, fill, background, event.shape === "hatched" ? hatchFor(fill) : undefined);
         if (event.clipped) drawNotch(context, rect, lane.bars, background, foreground);
         const centerY = rect.y + rect.height / 2;
         if (isSelected && isLinked) {
@@ -1320,7 +1382,7 @@ function EventLanesImpl<K extends string = string>({
             : Math.min(layout.tops[row] + laneHeight - 2, rect.y + rect.height + 4);
           context.beginPath();
           context.arc(x, markerY, 2, 0, Math.PI * 2);
-          context.fillStyle = accent;
+          context.fillStyle = markerColor(event);
           context.fill();
         }
         continue;
@@ -1346,7 +1408,7 @@ function EventLanesImpl<K extends string = string>({
         drawHalo(context, event.shape, x, y, size + 3, background, 2);
       }
 
-      drawMark(context, event.shape, x, y, size, fill, background);
+      drawMark(context, event.shape, x, y, size, fill, background, event.shape === "hatched" ? hatchFor(fill) : undefined);
 
       if (isSelected && isLinked) {
         context.beginPath();
@@ -1377,7 +1439,7 @@ function EventLanesImpl<K extends string = string>({
       if (event.marker) {
         context.beginPath();
         context.arc(x, y - size / 2 - 4, 2, 0, Math.PI * 2);
-        context.fillStyle = accent;
+        context.fillStyle = markerColor(event);
         context.fill();
       }
     }

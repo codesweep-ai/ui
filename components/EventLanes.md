@@ -33,7 +33,7 @@ note: >
 ```tsx
 import type { ReactNode } from "react";
 
-type EventShape = "square" | "circle" | "hollow" | "hollow-circle";
+type EventShape = "square" | "circle" | "hollow" | "hollow-circle" | "hatched";
 
 /** A CSS custom-property name. The component resolves it with var(...). */
 type EventToken = `--${string}`;
@@ -85,6 +85,8 @@ interface EventLaneEvent<K extends string = string> {
   tick?: boolean;
   /** Short accessible label for an auxiliary marker (for example, "spawn"). */
   marker?: string;
+  /** The marker's token. Default --color-accent. */
+  markerToken?: EventToken;
   /** Permanent token-coloured ring, below linked and selected halos. */
   halo?: EventToken;
   /** 0 to 1: how far a bar reaches from its floor. Read only in a bars lane. */
@@ -290,9 +292,10 @@ But if a legend then **lists those kinds separately**, it promises a distinction
 - `circle`: filled token-colored circle.
 - `hollow`: transparent `var(--bg)` center with a token-colored square outline. The dense profile maps `redacted` to this shape; this existing geometry is unchanged.
 - `hollow-circle`: transparent `var(--bg)` center with a token-colored circular outline. The multi-lane profile maps its hollow `accept` mark to this shape.
+- `hatched`: a diagonal token-coloured hatch on `var(--bg)`, inside a one-pixel token outline. It reads as absence rather than as work, which is what a band of waiting is. The overview draws it filled, since a hatch has no room there.
 - `error`: draws an error cross with `var(--color-error)` above the base shape. It does not replace the kind color.
 - `tick`: draws a trailing `var(--fg)` vertical boundary bar at the event cell edge.
-- `marker`: draws a small `var(--color-accent)` marker above the base shape. The string is its accessible/tooltip label; dense canvases do not paint the marker text.
+- `marker`: draws a small marker above the base shape, in `markerToken` or `var(--color-accent)` when there is none. The string is its accessible/tooltip label; dense canvases do not paint the marker text. A page that marks failed steps so they can be found at any zoom gives them `--color-error`.
 
 Marks are centered in their `cellWidth` column and lane row. `cellWidth` is a finite positive number in CSS pixels; invalid values fall back to 10. Ten pixels is the dense profile's default. The multi-lane profile supplies 22 to preserve its ruler pitch and larger hit cells.
 
@@ -304,7 +307,7 @@ A lane with `bars` draws each of its events as a bar rather than a centred mark.
 
 - `magnitude` is clamped to 0 through 1. An absent or non-finite value is 0.
 - `clipped` draws the broken-bar notch at the bar's far end: a `var(--bg)` stripe just inside it and a `var(--fg)` cap just past it. It marks a value the consumer's ceiling cut short, and the tooltip is where the true value belongs.
-- Every shape draws as a rectangle, and both hollow shapes draw as a token outline on `var(--bg)`.
+- Every shape draws as a rectangle, both hollow shapes draw as a token outline on `var(--bg)`, and `hatched` draws the hatch.
 - Halos, the error cross, the tick and the marker keep their meaning. Halos follow the bar's outline, the cross and the linked centre mark sit at its middle, and the marker sits past its far end.
 
 A lane without `bars` ignores `magnitude` and `clipped`, and draws exactly as it did before they existed.

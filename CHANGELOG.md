@@ -115,6 +115,10 @@ holds today.
 
 ### Added
 
+- `EventLanes` draws a `hatched` shape: a diagonal token-coloured hatch on the
+  background, for a band of waiting that should read as absence rather than as
+  work. An event's `markerToken` colours its marker, which used to be the
+  accent whatever the marker meant.
 - `EventLanes` takes `wheelZoom={false}` to leave a Ctrl or Cmd wheel, and a
   pinch, to the browser. The plain wheel still scrolls the axis sideways.
 - An `EventLanes` lane can carry a `shade` token and a `gapBefore`. The shade

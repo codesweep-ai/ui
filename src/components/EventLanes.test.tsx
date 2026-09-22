@@ -321,6 +321,60 @@ describe("EventLanes", () => {
     expect(screen.getByRole("tooltip")).toHaveTextContent("Details for Start");
   });
 
+  it("hatches a hatched mark, and colours a marker by its token", async () => {
+    const { container } = render(
+      <EventLanes
+        lanes={[{ id: "a", label: "A" }]}
+        events={[
+          { i: 0, lane: "a", kind: "message", shape: "hatched", label: "Waited", at: "0" },
+          { i: 1, lane: "a", kind: "message", shape: "square", label: "Failed", at: "1", marker: "error", markerToken: "--color-error" },
+          { i: 2, lane: "a", kind: "message", shape: "square", label: "Spawned", at: "2", marker: "spawn" },
+        ]}
+        palette={palette}
+        cellWidth={22}
+      />,
+    );
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const canvas = container.querySelector("[data-event-lanes-canvas]") as HTMLCanvasElement;
+    const context = canvas.getContext("2d")!;
+    const ratio = canvas.width / canvas.getBoundingClientRect().width;
+    const styles = getComputedStyle(container.querySelector('[data-component="EventLanes"]')!);
+    const rgb = (token: string) => {
+      const probe = document.createElement("div");
+      probe.style.color = styles.getPropertyValue(token).trim();
+      document.body.append(probe);
+      const [r, g, b] = getComputedStyle(probe).color.match(/[\d.]+/g)!.map(Number);
+      probe.remove();
+      return [r, g, b];
+    };
+    const near = (pixel: Uint8ClampedArray, [r, g, b]: number[]) => Math.abs(pixel[0] - r) + Math.abs(pixel[1] - g) + Math.abs(pixel[2] - b) < 40 && pixel[3] > 200;
+    const at = (x: number, y: number) => context.getImageData(Math.round(x * ratio), Math.round(y * ratio), 1, 1).data;
+    const fill = rgb(palette.message);
+    const background = rgb("--bg");
+    const size = markSizeFor(22);
+    const padding = axisPaddingFor(22);
+    const y = 14;
+
+    // Inside the hatched mark, away from its outline, some pixels are the fill and some the background.
+    const centre = padding + 11;
+    let filled = 0;
+    let bare = 0;
+    for (let dx = -3; dx <= 3; dx += 1) {
+      for (let dy = -3; dy <= 3; dy += 1) {
+        const pixel = at(centre + dx, y + dy);
+        if (near(pixel, fill)) filled += 1;
+        else if (near(pixel, background)) bare += 1;
+      }
+    }
+    expect(filled).toBeGreaterThan(4);
+    expect(bare).toBeGreaterThan(4);
+
+    // The marker dot sits above the mark: in --color-error when asked, the accent otherwise.
+    const markerY = y - size / 2 - 4;
+    expect(near(at(padding + 33, markerY), rgb("--color-error"))).toBe(true);
+    expect(near(at(padding + 55, markerY), rgb("--color-accent"))).toBe(true);
+  });
+
   it("forwards the component root ref", () => {
     const ref = createRef<HTMLDivElement>();
     render(<EventLanes ref={ref} lanes={lanes} events={events} palette={palette} />);
