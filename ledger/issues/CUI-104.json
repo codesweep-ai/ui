@@ -1,0 +1,16 @@
+{
+  "id": "CUI-104",
+  "title": "A lane height under 8 pixels silently renders at the default 28",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent of a consuming timeline page, measuring a headless Chromium render; relayed by the repository owner",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "A finite `height` under 8 is replaced with 28, and nothing says so at the point of use. The TSDoc on `height` reads \"Row height in CSS pixels. Default 28.\" and no development warning fires. The component document names the floor under its edge cases, and that document does not ship.\n\nA consuming page asked for a 6-pixel gap lane, got a 28-pixel one, and the bands it had measured from its rows landed 22 pixels off. A height the component will not draw should be reported in development, as an invalid span is, and the floor should be named where the prop is declared.",
+  "notes": [],
+  "links": []
+}

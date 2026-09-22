@@ -1,0 +1,16 @@
+{
+  "id": "CUI-102",
+  "title": "The overview can only sit below the lanes",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent of a consuming timeline page; relayed by the repository owner",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "The overview row always renders after the lanes. A page that keeps its zoom controls above the timeline wants the overview between the controls and the lanes, so the thing that moves the view sits next to the controls that set it.\n\nThe consuming page sets `display: flex` on the root and `order: -1` on the overview row, which reaches into the component's class names. Those are not contract. An option to place the overview above the lanes is wanted.",
+  "notes": [],
+  "links": []
+}

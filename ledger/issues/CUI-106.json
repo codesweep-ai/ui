@@ -1,0 +1,16 @@
+{
+  "id": "CUI-106",
+  "title": "Wheel zoom cannot be turned off",
+  "type": "improvement",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "session agent of a consuming timeline page; relayed by the repository owner",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "In the positioned layout a Ctrl or Cmd wheel, and a trackpad pinch, always zoom about the pointer. A page that zooms by preset alone, so that every view it shows is one it can name, has no way to leave the wheel to the browser.\n\nThe consuming page stops the Ctrl and Cmd wheel in the capture phase on a wrapper, before the component's own listener sees it. An option is wanted. The plain wheel should keep scrolling sideways.",
+  "notes": [],
+  "links": []
+}

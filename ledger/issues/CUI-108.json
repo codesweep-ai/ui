@@ -1,0 +1,16 @@
+{
+  "id": "CUI-108",
+  "title": "Marks have no hatch fill, and the marker's colour cannot be set",
+  "type": "improvement",
+  "severity": "med",
+  "status": "open",
+  "foundBy": "session agent of a consuming timeline page; relayed by the repository owner",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": null,
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "Two gaps, met by one page.\n\nWaiting drawn as a band should read as absence rather than as work, and the convention for that is a hatch. There is no hatched shape, so the page draws waiting as a light filled band, and it competes with the work bars beside it.\n\nThe marker dot above a mark is always `--color-accent`. A page that marks failed steps with a marker, so they are found at any zoom, wants it in `--color-error`, and cannot have it.\n\nA hatched shape and a per-event marker token are wanted.",
+  "notes": [],
+  "links": []
+}
