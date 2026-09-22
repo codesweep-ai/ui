@@ -3,17 +3,19 @@
   "title": "An end-anchored mark is sized by the gap behind it, not the gap it draws into",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent, measuring a consuming page after the repository owner reported the first dot as clipped",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 end anchor",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "f9a7e06"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that draws a mark anchored at its end fails on the parent commit and passes here. A mark a third of a unit behind the anchored one no longer narrows it, and it draws at the mark size. `npm run ci` passes on f9a7e06 with every gate run, and the visual gate passes 116 of 116 captures with no differing pixel."
   },
-  "resolution": null,
+  "resolution": "One anchored at its end is as wide as the gap to the previous position in its run, less the gutter, clamped to the mark size. With nothing before it, it draws at the mark size. The order keeps each previous position beside the next.",
   "details": "A mark's width is the gap to the next mark in its run, so two marks never overlap. One anchored at its end draws to the left, so the next one is behind it, and the gap that matters is the one before it. On a consuming page a dispatch opened and answered within seconds drew its opening five pixels wide at the one-hour zoom. A reply it does not reach narrowed it, and it was drawn as a column rather than a dot.",
   "notes": [],
   "links": [
