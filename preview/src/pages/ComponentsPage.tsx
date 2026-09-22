@@ -376,9 +376,20 @@ function PositionedLanesDemo() {
   const [selected, setSelected] = useState<number | null>(null);
   const [selectedSpan, setSelectedSpan] = useState<string | null>(null);
   const [showWaiting, setShowWaiting] = useState(true);
+  // The selected mark's member, or the selected task's, takes the accent band.
+  const selectedGroup = useMemo(() => {
+    const laneId = selected != null
+      ? positionedRun.events.find((event) => event.i === selected)?.lane
+      : positionedRun.spans.find((span) => span.id === selectedSpan)?.lane;
+    return laneId ? positionedRun.lanes.find((lane) => lane.id === laneId)?.group : undefined;
+  }, [positionedRun, selected, selectedSpan]);
   const lanes = useMemo(
-    () => positionedRun.lanes.map((lane) => lane.bars === "down" ? { ...lane, hidden: !showWaiting } : lane),
-    [positionedRun, showWaiting],
+    () => positionedRun.lanes.map((lane) => ({
+      ...lane,
+      ...(lane.bars === "down" ? { hidden: !showWaiting } : {}),
+      ...(selectedGroup != null && lane.group === selectedGroup ? { shade: "--color-accent-bg" as const } : {}),
+    })),
+    [positionedRun, selectedGroup, showWaiting],
   );
   const links = useMemo(
     () => positionedRun.links.map((link) => ({
@@ -462,6 +473,7 @@ function PositionedLanesDemo() {
         onViewChange={setShown}
         overview
         overviewContent="spans"
+        overviewPlacement="above"
         cellWidth={10}
         rulerLabel="Elapsed"
         ruler={({ position }) => {

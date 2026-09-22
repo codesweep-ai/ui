@@ -5,11 +5,13 @@ import type { EventLane, EventLaneEvent, EventLaneLink, EventLaneSpan, EventToke
  *  same run every time and nothing in it comes from a real one.
  *
  *  A coordinator hands tasks to workers. Each worker is one timeline of two
- *  lanes: steps rise above its line, and the waits between them hang below.
- *  A task is a span on the worker, from the hand-off to the reply, with a
- *  trailing segment until the coordinator takes the reply up. A solid link
+ *  lanes: steps rise above its line, and the waits between them hang below as
+ *  hatched bars. Every other member is shaded as a band, with a gap before
+ *  each. A task is a span on the worker, from the hand-off to the reply, with
+ *  a trailing segment until the coordinator takes the reply up. A solid link
  *  joins the hand-off to the worker's first step, and a dashed one joins the
- *  reply to the coordinator's acceptance. Positions are seconds from the start. */
+ *  reply to the coordinator's acceptance. A failed step carries a marker in
+ *  the error colour. Positions are seconds from the start. */
 
 export type PositionKind = "handoff" | "reasoning" | "action" | "reply" | "accept" | "wait" | "idle";
 
@@ -77,9 +79,11 @@ export function positionRun({ steps = 2_600, workers = 6, seed = 7 }: { steps?: 
   ];
   for (let worker = 0; worker < count; worker += 1) {
     const name = WORKER_NAMES[worker];
+    // The coordinator is the first member, so the even workers take the shade.
+    const shade: EventToken | undefined = worker % 2 === 0 ? "--color-bg-muted" : undefined;
     lanes.push(
-      { id: `worker-${name}`, label: `Worker ${name}`, height: 40, bars: "up", barFloor: 2, group: `worker-${name}` },
-      { id: `worker-${name}-wait`, label: "", height: 18, bars: "down", barFloor: 2, group: `worker-${name}`, overview: false },
+      { id: `worker-${name}`, label: `Worker ${name}`, height: 40, bars: "up", barFloor: 2, group: `worker-${name}`, gapBefore: 8, shade },
+      { id: `worker-${name}-wait`, label: "", height: 18, bars: "down", barFloor: 2, group: `worker-${name}`, overview: false, shade },
     );
   }
 
@@ -92,7 +96,7 @@ export function positionRun({ steps = 2_600, workers = 6, seed = 7 }: { steps?: 
       i: index,
       lane,
       kind,
-      shape: kind === "accept" ? "hollow" : "square",
+      shape: kind === "accept" ? "hollow" : kind === "wait" || kind === "idle" ? "hatched" : "square",
       label,
       at: clock(position),
       position,
@@ -133,9 +137,12 @@ export function positionRun({ steps = 2_600, workers = 6, seed = 7 }: { steps?: 
       const dense = step < length / 3;
       const seconds = dense ? 0.2 + next() * 3 : 1 + next() * next() * 110;
       const kind: PositionKind = next() < 0.45 ? "action" : "reasoning";
+      const failed = next() < 0.002;
       const mark = add(`worker-${name}`, kind, at, `Worker ${name} step ${step + 1}`, stepMagnitude(seconds), {
         clipped: seconds > 100,
-        error: next() < 0.002,
+        error: failed,
+        marker: failed ? "failed" : undefined,
+        markerToken: failed ? "--color-error" : undefined,
       });
       first ??= mark;
       at += seconds;
