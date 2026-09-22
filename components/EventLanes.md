@@ -362,7 +362,7 @@ Clicking the overview recenters the main viewport. Dragging its window scrolls c
 
 With `layout="position"`, each mark sits at its `position` on a continuous scale rather than in the column its `i` names. The consumer chooses the unit and the zero, for example seconds since a run began. `i` stays the mark's identity for selection, focus, `linked`, `emphasis` and every callback, and it must still be unique across the component.
 
-The axis begins at the smallest position in the data, its origin, after the same boundary padding the index layout reserves for halos. A position becomes a pixel through the scale, in CSS pixels per unit. The layout is chosen for the whole component: a mark without a finite `position` is left out and reported in development, as an invalid span is.
+The axis begins at the smallest position in the data, its origin, after the same boundary padding the index layout reserves for halos. It ends a mark size after the largest position, plus that padding again, because a mark begins at its position and the last one in a timeline draws a mark size to the right of it. A position becomes a pixel through the scale, in CSS pixels per unit. The layout is chosen for the whole component: a mark without a finite `position` is left out and reported in development, as an invalid span is.
 
 ### Timelines
 
@@ -396,9 +396,9 @@ The span whose `id` equals `selectedSpan` fills with `var(--color-accent-bg)` in
 
 ### Scale, zoom and scroll
 
-Until something asks for a scale, the whole extent fits the viewport, and it keeps fitting as the viewport resizes. The deepest zoom puts the two closest marks in any timeline four mark sizes apart, and it never grows the axis past eight million pixels.
+Until something asks for a scale, the whole extent fits the viewport between the boundary paddings, and it keeps fitting as the viewport resizes. The last mark and its selection halo stay inside the viewport, and there is nothing to scroll to. The deepest zoom puts the two closest marks in any timeline four mark sizes apart, and it never grows the axis past eight million pixels.
 
-`view` asks for a range in axis units. It is applied each time the page passes a new object, so a page can restore a view from its URL, offer presets, or return to a range it showed before. A range narrower or wider than the zoom allows is clamped. `onViewChange` reports the start, end and scale whenever the view changes, from a scroll, a zoom, a resize or a request. A page that writes each report back into `view` hands over the view already shown, and nothing moves.
+`view` asks for a range in axis units. It is applied each time the page passes a new object, so a page can restore a view from its URL, offer presets, or return to a range it showed before. The range is shown between the boundary paddings, so a view from the origin to the end is the fit the component opens with. A range narrower or wider than the zoom allows is clamped. `onViewChange` reports the start, end and scale whenever the view changes, from a scroll, a zoom, a resize or a request. It reports the range between the paddings, as `view` asks for it. A page that writes each report back into `view` hands over the view already shown, and nothing moves. The ruler's `visibleStart` and `visibleEnd` are the viewport's edges themselves, padding included, so the ruler can place a tick anywhere in view.
 
 In the positioned layout only:
 

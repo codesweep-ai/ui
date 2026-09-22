@@ -141,6 +141,41 @@ describe("EventLanes positioned layout", () => {
     expect(onSelect.mock.calls[1][0].i).toBe(1);
   });
 
+  it("fits a requested view between the boundary paddings, so the whole extent is the opening fit", async () => {
+    const contexts: EventLanesRulerContext[] = [];
+    const reports: EventLanesViewState[] = [];
+    const ruler = (context: EventLanesRulerContext) => {
+      contexts.push(context);
+      return null;
+    };
+    const latest = () => contexts[contexts.length - 1].position!;
+    const { rerender } = render(
+      <div style={{ width: 640 }}>
+        <EventLanes layout="position" lanes={lanes} events={events} palette={palette} ruler={ruler} />
+      </div>,
+    );
+    await frame();
+    const opening = latest().scale;
+    const listbox = screen.getByRole("listbox");
+    rerender(
+      <div style={{ width: 640 }}>
+        <EventLanes layout="position" lanes={lanes} events={events} palette={palette} ruler={ruler} view={{ start: 0, end: 30 }} onViewChange={(view) => reports.push(view)} />
+      </div>,
+    );
+    await waitFor(() => expect(reports.length).toBeGreaterThan(0));
+    await frame();
+    expect(latest().scale).toBeCloseTo(opening, 6);
+    expect(listbox.scrollLeft).toBe(0);
+    // The last mark draws a mark size past its position, and its halo past
+    // that: both sit inside the viewport, and nothing is left to scroll to.
+    expect(latest().xForPosition(30) + markSizeFor(10) + axisPaddingFor(10)).toBeLessThanOrEqual(listbox.clientWidth + 0.5);
+    expect(listbox.scrollWidth).toBeLessThanOrEqual(listbox.clientWidth);
+    // The report is the range between the paddings: the request, handed back.
+    const shown = reports[reports.length - 1];
+    expect(shown.start).toBeCloseTo(0, 3);
+    expect(shown.end).toBeCloseTo(30, 3);
+  });
+
   it("shows a requested view, reports it, and applies a new request for the same range", async () => {
     const reports: EventLanesViewState[] = [];
     const { rerender } = renderPositioned({ view: { start: 10, end: 20 }, onViewChange: (view) => reports.push(view) });

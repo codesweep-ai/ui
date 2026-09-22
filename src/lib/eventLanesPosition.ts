@@ -95,10 +95,12 @@ export interface ScaleLimits {
   max: number;
 }
 
-/** How far out and in the view may zoom. Fully out shows the whole extent.
- *  Fully in puts the closest two marks a few mark sizes apart, and never grows
- *  the axis past what a browser can lay out. `smallestGap` is the least positive
- *  distance between neighbouring marks, or undefined when there is none. */
+/** How far out and in the view may zoom. Fully out shows the whole extent
+ *  inside the viewport, after `padding`, the boundary room at both ends taken
+ *  together. Fully in puts the closest two marks a few mark sizes apart, and
+ *  never grows the axis past what a browser can lay out. `smallestGap` is the
+ *  least positive distance between neighbouring marks, or undefined when there
+ *  is none. */
 export function scaleLimits(
   extent: number,
   viewportWidth: number,
@@ -106,10 +108,10 @@ export function scaleLimits(
   smallestGap: number | undefined,
   markSize: number,
 ): ScaleLimits {
-  const room = Math.max(1, viewportWidth - padding * 2);
+  const room = Math.max(1, viewportWidth - padding);
   const min = extent > 0 ? room / extent : 1;
   const readable = smallestGap && smallestGap > 0 ? (markSize * DEEPEST_GAP_IN_MARKS) / smallestGap : min * 64;
-  const layable = extent > 0 ? (MAX_AXIS_PIXELS - padding * 2) / extent : readable;
+  const layable = extent > 0 ? (MAX_AXIS_PIXELS - padding) / extent : readable;
   return { min, max: Math.max(min, Math.min(readable, layable)) };
 }
 

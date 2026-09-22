@@ -130,17 +130,17 @@ describe("timelines", () => {
 
 describe("scale limits", () => {
   it("fits the whole extent when fully zoomed out", () => {
-    const limits = scaleLimits(1_000, 1_016, 8, 1, 9);
+    const limits = scaleLimits(1_000, 1_016, 16, 1, 9);
     expect(limits.min).toBe(1);
   });
 
   it("zooms in until the closest marks sit a few mark sizes apart", () => {
-    const limits = scaleLimits(1_000, 1_016, 8, 0.5, 9);
+    const limits = scaleLimits(1_000, 1_016, 16, 0.5, 9);
     expect(limits.max).toBe(72);
   });
 
   it("never grows the axis past what a browser can lay out", () => {
-    const limits = scaleLimits(10_000_000, 1_016, 8, 0.0001, 9);
+    const limits = scaleLimits(10_000_000, 1_016, 16, 0.0001, 9);
     expect(10_000_000 * limits.max).toBeLessThanOrEqual(MAX_AXIS_PIXELS);
   });
 

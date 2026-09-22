@@ -786,8 +786,12 @@ function EventLanesImpl<K extends string = string>({
 
   const [requestedScale, setRequestedScale] = useState<number | null>(null);
   const extentUnits = positionModel ? positionModel.finish - positionModel.origin : 0;
+  // A positioned mark begins at its position and the last one in a timeline
+  // draws a mark size to the right of it, so the axis keeps that much more
+  // room after the last position than before the first.
+  const trailingPadding = axisPadding + markSize;
   const limits = positionModel
-    ? scaleLimits(extentUnits, viewportWidth, axisPadding, positionModel.smallestGap, markSize)
+    ? scaleLimits(extentUnits, viewportWidth, axisPadding + trailingPadding, positionModel.smallestGap, markSize)
     : null;
   // Until a page or a zoom asks for a scale, the whole extent fits.
   const scale = limits ? clampScale(requestedScale ?? limits.min, limits) : 1;
@@ -807,7 +811,7 @@ function EventLanesImpl<K extends string = string>({
     [markSize, positionModel, scale],
   );
   const axisWidth = positioned
-    ? (positionModel && !positionModel.empty ? extentUnits * scale + axisPadding * 2 : 0)
+    ? (positionModel && !positionModel.empty ? extentUnits * scale + axisPadding + trailingPadding : 0)
     : end < 0 ? 0 : (end + 1) * cellWidth + axisPadding * 2;
   const layout = useMemo(() => laneLayout(lanes), [lanes]);
   // Each timeline's vertical extent over its visible lanes: where its boxes go.
@@ -931,8 +935,11 @@ function EventLanesImpl<K extends string = string>({
   }, [positioned]);
 
   // A requested view is applied each time the page passes a new one, once the
-  // viewport has a width to fit it to. A page that writes every reported view
-  // back into the prop hands over the view already shown, which is left alone.
+  // viewport has a width to fit it to. The range lands between the boundary
+  // paddings, so a view of the whole extent is the fit the component opens
+  // with, and the last mark stays inside the viewport. A page that writes every
+  // reported view back into the prop hands over the view already shown, which
+  // is left alone.
   const reportedViewRef = useRef<string | null>(null);
   const requestedViewRef = useRef<EventLanesView | null>(null);
   useLayoutEffect(() => {
@@ -945,8 +952,8 @@ function EventLanesImpl<K extends string = string>({
     if (viewKey(wanted) === reportedViewRef.current) return;
     const span = wanted.end - wanted.start;
     if (!(span > 0) || !Number.isFinite(span)) return;
-    const next = clampScale(viewportWidth / span, limits);
-    const target = xForPosition(wanted.start, origin, next, axisPadding);
+    const next = clampScale(Math.max(1, viewportWidth - axisPadding - trailingPadding) / span, limits);
+    const target = xForPosition(wanted.start, origin, next, axisPadding) - axisPadding;
     liveScaleRef.current = next;
     if (next !== scale) {
       pendingScrollRef.current = target;
@@ -959,24 +966,26 @@ function EventLanesImpl<K extends string = string>({
     const clamped = Math.max(0, Math.min(Math.max(0, axisWidth - scroller.clientWidth), target));
     scroller.scrollLeft = clamped;
     setScrollLeft(clamped);
-  }, [axisPadding, axisWidth, limits, origin, positioned, scale, view, viewportWidth]);
+  }, [axisPadding, axisWidth, limits, origin, positioned, scale, trailingPadding, view, viewportWidth]);
 
   useEffect(() => {
     const scroller = scrollerRef.current;
     if (!positioned || !onViewChange || !scroller || viewportWidth <= 0 || pendingScrollRef.current != null) return;
     // Read from the scroller: during a zoom the state can trail the scroll the
-    // layout effect has just applied.
+    // layout effect has just applied. The range reported is the one between
+    // the boundary paddings, as `view` asks for it, so a report handed back
+    // as a request asks for what is already shown.
     const left = scroller.scrollLeft;
     const state = {
-      start: positionForX(left, origin, scale, axisPadding),
-      end: positionForX(left + viewportWidth, origin, scale, axisPadding),
+      start: positionForX(left + axisPadding, origin, scale, axisPadding),
+      end: positionForX(left + viewportWidth - trailingPadding, origin, scale, axisPadding),
       scale,
     };
     const key = viewKey(state);
     if (key === reportedViewRef.current) return;
     reportedViewRef.current = key;
     onViewChange(state);
-  }, [axisPadding, onViewChange, origin, positioned, scale, scrollLeft, viewportWidth]);
+  }, [axisPadding, onViewChange, origin, positioned, scale, scrollLeft, trailingPadding, viewportWidth]);
 
   useEffect(() => {
     if (selected != null && visibleByIndex.has(selected)) {

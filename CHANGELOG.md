@@ -54,6 +54,13 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` fits a requested `view` between its boundary paddings, and keeps
+  a mark size of room after the last position. A view of the whole extent used
+  to be fitted to the full viewport with the padding added on top, so the axis
+  ran wider than the viewport and the last mark hung over its edge. A page that
+  asked for a view slightly longer than its data to hide this can ask for the
+  data's range. `onViewChange` reports the range between the paddings, so a
+  report handed back as a request still asks for what is shown.
 - `EventLanes` no longer lets its tooltip be cut off or squeezed. It was
   placed inside the component, so an ancestor that hides its overflow, such as
   a `Card`, clipped it, and near the right edge it wrapped word by word into a
