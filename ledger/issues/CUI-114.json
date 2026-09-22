@@ -3,17 +3,19 @@
   "title": "A mark anchored at its end at the origin is clipped by the axis edge",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "repository owner, reading a consuming page: \"the first dot is getting clipped?\"",
   "opened": "2026-09-22",
-  "resolved": null,
+  "resolved": "2026-09-22",
   "stint": "2026-09-22 end anchor",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "53cbadf"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "The browser test that draws a mark anchored at its end fails on the parent commit and passes here. The mark's left edge sits at the halo padding, inside the axis. `npm run ci` passes on 53cbadf with every gate run, and the visual gate passes 116 of 116 captures with no differing pixel."
   },
-  "resolution": null,
+  "resolution": "While any mark is anchored at its end, the positioned axis keeps a mark size before the first position, as it keeps one after the last. The fit, the view, the report and the ruler's context all count it.",
   "details": "The positioned axis keeps the halo padding, seven pixels at the default cell width, before the first position, and a mark size more after the last. A mark anchored at its end draws to the left of its position, so one at the origin reaches two pixels past the axis edge and its halo further. On a consuming page the first opening drew five of its nine pixels, measured in headless Chromium.\n\nWhile any mark is anchored at its end, the axis should keep a mark size before the first position as well.",
   "notes": [],
   "links": [
