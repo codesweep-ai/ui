@@ -115,6 +115,39 @@ describe("EventLanes positioned layout", () => {
     expect(document.querySelector('[data-event-index="0"]')!.getAttribute("aria-label")).toContain("in Run");
   });
 
+  it("draws a mark anchored at its end to the left of its position, and hits it there", async () => {
+    const contexts: EventLanesRulerContext[] = [];
+    const onSelect = vi.fn();
+    const { container } = render(
+      <div style={{ width: 640 }}>
+        <EventLanes
+          layout="position"
+          lanes={[{ id: "c", label: "C" }]}
+          events={[
+            { i: 0, lane: "c", kind: "work", shape: "circle", label: "Opens", at: "20", position: 20, anchor: "end" },
+            { i: 1, lane: "c", kind: "work", shape: "square", label: "Later", at: "100", position: 100 },
+          ]}
+          palette={palette}
+          onSelect={onSelect}
+          ruler={(context) => {
+            contexts.push(context);
+            return null;
+          }}
+        />
+      </div>,
+    );
+    await frame();
+    const latest = contexts[contexts.length - 1];
+    const size = markSizeFor(10);
+    const at = latest.position!.xForPosition(20);
+    // Its centre is half a mark left of its moment, not right of it.
+    expect(latest.xForIndex(0)).toBeCloseTo(at - size / 2, 6);
+    const canvas = container.querySelector("[data-event-lanes-canvas]")!;
+    const bounds = canvas.getBoundingClientRect();
+    fireEvent.pointerDown(canvas, { clientX: bounds.left + at - size / 2, clientY: bounds.top + 14, pointerId: 1 });
+    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ i: 0 }));
+  });
+
   it("draws a circle round when it has room, and as a column when it has not", async () => {
     const { container } = render(
       <div style={{ width: 640 }}>

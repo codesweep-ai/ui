@@ -99,6 +99,8 @@ interface EventLaneEvent<K extends string = string> {
   position?: number;
   /** Positioned layout: the mark's length in axis units, drawn at its true width. */
   extent?: number;
+  /** Positioned layout: which edge sits at position. Default "start". */
+  anchor?: "start" | "end";
 }
 
 interface EventLaneSpan {
@@ -397,7 +399,7 @@ Its marks share one order, by position and then by `i`, and that order sets thei
 
 ### Width
 
-A mark begins at its position and is as wide as the gap to the next mark anywhere in its timeline, less a one-pixel gutter. The width is clamped between one pixel and the mark size that `cellWidth` gives. Dense runs therefore read as hairlines, and sparse runs stay readable. The last mark in a timeline draws at the mark size. A mark with an `extent` draws at its true length instead, with no upper clamp.
+A mark begins at its position and is as wide as the gap to the next mark anywhere in its timeline, less a one-pixel gutter. A mark with `anchor: "end"` ends at its position instead, drawn to the left of its moment. An opening drawn at the same moment a box begins would otherwise sit inside the box, over its label; anchored at its end it sits just before it, as a reply sits just after. The width is clamped between one pixel and the mark size that `cellWidth` gives. Dense runs therefore read as hairlines, and sparse runs stay readable. The last mark in a timeline draws at the mark size. A mark with an `extent` draws at its true length instead, with no upper clamp.
 
 Widths read every valid mark in the timeline, including hidden kinds and hidden lanes. Filtering a kind, or hiding a lane, never moves or resizes the marks that remain.
 

@@ -107,6 +107,11 @@ export interface EventLaneEvent<K extends string = string> {
   /** The mark's length in axis units. Absent, the mark fills the gap to the
    *  next mark in its timeline, clamped to the mark size. */
   extent?: number;
+  /** Positioned layout: which edge sits at `position`. "start", the default,
+   *  draws the mark to the right of its moment; "end" draws it to the left,
+   *  for a mark that closes something, such as an opening whose box begins
+   *  at the same moment. */
+  anchor?: "start" | "end";
 }
 
 export interface EventLaneSpan {
@@ -914,6 +919,12 @@ function EventLanesImpl<K extends string = string>({
     ),
     [markSize, positionModel, scale],
   );
+  // Where a mark's left edge is in the scrolling content: at its position, or
+  // a width before it for a mark anchored at its end.
+  const leftOf = useCallback(
+    (event: EventLaneEvent<K>) => xOf(event.position as number) - (event.anchor === "end" ? widthOf(event) : 0),
+    [widthOf, xOf],
+  );
   const axisWidth = positioned
     ? (positionModel && !positionModel.empty ? extentUnits * scale + axisPadding + trailingPadding : 0)
     : end < 0 ? 0 : (end + 1) * cellWidth + axisPadding * 2;
@@ -990,10 +1001,10 @@ function EventLanesImpl<K extends string = string>({
     const placed = positioned ? eventByIndex.get(index) : undefined;
     if (positioned && !placed) return;
     const start = placed
-      ? xOf(placed.position as number)
+      ? leftOf(placed)
       : index === 0 ? 0 : axisPadding + index * cellWidth;
     const finish = placed
-      ? xOf(placed.position as number) + widthOf(placed)
+      ? leftOf(placed) + widthOf(placed)
       : index === end ? axisWidth : axisPadding + (index + 1) * cellWidth;
     let next = scroller.scrollLeft;
     if (start < next) next = start;
@@ -1002,7 +1013,7 @@ function EventLanesImpl<K extends string = string>({
     next = Math.max(0, Math.min(maximum, next));
     if (next !== scroller.scrollLeft) scroller.scrollLeft = next;
     setScrollLeft(next);
-  }, [axisPadding, axisWidth, cellWidth, end, eventByIndex, positioned, viewportWidth, widthOf, xOf]);
+  }, [axisPadding, axisWidth, cellWidth, end, eventByIndex, leftOf, positioned, viewportWidth, widthOf]);
 
   // A zoom changes the axis width, and the scroll offset that holds the
   // anchored position still can only be applied once the new width is laid
@@ -1201,7 +1212,7 @@ function EventLanesImpl<K extends string = string>({
         );
       }
 
-      const centreOf = (event: EventLaneEvent<K>) => xOf(event.position as number) + widthOf(event) / 2 - scrollLeft;
+      const centreOf = (event: EventLaneEvent<K>) => leftOf(event) + widthOf(event) / 2 - scrollLeft;
       for (const connection of validated.links) {
         const start = visibleByIndex.get(connection.from);
         const finish = visibleByIndex.get(connection.to);
@@ -1220,11 +1231,12 @@ function EventLanesImpl<K extends string = string>({
         if (lane.hidden || !entry) return;
         const top = layout.tops[row];
         const laneHeight = layout.heights[row];
-        const [first, last] = visibleSlice(entry.positions, from - markSize / scale, to, entry.reach);
+        // A mark anchored at its end reaches a mark size left of its position, so the window reaches that far right.
+        const [first, last] = visibleSlice(entry.positions, from - markSize / scale, to + markSize / scale, entry.reach);
         for (let index = first; index < last; index += 1) {
           const event = entry.events[index];
           const markWidthPx = widthOf(event);
-          const left = xOf(event.position as number) - scrollLeft;
+          const left = leftOf(event) - scrollLeft;
           const centre = left + markWidthPx / 2;
           const rect = lane.bars
             ? barRect(top, laneHeight, lane.bars, centre, markWidthPx, lane.barFloor ?? markSize, event.magnitude)
@@ -1489,6 +1501,7 @@ function EventLanesImpl<K extends string = string>({
     timelineOf,
     timelineRows,
     validated.links,
+    leftOf,
     widthOf,
     xOf,
   ]);
@@ -1556,7 +1569,7 @@ function EventLanesImpl<K extends string = string>({
         context.globalAlpha = emphasis === undefined || emphasis.has(event.i) || isSelected || isLinked ? 1 : 0.3;
         context.fillStyle = resolveToken(styles, palette[event.kind], muted);
         context.fillRect(
-          positioned ? xOf(event.position as number) * scale : (axisPadding + event.i * cellWidth) * scale,
+          positioned ? leftOf(event) * scale : (axisPadding + event.i * cellWidth) * scale,
           overview.markTop(row),
           Math.max(1, (positioned ? widthOf(event) : cellWidth) * scale),
           overview.markHeight,
@@ -1599,6 +1612,7 @@ function EventLanesImpl<K extends string = string>({
     selectedSpan,
     timelineOf,
     validated.spans,
+    leftOf,
     widthOf,
     xOf,
   ]);
@@ -1636,10 +1650,10 @@ function EventLanesImpl<K extends string = string>({
       let best: EventLaneEvent<K> | null = null;
       let bestDistance = Infinity;
       const first = lowerBound(entry.positions, at - entry.reach - markSize / scale - slack);
-      const last = upperBound(entry.positions, at + slack);
+      const last = upperBound(entry.positions, at + markSize / scale + slack);
       for (let index = first; index < last; index += 1) {
         const event = entry.events[index];
-        const left = xOf(event.position as number);
+        const left = leftOf(event);
         const markWidthPx = widthOf(event);
         const tolerance = markWidthPx < HIT_SLACK * 2 ? HIT_SLACK : 0;
         if (pointerX < left - tolerance || pointerX > left + markWidthPx + tolerance) continue;
@@ -1653,7 +1667,7 @@ function EventLanesImpl<K extends string = string>({
     }
     const index = Math.floor(x / cellWidth);
     return lane ? visibleByCell.get(`${lane.id}:${index}`) ?? null : null;
-  }, [axisPadding, cellWidth, lanes, layout, markSize, origin, positionIndex, positioned, scale, visibleByCell, widthOf, xOf]);
+  }, [axisPadding, cellWidth, lanes, layout, leftOf, markSize, origin, positionIndex, positioned, scale, visibleByCell, widthOf]);
 
   /** The span whose box or trailing segment lies under the pointer, topmost first. */
   const spanHit = useCallback((pointer: ReactPointerEvent<HTMLCanvasElement>) => {
@@ -1833,7 +1847,7 @@ function EventLanesImpl<K extends string = string>({
   const tooltipRow = tooltipEvent ? laneIndex.get(tooltipEvent.lane) ?? 0 : 0;
   const rawTooltipX = tooltipEvent
     ? (positioned
-      ? xOf(tooltipEvent.position as number) + widthOf(tooltipEvent) / 2 - scrollLeft
+      ? leftOf(tooltipEvent) + widthOf(tooltipEvent) / 2 - scrollLeft
       : axisPadding + (tooltipEvent.i + 0.5) * cellWidth - scrollLeft)
     : 0;
   const tooltipX = Math.max(48, Math.min(Math.max(48, viewportWidth - 48), rawTooltipX));
@@ -1893,7 +1907,7 @@ function EventLanesImpl<K extends string = string>({
     width: axisWidth,
     xForIndex: (index) => {
       const placed = positioned ? eventByIndex.get(index) : undefined;
-      return placed ? xOf(placed.position as number) + widthOf(placed) / 2 : axisPadding + (index + 0.5) * cellWidth;
+      return placed ? leftOf(placed) + widthOf(placed) / 2 : axisPadding + (index + 0.5) * cellWidth;
     },
     ...(positioned && positionModel
       ? {

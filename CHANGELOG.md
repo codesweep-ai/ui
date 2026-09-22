@@ -122,6 +122,9 @@ holds today.
 
 ### Added
 
+- An `EventLanes` event can take `anchor: "end"` in the positioned layout, so
+  the mark ends at its position rather than beginning there. An opening at the
+  moment a box begins then sits before the box, as a reply sits after it.
 - An `EventLanes` lane can take `widthBy: "lane"` in the positioned layout, so
   its marks are as wide as the gap to the next mark in that lane rather than
   anywhere in its timeline. A sparse row sharing a timeline with dense ones no
