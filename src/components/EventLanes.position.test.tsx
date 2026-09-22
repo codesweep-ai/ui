@@ -317,6 +317,57 @@ describe("EventLanes positioned layout", () => {
     expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ i: 1 }));
   });
 
+  it("sizes the error cross to the column it marks", async () => {
+    const contexts: EventLanesRulerContext[] = [];
+    const { container } = render(
+      <div style={{ width: 640 }}>
+        <EventLanes
+          layout="position"
+          lanes={[{ id: "c", label: "C" }]}
+          events={[
+            { i: 0, lane: "c", kind: "work", shape: "square", label: "Failed", at: "0", position: 0, error: true },
+            // A hairline too, so it does not paint over the cross beside it.
+            { i: 1, lane: "c", kind: "work", shape: "square", label: "Next", at: "0", position: 0.001, extent: 0.001 },
+            { i: 2, lane: "c", kind: "work", shape: "square", label: "Last", at: "100", position: 100 },
+          ]}
+          palette={palette}
+          ruler={(context) => {
+            contexts.push(context);
+            return null;
+          }}
+        />
+      </div>,
+    );
+    await frame();
+    const canvas = container.querySelector("[data-event-lanes-canvas]") as HTMLCanvasElement;
+    const context = canvas.getContext("2d")!;
+    const ratio = canvas.width / canvas.getBoundingClientRect().width;
+    const styles = getComputedStyle(container.querySelector('[data-component="EventLanes"]')!);
+    const probe = document.createElement("div");
+    probe.style.color = styles.getPropertyValue("--color-error").trim();
+    document.body.append(probe);
+    const [r, g, b] = getComputedStyle(probe).color.match(/[\d.]+/g)!.map(Number);
+    probe.remove();
+    const red = (x: number, y: number) => {
+      const pixel = context.getImageData(Math.round(x * ratio), Math.round(y * ratio), 1, 1).data;
+      return Math.abs(pixel[0] - r) + Math.abs(pixel[1] - g) + Math.abs(pixel[2] - b) < 60 && pixel[3] > 150;
+    };
+    // The first mark is a hairline: its cross reaches three pixels from its centre, not six.
+    const centre = contexts[contexts.length - 1].xForIndex(0);
+    const middle = 14;
+    let inner = 0;
+    let outer = 0;
+    for (let dx = -7; dx <= 7; dx += 1) {
+      for (let dy = -7; dy <= 7; dy += 1) {
+        if (!red(Math.round(centre) + dx, middle + dy)) continue;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) <= 3) inner += 1;
+        else if (Math.max(Math.abs(dx), Math.abs(dy)) >= 5) outer += 1;
+      }
+    }
+    expect(inner).toBeGreaterThanOrEqual(8);
+    expect(outer).toBe(0);
+  });
+
   it("lists spans and links in the census", async () => {
     renderPositioned({
       spans: [{ lane: "a", from: 0, to: 30, id: "run", label: "Run", trail: 32 }],

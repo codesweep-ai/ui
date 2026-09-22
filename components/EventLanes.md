@@ -397,7 +397,7 @@ A mark begins at its position and is as wide as the gap to the next mark anywher
 
 Widths read every valid mark in the timeline, including hidden kinds and hidden lanes. Filtering a kind, or hiding a lane, never moves or resizes the marks that remain.
 
-Every shape draws as a rectangle of that width, as in a bar lane, and both hollow shapes draw as a token outline. A lane without `bars` centres a rectangle of the mark size's height in its row.
+Every shape draws as a rectangle of that width, as in a bar lane, and both hollow shapes draw as a token outline. A lane without `bars` centres a rectangle of the mark size's height in its row. The error cross is sized to the column it marks, and is at least six pixels across, so a hairline is not lost under a cross the mark size wide.
 
 ### Hidden lanes
 

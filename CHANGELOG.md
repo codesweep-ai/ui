@@ -54,6 +54,9 @@ holds today.
 
 ### Fixed
 
+- `EventLanes` sizes the error cross to the column it marks in the positioned
+  layout. It was always the mark size, so at a whole-run view it dwarfed the
+  hairline it sat on.
 - `EventLanes` no longer rings its listbox after a pointer press. A press
   focuses the listbox by script, which Chrome matched with `:focus-visible`, so
   the ring stayed until something else took focus. The ring now shows for a

@@ -1241,7 +1241,9 @@ function EventLanesImpl<K extends string = string>({
             context.fill();
           }
           if (event.error) {
-            const offset = markSize / 2 + 2;
+            // Sized to the column it marks, so a hairline is not lost under a
+            // cross the mark size wide, with a floor that keeps it a cross.
+            const offset = Math.max(3, Math.min(markSize / 2 + 2, markWidthPx / 2 + 2));
             context.beginPath();
             context.moveTo(centre - offset, centreY - offset);
             context.lineTo(centre + offset, centreY + offset);
