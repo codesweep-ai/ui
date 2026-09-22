@@ -52,8 +52,8 @@ node_modules/
 # storage, and the throwaway credentials for it.
 /.local-registry/
 
-# What `npm run registry:npmrevs` keeps between runs: the tarball it serves, the
-# server's pid and log, and the npmrc it writes.
+# What `npm run registry:npmrevs` keeps between runs: the server's pid and log,
+# and the npmrc it writes. The tarball goes to cs-npmrevs's data directory.
 /.npmrevs-registry/
 
 # Screenshots and attachments a failing browser test leaves behind.

@@ -10,30 +10,43 @@
 // every other package through from npmjs.com.
 //
 //   node scripts/npmrevs-registry.mjs         # build, stage, serve, print how to install
+//   node scripts/npmrevs-registry.mjs pack    # build and stage only, for a later build to install
 //   node scripts/npmrevs-registry.mjs stop    # stop the server again
+//
+// The package goes into cs-npmrevs's own data directory, which every project's
+// build shares: a later build that installs through cs-npmrevs on this port, such
+// as ledger's, tracer's and campaign's through their scripts/with-npmrevs.sh,
+// finds it there. The server is started as those scripts start one, with the
+// @codesweep-ai images on ghcr.io as well, so either finds what it needs on the
+// port. It is packed under the dev version of this commit, -dirty when the tree
+// has changes, so it never takes the place of a release.
 //
 // Nothing here touches ~/.npmrc or npmjs.com. The npmrc it writes lives in the
 // state directory and is passed with NPM_CONFIG_USERCONFIG, and cs-npmrevs refuses
 // every write, so nothing run through that npmrc can publish anywhere.
 //
-// It takes the port and the address scripts/local-registry.mjs does, so an npmrc
-// that sends this package's scope there works with either, and only one of them
-// runs at a time. cs-npmrevs listens on 127.0.0.1, and localhost reaches it there.
+// cs-npmrevs listens on 127.0.0.1, and localhost reaches it there. Its port is
+// not the 4873 scripts/local-registry.mjs gives verdaccio, so both can run.
 
 import { spawn, spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync, openSync, closeSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { setTimeout as sleep } from "node:timers/promises";
-import { publishedName } from "./stage-package.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const STATE = join(ROOT, ".npmrevs-registry");
-const DATA = join(STATE, "data");
+// The directory cs-npmrevs serves when given none, resolved as it resolves it.
+const DATA =
+  process.env.CS_NPMREVS_DATA ||
+  join(process.env.XDG_DATA_HOME || join(homedir(), ".local", "share"), "cs-npmrevs", "data");
 const NPMRC = join(STATE, "npmrc");
 const PIDFILE = join(STATE, "cs-npmrevs.pid");
 const LOG = join(STATE, "cs-npmrevs.log");
-const PORT = process.env.CS_UI_REGISTRY_PORT ?? "4873";
+const PORT = process.env.CS_NPMREVS_PORT ?? "4875";
+const IMAGES = process.env.CS_NPMREVS_IMAGES ?? "ghcr.io";
+const SCOPE = process.env.CS_NPMREVS_SCOPE ?? "@codesweep-ai";
 const URL = `http://localhost:${PORT}`;
 
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
@@ -132,8 +145,10 @@ if (process.argv[2] === "stop") {
   process.exit(0);
 }
 
+// Packing alone runs no cs-npmrevs, so only serving needs one.
+const packOnly = process.argv[2] === "pack";
 const { argv: [command, ...prefix], shown } = npmrevs();
-if (spawnSync(command, [...prefix, "version"], { stdio: "ignore" }).status !== 0) {
+if (!packOnly && spawnSync(command, [...prefix, "version"], { stdio: "ignore" }).status !== 0) {
   console.error(
     "cs-npmrevs is not installed, and it is the registry this script runs.\n" +
       `It is a devDependency, so \`npm ci\` installs the @codesweep-ai/npmrevs@${pinnedVersion()}\n` +
@@ -142,6 +157,7 @@ if (spawnSync(command, [...prefix, "version"], { stdio: "ignore" }).status !== 0
   process.exit(1);
 }
 
+mkdirSync(STATE, { recursive: true });
 mkdirSync(DATA, { recursive: true });
 
 // Staged with --inspect, so a commit no remote has yet can be tried too. The
@@ -151,16 +167,32 @@ console.log("==> building and staging");
 if (run(npm, ["run", "build"]).status !== 0) process.exit(1);
 if (run(process.execPath, ["scripts/stage-package.mjs", "--inspect"]).status !== 0) process.exit(1);
 
-const manifest = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
-const name = publishedName(manifest.name);
-const { version } = manifest;
+// The version the images workflow gives this commit, so the data directory,
+// which every build on this machine shares, never holds one under a release's
+// number.
+const dev = spawnSync(process.execPath, ["scripts/dev-version.mjs", "--dirty"], {
+  cwd: ROOT,
+  encoding: "utf8",
+  stdio: ["ignore", "pipe", "inherit"],
+});
+if (dev.status !== 0) process.exit(1);
+const version = dev.stdout.trim();
+const staged = join(ROOT, ".package", "package.json");
+const manifest = JSON.parse(readFileSync(staged, "utf8"));
+const { name } = manifest;
+writeFileSync(staged, `${JSON.stringify({ ...manifest, version }, null, 2)}\n`);
 
 // Packed into the data directory, which the server rereads as it changes. A
 // version packed again replaces its file, so a rebuild replaces what the last
 // run packed.
-console.log(`==> packing ${name}@${version} into .npmrevs-registry/data`);
+console.log(`==> packing ${name}@${version} into ${DATA}`);
 if (run(npm, ["pack", ".package", "--pack-destination", DATA, "--silent"], { stdio: ["ignore", "ignore", "inherit"] }).status !== 0) {
   process.exit(1);
+}
+
+if (packOnly) {
+  console.log(`A build installing through cs-npmrevs on port ${PORT} now finds ${name}@${version}.`);
+  process.exit(0);
 }
 
 // The server this script started last is replaced, so the cs-npmrevs doing the
@@ -168,13 +200,13 @@ if (run(npm, ["pack", ".package", "--pack-destination", DATA, "--silent"], { std
 await stop({ quiet: true });
 if (await answering()) {
   console.error(`port ${PORT} is taken by a program this script did not start.`);
-  console.error("Stop it, or set CS_UI_REGISTRY_PORT to a free port. If it is the registry");
-  console.error("`npm run registry:local` started, `node scripts/local-registry.mjs stop` stops it.");
+  console.error("Stop it, or set CS_NPMREVS_PORT to a free port.");
   process.exit(1);
 }
 console.log(`==> starting the registry on port ${PORT}`);
 const log = openSync(LOG, "w");
-const child = spawn(command, [...prefix, "serve", "--data", DATA, "--listen", `127.0.0.1:${PORT}`], {
+const serve = ["serve", "--data", DATA, "--images", IMAGES, "--images-scope", SCOPE, "--listen", `127.0.0.1:${PORT}`];
+const child = spawn(command, [...prefix, ...serve], {
   cwd: STATE,
   detached: true,
   stdio: ["ignore", log, log],
