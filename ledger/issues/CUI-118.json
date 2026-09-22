@@ -1,0 +1,16 @@
+{
+  "id": "CUI-118",
+  "title": "The visual gate fails on a one-bit antialiasing flake, and a rerun deletes the evidence",
+  "type": "defect",
+  "severity": "high",
+  "status": "in-progress",
+  "foundBy": "deps-maintenance pilot2 campaign, orchestrator/output/findings.md item 4, from frontend's d008 flake note",
+  "opened": "2026-09-22",
+  "resolved": null,
+  "stint": "pilot2-tier1",
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`npm run visual:compare` failed once in nine runs on trees with nothing changed. Each time it was six pixels, three on each of `dark/markdown-minimap.png` and `dark/markdown-viewer.png`. Both captures differ at the same three offsets from their bottom-right corner, (-1,-4), (-1,-3) and (-2,-2), by one least significant bit in one or two channels. It is one rounded corner whose antialiasing blend lands a bit low, in dark only. At `PIXEL_THRESHOLD = 0` any non-zero delta is counted, so the flake reads as a small real regression. The route from a red gate is a review and a re-record, which moves a frozen baseline to silence noise.\n\nTwo more defects sit on that route. `compare()` deletes `visual-diff/` before it runs, so the confirming rerun destroys the images of the run that found the difference. The campaign lost a red run's images that way. And `writeFailure` writes `<name>-current.png` as a pngjs re-encode, which is pixel-identical and about 34% larger. Copying one into `visual-baseline/` leaves an approved capture encoded unlike its siblings, which no pixel comparison notices.",
+  "notes": [],
+  "links": []
+}
