@@ -32,7 +32,9 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
 
-      - run: npm ci
+      # Through scripts/with-npmrevs.sh, so a @codesweep-ai version that exists
+      # only as an image, which oss-repin can pin, installs like any other.
+      - run: scripts/with-npmrevs.sh npm ci
 
       - run: npm run check
 
@@ -49,7 +51,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-lint prose
 
   refs:
@@ -62,7 +64,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-lint refs
 
   # The gate renders in the Playwright image rather than on the runner, because
@@ -79,7 +81,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
       - run: npm run visual:compare
 
       # A pixel count names a file and shows nobody anything. On a red run the
@@ -111,7 +113,7 @@ jobs:
       # exclude list is what keeps Jekyll out of it, and a dependency shipping a
       # stray Liquid brace is how CUI-073 reached main. Without the install this
       # job would pass while the real build failed.
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
 
       - uses: actions/jekyll-build-pages@v1
         with:
@@ -130,7 +132,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
       - run: npx puppeteer browsers install chrome
       - run: npm run preview:rich-check
 
@@ -181,7 +183,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-ledger check
 
   oss:
@@ -196,7 +198,7 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-      - run: npm ci
+      - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-lint oss
       # The one commit rule cs-lint does not carry. See scripts/check-commits.mjs.
       - run: npm run lint:commits

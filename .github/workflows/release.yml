@@ -70,7 +70,9 @@ jobs:
       # a token it does not have.
       - run: npm install -g npm@latest
 
-      - run: npm ci
+      # Through scripts/with-npmrevs.sh, so a @codesweep-ai version that exists
+      # only as an image, which oss-repin can pin, installs like any other.
+      - run: scripts/with-npmrevs.sh npm ci
 
       # The whole gate, because a release is the one build nobody re-runs.
       - run: npm run check

@@ -15,8 +15,9 @@ anything that adds a component, changes a public prop, or moves a token, open an
 issue first, so the design is settled before you write it.
 
 1. Fork the repository, and create a branch off `main`.
-2. Run `npm install`, then `npm run preview` to see the components. The preview
-   imports the package source, so it is the quickest place to exercise a change.
+2. Run `scripts/with-npmrevs.sh npm install`, then `npm run preview` to see the
+   components. The preview imports the package source, so it is the quickest
+   place to exercise a change.
 3. Make the change, with its tests.
 4. Run `npm run ci`, which is every gate CI runs.
 5. Open a pull request against `main`, and say what the change does and why.
@@ -39,7 +40,7 @@ pass first. `npm run ledger` runs the check half.
 
 `cs-ledger` comes from
 [codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) as the
-`@codesweep-ai/ledger` package, so `npm ci` installs it with everything else
+`@codesweep-ai/ledger` package, so the install brings it with everything else
 and `npm run check` gates on it. CI runs the same check in its own
 `ledger check` job.
 
@@ -61,11 +62,21 @@ workflow takes them, so a green run here is a green run there. `npm run check`
 is the faster subset to keep beside you while you work, and `npm run ci` is the
 one that has to pass.
 
-Nothing needs installing beyond `npm install`. Three gates are the exception,
-and each reports a skip rather than a failure when its prerequisite is absent.
-`npm run ci` checks the workflow files when `actionlint` is on the PATH. It
-compares the visual baseline, and builds the site, when there is a container
-runtime to run them in. Either way the closing line names what did not run.
+Nothing needs installing beyond `scripts/with-npmrevs.sh npm install`. Three
+gates are the exception, and each reports a skip rather than a failure when its
+prerequisite is absent. `npm run ci` checks the workflow files when `actionlint`
+is on the PATH. It compares the visual baseline, and builds the site, when there
+is a container runtime to run them in. Either way the closing line names what
+did not run.
+
+`scripts/with-npmrevs.sh` puts
+[cs-npmrevs](https://github.com/codesweep-ai/npmrevs) in front of npmjs.com for
+the command it runs. A `@codesweep-ai` version that exists only as a container
+image then installs like any other. So does a lockfile entry naming the
+registry's own address, which a plain `npm install` cannot reach. It runs the
+`@codesweep-ai/npmrevs` version `package.json` pins: the copy in
+`node_modules`, or, before the first install, that version from npmjs.com.
+Every install in CI runs through it.
 
 The site build is the gate that runs where the failure would otherwise land.
 `pages.yml` publishes only from `main`, and runs nowhere else. Before this
@@ -362,8 +373,10 @@ finds the version packed here without anything being pushed.
 
 Every commit on main that passes `ci` publishes to the `dev` channel on npm,
 versioned from the commit itself. The `npm` workflow runs when `ci` finishes,
-and skips a commit that is no longer main's head by then. No tag is cut and
-`latest` does not move, so a dev build reaches only someone who asks for it:
+and builds the commit `ci` tested. It skips that commit once main's head changes
+more than `ledger/` after it. Every publish also writes an `npm` commit status to
+its commit. No tag is cut and `latest` does not move, so a dev build reaches only
+someone who asks for it:
 
 ```sh
 npm install --save-dev @codesweep-ai/ui@dev
@@ -386,6 +399,12 @@ gate, publishes to `latest`, and opens a GitHub release. Neither workflow stores
 a credential: each package names its workflow as a trusted publisher. Both
 publish through `scripts/publish-staged.mjs`, so re-running either is safe: it
 skips a version the registry already has from this commit, and stops on one it
+Each run posts a `publish images` commit status on the commit it published: a
+success once the image is pushed, a failure otherwise. GitHub lists the run
+under main's head when `ci` finished, which can be a later commit. The CI status
+file reads the registry instead, and lists a commit as built, one a sibling can
+pin, once its version is there.
+
 has from another commit.
 
 In a fork, or a copy under another owner, the images are still published.

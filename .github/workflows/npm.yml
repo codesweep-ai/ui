@@ -11,6 +11,11 @@ name: npm
 # taken back, so nothing publishes from a commit ci has not passed. Not a job in
 # ci.yml either: npm checks a trusted publisher against the workflow a run
 # started from, so a publish called from ci.yml would be refused as ci.yml's.
+#
+# A publish posts an `npm` commit status on the commit it published, failure
+# included. GitHub lists a run that ci's finishing started under main's head,
+# which can be a later commit, so the status is what says which commit this
+# was.
 on:
   workflow_run:
     workflows: [ci]
@@ -26,21 +31,26 @@ permissions:
   contents: read # this workflow reads the repository and writes nothing to it
   actions: read # a dispatch reads ci's run on the commit it publishes
   id-token: write # provenance, minted from the run rather than from a key
-
-# One publish at a time, and a superseded one is dropped: two pushes in a row
-# would otherwise race, and the older is of no interest by the time it lands.
-concurrency:
-  group: npm-${{ github.ref }}
-  cancel-in-progress: true
+  statuses: write # say on the published commit how its publish went
 
 jobs:
   publish:
     name: publish a dev build
-    # A passing ci run on a push to main, and only while its commit is still
-    # main's head. A run started from ci builds main's head rather than the
-    # commit ci tested, and its provenance names main's head too, so the two
-    # have to be the same commit. One that is not has been superseded, and the
-    # newer commit publishes when its own ci run passes.
+    # One publish at a time. On the job rather than the workflow, so a run whose
+    # job is skipped, such as one for a pull request's ci, takes no place. One
+    # under way is never cancelled: a later ci finishing, even for an older
+    # commit, would otherwise cut it off with some of its packages out. GitHub
+    # keeps one run waiting behind it and drops an older waiting one, which the
+    # head it builds has superseded anyway.
+    concurrency:
+      group: npm-${{ github.ref }}
+      cancel-in-progress: false
+    # A passing ci run on a push to main. Its provenance names main's head
+    # rather than the commit ci tested, so it publishes only while main's head
+    # builds what ci tested: that commit, or later ones that changed nothing
+    # outside ledger/, which run no ci of their own. A head that changes more
+    # has superseded it, and publishes when its own ci run passes. The first
+    # step after the checkout decides which.
     #
     # And only in codesweep-ai's own repository. A fork, or a copy under another
     # owner, publishes under that owner's scope, with credentials only that owner
@@ -51,8 +61,7 @@ jobs:
       (github.repository_owner == 'codesweep-ai' &&
        !github.event.repository.fork &&
        github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_sha == github.sha)
+       github.event.workflow_run.event == 'push')
     # A cloud-hosted runner, which provenance requires.
     runs-on: ubuntu-latest
     timeout-minutes: 45 # a dispatch can sit out a whole ci run before it builds
@@ -62,6 +71,7 @@ jobs:
       # tested the commit merged into main, not the commit itself. A dry run
       # publishes nothing, so it waits for nothing.
       - name: wait for ci to pass on this commit
+        id: wait
         if: github.event_name == 'workflow_dispatch' && !inputs.dry_run
         env:
           GH_TOKEN: ${{ github.token }}
@@ -73,19 +83,38 @@ jobs:
             sleep 10
           done
           if [ -z "$run" ]; then
-            echo "::error::ci has not run on $GITHUB_SHA, so nothing publishes from it. Run ci on it first."
+            echo "::error::ci has not run on $GITHUB_SHA, so nothing publishes from it. A push that changes only the ledger runs no ci: its build is the commit ci ran on before it. Otherwise run ci on it first."
             exit 1
           fi
           gh run watch "$run" --repo "$GITHUB_REPOSITORY" --exit-status --compact --interval 30
 
       - uses: actions/checkout@v7
         with:
+          # The commit ci tested, which a run started by ci finishing is not
+          # otherwise on. A dispatch builds the commit it names.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
           # The version is the commit, so the history has to be here. The depth is
           # also load-bearing for the publish guard: stage-package.mjs judges whether
           # that commit can be fetched, from the remote refs and tags a full fetch brings.
           fetch-depth: 0
 
+      # main's head against the commit ci tested, both in the full clone.
+      - name: whether main's head builds what ci tested
+        id: head
+        if: github.event_name == 'workflow_run'
+        env:
+          TESTED: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [ "$TESTED" = "$GITHUB_SHA" ] || { git merge-base --is-ancestor "$TESTED" "$GITHUB_SHA" &&
+              git diff --quiet "$TESTED" "$GITHUB_SHA" -- . ':(exclude)ledger'; }; then
+            echo "publish=true" >>"$GITHUB_OUTPUT"
+          else
+            echo "main's head ${GITHUB_SHA:0:7} is not ${TESTED:0:7} plus ledger changes, and publishes when its own ci run passes"
+            echo "publish=false" >>"$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/setup-node@v6
+        if: steps.head.outputs.publish != 'false'
         with:
           node-version: "24"
           registry-url: https://registry.npmjs.org
@@ -96,16 +125,22 @@ jobs:
       # 11.4.2, under the floor. Without this the run falls back to looking for
       # a token it does not have.
       - run: npm install -g npm@latest
+        if: steps.head.outputs.publish != 'false'
 
-      - run: npm ci
+      # Through scripts/with-npmrevs.sh, so a @codesweep-ai version that exists
+      # only as an image, which oss-repin can pin, installs like any other.
+      - run: scripts/with-npmrevs.sh npm ci
+        if: steps.head.outputs.publish != 'false'
 
       # The gate, because a published version cannot be taken back.
       - run: npm run check
+        if: steps.head.outputs.publish != 'false'
 
       # The commit's own timestamp and hash, so the same commit always names
       # itself the same way. scripts/dev-version.mjs says why the patch is
       # bumped rather than the current version reused.
       - name: version this build
+        if: steps.head.outputs.publish != 'false'
         run: |
           version="$(node scripts/dev-version.mjs)"
           echo "publishing $version"
@@ -115,6 +150,7 @@ jobs:
       # the README written for someone installing this rather than reading the
       # repository. scripts/stage-package.mjs says why that needs a directory.
       - run: npm run stage
+        if: steps.head.outputs.publish != 'false'
 
       # No token. The package names this workflow as its trusted publisher, so
       # npm takes the run's own identity and mints a credential that lives for
@@ -126,4 +162,19 @@ jobs:
       # Through publish-staged.mjs, which skips a version this commit already
       # published, so re-running ci on a published commit does not fail here.
       - name: publish
+        if: steps.head.outputs.publish != 'false'
         run: node scripts/publish-staged.mjs --tag dev --provenance --access public ${{ inputs.dry_run && '--dry-run' || '' }}
+
+      # On the commit this publishes, whether it went or not. A dry run publishes
+      # nothing, and neither does a run cancelled for a newer one or a dispatch
+      # refused before it built, so they say nothing.
+      - name: say on the commit how its publish went
+        if: ${{ !cancelled() && !inputs.dry_run && steps.head.outputs.publish != 'false' && steps.wait.outcome != 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" -f state="$STATE" \
+            -f context=npm -f target_url="$URL" -f description="npm publish: $STATE" >/dev/null

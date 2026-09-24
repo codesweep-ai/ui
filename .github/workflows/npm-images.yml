@@ -12,6 +12,12 @@ name: publish images
 # It starts when ci finishes, and publishes only a push to main whose ci run
 # passed, so no image comes from a commit that fails any ci job. Pull requests
 # get none.
+#
+# It says on the commit it published that its images are out: a `publish
+# images` commit status, or a failed one, which GitHub shows beside the commit.
+# GitHub lists this run under main's head when ci finished, which can be a later
+# commit. The CI status file reads the registry instead: a commit is built once
+# its version tag is there, and the wrapper, which carries it, goes out last.
 on:
   workflow_run:
     workflows: [ci]
@@ -20,16 +26,20 @@ on:
 permissions:
   contents: read
   packages: write # push the image
-
-# One build at a time. Not cancelled: every build publishes its own version, and
-# a superseded one still has it to publish.
-concurrency:
-  group: npm-images
-  cancel-in-progress: false
+  statuses: write # say on the commit that its image is out
 
 jobs:
   publish:
     name: publish images
+    # One build at a time. On the job rather than the workflow, so a run whose
+    # job is skipped, such as one for a pull request's ci, takes no place. A
+    # running build is not cancelled, since it has its own versions to publish.
+    # GitHub keeps one run waiting behind it and drops an older waiting one, so
+    # a commit whose build was still waiting when two more arrived publishes no
+    # images, and the status file passes over it.
+    concurrency:
+      group: npm-images
+      cancel-in-progress: false
     # A run started by ci finishing holds a token that can write packages even
     # when ci ran for a fork's pull request. Asking for a push to main is what
     # keeps unreviewed code away from that token.
@@ -53,8 +63,9 @@ jobs:
           cache: npm
 
       # cs-npmrevs is a devDependency, so this is what installs the version
-      # package.json pins, beside every other tool this build runs.
-      - run: npm ci
+      # package.json pins, beside every other tool this build runs. Through
+      # scripts/with-npmrevs.sh, as every install here is.
+      - run: scripts/with-npmrevs.sh npm ci
 
       # Versioned as the npm workflow versions a dev build. Not gated on `npm run
       # check` again: ci has already passed it on this commit.
@@ -73,3 +84,16 @@ jobs:
 
       - name: publish
         run: NPMREVS=node_modules/.bin/cs-npmrevs ./scripts/publish-images.sh .package
+
+      # On the commit ci tested, which is the one published, whether it went or
+      # not. A cancelled run says nothing.
+      - name: say on the commit whether its images are out
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          STATE: ${{ job.status == 'success' && 'success' || 'failure' }}
+          URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" -f state="$STATE" \
+            -f context="publish images" -f target_url="$URL" -f description="images: $STATE" >/dev/null
