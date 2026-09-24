@@ -3,17 +3,19 @@
   "title": "ui has no command that moves its @codesweep-ai pins",
   "type": "improvement",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "user report (host): \"is there a repinning mechanism, like maybe an npm run repin in the ui project?\"",
   "opened": "2026-09-23",
-  "resolved": null,
+  "resolved": "2026-09-23",
   "stint": "npm-repins",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "ffdfab3"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "In a clean clone with the change, `npm run repin` moved the ledger, lint and npmrevs pins to each project's last build, and rendered `ledger/ledger.html` again. `npm run check` then passed. The nine tests of `scripts/repin-npm.test.mjs` pass, and ci run 35961212420 passed at ffdfab3."
   },
-  "resolution": null,
+  "resolution": "`npm run repin` moves each `@codesweep-ai` pin in `package.json` to the npm version of its project's last build, installed through `scripts/with-npmrevs.sh`, and renders `ledger.html` again. A pin whose project lists no build stays where it is. `@codesweep-ai/npmrevs` moves only to a version npmjs.com holds.",
   "details": "`package.json` pins `@codesweep-ai/ledger`, `@codesweep-ai/lint` and `@codesweep-ai/npmrevs` at exact versions. Only oss-repin moves them, and it needs every sibling checked out beside ui. The Go repositories have `make repin`, which moves their pins to the last commit each project's CI built. This repository has nothing like it, so a clone of ui alone has no way to take those builds. The ledger pin also has to move with a fresh render of `ledger/ledger.html`.",
   "notes": [],
   "links": []
