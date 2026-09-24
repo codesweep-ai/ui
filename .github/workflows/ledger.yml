@@ -19,6 +19,70 @@ permissions:
 jobs:
   # cs-ledger and cs-lint are the versions package.json pins, as in ci's ledger,
   # prose, refs and oss jobs.
+  #
+  # prose, refs and oss read the records along with the rest of the tree, so
+  # a record can fail them: its prose, the record IDs the documents cite,
+  # what a record may not publish, and the commits that changed it. Each is
+  # a job of its own, named as in ci.yml, so a failed run names the check
+  # that failed.
+  prose:
+    name: docs prose
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: scripts/with-npmrevs.sh npm ci
+      - run: npx cs-lint prose
+
+  refs:
+    name: docs refs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: scripts/with-npmrevs.sh npm ci
+      - run: npx cs-lint refs
+
+  oss:
+    name: open-source readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the history rules read the history
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: scripts/with-npmrevs.sh npm ci
+      - run: npx cs-lint oss
+      # The one commit rule cs-lint does not carry. See scripts/check-commits.mjs.
+      - run: npm run lint:commits
+
+  # The Jekyll pages the site builds include ledger/AGENTS.md and
+  # ledger/GUIDE.md, and a stray Liquid brace in one breaks the build.
+  integrity:
+    name: integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: scripts/with-npmrevs.sh npm ci
+      - run: npm run lint:integrity
+
   check:
     name: ledger check
     runs-on: ubuntu-latest
@@ -26,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0 # the check resolves every sha a record cites, and oss reads the history
+          fetch-depth: 0 # the check resolves every sha a record cites
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
@@ -36,19 +100,3 @@ jobs:
       - run: scripts/with-npmrevs.sh npm ci
       - name: records and page
         run: npx cs-ledger check
-      # These read the records along with the rest of the tree, so a record can
-      # fail them: its prose, the record IDs the documents cite, what a record
-      # may not publish, and the commits that changed it.
-      - name: prose
-        run: npx cs-lint prose
-      - name: refs
-        run: npx cs-lint refs
-      - name: open-source readiness
-        run: npx cs-lint oss
-      # The Jekyll pages the site builds include ledger/AGENTS.md and
-      # ledger/GUIDE.md, and a stray Liquid brace in one breaks the build.
-      - name: integrity
-        run: npm run lint:integrity
-      # The one commit rule cs-lint does not carry, as ci's oss job runs it.
-      - name: commits
-        run: npm run lint:commits
