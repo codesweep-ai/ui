@@ -3,17 +3,19 @@
   "title": "ui cannot install a @codesweep-ai version that exists only as an image",
   "type": "improvement",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "user choice (host), answering how a build left off npm reaches ui: \"Do (1) publish past ledger, and (2) as well, add with-npmrevs to ui.\"",
   "opened": "2026-09-23",
-  "resolved": null,
+  "resolved": "2026-09-23",
   "stint": "last-green-pins",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "2671edf"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "Through scripts/with-npmrevs.sh, npm resolved lint's newest build to a tarball the local cs-npmrevs served, not npmjs.com. Every install in ui's CI runs through the script, and all of them passed on d8a36fe."
   },
-  "resolution": null,
+  "resolution": "Every install in ui runs through scripts/with-npmrevs.sh, which puts cs-npmrevs in front of npmjs.com, so a version that exists only as an image installs too.",
   "details": "A repin moves ui's pins on lint, ledger and npmrevs to the last commit each one built. That build can exist only as a container image when npm skipped it, and plain `npm install` cannot fetch one. The tracer, campaign and dashboards projects install through `scripts/with-npmrevs.sh`, which puts cs-npmrevs in front of npmjs.com. A repin holds such a pin in a project without the script.",
   "notes": [],
   "links": []
