@@ -1,0 +1,54 @@
+name: ledger
+
+# The checks of a push to main that changes the ledger. ci.yml ignores a push
+# that changes nothing outside ledger/, and without this such a push would be
+# checked by nothing. It builds and publishes nothing: the ledger is no part of
+# the package, and its commit never becomes a build a sibling pins. pages.yml
+# runs when this finishes, and republishes the ledger's page.
+#
+# A push that changes the ledger and anything else runs ci as well, which checks
+# the ledger again. The second check costs a minute.
+on:
+  push:
+    branches: [main]
+    paths: ["ledger/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  # cs-ledger and cs-lint are the versions package.json pins, as in ci's ledger,
+  # prose, refs and oss jobs.
+  check:
+    name: ledger check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the check resolves every sha a record cites, and oss reads the history
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      # Through scripts/with-npmrevs.sh, so a @codesweep-ai version that exists
+      # only as an image, which oss-repin can pin, installs like any other.
+      - run: scripts/with-npmrevs.sh npm ci
+      - name: records and page
+        run: npx cs-ledger check
+      # These read the records along with the rest of the tree, so a record can
+      # fail them: its prose, the record IDs the documents cite, what a record
+      # may not publish, and the commits that changed it.
+      - name: prose
+        run: npx cs-lint prose
+      - name: refs
+        run: npx cs-lint refs
+      - name: open-source readiness
+        run: npx cs-lint oss
+      # The Jekyll pages the site builds include ledger/AGENTS.md and
+      # ledger/GUIDE.md, and a stray Liquid brace in one breaks the build.
+      - name: integrity
+        run: npm run lint:integrity
+      # The one commit rule cs-lint does not carry, as ci's oss job runs it.
+      - name: commits
+        run: npm run lint:commits

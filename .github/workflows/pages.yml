@@ -20,14 +20,16 @@ name: pages
 # finishes, so a site built on ci alone always catches them mid-run, and
 # prune-images runs on a schedule of its own. Waking on each of them means the
 # last deploy of a push comes after the last of its workflows has finished. A new
-# workflow that runs on main belongs in this list too.
+# workflow that runs on main belongs in this list too. ledger takes the place of
+# ci for a push that changes only the ledger.
 #
 # A push therefore publishes the site two or three times. The concurrency group
 # below keeps one run waiting behind the one deploying, and a newer run replaces
 # a waiting one, which then shows as cancelled in this workflow's row.
 #
-# ci runs on every push to main, so the documents and the gallery still publish
-# on every push, a few minutes later than they used to. prune-images runs every
+# ci runs on every push to main, or ledger does for a push that changes only the
+# ledger, so the documents and the gallery still publish on every push, a few
+# minutes later than they used to. prune-images runs every
 # day, so the site also republishes daily whether or not anything was pushed. The
 # dashboard dates a repository by its latest ci run, so the daily republish does
 # not hide one that has stopped building.
@@ -36,7 +38,7 @@ name: pages
 # the dashboard exists to show, so it has to publish too.
 on:
   workflow_run:
-    workflows: [ci, npm, publish images, prune-images]
+    workflows: [ci, npm, publish images, prune-images, ledger]
     types: [completed]
   workflow_dispatch:
 
@@ -66,15 +68,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v7
-
       # The branch's history without its file contents, beyond what the site is
       # built from: the status file asks git whether each build it lists is
       # still on the branch, rather than asking GitHub's API.
-      # Written before Jekyll runs, so Jekyll copies it into the site like any
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           filter: blob:none
+
+      # Written before Jekyll runs, so Jekyll copies it into the site like any
       # other file at the repository root. It reads this repository's own workflow
       # runs and nothing else, so the job's GITHUB_TOKEN is enough.
       #

@@ -3,6 +3,10 @@ name: ci
 on:
   push:
     branches: [main]
+    # A push that changes nothing but the ledger builds and publishes nothing,
+    # and ledger.yml checks it. Its commit then has no ci run, so it is never a
+    # build a sibling pins.
+    paths-ignore: ["ledger/**"]
   pull_request:
   workflow_dispatch:
 

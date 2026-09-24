@@ -38,6 +38,12 @@ travel together in one commit.
 A commit that touches `ledger/` needs `cs-ledger render && cs-ledger check` to
 pass first. `npm run ledger` runs the check half.
 
+A push to main that changes only `ledger/` builds nothing and publishes nothing
+to npm or as an image. `ci` does not run for it. The `ledger` workflow runs the
+ledger check, the document linters and the commit rules instead, and the site
+republishes the ledger's page when it finishes. Such a commit is never a build
+a sibling pins.
+
 `cs-ledger` comes from
 [codesweep-ai/ledger](https://github.com/codesweep-ai/ledger) as the
 `@codesweep-ai/ledger` package, so the install brings it with everything else
@@ -393,19 +399,20 @@ the cs-npmrevs `npm ci` installed, and pushes it with podman. The workflow is
 what runs it. The script is shared with npmrevs, lint and ledger, so change all
 four together.
 
-A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
-push the tag. `release.yml` waits for `ci` to pass on the tagged commit, runs the
-gate, publishes to `latest`, and opens a GitHub release. Neither workflow stores
-a credential: each package names its workflow as a trusted publisher. Both
-publish through `scripts/publish-staged.mjs`, so re-running either is safe: it
-skips a version the registry already has from this commit, and stops on one it
 Each run posts a `publish images` commit status on the commit it published: a
 success once the image is pushed, a failure otherwise. GitHub lists the run
 under main's head when `ci` finished, which can be a later commit. The CI status
 file reads the registry instead, and lists a commit as built, one a sibling can
 pin, once its version is there.
 
-has from another commit.
+A release is a tag. Bump the version in `package.json`, tag it `v<version>`, and
+push the tag. `release.yml` waits for `ci` to pass on the tagged commit, runs the
+gate, publishes to `latest`, and opens a GitHub release. A commit whose push
+changed only the ledger has no `ci` run, so tag the one before it. Neither
+workflow stores a credential: each package names its workflow as a trusted
+publisher. Both publish through `scripts/publish-staged.mjs`, so re-running
+either is safe: it skips a version the registry already has from this commit,
+and stops on one it has from another commit.
 
 In a fork, or a copy under another owner, the images are still published.
 Neither workflow publishes to npm on its own there, because the package takes

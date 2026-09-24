@@ -46,7 +46,7 @@ jobs:
             sleep 10
           done
           if [ -z "$run" ]; then
-            echo "::error::ci has not run on $GITHUB_SHA, so nothing publishes from it. Push the commit to main first."
+            echo "::error::ci has not run on $GITHUB_SHA, so nothing publishes from it. Push the commit to main first. A push that changes only the ledger runs no ci: tag the commit ci ran on before it."
             exit 1
           fi
           gh run watch "$run" --repo "$GITHUB_REPOSITORY" --exit-status --compact --interval 30
