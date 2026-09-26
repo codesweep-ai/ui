@@ -56,14 +56,16 @@ it, so a newer binary reports a good page as stale. Moving the pin means
 re-rendering `ledger.html` in the same commit.
 
 `npm run repin` does both, and moves the other `@codesweep-ai` pins with it, as
-`make repin` does in the Go repositories. Each project's site publishes a
-`ci-status.json` whose `built` lists the commits its CI built and passed, newest
-first. Each pin moves to the version of the first, installed through
-`scripts/with-npmrevs.sh`, and `ledger.html` is rendered again. A pin whose
-project lists no build stays where it is, and says so. `@codesweep-ai/npmrevs`
-moves only to a version npmjs.com holds, since `with-npmrevs.sh` installs it
-from there before its registry is up. The script is `scripts/repin-npm.mjs`, and
-the same file is in ledger, tracer and campaign.
+`make repin` does in the Go repositories. Each pin moves to the newer of its
+project's last CI build and its newest local one. The first is listed first in
+`built` in the `ci-status.json` its site publishes, and a clean `npm run ci` or
+`make ci` records the second. It names each pin taken from a local build,
+installs through `scripts/with-npmrevs.sh`, and renders `ledger.html` again. A
+pin whose project has neither stays where it is, and says so. `LOCAL=0 npm run
+repin` takes CI builds only. `@codesweep-ai/npmrevs` moves only to a CI build
+npmjs.com holds, since `with-npmrevs.sh` installs it from there before its
+registry is up. The script is `scripts/repin-npm.mjs`, and the same file is in
+ledger, tracer and campaign.
 
 ## Before you push
 
@@ -77,6 +79,12 @@ That is every gate the CI workflow has, on this machine and in the order the
 workflow takes them, so a green run here is a green run there. `npm run check`
 is the faster subset to keep beside you while you work, and `npm run ci` is the
 one that has to pass.
+
+A run that passes on a clean tree also records its commit as a local build, so
+a sibling project can pin it before it is pushed. `scripts/record-build.sh`
+files it, with its npm package, in the build store of the repository's owner,
+`~/.local/share/cs-builds/<owner>/`, and says so. A run over uncommitted
+changes records nothing.
 
 Nothing needs installing beyond `scripts/with-npmrevs.sh npm install`. Three
 gates are the exception, and each reports a skip rather than a failure when its

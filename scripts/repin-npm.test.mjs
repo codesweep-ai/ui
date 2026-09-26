@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { plan } from "./repin-npm.mjs";
+import { plan, stampOf } from "./repin-npm.mjs";
 
 const SHA = (c) => c.repeat(40);
 
@@ -14,17 +14,19 @@ function build(commit, npm) {
   return { commit, versions: { go: null, images: {}, npm } };
 }
 
-// plan() with status files and an npmjs.com answer given in advance, so no test
-// reaches the network.
-function run(pkg, { files = {}, npmjs = () => true, goMod = false } = {}) {
+// plan() with status files, local builds and an npmjs.com answer given in
+// advance, so no test reaches the network or the build store.
+function run(pkg, { files = {}, locals = {}, npmjs = () => true, goMod = false, local = true } = {}) {
   const asked = [];
   return plan(pkg, {
     readStatus: async (name) => files[name] ?? null,
+    readLocal: async (name) => locals[name] ?? null,
     onNpmjs: async (name, version) => {
       asked.push(`${name}@${version}`);
       return npmjs(name, version);
     },
     goMod,
+    local,
   }).then((steps) => ({ steps, asked }));
 }
 
@@ -76,7 +78,7 @@ test("a pin whose project lists no build, or cannot be read, is held", async () 
     ["@codesweep-ai/lint", "held", undefined],
     ["@codesweep-ai/npmrevs", "held", undefined],
   ]);
-  for (const s of steps) assert.match(s.line, /held, as its status file lists no build$/);
+  for (const s of steps) assert.match(s.line, /held, as its status file lists no build(, and the build store holds none)?$/);
 });
 
 test("where npm lists no version yet, the build's npm image names it", async () => {
@@ -152,4 +154,63 @@ test("only npmrevs asks npmjs.com, as only it has to be there before the registr
   );
   assert.deepEqual(kinds(steps), [["@codesweep-ai/lint", "move", to]]);
   assert.deepEqual(asked, []);
+});
+
+// Local builds, recorded by a clean `make ci` or `npm run ci` in the build store.
+const LINT = "@codesweep-ai/lint";
+const CI_LINT = "0.0.0-20260925060713-0d7c772789e8";
+const LOCAL_LINT = "0.0.0-20260925204130-a8ec53cb0c46";
+const lintCI = { [LINT]: status(build("0d7c772789e8".padEnd(40, "0"), { [LINT]: CI_LINT })) };
+const lintLocal = (version = LOCAL_LINT) => ({
+  [LINT]: { commit: version.slice(-12).padEnd(40, "0"), version, recorded: "2026-09-25T20:42:02Z" },
+});
+const lintPin = { devDependencies: { [LINT]: "0.0.0-20260924012322-5ffce6301cbf" } };
+
+test("the commit time is read out of either kind of npm version", () => {
+  assert.equal(stampOf("0.0.0-20260925204130-a8ec53cb0c46"), "20260925204130");
+  assert.equal(stampOf("0.3.1-dev.20260925204130.2a232a0"), "20260925204130");
+  assert.equal(stampOf("1.2.3"), null);
+});
+
+test("a local build newer than the last CI build is the one pinned, and says so", async () => {
+  const { steps } = await run(lintPin, { files: lintCI, locals: lintLocal() });
+  assert.deepEqual(kinds(steps), [[LINT, "move", LOCAL_LINT]]);
+  assert.equal(steps[0].local, true);
+  assert.equal(steps[0].line, `${LINT}: a8ec53c, a local build recorded 2026-09-25 20:42:02Z`);
+});
+
+test("a CI build newer than the newest local one wins", async () => {
+  const older = "0.0.0-20260925010000-111111111111";
+  const { steps } = await run(lintPin, { files: lintCI, locals: lintLocal(older) });
+  assert.deepEqual(kinds(steps), [[LINT, "move", CI_LINT]]);
+  assert.equal(steps[0].local, false);
+});
+
+test("a tie goes to the CI build, which can be pushed", async () => {
+  const same = "0.0.0-20260925060713-222222222222";
+  const { steps } = await run(lintPin, { files: lintCI, locals: lintLocal(same) });
+  assert.deepEqual(kinds(steps), [[LINT, "move", CI_LINT]]);
+});
+
+test("with local builds off, only the last CI build counts", async () => {
+  const { steps } = await run(lintPin, { files: lintCI, locals: lintLocal(), local: false });
+  assert.deepEqual(kinds(steps), [[LINT, "move", CI_LINT]]);
+});
+
+test("a project CI never built is pinned at its local build", async () => {
+  const { steps } = await run(lintPin, { locals: lintLocal() });
+  assert.deepEqual(kinds(steps), [[LINT, "move", LOCAL_LINT]]);
+});
+
+test("without a go.mod, npmrevs never moves to a local build", async () => {
+  const name = "@codesweep-ai/npmrevs";
+  const ci = "0.0.0-20260924012324-0b587a7c4645";
+  const { steps } = await run(
+    { devDependencies: { [name]: "0.0.0-20260920020255-40937e144093" } },
+    {
+      files: { [name]: status(build(SHA("0"), { [name]: ci })) },
+      locals: { [name]: { commit: SHA("6"), version: "0.0.0-20260925204130-613d6a5b014e", recorded: "x" } },
+    },
+  );
+  assert.deepEqual(kinds(steps), [[name, "move", ci]]);
 });

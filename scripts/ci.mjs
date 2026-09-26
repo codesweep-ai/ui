@@ -38,6 +38,13 @@ const skipped = [];
 
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 
+// A clean passing run is recorded as a local build, which sibling projects can
+// pin before this commit is pushed (scripts/record-build.sh). The start marks
+// where the run began, and the finish, reached only once every gate has passed,
+// records it. The script is bash, and the Windows leg of CI does not run this.
+const record = process.platform !== "win32";
+if (record) run("scripts/record-build.sh", ["start"]);
+
 // The gate itself. The workflow's prose, refs and readiness jobs each run one
 // linter, and `check` runs all three, so they need no step of their own here.
 say("the gate a contributor runs before pushing");
@@ -110,6 +117,11 @@ run(npm, ["pack", "--dry-run", ".package"]);
 // re-render is a page that disagrees with its own JSON.
 say("ledger");
 run(npm, ["run", "ledger"]);
+
+if (record) {
+  say("the local build record");
+  run("scripts/record-build.sh", ["finish", "npm run ci"]);
+}
 
 const ran = skipped.length === 0 ? "ci: every gate ran." : `ci: ${skipped.length} gate(s) did not run.`;
 const note = tty ? `\n\x1b[1m${ran}\x1b[0m` : `\n${ran}`;
