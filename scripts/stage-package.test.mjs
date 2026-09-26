@@ -8,6 +8,7 @@ import {
   publishedManifest,
   assertCommitIsFetchable,
   inspectionOnly,
+  repositoryOf,
 } from "./stage-package.mjs";
 
 // The published README is the only documentation an install carries, and its
@@ -219,4 +220,23 @@ test("staging inspects only when it was asked to by argument", () => {
     if (prior === undefined) delete process.env.CS_UI_STAGE_INSPECT;
     else process.env.CS_UI_STAGE_INSPECT = prior;
   }
+});
+
+// The scope is the owner origin names, so a fork stages its package under its
+// own scope. A fork's clone reaches GitHub through an SSH host alias, which
+// once read as no GitHub URL at all and staged the fork under @codesweep-ai
+// (CUI-126).
+test("the repository is read out of every form of GitHub remote", () => {
+  for (const [url, want] of [
+    ["https://github.com/codesweep-ai/ui", "codesweep-ai/ui"],
+    ["https://github.com/codesweep-ai/ui.git\n", "codesweep-ai/ui"],
+    ["git@github.com:codesweep-ai/ui.git", "codesweep-ai/ui"],
+    ["git@github.com-fork:forker/ui.git", "forker/ui"],
+    ["ssh://git@github.com/acme/ui.git", "acme/ui"],
+    ["ssh://git@github.com-fork/acme/ui", "acme/ui"],
+  ]) {
+    assert.equal(repositoryOf(url), want, url);
+  }
+  assert.equal(repositoryOf("/run/cs-sandbox-repo-1"), null);
+  assert.equal(repositoryOf("https://gitlab.com/acme/ui"), null);
 });

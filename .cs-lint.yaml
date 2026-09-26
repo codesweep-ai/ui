@@ -63,6 +63,11 @@ oss:
   # makes it public.
   published: false
 
+  # github.com because git@github.com is the user of every GitHub SSH remote,
+  # which scripts/stage-package.mjs reads the owner out of, and its tests write
+  # on purpose.
+  emailAllow: ["github.com"]
+
   # No SPEC.md: DESIGN_SYSTEM_SPEC.md is this project's specification, and it is
   # named for what it specifies. MANUAL.md holds the package-level surface, and
   # the component surface is one specification per component under components/,

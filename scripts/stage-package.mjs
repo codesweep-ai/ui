@@ -45,12 +45,22 @@ function repositoryName() {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
     });
-    const m = url.trim().match(/[@/]github\.com[:/]([^/]+)\/([^/]+?)(?:\.git)?\/?$/);
-    if (m) return `${m[1]}/${m[2]}`;
+    const nwo = repositoryOf(url);
+    if (nwo) return nwo;
   } catch {
     // No git or no checkout, which is a build of this project's own source.
   }
   return "codesweep-ai/ui";
+}
+
+/**
+ * The `owner/name` a GitHub remote URL names, or null for one that is not on
+ * GitHub. `[^:/]*` after github.com takes an SSH host alias, such as the
+ * git@github.com-<account>:<owner>/<name>.git a fork's clone uses.
+ */
+export function repositoryOf(url) {
+  const m = url.trim().match(/[@/]github\.com[^:/]*[:/]+([^/]+)\/([^/]+?)(?:\.git)?\/?$/);
+  return m ? `${m[1]}/${m[2]}` : null;
 }
 
 const REPO_NWO = repositoryName();
