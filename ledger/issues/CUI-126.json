@@ -3,17 +3,19 @@
   "title": "A fork's package takes the codesweep-ai scope",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, reviewing how local builds reach installs (tasks/pin-on-local-builds.md, section 9)",
   "opened": "2026-09-25",
-  "resolved": null,
+  "resolved": "2026-09-25",
   "stint": "local-builds",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "aed2536"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "scripts/stage-package.test.mjs passes all 18 of its tests, among them one holding repositoryOf to every form of GitHub remote: https, scp-style, an SSH host alias, and ssh:// with and without one. GitHub CI's `ci` and `npm` passed on 4332859."
   },
-  "resolution": null,
+  "resolution": "The owner is read from origin with a pattern that takes an SSH host alias, as record-build.sh already did. A fork's package is now staged under the fork's own scope.",
   "details": "`scripts/stage-package.mjs` reads the owner from origin with `[@/]github\\.com[:/]`, which needs a `:` or `/` right after `github.com`. An SSH host alias such as `git@github.com-fork:forker/ui.git`, which a fork's clones use, does not match. The build then falls back to `codesweep-ai`, so a fork's package is staged under this project's name.",
   "notes": [],
   "links": []

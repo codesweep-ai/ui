@@ -3,17 +3,19 @@
   "title": "npm run repin can pin a local build of a commit that is gone",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "session agent, after rewriting unpushed history left store entries for commits no branch holds",
   "opened": "2026-09-25",
-  "resolved": null,
+  "resolved": "2026-09-25",
   "stint": "local-builds",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "4332859"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "scripts/repin-npm.test.mjs passes all 17 of its tests against this same scripts/repin-npm.mjs. Among them, a store holds two builds of a sibling. The repin takes the newer while the sibling's checkout holds it, the older once its main moves back, and the newer again once it is restored. GitHub CI's `ci` passed on 4332859."
   },
-  "resolution": null,
+  "resolution": "A local build counts only if its commit is on a branch of the sibling's own checkout beside the consumer, where there is one. A newer build left out that way is named. Without such a checkout, as in a campaign member, the store is taken as it stands.",
   "details": "`scripts/repin-npm.mjs` takes the newest local build in the store whatever its commit. After a rebase or a squash, the store still holds builds of the commits that were replaced, and they carry the newest times. So `npm run repin` can pin a version whose commit no branch of the sibling's checkout holds any more.",
   "notes": [],
   "links": []

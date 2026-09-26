@@ -3,17 +3,19 @@
   "title": "npm run repin cannot pin a sibling's local build",
   "type": "improvement",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "user report (host): \"it doesn't seem possible anymore to have make repin do pin on local builds, which haven't been published to ghcr.io or npmjs.com or built in the Github CI builds\"",
   "opened": "2026-09-25",
-  "resolved": null,
+  "resolved": "2026-09-25",
   "stint": "local-builds",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "bfaa8da"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "scripts/repin-npm.test.mjs passes all 17 of its tests against this same scripts/repin-npm.mjs. GitHub CI's `ci` passed on 4332859."
   },
-  "resolution": null,
+  "resolution": "`npm run repin` now moves each @codesweep-ai pin to the newer, by commit time, of the sibling's last CI build and its newest local build. It names each pin taken from a local build. `LOCAL=0` takes CI builds only. The npmrevs pin, which the registry itself runs on, moves only to a CI build npmjs.com holds.",
   "details": "`npm run repin` moves each `@codesweep-ai` pin to its project's last CI build, and to nothing else. A build that a clean gate recorded in the build store is invisible to it, and `scripts/with-npmrevs.sh` serves none of the store's packages. So a change across ui and a sibling cannot pin its own parts before they are pushed.",
   "notes": [],
   "links": []
