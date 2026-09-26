@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
-import { plan, stampOf } from "./repin-npm.mjs";
+import { newestLocal, plan, siblingHolds, stampOf } from "./repin-npm.mjs";
 
 const SHA = (c) => c.repeat(40);
 
@@ -213,4 +217,47 @@ test("without a go.mod, npmrevs never moves to a local build", async () => {
     },
   );
   assert.deepEqual(kinds(steps), [[name, "move", ci]]);
+});
+
+// A local build whose commit the project's own checkout, beside this one, holds
+// on no branch — as after a rebase — is left out. Without that checkout the
+// store is taken as it stands, since nothing says the commit is gone.
+test("a local build of a commit its checkout no longer holds is left out", () => {
+  const ws = mkdtempSync(path.join(tmpdir(), "repin-npm-"));
+  const env = { ...process.env, GIT_CONFIG_GLOBAL: "/dev/null", GIT_CONFIG_NOSYSTEM: "1",
+    GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@example.com", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@example.com" };
+  const git = (dir, ...args) => {
+    const r = spawnSync("git", ["-C", dir, ...args], { env, encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  const sibling = path.join(ws, "lint");
+  mkdirSync(sibling);
+  writeFileSync(path.join(sibling, "go.mod"), "module github.com/codesweep-ai/lint\n");
+  git(sibling, "init", "-q", "-b", "main");
+  git(sibling, "add", "-A");
+  git(sibling, "commit", "-q", "-m", "old");
+  const old = git(sibling, "rev-parse", "HEAD");
+  git(sibling, "commit", "-q", "--allow-empty", "-m", "new");
+  const newer = git(sibling, "rev-parse", "HEAD");
+
+  const store = path.join(ws, "store");
+  mkdirSync(path.join(store, "status", "lint"), { recursive: true });
+  const versionOf = (sha, stamp) => `0.0.0-${stamp}-${sha.slice(0, 12)}`;
+  for (const [sha, stamp] of [[old, "20260925000000"], [newer, "20260926000000"]]) {
+    writeFileSync(path.join(store, "status", "lint", `${sha}.json`), JSON.stringify({
+      commit: sha, recorded: "2026-09-26T00:00:00Z", versions: { npm: { [LINT]: versionOf(sha, stamp) } },
+    }));
+  }
+  const root = path.join(ws, "consumer");
+  const holds = (c) => siblingHolds(root, LINT, c);
+
+  assert.equal(newestLocal(store, LINT, holds).commit, newer);
+  git(sibling, "checkout", "-q", "-B", "main", old);
+  assert.equal(newestLocal(store, LINT, holds).commit, old);
+  git(sibling, "checkout", "-q", "-B", "main", newer);
+  assert.equal(newestLocal(store, LINT, holds).commit, newer);
+
+  // No checkout beside this one: the store as it stands.
+  assert.equal(siblingHolds(path.join(ws, "elsewhere", "consumer"), LINT, old), true);
 });
