@@ -198,8 +198,8 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
-    "@codesweep-ai/ledger": "0.0.0-20260928023949-5ccf9df61728",
-    "@codesweep-ai/lint": "0.0.0-20260928023856-ba48d1dc7295",
+    "@codesweep-ai/ledger": "0.0.0-20260926051938-a74e65097227",
+    "@codesweep-ai/lint": "0.0.0-20260927191541-3374b87f8587",
     "@codesweep-ai/npmrevs": "0.0.0-20260924012324-0b587a7c4645",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
