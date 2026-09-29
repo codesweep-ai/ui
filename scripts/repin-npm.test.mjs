@@ -219,6 +219,28 @@ test("without a go.mod, npmrevs never moves to a local build", async () => {
   assert.deepEqual(kinds(steps), [[name, "move", ci]]);
 });
 
+// A lint build in `store`, as record-build.sh files one: its entry, and its
+// package unless `packed` is false.
+function record(store, sha, stamp, packed = true) {
+  const version = `0.0.0-${stamp}-${sha.slice(0, 12)}`;
+  mkdirSync(path.join(store, "status", "lint"), { recursive: true });
+  mkdirSync(path.join(store, "npm"), { recursive: true });
+  writeFileSync(path.join(store, "status", "lint", `${sha}.json`), JSON.stringify({
+    commit: sha, recorded: "2026-09-26T00:00:00Z", versions: { npm: { [LINT]: version } },
+  }));
+  if (packed) writeFileSync(path.join(store, "npm", `codesweep-ai-lint-${version}.tgz`), "");
+}
+
+// record-build.sh removes the packages of older builds, and keeps their entries.
+test("a local build whose package the store no longer holds is left out", () => {
+  const store = mkdtempSync(path.join(tmpdir(), "repin-npm-"));
+  record(store, SHA("1"), "20260925000000");
+  record(store, SHA("2"), "20260926000000", false);
+  assert.equal(newestLocal(store, LINT).commit, SHA("1"));
+  record(store, SHA("3"), "20260927000000");
+  assert.equal(newestLocal(store, LINT).commit, SHA("3"));
+});
+
 // A local build whose commit the project's own checkout, beside this one, holds
 // on no branch — as after a rebase — is left out. Without that checkout the
 // store is taken as it stands, since nothing says the commit is gone.
@@ -242,13 +264,7 @@ test("a local build of a commit its checkout no longer holds is left out", () =>
   const newer = git(sibling, "rev-parse", "HEAD");
 
   const store = path.join(ws, "store");
-  mkdirSync(path.join(store, "status", "lint"), { recursive: true });
-  const versionOf = (sha, stamp) => `0.0.0-${stamp}-${sha.slice(0, 12)}`;
-  for (const [sha, stamp] of [[old, "20260925000000"], [newer, "20260926000000"]]) {
-    writeFileSync(path.join(store, "status", "lint", `${sha}.json`), JSON.stringify({
-      commit: sha, recorded: "2026-09-26T00:00:00Z", versions: { npm: { [LINT]: versionOf(sha, stamp) } },
-    }));
-  }
+  for (const [sha, stamp] of [[old, "20260925000000"], [newer, "20260926000000"]]) record(store, sha, stamp);
   const root = path.join(ws, "consumer");
   const holds = (c) => siblingHolds(root, LINT, c);
 
