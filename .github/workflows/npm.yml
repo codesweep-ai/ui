@@ -165,6 +165,31 @@ jobs:
         if: steps.head.outputs.publish != 'false'
         run: node scripts/publish-staged.mjs --tag dev --provenance --access public ${{ inputs.dry_run && '--dry-run' || '' }}
 
+      # The Pages run that this workflow's finishing starts writes the status
+      # file, and asks npmjs.com which versions it holds. npmjs.com can take
+      # minutes to list a version it has accepted, and a status file written
+      # before then names the build by its image alone until the next Pages run.
+      # So the run ends once npmjs.com lists the version, asked the way the
+      # status file asks it. After ten minutes it says so and ends anyway,
+      # rather than failing a publish that went.
+      - name: wait for npmjs.com to list it
+        if: ${{ !inputs.dry_run && steps.head.outputs.publish != 'false' }}
+        env:
+          PACKAGE: .package
+        run: |
+          name="$(node -p "require('./$PACKAGE/package.json').name")"
+          version="$(node -p "require('./$PACKAGE/package.json').version")"
+          for _ in $(seq 60); do
+            if curl -fsS -H 'Accept: application/vnd.npm.install-v1+json' \
+                "https://registry.npmjs.org/${name/\//%2f}" |
+                jq -e --arg v "$version" '.versions | has($v)' >/dev/null; then
+              echo "npmjs.com lists $name@$version"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::warning::npmjs.com did not list $name@$version within ten minutes of its publish, so the status file names it by its image until the next Pages run."
+
       # On the commit this publishes, whether it went or not. A dry run publishes
       # nothing, and neither does a run cancelled for a newer one or a dispatch
       # refused before it built, so they say nothing.

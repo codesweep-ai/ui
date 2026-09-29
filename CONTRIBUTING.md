@@ -399,7 +399,8 @@ Every commit on main that passes `ci` publishes to the `dev` channel on npm,
 versioned from the commit itself. The `npm` workflow runs when `ci` finishes,
 and builds the commit `ci` tested. It skips that commit once main's head changes
 more than `ledger/` after it. Every publish also writes an `npm` commit status to
-its commit. No tag is cut and `latest` does not move, so a dev build reaches only
+its commit. It finishes once npmjs.com lists the new version, so the CI status
+file published after it names that version. No tag is cut and `latest` does not move, so a dev build reaches only
 someone who asks for it:
 
 ```sh
