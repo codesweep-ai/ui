@@ -1,0 +1,22 @@
+{
+  "id": "CUI-129",
+  "title": "The status file can name a new dev build by its image alone, though npmjs.com holds it",
+  "type": "defect",
+  "severity": "low",
+  "status": "closed",
+  "foundBy": "repository owner: \"Why isn't the latest version of npmrevs not on npmjs.com?\"",
+  "opened": "2026-09-29",
+  "resolved": "2026-09-29",
+  "stint": "2026-09-29 npm build store",
+  "evidence": {
+    "commits": [
+      "f7d5ce2"
+    ],
+    "integrated": [],
+    "verified": "The workflow passes actionlint. The step's script, run here against npmjs.com, found npmrevs's dev build of 2026-09-29 listed within half a second. For a version npmjs.com does not hold, with the loop cut to two tries, it printed the warning and exited 0."
+  },
+  "resolution": "A step after the publish waits until npmjs.com lists the version, asked the way the status file asks it, before the run ends. After ten minutes it warns and ends, rather than failing a publish that went.",
+  "details": "The `npm` workflow finished as soon as npm had accepted the publish. The Pages run its finishing starts asks npmjs.com for the version seconds later, and npmjs.com can take minutes to list it. For npmrevs's dev build of 2026-09-29, the workflow ended at 17:31:00 UTC, Pages asked by 17:32:11, and npmjs.com dates the version 17:34:01. The status file then named the build by its image alone, with an empty `npm` field, until the next Pages run. Anything reading the status file saw no npm version for a build npmjs.com held.",
+  "notes": [],
+  "links": []
+}
