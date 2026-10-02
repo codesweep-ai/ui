@@ -125,8 +125,8 @@ if (record) {
 
 const ran = skipped.length === 0 ? "ci: every gate ran." : `ci: ${skipped.length} gate(s) did not run.`;
 const note = tty ? `\n\x1b[1m${ran}\x1b[0m` : `\n${ran}`;
-console.log(`${note} Not reproduced here: the Node 22.13 leg of the`);
-console.log("build-test matrix, the clean install from the lockfile that CI starts from,");
+console.log(`${note} Not reproduced here: the clean install from the lockfile that`);
+console.log("CI starts from,");
 // actionlint is a Go binary rather than a dependency of this package. Running it
 // only where it happened to be installed made `npm run ci` mean one thing on one
 // machine and another thing on the next, so the workflows job on the forge owns

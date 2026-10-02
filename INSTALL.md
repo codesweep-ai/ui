@@ -21,7 +21,7 @@ npm install /path/to/codesweep-ai-ui-<version>.tgz react react-dom
 
 ## 2. Prerequisites
 
-This package needs Node 22.13 or newer, and React 18.3 or 19. React and
+This package needs Node 24.21.0 or newer, and React 18.3 or 19. React and
 React DOM are peer dependencies, so your project installs them and ends up with
 one copy of each.
 

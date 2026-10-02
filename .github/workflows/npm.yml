@@ -116,7 +116,7 @@ jobs:
       - uses: actions/setup-node@v6
         if: steps.head.outputs.publish != 'false'
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           registry-url: https://registry.npmjs.org
           cache: npm
 

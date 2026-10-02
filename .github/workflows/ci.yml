@@ -15,15 +15,7 @@ permissions:
 
 jobs:
   check:
-    name: check (node ${{ matrix.node }})
-    strategy:
-      fail-fast: false
-      matrix:
-        # The floor package.json declares, and the active LTS. Node 20 reached
-        # end of life in April 2026, and 22.13 is the lowest version every
-        # dependency accepts: below it, eslint and jsdom warn on install and
-        # rolldown fails outright on anything under 20.19.
-        node: ["22.13", "24"]
+    name: check
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -33,7 +25,8 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node }}
+          # The floor package.json declares, which is the latest LTS.
+          node-version: "24.21.0"
           cache: npm
 
       # Through scripts/with-npmrevs.sh, so a @codesweep-ai version that exists
@@ -53,7 +46,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-lint prose
@@ -66,7 +59,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-lint refs
@@ -83,7 +76,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
       - run: npm run visual:compare
@@ -110,7 +103,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
 
       # node_modules has to be on disk for this to mean anything. _config.yml's
@@ -134,7 +127,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
       - run: npx puppeteer browsers install chrome
@@ -185,7 +178,7 @@ jobs:
           fetch-depth: 0 # check resolves the commits an evidence line cites
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-ledger check
@@ -200,7 +193,7 @@ jobs:
           fetch-depth: 0 # the history rules read the history
       - uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
       - run: npx cs-lint oss

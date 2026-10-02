@@ -12,6 +12,9 @@ holds today.
 
 ### Breaking changes
 
+- The package needs Node 24.21.0 or newer, the latest LTS, where it accepted
+  22.13 before, and `engines` says so. A project on Node 22 moves to Node
+  24.21.0 before it takes this version.
 - A `?theme=` parameter no longer outranks a mode the reader chose. It seeds
   the theme until they choose for themselves, and their choice then holds for
   the rest of the tab, across remounts and reloads. It used to be re-read every
