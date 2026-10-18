@@ -34,8 +34,12 @@
     min-width: 0
 }
 
+/* One width for every line number in a block, as many digits as the last line
+   has. CodeBlock sets the count on its <code>, and the padding and the border
+   sit outside the content box, so each row's code starts at one edge. */
 .cs-component-code-block-69 {
-    min-width: 3ch
+    box-sizing: content-box;
+    width: calc(var(--code-block-gutter-digits) * 1ch)
 }
 
 .cs-component-code-block-62,

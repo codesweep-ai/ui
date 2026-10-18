@@ -57,6 +57,11 @@ holds today.
 
 ### Fixed
 
+- `CodeBlock` gives every line number in a block one width, sized from the
+  digits of the last line, in every mode. Each number used to be as wide as its
+  own digits, so the code moved one character right at line 10 and again at
+  line 100. A consumer who reached into the markup to align the rows can drop
+  that rule.
 - `syntax.css` colours an added diff line with `--color-success` and a removed
   one with `--color-error-text`, in both themes. An added line used to take the
   keyword colour and a removed line no colour at all, so the pair differed only

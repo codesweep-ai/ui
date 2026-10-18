@@ -83,11 +83,16 @@ interface CodeBlockProps {
 - Matches the `MarkdownViewer` code block header pattern (`md-code-block__header`).
 
 ### Line Numbers
+- Width: one for every number in the block, as many `ch` as the last line number has digits. It
+  holds in every mode. Each line is a flex row of its own, so a number sized by its own digits
+  would push its code one character right at line 10, and again at line 100.
+- CodeBlock writes the digit count to `--code-block-gutter-digits` on its `<code>`. The number's
+  content box is `calc(var(--code-block-gutter-digits) * 1ch)` wide, with the padding and the border
+  outside it, so a consumer has nothing to set.
 - `text-align: right`.
 - Color: `var(--muted)`.
 - `user-select: none`.
 - Padding: `0 var(--space-2) 0 var(--space-4)`.
-- `min-width: 3ch`.
 - Border-right: `1px solid var(--border)`.
 - `flex-shrink: 0`.
 

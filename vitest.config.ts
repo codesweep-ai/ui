@@ -14,6 +14,7 @@ const browserSuites = [
   "src/components/Input.hover.test.tsx",
   "src/components/Card.position.test.tsx",
   "src/components/CodeBlock.diff.test.tsx",
+  "src/components/CodeBlock.layout.test.tsx",
   "src/components/stylesheetWarning.test.tsx",
   "src/components/clippedContentWarning.test.tsx",
   "src/components/MarkdownMinimap.lateContent.test.tsx",

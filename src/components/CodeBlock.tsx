@@ -2,7 +2,7 @@
 
 import { forwardRefToRoot } from "../lib/forwardRefToRoot";
 
-import { useEffect, useState, useMemo, useSyncExternalStore } from "react";
+import { useEffect, useState, useMemo, useSyncExternalStore, type CSSProperties } from "react";
 import { Copy, Check } from "lucide-react";
 import { cn } from "../lib/cn";
 import hljs from "highlight.js/lib/core";
@@ -162,6 +162,12 @@ function CodeBlockImpl({
     return lines;
   }, [code, language, highlightQuery, languageRevision]);
 
+  // Every line is a flex row of its own, so the gutter is sized once for the
+  // block, from the digits of the last line number, rather than by each row.
+  const gutterStyle = {
+    "--code-block-gutter-digits": String(htmlLines.length).length,
+  } as CSSProperties;
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(code);
@@ -226,6 +232,7 @@ function CodeBlockImpl({
               "cs-component-code-block-66 hljs",
               language && `language-${language}`,
             )}
+            style={gutterStyle}
           >
             {htmlLines.map((lineHtml, i) => {
               const lineNum = i + 1;
