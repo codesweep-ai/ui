@@ -3,17 +3,19 @@
   "title": "The syntax theme colours an added diff line as a keyword and leaves a removed line uncoloured",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "closed",
   "foundBy": "consumer report from the campaign repository's review page (SAC-095), filed at the user's request",
   "opened": "2026-10-18",
-  "resolved": null,
-  "stint": null,
+  "resolved": "2026-10-18",
+  "stint": "2026-10-18 CodeBlock diff view",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "6c91d79"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "At 6c91d79, `npx vitest run --project browser src/components/CodeBlock.diff.test.tsx` passed 2 of 2, one test per theme. An added line resolved to the success colour, rgb(52, 211, 153) dark and rgb(4, 120, 87) light. A removed line resolved to the error text colour, rgb(248, 113, 113) dark and rgb(185, 28, 28) light. With the `.hljs-deletion` rule removed, the test failed 2 of 2, because a removed line took the plain text colour. With `.hljs-addition` back on `--syntax-keyword`, it failed 2 of 2 on rgb(249, 117, 131) dark and rgb(215, 58, 73) light. `npm run visual:compare` passed 116/116 with 0 differing pixels and no new axe findings, as no capture shows a diff."
   },
-  "resolution": null,
+  "resolution": "`syntax.css` gives `.hljs-addition` the success colour and `.hljs-deletion` the error text colour, so the two sides of a diff read apart in both themes. It uses the status colours rather than new syntax tokens, because those already mean success and failure. Both pass WCAG AA as text on the page background in either theme. The plain error colour does not, at 4.39:1 in the light theme.",
   "details": "`src/styles/syntax.css` lists `.hljs-addition` with `.hljs-keyword` and `.hljs-selector-tag`, so an added line in a diff takes `--syntax-keyword`. No rule names `.hljs-deletion`, so a removed line takes the default text colour. In a CodeBlock with `language=\"diff\"`, the two kinds of line differ only by their leading `+` and `-`. The added one reads as emphasis rather than as an addition.\n\nTo reproduce, register highlight.js's diff grammar and render a CodeBlock with `language=\"diff\"` and the code `-a` then `+b`. The `+b` line takes the keyword colour, and the `-a` line takes none.\n\nA diff reads by the pair, so each side needs a colour of its own. Mapping `.hljs-addition` to the success colour and `.hljs-deletion` to the error colour would fix it, as would syntax tokens made for them. A consumer could then show a diff without restyling the component's output. A consumer that does so today has to target highlight.js's class names under its own wrapper.",
   "notes": [],
   "links": []
