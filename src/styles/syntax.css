@@ -10,9 +10,19 @@
 }
 
 .hljs-keyword,
-.hljs-selector-tag,
-.hljs-addition {
+.hljs-selector-tag {
   color: var(--syntax-keyword);
+}
+
+/* A diff reads by the pair, so each side takes a status colour of its own.
+   A deletion takes the text variant of the error colour, because the plain
+   one falls short of WCAG AA on the light page background. */
+.hljs-addition {
+  color: var(--color-success);
+}
+
+.hljs-deletion {
+  color: var(--color-error-text);
 }
 
 .hljs-string,

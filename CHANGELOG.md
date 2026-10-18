@@ -57,6 +57,11 @@ holds today.
 
 ### Fixed
 
+- `syntax.css` colours an added diff line with `--color-success` and a removed
+  one with `--color-error-text`, in both themes. An added line used to take the
+  keyword colour and a removed line no colour at all, so the pair differed only
+  by its leading sign. A consumer who restyled `.hljs-addition` or
+  `.hljs-deletion` to tell them apart can drop those rules.
 - `EventLanes` shares a gap between a mark and the end-anchored mark after it
   when the gap is too small for both: each takes half, so both stay visible.
   Each used to fill the whole gap, and the later one covered the earlier.

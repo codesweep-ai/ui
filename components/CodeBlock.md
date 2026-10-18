@@ -125,6 +125,13 @@ import json from "highlight.js/lib/languages/json";
 | `.hljs-attribute`, `.hljs-attr`      | `--syntax-attr`      | `#79b8ff`     | `#005cc5`     |
 | `.hljs-variable`, `.hljs-built_in`   | `--syntax-builtin`   | `#ffab70`     | `#e36209`     |
 | `.hljs-comment`, `.hljs-quote`       | `--syntax-comment`   | `#6a737d`     | `#6a737d`     |
+| `.hljs-addition`                     | `--color-success`    | `#34d399`     | `#047857`     |
+| `.hljs-deletion`                     | `--color-error-text` | `#f87171`     | `#b91c1c`     |
+
+- A diff reads by the pair, so an added line and a removed line each take a colour of their own.
+  They take status colours rather than syntax tokens, because success and error already carry that
+  meaning. Both are text colours. On `--bg`, an addition measures 10.0:1 in the dark theme and
+  4.98:1 in the light one, and a deletion 6.95:1 and 5.88:1.
 
 ### Highlighted Lines
 - Background: `var(--color-success-bg)`.
