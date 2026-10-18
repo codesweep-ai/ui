@@ -1,0 +1,22 @@
+{
+  "id": "CUI-131",
+  "title": "Each CodeBlock line number widens its own row, so the code shifts right at rows 10 and 100",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "consumer report from the campaign repository's review page (SAC-095), filed at the user's request",
+  "opened": "2026-10-18",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "Each line of a CodeBlock is a flex row of its own, and its number sits in a span with `min-width: 3ch` in `src/styles/components/code-block.css`. The same span has `padding-left: var(--space-4)` and `padding-right: var(--space-2)` under `box-sizing: border-box`. The padding alone is wider than `3ch`, so the minimum never applies, and each number is as wide as its own digits. A row with more digits pushes its code further right.\n\nTo reproduce, render a CodeBlock of 120 lines in any mode and read `getBoundingClientRect().left` of the code span on lines 9, 10 and 100. In a consumer at a 1600 pixel viewport they read 313.8, 321.6 and 329.4. The code moves one character width, 7.8 pixels, at line 10 and again at line 100.\n\nA consumer can correct this only by reaching into the component's markup, because the line number has no documented hook. A gutter sized once for the whole block, from the digit count of its last line, would keep every row aligned.",
+  "notes": [],
+  "links": [
+    "CUI-130"
+  ]
+}

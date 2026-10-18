@@ -1,0 +1,20 @@
+{
+  "id": "CUI-130",
+  "title": "The syntax theme colours an added diff line as a keyword and leaves a removed line uncoloured",
+  "type": "defect",
+  "severity": "low",
+  "status": "open",
+  "foundBy": "consumer report from the campaign repository's review page (SAC-095), filed at the user's request",
+  "opened": "2026-10-18",
+  "resolved": null,
+  "stint": null,
+  "evidence": {
+    "commits": [],
+    "integrated": [],
+    "verified": null
+  },
+  "resolution": null,
+  "details": "`src/styles/syntax.css` lists `.hljs-addition` with `.hljs-keyword` and `.hljs-selector-tag`, so an added line in a diff takes `--syntax-keyword`. No rule names `.hljs-deletion`, so a removed line takes the default text colour. In a CodeBlock with `language=\"diff\"`, the two kinds of line differ only by their leading `+` and `-`. The added one reads as emphasis rather than as an addition.\n\nTo reproduce, register highlight.js's diff grammar and render a CodeBlock with `language=\"diff\"` and the code `-a` then `+b`. The `+b` line takes the keyword colour, and the `-a` line takes none.\n\nA diff reads by the pair, so each side needs a colour of its own. Mapping `.hljs-addition` to the success colour and `.hljs-deletion` to the error colour would fix it, as would syntax tokens made for them. A consumer could then show a diff without restyling the component's output. A consumer that does so today has to target highlight.js's class names under its own wrapper.",
+  "notes": [],
+  "links": []
+}
