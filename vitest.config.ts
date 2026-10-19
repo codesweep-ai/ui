@@ -35,6 +35,7 @@ const browserSuites = [
   "src/components/Tree.sizing.test.tsx",
   "src/patterns/patterns.responsive.test.tsx",
   "src/lib/chartTheme.text.test.tsx",
+  "src/components/visuallyHidden.test.tsx",
 ];
 
 export default defineConfig({

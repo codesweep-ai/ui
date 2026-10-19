@@ -5,3 +5,15 @@
   letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
 }
+
+.visually-hidden {
+  border: 0;
+  clip-path: inset(50%);
+  height: var(--space-px);
+  margin: calc(var(--space-px) * -1);
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: var(--space-px);
+}

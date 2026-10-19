@@ -1149,6 +1149,26 @@ the two differ.
 |--------------------|---------|------------------------------------------------|
 | `--page-max-width` | `64rem` | Widest a `Page` grows under `width="readable"`. Wide enough for a two-column form or a table, narrow enough that a line of text does not run the width of a large monitor. |
 
+### 4.21 Visually Hidden Utility
+
+The `.visually-hidden` CSS class keeps text for a screen reader and takes it out of sight. Use it for a label that a sighted reader gets from the layout. Examples are the header over a column of names, and the name of a button that shows only an icon.
+
+```css
+.visually-hidden {
+  border: 0;
+  clip-path: inset(50%);
+  height: var(--space-px);
+  margin: calc(var(--space-px) * -1);
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: var(--space-px);
+}
+```
+
+**Usage:** Apply the class to the element that holds the text. Never hide such text with `display: none` or `visibility: hidden`, because either one hides it from the screen reader too.
+
 ---
 
 ## 5. Branding

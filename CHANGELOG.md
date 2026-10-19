@@ -144,6 +144,9 @@ holds today.
 
 ### Added
 
+- `core.css` carries a `.visually-hidden` utility, which keeps text for a
+  screen reader and takes it out of sight. A page that defines its own class of
+  that name now gets both rules, so remove its copy when you upgrade.
 - An `EventLanes` event can take `anchor: "end"` in the positioned layout, so
   the mark ends at its position rather than beginning there. An opening at the
   moment a box begins then sits before the box, as a reply sits after it, and
