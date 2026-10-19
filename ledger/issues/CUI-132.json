@@ -3,11 +3,11 @@
   "title": "The design system specification leaves out tokens that tokens.css defines, and no document names some of them",
   "type": "defect",
   "severity": "low",
-  "status": "open",
+  "status": "in-progress",
   "foundBy": "session agent, while deciding which document should hold the diff line colours that CUI-130 asked for",
   "opened": "2026-10-18",
   "resolved": null,
-  "stint": null,
+  "stint": "review-packet-2026-10-18",
   "evidence": {
     "commits": [],
     "integrated": [],

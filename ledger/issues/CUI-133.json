@@ -1,0 +1,16 @@
+{
+  "id": "CUI-133",
+  "title": "The kit has no class that hides text from sight but keeps it for a screen reader, so each consumer writes its own",
+  "type": "improvement",
+  "severity": "low",
+  "status": "in-progress",
+  "foundBy": "session agent, while building the campaign repository's review packet on the kit, which defines its own `.visually-hidden`",
+  "opened": "2026-10-19",
+  "resolved": null,
+  "stint": "review-packet-2026-10-18",
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "A table header or an icon-only control sometimes needs text that a screen reader announces and a sighted reader does not see. The kit has no utility for it. `src/styles/utilities.css` holds only `.text-label-upper`, and `EventLanes` writes the same rules into its own census class. A consumer therefore writes a copy, as the campaign repository's packet page does. A copy is easy to get wrong in a way nobody sees, because `display: none` or `visibility: hidden` also hides the text from the screen reader.",
+  "notes": [],
+  "links": []
+}
