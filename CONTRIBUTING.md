@@ -186,6 +186,10 @@ it.
   frontmatter and `Added vX.Y.Z` in prose or TSDoc both answer "do I have this
   yet". `check:versions` fails any that names a version above the one in
   `package.json`, and `npm run check` runs it.
+- **The specification names every token.** Its section 4.19 is
+  `src/styles/tokens.css`, copied in by `npm run spec:tokens`.
+  `check:spec-tokens` fails when the two differ, and `npm run check` runs it.
+  Run the copy in the commit that moves a token.
 
 Section 4 of [DESIGN_SYSTEM_SPEC.md](DESIGN_SYSTEM_SPEC.md) has the tokens and
 the reasoning behind them.

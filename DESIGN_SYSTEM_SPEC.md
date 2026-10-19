@@ -357,7 +357,7 @@ These values change between dark and light themes. The theme is applied via `dat
 | Token      | Dark            | Light           | Notes               |
 |------------|-----------------|-----------------|----------------------|
 | `--bg`     | `#0b0f14`       | `#f3f4f6`       | Page background (light = soft gray so white cards lift) |
-| `--fg`     | `#e6edf3`       | `#1f2937`       | Primary text         |
+| `--fg`     | `#d1d9e0`       | `#1f2937`       | Primary text         |
 | `--muted`  | `#9aa4af`       | `#4b5563`       | Secondary text       |
 | `--color-structural` | `#6b7580` | `#7b8694` | A second structural step, one move further from the foreground than `--muted`. For recurring plumbing that must stay separable from it without competing with the categorical hues. |
 | `--card`   | `#0f1620`       | `#ffffff`       | Card / panel bg      |
@@ -658,7 +658,7 @@ Blue (cat-1) declares these tokens:
 | Token                  | Dark      | Light     |
 |------------------------|-----------|-----------|
 | `--color-cat-1-light`  | `#93c5fd` | `#60a5fa` |
-| `--color-cat-1`        | `#60a5fa` | `#3b82f6` |
+| `--color-cat-1`        | `#6d89c2` | `#3b5e8c` |
 | `--color-cat-1-mid`    | `#3b82f6` | `#2563eb` |
 | `--color-cat-1-dark`   | `#2563eb` | `#1d4ed8` |
 
@@ -754,6 +754,10 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
 
 ### 4.19 Complete `tokens.css`
 
+This is `src/styles/tokens.css` as it ships, so it names every token the package
+defines. `npm run spec:tokens` copies the file in, and `npm run check` fails when
+the two differ.
+
 ```css
 /* ============================================================
    @codesweep-ai/ui — Design Tokens
@@ -800,7 +804,18 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.7;
 
-  /* --- Shadows (dark-mode defaults) --- */
+  /* --- Prose / long-form ramp (generated content; larger than app chrome) ---
+     Drives the `.prose` utility (base.css) and MarkdownViewer's markdown CSS. */
+  --font-size-prose-h1: 2rem;        /* 32px */
+  --font-size-prose-h2: 1.5rem;      /* 24px */
+  --font-size-prose-h3: 1.25rem;     /* 20px */
+  --font-size-prose-h4: 1rem;        /* 16px */
+  --font-size-prose-body: 1rem;      /* 16px — larger than chrome body */
+  --font-size-prose-small: 0.875rem; /* 14px */
+  --line-height-prose: 1.65;
+  --max-width-prose: 65ch;
+
+  /* --- Shadows (dark-mode defaults — need higher opacity on dark bg) --- */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
@@ -810,7 +825,9 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --transition-fast: 0.15s ease;
   --transition-normal: 0.2s ease;
 
-  /* --- Application chrome --- */
+  /* --- Neutral header chrome (fixed, theme-independent) ---
+     The header + footer bar is always dark in BOTH themes, so every color
+     used on it must read on a dark surface regardless of the active theme. */
   --color-accent: #1ee0ca;
   --color-header-bg: #171717;
   --color-header-text: #fafafa;
@@ -820,10 +837,24 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
 
   /* --- Dark Theme (default) --- */
   --bg: #0b0f14;
-  --fg: #e6edf3;
+  --fg: #d1d9e0;
   --muted: #9aa4af;
+  /* A second structural step, one clear move further from the foreground than
+     --muted. For plumbing that recurs at volume and must stay separable from it
+     without competing with the categorical hues. Reviewed 2026-08-27 against a
+     real 1,366-event strip in both themes; 3:1+ against --bg. */
+  --color-structural: #6b7580;
   --card: #0f1620;
   --border: rgba(255, 255, 255, 0.08);
+
+  /* --- Syntax highlighting (dark) --- */
+  --syntax-keyword: #f97583;
+  --syntax-string: #85e89d;
+  --syntax-number: #79b8ff;
+  --syntax-title: #b392f0;
+  --syntax-attr: #79b8ff;
+  --syntax-builtin: #ffab70;
+  --syntax-comment: #6a737d;
 
   --color-accent-bg: rgba(30, 224, 202, 0.05);
   --color-accent-bg-hover: rgba(30, 224, 202, 0.1);
@@ -842,6 +873,12 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --color-warning-bg: rgba(245, 158, 11, 0.1);
   --color-neutral: #9ca3af;
   --color-neutral-bg: rgba(156, 163, 175, 0.2);
+  /* severe: the step between warning and error, for 4-level ordered severity
+     scales (low/med/high/critical). Status colors ship with a label or shape —
+     never color alone; adjacent hot hues (warning/severe/error) are not
+     separable by hue for CVD readers. Added v0.3.0. */
+  --color-severe: #f97316;
+  --color-severe-bg: rgba(249, 115, 22, 0.1);
 
   --color-btn-primary: #17c9b5;
   --color-btn-primary-text: #000000;
@@ -849,6 +886,8 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --color-btn-warning-text: #000000;
   --color-btn-disabled-bg: rgba(59, 130, 246, 0.5);
   --color-btn-disabled-text: rgba(255, 255, 255, 0.7);
+
+  --color-highlight: rgba(250, 204, 21, 0.35);
 
   --color-bg-subtle: rgba(255, 255, 255, 0.05);
   --color-bg-muted: rgba(128, 128, 128, 0.05);
@@ -859,6 +898,8 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --z-sticky: 10;
   --z-header: 100;
   --z-modal: 200;
+  --z-tooltip: 300; /* above modal — chart/UI tooltips. Added v0.3.0. */
+  --z-toast: 400;   /* above tooltips — transient feedback. Added v0.3.0. */
 
   /* --- Overlay --- */
   --color-overlay: rgba(0, 0, 0, 0.5);
@@ -879,12 +920,104 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --icon-size-md: 16px;
   --icon-size-lg: 18px;
 
+  /* --- Pulse / indicator dot sizes (PulseBadge) --- */
+  --pulse-size-sm: 6px;
+  --pulse-size-md: 8px;
+  --pulse-size-lg: 10px;
+
+  /* --- Categorical palette (charts, legends, grouping) — muted set (color review) --- */
+  --color-cat-1: #6d89c2;   /* blue    */
+  --color-cat-2: #56b9a8;   /* teal    */
+  --color-cat-3: #d2a750;   /* amber   */
+  --color-cat-4: #ce747a;   /* rose    */
+  --color-cat-5: #a29cda;   /* violet  */
+  --color-cat-6: #d9925a;   /* orange  */
+  --color-cat-7: #5fae8a;   /* emerald */
+  --color-cat-8: #c489c9;   /* fuchsia */
+  --color-cat-9: #6ab0d4;   /* sky     */
+  --color-cat-10: #9cb866;  /* lime    */
+
+  /* --- Categorical sub-shades (light / mid / dark per hue) --- */
+  --color-cat-1-light: #93c5fd;
+  --color-cat-1-mid: #3b82f6;
+  --color-cat-1-dark: #2563eb;
+  --color-cat-2-light: #5eead4;
+  --color-cat-2-mid: #14b8a6;
+  --color-cat-2-dark: #0d9488;
+  --color-cat-3-light: #fcd34d;
+  --color-cat-3-mid: #f59e0b;
+  --color-cat-3-dark: #d97706;
+  --color-cat-4-light: #fda4af;
+  --color-cat-4-mid: #f43f5e;
+  --color-cat-4-dark: #e11d48;
+  --color-cat-5-light: #c4b5fd;
+  --color-cat-5-mid: #8b5cf6;
+  --color-cat-5-dark: #7c3aed;
+  --color-cat-6-light: #fdba74;
+  --color-cat-6-mid: #f97316;
+  --color-cat-6-dark: #ea580c;
+  --color-cat-7-light: #6ee7b7;
+  --color-cat-7-mid: #10b981;
+  --color-cat-7-dark: #059669;
+  --color-cat-8-light: #f0abfc;
+  --color-cat-8-mid: #d946ef;
+  --color-cat-8-dark: #c026d3;
+  --color-cat-9-light: #7dd3fc;
+  --color-cat-9-mid: #0ea5e9;
+  --color-cat-9-dark: #0284c7;
+  --color-cat-10-light: #bef264;
+  --color-cat-10-mid: #84cc16;
+  --color-cat-10-dark: #65a30d;
+
+  /* --- Graph palette: safe where any pair of hues may meet ---
+     --color-cat-* answers whether a series is distinct from its neighbour,
+     which is all a bar or a line chart asks. A node-link diagram, a scatter or
+     a small multiple asks it of every pair, because any category can land
+     beside any other, and the categorical set collapses there. Eight slots and
+     a neutral, because no nine-hue set tested survives protanopia.
+     Both palettes need a second channel: a legend, a label, a shape. */
+  --color-graph-1: #e85d90;   /* pink */
+  --color-graph-2: #bf300e;   /* red */
+  --color-graph-3: #b98d21;   /* ochre */
+  --color-graph-4: #05744c;   /* green */
+  --color-graph-5: #03a0b9;   /* cyan */
+  --color-graph-6: #2462d0;   /* blue */
+  --color-graph-7: #937af9;   /* violet */
+  --color-graph-8: #904598;   /* purple */
+  --color-graph-other: var(--color-structural);
+
+  /* --- Semantic typography --- */
+  --font-size-page-title: var(--font-size-xl);
+  --font-size-section-title: var(--font-size-lg);
+  --font-size-card-header: var(--font-size-sm);
+  --font-size-label: var(--font-size-xs);
+  --font-size-body: var(--font-size-sm);
+  --font-size-caption: var(--font-size-xs);
+  --font-size-stat: var(--font-size-xl);
+
   /* --- Code typography --- */
   --font-size-code: 13px;
   --line-height-code: 1.6;
 
+  /* --- Chart typography --- */
+  --font-size-chart-axis: 11px;
+
   /* --- Card content --- */
   --card-content-height: 28rem;
+
+  /* --- Input / Layout Widths --- */
+  --input-min-width: 150px;
+  --page-max-width: 64rem;
+  --content-width-sm: 200px;
+  --chart-tooltip-max-width: 240px;
+  --tooltip-max-width: 320px;
+  --toast-max-width: 360px;
+
+  /* --- Modal --- */
+  --modal-max-width: 700px;
+  --modal-margin-top: 5vh;
+  --modal-max-height: 80vh;
+
 }
 
 :root[data-theme="light"] {
@@ -894,11 +1027,21 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.18);
   --shadow-up: 0 -3px 6px rgba(15, 23, 42, 0.1);
 
-  --bg: #f3f4f6;
+  --bg: #f3f4f6;        /* soft cool gray — page recedes (color review) */
   --fg: #1f2937;
   --muted: #4b5563;
-  --card: #ffffff;
+  --color-structural: #7b8694;
+  --card: #ffffff;      /* white cards lift off the page (color review) */
   --border: rgba(0, 0, 0, 0.1);
+
+  /* --- Syntax highlighting (light) --- */
+  --syntax-keyword: #d73a49;
+  --syntax-string: #22863a;
+  --syntax-number: #005cc5;
+  --syntax-title: #6f42c1;
+  --syntax-attr: #005cc5;
+  --syntax-builtin: #e36209;
+  --syntax-comment: #6a737d;
 
   --color-accent: #0f766e;
   --color-accent-bg: rgba(13, 148, 136, 0.08);
@@ -918,6 +1061,8 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --color-warning-bg: rgba(210, 153, 34, 0.15);
   --color-neutral: #6b7280;
   --color-neutral-bg: rgba(107, 114, 128, 0.2);
+  --color-severe: #c2410c;
+  --color-severe-bg: rgba(194, 65, 12, 0.1);
 
   --color-btn-primary: #0f766e;
   --color-btn-primary-text: #ffffff;
@@ -926,10 +1071,73 @@ The `.text-label-upper` CSS class bundles the uppercase label pattern used acros
   --color-btn-disabled-bg: rgba(37, 99, 235, 0.5);
   --color-btn-disabled-text: rgba(255, 255, 255, 0.7);
 
+  --color-highlight: rgba(250, 204, 21, 0.4);
+
   --color-bg-subtle: rgba(0, 0, 0, 0.03);
   --color-bg-muted: rgba(128, 128, 128, 0.08);
   --color-bg-muted-hover: rgba(128, 128, 128, 0.12);
   --color-row-hover: rgba(0, 0, 0, 0.04);
+
+  /* --- Categorical palette (light — muted set, darkened for contrast on white) --- */
+  --color-cat-1: #3b5e8c;   /* blue    */
+  --color-cat-2: #358f84;   /* teal    */
+  --color-cat-3: #a57c28;   /* amber   */
+  --color-cat-4: #ac4e63;   /* rose    */
+  --color-cat-5: #635c9f;   /* violet  */
+  --color-cat-6: #b06a3c;   /* orange  */
+  --color-cat-7: #3f7d5e;   /* emerald */
+  --color-cat-8: #95548c;   /* fuchsia */
+  --color-cat-9: #2f78a0;   /* sky     */
+  --color-cat-10: #6f8a40;  /* lime    */
+
+  /* --- Categorical sub-shades (light — adjusted for white backgrounds) --- */
+  --color-cat-1-light: #60a5fa;
+  --color-cat-1-mid: #2563eb;
+  --color-cat-1-dark: #1d4ed8;
+  --color-cat-2-light: #2dd4bf;
+  --color-cat-2-mid: #0d9488;
+  --color-cat-2-dark: #0f766e;
+  --color-cat-3-light: #f59e0b;
+  --color-cat-3-mid: #b45309;
+  --color-cat-3-dark: #92400e;
+  --color-cat-4-light: #f43f5e;
+  --color-cat-4-mid: #be123c;
+  --color-cat-4-dark: #9f1239;
+  --color-cat-5-light: #8b5cf6;
+  --color-cat-5-mid: #6d28d9;
+  --color-cat-5-dark: #5b21b6;
+  --color-cat-6-light: #f97316;
+  --color-cat-6-mid: #c2410c;
+  --color-cat-6-dark: #9a3412;
+  --color-cat-7-light: #10b981;
+  --color-cat-7-mid: #047857;
+  --color-cat-7-dark: #065f46;
+  --color-cat-8-light: #d946ef;
+  --color-cat-8-mid: #a21caf;
+  --color-cat-8-dark: #86198f;
+  --color-cat-9-light: #0ea5e9;
+  --color-cat-9-mid: #0369a1;
+  --color-cat-9-dark: #075985;
+  --color-cat-10-light: #84cc16;
+  --color-cat-10-mid: #4d7c0f;
+  --color-cat-10-dark: #3f6212;
+
+  /* --- Graph palette: safe where any pair of hues may meet ---
+     --color-cat-* answers whether a series is distinct from its neighbour,
+     which is all a bar or a line chart asks. A node-link diagram, a scatter or
+     a small multiple asks it of every pair, because any category can land
+     beside any other, and the categorical set collapses there. Eight slots and
+     a neutral, because no nine-hue set tested survives protanopia.
+     Both palettes need a second channel: a legend, a label, a shape. */
+  --color-graph-1: #e9578b;   /* pink */
+  --color-graph-2: #853604;   /* red */
+  --color-graph-3: #a28b17;   /* ochre */
+  --color-graph-4: #247e4b;   /* green */
+  --color-graph-5: #0298be;   /* cyan */
+  --color-graph-6: #5768e2;   /* blue */
+  --color-graph-7: #5e2da9;   /* violet */
+  --color-graph-8: #9f468e;   /* purple */
+  --color-graph-other: var(--color-structural);
 }
 ```
 
