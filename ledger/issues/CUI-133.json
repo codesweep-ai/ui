@@ -3,14 +3,25 @@
   "title": "The kit has no class that hides text from sight but keeps it for a screen reader, so each consumer writes its own",
   "type": "improvement",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent, while building the campaign repository's review packet on the kit, which defines its own `.visually-hidden`",
   "opened": "2026-10-19",
-  "resolved": null,
+  "resolved": "2026-10-19",
   "stint": "review-packet-2026-10-18",
-  "evidence": { "commits": [], "integrated": [], "verified": null },
-  "resolution": null,
+  "evidence": {
+    "commits": [
+      "d367ec6"
+    ],
+    "integrated": [],
+    "verified": "`src/components/visuallyHidden.test.tsx` passes 2 tests in the browser project. A rule of `display: none` fails the test that a button is named by its hidden text. A rule that hides nothing fails the test that the text takes no more than a pixel. `npm run ci` passes on bc04da2, with axe violations=0 in both themes and no test file in the package."
+  },
+  "resolution": "`core.css` carries `.visually-hidden` from `utilities.css`, specified in section 4.21 and named under Added in the changelog. It keeps text in the accessibility tree and takes it out of sight.",
   "details": "A table header or an icon-only control sometimes needs text that a screen reader announces and a sighted reader does not see. The kit has no utility for it. `src/styles/utilities.css` holds only `.text-label-upper`, and `EventLanes` writes the same rules into its own census class. A consumer therefore writes a copy, as the campaign repository's packet page does. A copy is easy to get wrong in a way nobody sees, because `display: none` or `visibility: hidden` also hides the text from the screen reader.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-10-19",
+      "text": "`scripts/build.mjs` copies `src/styles/` into the package whole, so a test placed there ships to npm. The test for this utility sits in `src/components/` for that reason."
+    }
+  ],
   "links": []
 }

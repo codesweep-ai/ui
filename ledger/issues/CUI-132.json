@@ -3,19 +3,26 @@
   "title": "The design system specification leaves out tokens that tokens.css defines, and no document names some of them",
   "type": "defect",
   "severity": "low",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "session agent, while deciding which document should hold the diff line colours that CUI-130 asked for",
   "opened": "2026-10-18",
-  "resolved": null,
+  "resolved": "2026-10-19",
   "stint": "review-packet-2026-10-18",
   "evidence": {
-    "commits": [],
+    "commits": [
+      "1a0ec68"
+    ],
     "integrated": [],
-    "verified": null
+    "verified": "`npm run check:spec-tokens` prints `DESIGN_SYSTEM_SPEC.md lists tokens.css verbatim, 175 tokens`. Before the copy it failed with `the listing leaves out 90 token(s) tokens.css declares`. `node --test scripts/check-spec-tokens.test.mjs` passes 7 tests. Comparing token names alone fails the test on a changed value, and dropping the closing fence on write fails the write test. `npm run ci` passes on bc04da2, visual compare and site build included."
   },
-  "resolution": null,
+  "resolution": "Section 4.19 of the specification is now `src/styles/tokens.css` verbatim, so it names every token. `npm run spec:tokens` copies the file in, and `check:spec-tokens` in `npm run check` fails when the two differ. Two table cells that disagreed with the file now match it: the dark `--fg`, and the base row of the cat-1 sub-shade example.",
   "details": "`CONTRIBUTING.md` sends a token to `DESIGN_SYSTEM_SPEC.md`, and section 4.19 of the specification presents itself as the complete `tokens.css`. On 2026-10-18, `src/styles/tokens.css` declared 175 custom properties, and the specification never named 57 of them. The `--color-cat-N` sub-shades account for 27, and the suffix rule in section 4.12 covers those.\n\nOf the other 30, 17 are documented only in a component or pattern file. The seven `--syntax-*` colours, for example, appear only in `components/CodeBlock.md`. The remaining 13 appear in no document at all. They are the eight prose typography tokens such as `--font-size-prose-h1`, `--color-severe-bg`, `--toast-max-width`, and the three `--modal-*` sizes.\n\nTo reproduce, collect every name declared in `src/styles/tokens.css` and search `DESIGN_SYSTEM_SPEC.md` for each one.\n\nA consumer restyling the kit from the specification cannot find these tokens. Section 8 also forbids a project to redefine a token from section 4, so a project may redefine any of these without breaking that rule as written.",
-  "notes": [],
+  "notes": [
+    {
+      "date": "2026-10-19",
+      "text": "The dark `--fg` row in section 4.5 said `#e6edf3`, and the file says `#d1d9e0`. The table now follows the file, because the file ships and the visual baseline was drawn with it. If `#e6edf3` was meant, the file and the dark baseline move instead."
+    }
+  ],
   "links": [
     "CUI-130"
   ]
