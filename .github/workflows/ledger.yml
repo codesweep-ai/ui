@@ -58,6 +58,9 @@ jobs:
     name: open-source readiness
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read # gh finds the last commit ci passed on
     steps:
       - uses: actions/checkout@v7
         with:
@@ -67,7 +70,13 @@ jobs:
           node-version: "24.21.0"
           cache: npm
       - run: scripts/with-npmrevs.sh npm ci
-      - run: npx cs-lint oss
+      # The history scan reads the commits the last green ci run on main did
+      # not, and the last ten days before there is one.
+      - run: >-
+          npx cs-lint oss --since="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml
+          --branch main --status success --limit 1 --json headSha --jq '.[0].headSha // ""')"
+        env:
+          GH_TOKEN: ${{ github.token }}
       # The one commit rule cs-lint does not carry. See scripts/check-commits.mjs.
       - run: npm run lint:commits
 
