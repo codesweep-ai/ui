@@ -84,7 +84,7 @@ jobs:
       # A pixel count names a file and shows nobody anything. On a red run the
       # render and the diff go up with it.
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-diff
           path: visual-diff/
