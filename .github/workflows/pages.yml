@@ -102,7 +102,7 @@ jobs:
       # workflows are guarding against.
       - run: npm run preview:build
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
 
       # The same Jekyll, the same gem and the same repository settings the
       # branch-served site was built with, so the documents render here exactly
