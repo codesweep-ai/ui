@@ -3,14 +3,22 @@
   "title": "The lightweight MarkdownViewer still shows `&lt;` for a backslash-escaped tag and for a fence indented inside a list item",
   "type": "defect",
   "severity": "med",
-  "status": "in-progress",
+  "status": "closed",
   "foundBy": "user report from the repository owner, reading documents in a consumer's markdown viewer: \"the actual markdown viewer itself sometimes shows &lt; instead of <\"",
   "opened": "2026-10-29",
-  "resolved": null,
+  "resolved": "2026-10-29",
   "stint": "mdread-viewer-2026-10-29",
-  "evidence": { "commits": [], "integrated": [], "verified": null },
-  "resolution": null,
+  "evidence": {
+    "commits": [
+      "fee65c1"
+    ],
+    "integrated": [],
+    "verified": "`src/components/MarkdownViewer.security.test.tsx` adds 2 tests, one per case, and both fail when the lightweight entry escapes again. `npm run ci` passes on fee65c1 with 824 tests and axe violations=0 in both themes. The published build `0.3.1-dev.20261029175252.fee65c1` renders `Use \\<br> for breaks.` and `Array<string>` in an indented `~~~` fence with no `&lt;`, in a consumer's browser test."
+  },
+  "resolution": "The default entry no longer escapes its source. The lightweight parser builds only React elements and strings, so raw HTML stays text without an escape. The rich entry still escapes prose, because its parser does produce HTML nodes.",
   "details": "`MarkdownViewer` runs `escapeMarkdownHtml` over the source before either renderer parses it. The escaper finds code with its own scan, and wherever that scan disagrees with the parser the reader sees a literal `&lt;`. Two cases reproduce on 0.3.0 with the default entry. `Use \\<br> here` renders as `Use &lt;br> here`, because the escaper turns it into `\\&lt;br>` and the parser then reads `\\&` as an escaped ampersand. A `~~~` fence indented four spaces under a list item renders `<div>` as `&lt;div>`, because the escaper only recognises a fence indented three spaces or fewer. A backtick fence there escapes the same way once it holds a blank line. The lightweight renderer builds only React elements and strings, so it has no HTML node to emit and gains nothing from the escape.",
   "notes": [],
-  "links": ["CUI-001"]
+  "links": [
+    "CUI-001"
+  ]
 }
