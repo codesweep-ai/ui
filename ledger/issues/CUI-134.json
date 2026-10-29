@@ -1,0 +1,16 @@
+{
+  "id": "CUI-134",
+  "title": "The lightweight MarkdownViewer still shows `&lt;` for a backslash-escaped tag and for a fence indented inside a list item",
+  "type": "defect",
+  "severity": "med",
+  "status": "in-progress",
+  "foundBy": "user report from the repository owner, reading documents in a consumer's markdown viewer: \"the actual markdown viewer itself sometimes shows &lt; instead of <\"",
+  "opened": "2026-10-29",
+  "resolved": null,
+  "stint": "mdread-viewer-2026-10-29",
+  "evidence": { "commits": [], "integrated": [], "verified": null },
+  "resolution": null,
+  "details": "`MarkdownViewer` runs `escapeMarkdownHtml` over the source before either renderer parses it. The escaper finds code with its own scan, and wherever that scan disagrees with the parser the reader sees a literal `&lt;`. Two cases reproduce on 0.3.0 with the default entry. `Use \\<br> here` renders as `Use &lt;br> here`, because the escaper turns it into `\\&lt;br>` and the parser then reads `\\&` as an escaped ampersand. A `~~~` fence indented four spaces under a list item renders `<div>` as `&lt;div>`, because the escaper only recognises a fence indented three spaces or fewer. A backtick fence there escapes the same way once it holds a blank line. The lightweight renderer builds only React elements and strings, so it has no HTML node to emit and gains nothing from the escape.",
+  "notes": [],
+  "links": ["CUI-001"]
+}
