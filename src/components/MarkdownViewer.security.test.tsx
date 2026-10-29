@@ -102,3 +102,20 @@ describe.each(viewers)("MarkdownViewer code regions are verbatim — %s", (_, Vi
     expect(container.querySelector("article section")).toBeNull();
   });
 });
+
+describe("MarkdownViewer lightweight source is not pre-escaped", () => {
+  // An escape that finds code by its own scan disagrees with the parser in places, and each
+  // disagreement showed the reader a literal `&lt;`. These are two of them.
+  it("renders a backslash-escaped tag as its text", () => {
+    const { container } = render(<MarkdownViewer content={"Use \\<br> for breaks."} />);
+    expect(container.querySelector("article")).toHaveTextContent("Use <br> for breaks.");
+    expect(container.querySelector("article br")).toBeNull();
+  });
+
+  it("keeps a fence indented inside a list item verbatim", () => {
+    const content = ["- item", "", "    ~~~ts", "    const a = 1;", "", "    const b: Array<string> = [];", "    ~~~"].join("\n");
+    const { container } = render(<MarkdownViewer content={content} />);
+    expect(container.querySelector("pre code")).toHaveTextContent("const b: Array<string> = [];");
+    expect(container.querySelector("article")!.textContent).not.toContain("&lt;");
+  });
+});

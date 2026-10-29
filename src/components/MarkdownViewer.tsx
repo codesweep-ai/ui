@@ -233,9 +233,11 @@ function AsyncImage({
 function MarkdownViewerImpl<Extra extends object>({
   viewerProps,
   Renderer,
+  escapeHtml,
 }: {
   viewerProps: MarkdownViewerBaseProps & Extra;
   Renderer: ComponentType<MarkdownRendererProps & Extra>;
+  escapeHtml: boolean;
 }) {
   const {
     content,
@@ -856,7 +858,7 @@ function MarkdownViewerImpl<Extra extends object>({
         <article data-part="content" data-markdown-content="" className={`${inline ? "markdown-content" : "markdown-content cs-component-markdown-viewer-159"}${density === "dense" ? " markdown-content--dense" : ""}`}>
           <Renderer
             {...(viewerProps as Extra)}
-            content={escapeMarkdownHtml(content)}
+            content={escapeHtml ? escapeMarkdownHtml(content) : content}
             components={components as MarkdownComponents}
           />
         </article>
@@ -903,11 +905,18 @@ function MarkdownViewerImpl<Extra extends object>({
   );
 }
 
+/**
+ * `escapeHtml` pre-escapes raw HTML openers in the source, for a renderer whose parser would
+ * otherwise produce HTML nodes. It is on unless the renderer cannot emit HTML at all. The escape
+ * finds code with its own scan, outside the parser, and wherever the two disagree the reader sees
+ * a literal `&lt;`: a backslash-escaped `\<`, or a fence indented inside a list item.
+ */
 export function createMarkdownViewer<Extra extends object = Record<never, never>>(
   Renderer: ComponentType<MarkdownRendererProps & Extra>,
+  { escapeHtml = true }: { escapeHtml?: boolean } = {},
 ) {
   function ConfiguredMarkdownViewerImpl(viewerProps: MarkdownViewerBaseProps & Extra) {
-    return MarkdownViewerImpl({ viewerProps, Renderer });
+    return MarkdownViewerImpl({ viewerProps, Renderer, escapeHtml });
   }
 
   const Viewer = forwardRefToRoot<
@@ -918,4 +927,6 @@ export function createMarkdownViewer<Extra extends object = Record<never, never>
   return Viewer;
 }
 
-export const MarkdownViewer = createMarkdownViewer(LightweightMarkdown);
+// LightweightMarkdown builds React elements and strings and has no HTML node to emit, so `<div>`
+// in its source is inert text already.
+export const MarkdownViewer = createMarkdownViewer(LightweightMarkdown, { escapeHtml: false });

@@ -10,14 +10,14 @@
     "eager": 183861
   },
   "./markdown": {
-    "raw": 173871,
-    "gzip": 56576,
-    "eager": 200545
+    "raw": 173945,
+    "gzip": 56626,
+    "eager": 200619
   },
   "./markdown/rich": {
-    "raw": 337115,
-    "gzip": 105833,
-    "eager": 363789
+    "raw": 337187,
+    "gzip": 105857,
+    "eager": 363861
   },
   "./mermaid": {
     "raw": 3265478,

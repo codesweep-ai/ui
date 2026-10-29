@@ -57,6 +57,12 @@ holds today.
 
 ### Fixed
 
+- The default `MarkdownViewer` renders a backslash-escaped tag, and code in a
+  fence indented under a list item, as the characters written. Both used to
+  reach the reader as `&lt;`. Its source was escaped before parsing by a scan
+  that found code differently from the parser, and the lightweight parser
+  emits no HTML, so it is no longer escaped at all. The rich entry still
+  escapes raw HTML in prose.
 - `CodeBlock` gives every line number in a block one width, sized from the
   digits of the last line, in every mode. Each number used to be as wide as its
   own digits, so the code moved one character right at line 10 and again at
